@@ -448,6 +448,7 @@ async function fetchModel(m){
   try{
     const r = await fetch("https://api.open-meteo.com/v1/forecast?"+p.toString());
     const j = await r.json().catch(() => ({}));
+    if(/no data is available for this location/i.test(j.reason||"")) return {m, status:"outside", reason:j.reason};
     if(!r.ok || j.error) return {m, status:"error", reason: j.reason || ("HTTP "+r.status)};
     return {m, status:"ok", hourly:j.hourly, tz:j.timezone};
   }catch(e){ return {m, status:"error", reason:"Keine Verbindung"}; }
