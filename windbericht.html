@@ -68,6 +68,9 @@ header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:1
 .lamp{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;font:700 15px var(--f-display);letter-spacing:.08em;color:#fff;background:var(--none);box-shadow:inset 0 -6px 0 rgba(0,0,0,.15)}
 .lamp.go{background:var(--go)} .lamp.warn{background:var(--warn)} .lamp.stop{background:var(--stop)}
 .headline{font:600 23px/1.12 var(--f-display);margin:0}
+.hero-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.seg-day button{padding:8px 14px;font-size:14px}
+.now-head{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap;font-size:14px}
 .hero p{margin:0}
 .now{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .now div{background:var(--raised);padding:8px 10px;display:flex;flex-direction:column;gap:1px;min-width:0}
@@ -221,14 +224,18 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
 
   <!-- Entscheidung -->
   <section class="card">
+    <div class="hero-top">
+      <div class="seg seg-day" role="group" aria-label="Tag" id="dayTabs"></div>
+      <span class="eyebrow" id="heroDay"></span>
+    </div>
     <div class="hero">
       <div class="lamp" id="lamp">…</div>
       <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
-        <div class="eyebrow" id="heroDay">Arbeitstag</div>
         <p class="headline" id="headline">Lade Wettermodelle…</p>
         <p class="muted" id="summary"></p>
       </div>
     </div>
+    <div class="now-head"><b id="nowLabel">Gewählte Stunde</b><span class="note">Andere Stunde: Feld im Arbeitsfenster antippen</span></div>
     <div class="now" id="nowBox">
       <div><small>Wind</small><b>–</b><small>m/s Median</small></div>
       <div><small>Böe</small><b>–</b><small>m/s geschätzt</small></div>
@@ -305,7 +312,6 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
     <div class="card-head">
       <h2 id="chartTitle">Wind</h2>
       <div class="row">
-        <div class="seg" role="group" aria-label="Tag" id="dayTabs"></div>
         <div class="seg" role="group" aria-label="Darstellung">
           <button type="button" data-view="band" aria-pressed="true">Band</button>
           <button type="button" data-view="all" aria-pressed="false">Einzelmodelle</button>
@@ -542,15 +548,17 @@ async function load(){
     h.lamp = rate(h);
     return h;
   });
-  const keepDay = state.day && times.some(t=>t.startsWith(state.day)) ? state.day : times[0].slice(0,10);
+  const nk = nowKey(), today = nk.slice(0,10);
+  const startDay = new Date().getHours() > site.to ? times.find(t => t.slice(0,10) > today)?.slice(0,10) : today;
+  const keepDay = state.day && times.some(t=>t.startsWith(state.day)) ? state.day : (startDay && times.some(t=>t.startsWith(startDay)) ? startDay : times[0].slice(0,10));
   state = {...state, results, times, hours, fetchedAt:new Date(), day:keepDay, tz:okAny.tz};
-  const nk = nowKey();
-  const nowIdx = times.findIndex(t => t.slice(0,13)===nk);
-  state.sel = nowIdx>=0 && times[nowIdx].startsWith(state.day) ? nowIdx : defaultSel(state.day);
+  state.sel = defaultSel(state.day);
   render();
 }
 function defaultSel(day){
-  const i = state.times.findIndex(t => t.startsWith(day) && hourOf(t)===Math.max(site.from, 8));
+  const now = state.times.findIndex(t => t.slice(0,13)===nowKey());
+  if(now>=0 && state.times[now].startsWith(day) && isWork(state.times[now])) return now;
+  const i = state.times.findIndex(t => t.startsWith(day) && hourOf(t)===site.from);
   return i>=0 ? i : state.times.findIndex(t=>t.startsWith(day));
 }
 
@@ -581,7 +589,7 @@ function buildSummary(hs){
   hs.forEach(h => { if(h.lamp==="go"){ cur = cur ? {...cur, end:h.t, len:cur.len+1} : {start:h.t, end:h.t, len:1}; if(!best||cur.len>best.len) best=cur; } else cur=null; });
   let lamp, head;
   if(c.go===hs.length){ lamp="go"; head=`Ganzer Arbeitstag im grünen Bereich (${site.from}–${site.to} Uhr).`; }
-  else if(best && best.len>=2){ lamp = best.len>=4 ? "warn" : "warn"; head=`Grünes Fenster ${hh(best.start)}–${String(hourOf(best.end)+1).padStart(2,"0")} Uhr (${best.len} h).`; if(c.stop===0 && best.len>=hs.length-2) lamp="go"; }
+  else if(best && best.len>=2){ lamp = best.len>=4 ? "warn" : "warn"; const win = `${hh(best.start)}–${String(hourOf(best.end)+1).padStart(2,"0")} Uhr`; head=`Grün nur ${win} (${best.len} h), übrige Stunden prüfen.`; if(c.stop===0 && best.len>=hs.length-2){ lamp="go"; head=`Grün ${win}, Randstunden prüfen.`; } }
   else if(c.stop===hs.length){ lamp="stop"; head="Kein Arbeitsfenster: Grenzwerte ganztägig überschritten."; }
   else { lamp = c.stop > hs.length/2 ? "stop" : "warn"; head="Kein sicheres grünes Fenster, nur Stunden mit Prüfbedarf."; }
   const parts = [];
@@ -618,7 +626,7 @@ function renderHero(){
   const sum = buildSummary(dayHours(state.day));
   state.summary = sum;
   $("lamp").className = "lamp " + sum.lamp; $("lamp").textContent = LAMP_TXT[sum.lamp];
-  $("heroDay").textContent = `${dayLabel(state.day)} · Arbeitszeit ${site.from}–${site.to} Uhr`;
+  $("heroDay").textContent = `${new Date(state.day+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"})} · Arbeitszeit ${site.from}–${site.to} Uhr`;
   $("headline").textContent = sum.head; $("summary").textContent = sum.text;
   const u = usableModels();
   $("status").textContent = `Abgerufen ${state.fetchedAt.toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"})} · ${u.length} Modelle aktiv, davon ${u.filter(r=>r.m.hi).length} hochauflösend`;
@@ -626,8 +634,9 @@ function renderHero(){
 
 function renderNow(){
   const h = state.hours[state.sel]; if(!h) return;
+  $("nowLabel").textContent = `${dayLabel(h.t.slice(0,10),true)}, ${hh(h.t)} Uhr` + (isWork(h.t) ? "" : " (außerhalb der Arbeitszeit)");
   const cells = [
-    ["Wind "+zoneTxt(), fmt(h.med), `m/s · ${hh(h.t)} Uhr`, h.med>site.wind],
+    ["Wind "+zoneTxt(), fmt(h.med), "m/s Median", h.med>site.wind],
     ["Böe "+zoneTxt(), fmt(h.gMed), "m/s geschätzt", h.gMed>site.gust],
     ["Richtung", dirName(h.dir.mean), h.dir.mean==null ? "" : Math.round(h.dir.mean)+"° · "+workH()+" m", false],
     ["Modelle", h.n ? `${h.over}/${h.n}` : "–", "über Grenze", h.over>0 && h.over>=h.n/2]
