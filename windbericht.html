@@ -369,9 +369,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
       <div class="card-head">
         <h2>Anlage auf der Karte</h2>
         <div class="seg" role="group" aria-label="Kartenebene">
-          <button type="button" data-layer="sat" aria-pressed="true">Satellit</button>
-          <button type="button" data-layer="osm" aria-pressed="false">Karte</button>
-          <button type="button" id="radarBtn" aria-pressed="false">Radar</button>
+          <button type="button" id="radarBtn" aria-pressed="false">Radar einblenden</button>
         </div>
       </div>
       <form class="search" id="searchForm" role="search">
@@ -468,7 +466,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
 
   <footer class="foot">
     <svg class="logo" role="img" aria-label="Logo Tobias Windberg"><use href="#tw-logo"/></svg>
-    <p class="note">Wetterdaten: Open-Meteo.com (CC BY 4.0) mit Modellen von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA u. a. Radar: DWD. Karten: Esri, OpenStreetMap. Open-Meteo ist kostenlos nur für nicht-kommerzielle Nutzung. Entscheidungshilfe, ersetzt nicht die Beurteilung vor Ort durch den Aufsichtführenden.</p>
+    <p class="note">Wetterdaten: Open-Meteo.com (CC BY 4.0) mit Modellen von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA u. a. Radar: DWD. Satellitenbild: Esri. Ortssuche: OpenStreetMap (Nominatim). Open-Meteo ist kostenlos nur für nicht-kommerzielle Nutzung. Entscheidungshilfe, ersetzt nicht die Beurteilung vor Ort durch den Aufsichtführenden.</p>
   </footer>
 
   <section id="report"></section>
@@ -510,7 +508,7 @@ const LAMP_TXT = {go:"GO", warn:"PRÜFEN", stop:"STOP", none:"–"};
 let site = loadSite();
 let state = {results:[], times:[], hours:[], fetchedAt:null, day:null, sel:null, view:"band"};
 const charts = {};
-let map, marker, rotorCircle, arrowMarker, satLayer, osmLayer, radarLayer;
+let map, marker, rotorCircle, arrowMarker, satLayer, radarLayer;
 
 /* ---------- Hilfsfunktionen ---------- */
 function loadSite(){
@@ -1190,20 +1188,14 @@ function initMap(){
   if(typeof L==="undefined"){ $("map").innerHTML = '<p class="note" style="padding:12px">Karte konnte nicht geladen werden.</p>'; return; }
   map = L.map("map", {zoomControl:true, attributionControl:true}).setView([site.lat, site.lon], 14);
   satLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {maxZoom:19, attribution:"Esri, Maxar, Earthstar"}).addTo(map);
-  osmLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom:19, attribution:"© OpenStreetMap"});
   radarLayer = L.tileLayer.wms("https://maps.dwd.de/geoserver/dwd/wms", {layers:"dwd:Niederschlagsradar", format:"image/png", transparent:true, opacity:.65, attribution:"Radar © DWD"});
   marker = L.marker([site.lat, site.lon], {draggable:true, title:"Anlage"}).addTo(map);
   rotorCircle = L.circle([site.lat, site.lon], {radius:site.rotor/2, color:"#ff7a33", weight:2, fillOpacity:.08}).addTo(map);
   marker.on("dragend", () => setPos(marker.getLatLng(), true));
   map.on("click", e => setPos(e.latlng));
-  document.querySelectorAll("[data-layer]").forEach(b => b.onclick = () => {
-    const sat = b.dataset.layer==="sat";
-    if(sat){ map.removeLayer(osmLayer); satLayer.addTo(map); } else { map.removeLayer(satLayer); osmLayer.addTo(map); }
-    document.querySelectorAll("[data-layer]").forEach(x => x.setAttribute("aria-pressed", String(x===b)));
-  });
   $("radarBtn").onclick = () => {
     const on = $("radarBtn").getAttribute("aria-pressed")!=="true";
-    $("radarBtn").setAttribute("aria-pressed", String(on));
+    $("radarBtn").setAttribute("aria-pressed", String(on)); $("radarBtn").textContent = on ? "Radar ausblenden" : "Radar einblenden";
     if(on){ radarLayer.setParams({_t:Date.now()}); radarLayer.addTo(map); if(map.getZoom()>10) map.setZoom(9); } else map.removeLayer(radarLayer);
   };
 }
