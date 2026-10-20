@@ -96,7 +96,8 @@ legend{font:600 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:upper
 .tl-cell.dark,.sw.dark{background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.35) 0 3px,transparent 3px 6px)}
 .now-head{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap;font-size:14px}
 .hero p{margin:0}
-.now{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.now{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+@media (min-width:900px){.now{grid-template-columns:repeat(6,1fr)}}
 .now div{background:var(--raised);padding:8px 10px;display:flex;flex-direction:column;gap:1px;min-width:0}
 .now b{font:600 22px/1.1 var(--f-mono);font-variant-numeric:tabular-nums}
 .now small{font-size:11px;color:var(--muted)}
@@ -483,7 +484,9 @@ const MODELS = [
 const LEVELS = [10,80,120,180];
 const VARS = ["wind_speed_10m","wind_speed_80m","wind_speed_120m","wind_speed_180m",
   "wind_direction_10m","wind_direction_80m","wind_direction_120m","wind_direction_180m",
-  "wind_gusts_10m","precipitation","cape","weather_code","temperature_2m"];
+  "wind_gusts_10m","precipitation","cape","weather_code","temperature_2m",
+  "temperature_80m","temperature_120m","temperature_180m","apparent_temperature"];
+const CHILL_INFO = -10, CHILL_WARN = -27, HEAT_INFO = 32, UV_INFO = 6;
 const DEFAULT_SITE = {name:"Hildesheim", lat:52.1508, lon:9.9511, hub:125, rotor:149, work:null, path:true, wind:12, gust:15, from:6, to:19};
 const CAPE_WARN = 300, CAPE_STOP = 800, RAIN_WARN = 0.5;
 const COLORS = ["#3b82f6","#14b8a6","#a855f7","#f59e0b","#ec4899","#22c55e","#06b6d4","#ef4444","#64748b","#8b5cf6","#84cc16","#f97316","#0ea5e9","#d946ef","#10b981","#eab308"];
@@ -574,6 +577,21 @@ function zoneWind(lv){
   const zs = [...new Set([lo, ...LEVELS.filter(z => z>lo && z<hi), hi])];
   return zs.map(z => windAt(lv, z)).filter(w => w.v!=null).reduce((a,b) => !a || b.v > a.v ? b : a, null) || {v:null, ext:false};
 }
+/* Temperatur in Höhe z: zwischen gelieferten Höhen linear, darüber/ohne Höhenwerte mit 0,65 °C pro 100 m */
+function tempAt(h, i, z){
+  const lv = [[2, h.temperature_2m?.[i]], ...[80,120,180].map(k => [k, h["temperature_"+k+"m"]?.[i]])].filter(([,v]) => v!=null && !isNaN(v));
+  if(!lv.length) return null;
+  for(let k=0; k<lv.length-1; k++){ const [z1,v1]=lv[k], [z2,v2]=lv[k+1]; if(z>=z1 && z<=z2) return v1 + (v2-v1)*(z-z1)/(z2-z1); }
+  const [zt, vt] = z < lv[0][0] ? lv[0] : lv[lv.length-1];
+  return vt - 0.0065*(z - zt);
+}
+/* Gefühlte Temperatur (Windchill, Formel von Environment Canada / NWS), Wind in m/s */
+function windChill(t, v){
+  if(t==null || v==null) return null;
+  const k = v*3.6;
+  if(t > 10 || k < 4.8) return t;
+  return 13.12 + 0.6215*t - 11.37*Math.pow(k,0.16) + 0.3965*t*Math.pow(k,0.16);
+}
 function dirAt(lv, z){
   const withDir = lv.filter(l => l[2]!=null);
   if(!withDir.length) return null;
@@ -604,11 +622,23 @@ async function fetchModel(m){
   }catch(e){ return {m, status:"error", reason:"Keine Verbindung"}; }
 }
 
+/* Zusätzliche Quellen neben den Wettermodellen. Fällt eine aus, läuft die App ohne sie weiter. */
+let extras = {};
+async function loadExtras(){
+  const ex = {};
+  try{
+    const p = new URLSearchParams({latitude:site.lat, longitude:site.lon, hourly:"uv_index", timezone:"auto", forecast_days:"3"});
+    const j = await (await fetch("https://api.open-meteo.com/v1/forecast?"+p)).json();
+    if(j.hourly){ fixTimes(j.hourly, j.timezone, j.utc_offset_seconds||0); ex.uv = new Map(j.hourly.time.map((t,i) => [t, j.hourly.uv_index[i]])); }
+  }catch(e){}
+  return ex;
+}
 async function load(){
   $("errorBox").hidden = true;
   $("headline").textContent = "Lade Wettermodelle…"; $("lamp").className="lamp"; $("lamp").textContent="…";
   $("reloadBtn").disabled = true;
-  const raw = await Promise.all(MODELS.map(fetchModel));
+  const [raw, ex] = await Promise.all([Promise.all(MODELS.map(fetchModel)), loadExtras()]);
+  extras = ex;
   $("reloadBtn").disabled = false;
   const okAny = raw.find(r => r.status==="ok");
   if(!okAny){
@@ -627,7 +657,8 @@ async function load(){
       const hw = zoneWind(lv);
       if(hw.v==null) return null;
       return {v:hw.v, ext:hw.ext, g:gustAt(h,i,hw.v), dir:dirAt(lv, workH()), lv,
-        rain:h.precipitation?.[i], cape:h.cape?.[i], wc:h.weather_code?.[i], t2:h.temperature_2m?.[i]};
+        rain:h.precipitation?.[i], cape:h.cape?.[i], wc:h.weather_code?.[i], t2:h.temperature_2m?.[i],
+        tW:tempAt(h, i, workH()), app:h.apparent_temperature?.[i]};
     });
     const n = series.filter(Boolean).length;
     if(n===0) return {...r, status:"outside", series};
@@ -642,10 +673,13 @@ async function load(){
       gMed:median(gs), gMax:gs.length?Math.max(...gs):null,
       rain:median(pts.map(x=>x.s.rain).filter(v=>v!=null)), cape:median(pts.map(x=>x.s.cape).filter(v=>v!=null)),
       t2:median(pts.map(x=>x.s.t2).filter(v=>v!=null)),
+      tW:median(pts.map(x=>x.s.tW).filter(v=>v!=null)), app:median(pts.map(x=>x.s.app).filter(v=>v!=null)),
+      uv:extras.uv?.get(t) ?? null,
       storms:pts.filter(x => x.s.wc!=null && x.s.wc>=95).length,
       over:pts.filter(x => x.s.v > site.wind || (x.s.g!=null && x.s.g > site.gust)).length,
       dir:circMean(pts.map(x=>x.s.dir).filter(v=>v!=null))};
     h.dark = isDark(t);
+    h.chill = windChill(h.tW, h.med);
     Object.assign(h, rate(h));
     return h;
   });
@@ -677,6 +711,10 @@ function rate(h){
   else if(h.cape!=null && h.cape >= CAPE_WARN) add("warn", `Gewitterenergie CAPE ${Math.round(h.cape)} J/kg`);
   if(h.rain!=null && h.rain >= RAIN_WARN) add("warn", `Regen ${fmt(h.rain)} mm/h`);
   if(h.dark) add("warn", "Dunkel (außerhalb der bürgerlichen Dämmerung)");
+  if(h.chill!=null && h.chill <= CHILL_WARN) add("warn", `Gefühlt ${fmt(h.chill,0)} °C in ${workH()} m: Erfrierungsgefahr`);
+  else if(h.chill!=null && h.chill <= CHILL_INFO) add("info", `Gefühlt ${fmt(h.chill,0)} °C in ${workH()} m: Kälteschutz`);
+  if(h.app!=null && h.app >= HEAT_INFO) add("info", `Hitze: gefühlt ${fmt(h.app,0)} °C am Boden`);
+  if(h.uv!=null && h.uv >= UV_INFO) add("info", `UV-Index ${fmt(h.uv,0)}: Sonnenschutz`);
   const lamp = why.some(w => w.l==="stop") ? "stop" : why.some(w => w.l==="warn") ? "warn" : "go";
   return {lamp, why};
 }
@@ -794,7 +832,8 @@ function renderNow(){
     ["Wind "+zoneTxt(), fmt(h.med), "m/s Median", h.med>site.wind],
     ["Böe "+zoneTxt(), fmt(h.gMed), "m/s geschätzt", h.gMed>site.gust],
     ["Richtung", dirName(h.dir.mean), h.dir.mean==null ? "" : Math.round(h.dir.mean)+"° · "+workH()+" m", false],
-    ["Modelle", h.n ? `${h.over}/${h.n}` : "–", "über Grenze", h.over>0 && h.over>=h.n/2]
+    ["Modelle", h.n ? `${h.over}/${h.n}` : "–", "über Grenze", h.over>0 && h.over>=h.n/2],
+    ["Temperatur "+workH()+" m", h.tW==null ? "–" : fmt(h.tW,0)+" °C", h.chill==null ? "" : "gefühlt "+fmt(h.chill,0)+" °C", h.chill!=null && h.chill<=CHILL_WARN]
   ];
   $("nowBox").innerHTML = cells.map(([a,b,c,o]) => `<div class="${o?"over":""}"><small>${a}</small><b>${b}</b><small>${c}</small></div>`).join("");
 }
@@ -977,7 +1016,7 @@ function renderMatrix(){
   highlightSel();
 }
 
-const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Richtung</th><th>Über Grenze</th><th>Regen</th><th>CAPE</th><th>°C</th><th>Gründe</th></tr></thead>`;
+const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Richtung</th><th>Über Grenze</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th>Gründe</th></tr></thead>`;
 function hourRows(hs, dots){
   return hs.map(h => `<tr>
     <td class="num">${dots?`<span class="dot d-${h.lamp}"></span> `:LAMP_TXT[h.lamp]+" "}${hh(h.t)}:00</td>
@@ -988,7 +1027,8 @@ function hourRows(hs, dots){
     <td class="num">${h.n ? h.over+"/"+h.n : "–"}</td>
     <td class="num">${fmt(h.rain)}</td>
     <td class="num">${h.cape==null?"–":Math.round(h.cape)}</td>
-    <td class="num">${fmt(h.t2,0)}</td>
+    <td class="num">${fmt(h.tW,0)}</td>
+    <td class="num">${fmt(h.chill,0)}</td>
     <td class="why-cell">${esc(h.why.filter(w=>w.l!=="go").map(w=>w.t).join(" · ")) || "–"}</td></tr>`).join("");
 }
 function renderHourTable(){ $("hourTable").innerHTML = HOUR_HEAD + "<tbody>" + hourRows(dayHours(state.day), true) + "</tbody>"; }
@@ -1151,7 +1191,7 @@ function snapshot(){
     bereich:{arbeitshoehe:workH(), bis:zoneTop(), text:zoneTxt()},
     modelle: state.results.map(r=>({id:r.m.id, name:r.m.name, anbieter:r.m.org, status:r.status, abfrage:apiUrl(r.m),
       werte: r.series ? dayHours(state.day).map(h => { const s = r.series[h.i]; return s ? {zeit:h.t, utc:utcStr(h.t), wind:s.v, boe:s.g, richtung:s.dir, hochgerechnet:s.ext} : null; }) : null})),
-    stunden: dayHours(state.day).map(h=>({zeit:h.t, utc:utcStr(h.t), ampel:h.lamp, median:h.med, min:h.min, max:h.max, boe:h.gMed, richtung:h.dir.mean, modelle:h.n, ueberGrenze:h.over, regen:h.rain, cape:h.cape, gruende:h.why.map(w=>w.t)}))};
+    stunden: dayHours(state.day).map(h=>({zeit:h.t, utc:utcStr(h.t), ampel:h.lamp, median:h.med, min:h.min, max:h.max, boe:h.gMed, richtung:h.dir.mean, modelle:h.n, ueberGrenze:h.over, regen:h.rain, cape:h.cape, tempArbeit:h.tW, gefuehlt:h.chill, uv:h.uv, gruende:h.why.map(w=>w.t)}))};
 }
 async function buildReport(){
   const snap = snapshot(), hash = await sha256(JSON.stringify(snap));
