@@ -99,7 +99,7 @@ legend{font:600 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:upper
 .fav-del{color:var(--muted);font-size:17px;padding:4px 8px}
 .fav-del:hover{color:var(--stop)}
 .fav-empty{font-size:12px;color:var(--muted);padding:4px 2px 8px}
-.fav-add{display:flex;gap:6px;border-top:1px solid var(--line);padding-top:8px}
+.fav-add{display:flex;gap:6px}
 .fav-add input{flex:1;min-width:0}
 .check{flex-direction:row;align-items:center;gap:8px;font-size:13px;color:var(--fg)}
 .check input{width:18px;height:18px;margin:0;flex:none;accent-color:var(--accent)}
@@ -112,7 +112,19 @@ legend{font:600 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:upper
 .results li button:hover{background:var(--surface)}
 .results small{color:var(--muted);font-weight:400;font-size:12px}
 [hidden]{display:none!important}
-.pickbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;background:var(--warn-bg);border:1px solid var(--warn);border-radius:8px;padding:8px 10px;font-size:13px}
+.pickbar{display:flex;flex-direction:column;gap:8px;background:var(--warn-bg);border:1px solid var(--warn);border-radius:8px;padding:10px 12px;font-size:13px}
+.pick-info{display:flex;flex-direction:column;gap:2px}
+.pick-info b{font-size:15px}
+.pick-form{display:flex;flex-direction:column;gap:8px}
+@keyframes pulseHint{0%,100%{box-shadow:0 0 0 0 rgba(255,122,51,.65)}50%{box-shadow:0 0 0 10px rgba(255,122,51,0)}}
+.pulse-hint{border-color:var(--accent)!important;animation:pulseHint 1.6s ease-in-out infinite}
+body.no-site .needs-data{display:none!important}
+body.no-site .cols{grid-template-columns:1fr}
+.only-no-site{display:none;margin-top:6px}
+body.no-site .only-no-site{display:block}
+.fav-new{width:100%;text-align:left;margin-bottom:8px;color:var(--accent);background:transparent;border-style:dashed}
+.fav-save{display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--line);padding-top:8px}
+.fav-saved{border-top:1px solid var(--line);padding-top:8px}
 .leaflet-container.picking{cursor:crosshair}
 .leaflet-container{font-family:var(--f-body);background:var(--raised)}
 
@@ -208,9 +220,14 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
     <div class="fav-panel" id="favPanel" hidden>
       <div class="eyebrow">Gespeicherte Anlagen</div>
       <div class="fav-list" id="favList"></div>
-      <div class="fav-add">
-        <input type="text" id="favName" placeholder="Aktuelle Anlage benennen…" maxlength="40" aria-label="Name der Anlage">
-        <button class="primary" id="favAdd" type="button" title="Aktuelle Anlage mit Höhen und Grenzwerten speichern">Speichern</button>
+      <button class="fav-new" id="favNew" type="button">+ Neue Anlage auf der Karte wählen</button>
+      <p class="note fav-saved" id="favSaved" hidden></p>
+      <div class="fav-save" id="favSaveRow">
+        <span class="note">Aktuelle Anlage speichern:</span>
+        <div class="fav-add">
+          <input type="text" id="favName" placeholder="Name der Anlage" maxlength="40" aria-label="Name der Anlage">
+          <button class="primary" id="favAdd" type="button" title="Aktuelle Anlage mit Höhen und Grenzwerten speichern">Speichern</button>
+        </div>
       </div>
     </div>
   </header>
@@ -255,7 +272,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
 
   <!-- Entscheidung -->
   <section class="card">
-    <div class="hero-top">
+    <div class="hero-top needs-data">
       <div class="seg seg-day" role="group" aria-label="Tag" id="dayTabs"></div>
       <span class="eyebrow" id="heroDay"></span>
     </div>
@@ -264,20 +281,21 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
       <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
         <p class="headline" id="headline">Lade Wettermodelle…</p>
         <p class="muted" id="summary"></p>
+        <div class="only-no-site"><button class="primary" id="heroMapBtn" type="button">Anlage auf der Karte wählen</button></div>
       </div>
     </div>
-    <div class="now-head"><b id="nowLabel">Gewählte Stunde</b><span class="note">Andere Stunde: Feld im Arbeitsfenster antippen</span></div>
-    <div class="now" id="nowBox">
+    <div class="now-head needs-data"><b id="nowLabel">Gewählte Stunde</b><span class="note">Andere Stunde: Feld im Arbeitsfenster antippen</span></div>
+    <div class="now needs-data" id="nowBox">
       <div><small>Wind</small><b>–</b><small>m/s Median</small></div>
       <div><small>Böe</small><b>–</b><small>m/s geschätzt</small></div>
       <div><small>Richtung</small><b>–</b><small>in Arbeitshöhe</small></div>
       <div><small>Modelle</small><b>–</b><small>über Grenze</small></div>
     </div>
-    <p class="note mono" id="status"></p>
+    <p class="note mono needs-data" id="status"></p>
   </section>
 
   <!-- Zeitleiste -->
-  <section class="card">
+  <section class="card needs-data">
     <div class="card-head">
       <h2>Arbeitsfenster</h2>
       <div class="legend">
@@ -291,7 +309,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
   </section>
 
   <!-- Verlauf -->
-  <section class="card">
+  <section class="card needs-data">
     <div class="card-head">
       <h2 id="chartTitle">Wind</h2>
       <div class="row">
@@ -307,9 +325,9 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
 
   <!-- Karte + Richtung -->
   <div class="cols">
-    <section class="card">
+    <section class="card" id="mapCard">
       <div class="card-head">
-        <h2>Standort</h2>
+        <h2>Anlage auf der Karte</h2>
         <div class="seg" role="group" aria-label="Kartenebene">
           <button type="button" data-layer="sat" aria-pressed="true">Satellit</button>
           <button type="button" data-layer="osm" aria-pressed="false">Karte</button>
@@ -325,16 +343,21 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
         <div id="map" role="application" aria-label="Karte des Anlagenstandorts"></div>
       </div>
       <div class="pickbar" id="pickBar" hidden>
-        <span class="mono" id="pickText"></span>
+        <div class="pick-info"><b id="pickTitle">Neuer Standort</b><span class="mono" id="pickText"></span></div>
+        <div class="pick-form" id="pickForm">
+          <label>Name der Anlage<input id="pickName" type="text" maxlength="40" placeholder="z. B. WP Musterberg WEA 3"></label>
+          <label class="check"><input id="pickFav" type="checkbox" checked>In „Anlagen“ speichern</label>
+          <p class="note">Nabenhöhe, Arbeitshöhe und Grenzwerte werden übernommen. Ändern unter „Einstellungen“.</p>
+        </div>
         <div class="row">
-          <button class="ghost" id="pickCancel" type="button">Verwerfen</button>
           <button class="primary" id="pickApply" type="button">Standort übernehmen</button>
+          <button class="ghost" id="pickCancel" type="button">Verwerfen</button>
         </div>
       </div>
-      <p class="note" id="mapNote">Neue Anlage: Ort suchen und Anlage antippen. Pfeil: Windrichtung zur gewählten Stunde. Radar: DWD, nur Deutschland und Grenzgebiete.</p>
+      <p class="note" id="mapNote">Ort suchen oder direkt auf die Anlage tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Radar: DWD, nur Deutschland und Grenzgebiete.</p>
     </section>
 
-    <section class="card">
+    <section class="card needs-data">
       <div class="card-head"><h2 id="compassTitle">Windrichtung</h2><span class="eyebrow" id="compassHour"></span></div>
       <div class="compass-wrap">
         <div class="compass" id="compass"></div>
@@ -346,7 +369,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
 
   <!-- Details -->
   <!-- Höhenprofil + Niederschlag -->
-  <div class="cols">
+  <div class="cols needs-data">
     <section class="card">
       <div class="card-head"><h2>Höhenprofil</h2><span class="eyebrow" id="profileHour"></span></div>
       <div class="chart-sm"><canvas id="profile" aria-label="Windgeschwindigkeit nach Höhe"></canvas></div>
@@ -360,26 +383,26 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
   </div>
 
   <!-- Modell-Matrix -->
-  <section class="card">
+  <section class="card needs-data">
     <div class="card-head"><h2>Modell-Matrix</h2><span class="eyebrow" id="mxDay"></span></div>
     <div class="mx" id="matrix"></div>
     <p class="note">Wind je Modell und Stunde in m/s. Gelb ab 75 % des Grenzwerts, rot darüber. Zeigt, ob nur ein Ausreißer warnt oder fast alle.</p>
   </section>
 
-  <section class="card">
+  <section class="card needs-data">
     <h2>Stunden im Detail</h2>
     <div class="scroll"><table class="t" id="hourTable"></table></div>
     <p class="note">Wind aus den Modellwerten in 10, 80, 120 und 180 m auf die Arbeitshöhe interpoliert. Böen liefern die Modelle nur in 10 m; die Böe in der Höhe ist daraus geschätzt und sollte mit NC2-Messwerten geprüft werden.</p>
   </section>
 
-  <section class="card">
+  <section class="card needs-data">
     <h2>Modelle am Standort</h2>
     <div class="scroll"><table class="t" id="modelTable"></table></div>
     <p class="note">Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung.</p>
   </section>
 
   <!-- Tagesbericht -->
-  <section class="card">
+  <section class="card needs-data">
     <h2>Tagesbericht</h2>
     <p class="note">Dokumentiert die Prognose zum Zeitpunkt der Freigabe. Als PDF drucken und zur Projektdokumentation legen.</p>
     <div class="grid">
@@ -679,7 +702,11 @@ function renderTimeline(){
 function scrollTimeline(){
   // nur seitlich scrollen, die Seite selbst bleibt stehen
   const box = $("tlScroll"), el = $("timeline").querySelector(`[data-i="${state.sel}"]`);
-  if(el) box.scrollLeft = el.offsetLeft - box.clientWidth/2 + el.offsetWidth/2;
+  if(!el) return;
+  // Tag möglichst ab seinem Anfang zeigen, sonst die Stunde mittig
+  const day = el.closest(".tl-day");
+  box.scrollLeft = el.offsetLeft + el.offsetWidth - day.offsetLeft < box.clientWidth
+    ? day.offsetLeft : el.offsetLeft - box.clientWidth/2 + el.offsetWidth/2;
 }
 function highlightSel(){
   $("timeline").querySelectorAll(".tl-cell").forEach(b => b.classList.toggle("sel", +b.dataset.i===state.sel));
@@ -881,7 +908,7 @@ function initMap(){
   radarLayer = L.tileLayer.wms("https://maps.dwd.de/geoserver/dwd/wms", {layers:"dwd:Niederschlagsradar", format:"image/png", transparent:true, opacity:.65, attribution:"Radar © DWD"});
   marker = L.marker([site.lat, site.lon], {draggable:true, title:"Anlage"}).addTo(map);
   rotorCircle = L.circle([site.lat, site.lon], {radius:site.rotor/2, color:"#ff7a33", weight:2, fillOpacity:.08}).addTo(map);
-  marker.on("dragend", () => setPos(marker.getLatLng()));
+  marker.on("dragend", () => setPos(marker.getLatLng(), true));
   map.on("click", e => setPos(e.latlng));
   document.querySelectorAll("[data-layer]").forEach(b => b.onclick = () => {
     const sat = b.dataset.layer==="sat";
@@ -895,23 +922,65 @@ function initMap(){
   };
 }
 let pending = null, pendingName = null;
-function setPos(ll){
+let siteChosen = (() => { try{ return localStorage.getItem("wb_site")!==null; }catch(e){ return true; } })();
+function showMarker(on){
+  if(!map) return;
+  [marker, rotorCircle].forEach(l => on ? (!map.hasLayer(l) && l.addTo(map)) : map.removeLayer(l));
+}
+function setPos(ll, fromDrag){
   pending = ll;
+  showMarker(true); stopPulse();
   marker.setLatLng(ll); rotorCircle.setLatLng(ll);
   if(arrowMarker){ map.removeLayer(arrowMarker); arrowMarker=null; }
-  $("pickText").textContent = `${pendingName ? pendingName+" · " : ""}${ll.lat.toFixed(5)}° N, ${ll.lng.toFixed(5)}° E`;
+  $("pickTitle").textContent = fromDrag ? "Standort verschoben" : "Neuer Standort";
+  $("pickText").textContent = `${ll.lat.toFixed(5)}° N, ${ll.lng.toFixed(5)}° E`;
+  $("pickName").value = pendingName || (fromDrag && siteChosen ? site.name : "");
+  $("pickForm").hidden = false;
   $("pickBar").hidden = false; $("pickApply").disabled = false;
+}
+function siteReady(){
+  if(siteChosen) return;
+  siteChosen = true;
+  document.body.classList.remove("no-site"); stopPulse(); showMarker(true);
+  setTimeout(() => map && map.invalidateSize(), 50);
 }
 function applyPending(){
   if(!pending) return;
-  site = {...site, lat:+pending.lat.toFixed(5), lon:+pending.lng.toFixed(5), name: pendingName || site.name};
+  const lat = +pending.lat.toFixed(5), lon = +pending.lng.toFixed(5);
+  const name = $("pickName").value.trim() || pendingName || `Standort ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+  site = {...site, lat, lon, name};
+  if($("pickFav").checked) upsertFav();
   pending = null; pendingName = null;
   $("pickBar").hidden = true; map.getContainer().classList.remove("picking");
-  saveSite(); fillSettings(); load();
+  siteReady(); saveSite(); fillSettings(); load();
+  window.scrollTo({top:0, behavior:"smooth"});
 }
 function cancelPending(){
   pending = null; pendingName = null; $("pickBar").hidden = true; map.getContainer().classList.remove("picking");
+  if(!siteChosen){ showMarker(false); startPulse(); return; }
   updateMap(); map.setView([site.lat, site.lon], Math.max(map.getZoom(), 13));
+}
+/* Hinweis auf die Karte: Rahmen pulsiert wie in TargetMate */
+let pulseTimer = null;
+function startPulse(ms){
+  clearTimeout(pulseTimer);
+  $("map").classList.add("pulse-hint");
+  if(ms) pulseTimer = setTimeout(stopPulse, ms);
+}
+function stopPulse(){ clearTimeout(pulseTimer); $("map").classList.remove("pulse-hint"); }
+function pointToMap(ms){
+  toggleFavs(false);
+  $("mapCard").scrollIntoView({behavior:"smooth", block:"start"});
+  startPulse(ms);
+}
+function startFirstRun(){
+  document.body.classList.add("no-site");
+  $("lamp").className = "lamp"; $("lamp").textContent = "–";
+  $("headline").textContent = "Noch keine Anlage gewählt.";
+  $("summary").textContent = "Ort suchen und die Anlage auf der Karte antippen. Danach erscheint hier die Bewertung für euren Arbeitstag.";
+  $("siteTitle").textContent = "Anlage wählen"; $("siteMeta").innerHTML = "";
+  if(map){ showMarker(false); map.setView([48.4, 11.3], 6); }
+  setTimeout(() => pointToMap(), 300);
 }
 async function search(q){
   const box = $("searchResults");
@@ -937,8 +1006,11 @@ async function search(q){
     pendingName = x.name;
     map.setView([x.lat, x.lon], 15);
     map.getContainer().classList.add("picking");
-    $("pickText").textContent = `${x.name}: jetzt die Anlage auf der Karte antippen`;
+    $("pickTitle").textContent = x.name;
+    $("pickText").textContent = "Jetzt die Anlage auf der Karte antippen.";
+    $("pickForm").hidden = true;
     $("pickBar").hidden = false; pending = null; $("pickApply").disabled = true;
+    startPulse(8000);
   });
 }
 function updateMap(){
@@ -998,22 +1070,36 @@ async function buildReport(){
 /* ---------- Favoriten (gespeicherte Anlagen) ---------- */
 function loadFavs(){ try{ const f = JSON.parse(localStorage.getItem("wb_favs")||"[]"); return Array.isArray(f) ? f.filter(x => x && x.site && typeof x.site.lat==="number") : []; }catch(e){ return []; } }
 function saveFavs(f){ try{ localStorage.setItem("wb_favs", JSON.stringify(f)); }catch(e){} }
-const isCurrent = f => Math.abs(f.site.lat-site.lat)<1e-4 && Math.abs(f.site.lon-site.lon)<1e-4;
+const sameSpot = (a, b) => Math.abs(a.lat-b.lat)<1e-4 && Math.abs(a.lon-b.lon)<1e-4;
+const isCurrent = f => siteChosen && sameSpot(f.site, site);
+function upsertFav(){
+  // gleicher Name oder gleicher Standort wird ersetzt
+  const favs = loadFavs().filter(f => f.name !== site.name && !sameSpot(f.site, site));
+  favs.push({name:site.name, site:{...site}});
+  favs.sort((a,b) => a.name.localeCompare(b.name, "de"));
+  saveFavs(favs);
+}
 function renderFavs(){
-  const favs = loadFavs();
-  if(!favs.length){ $("favList").innerHTML = `<div class="fav-empty">Noch keine Anlagen gespeichert. Aktuelle Anlage unten benennen und speichern.</div>`; return; }
-  $("favList").innerHTML = favs.map((f,k) => `<div class="fav-item ${isCurrent(f)?"cur":""}">
-    <button type="button" class="fav-go" data-k="${k}"><span>${esc(f.name)}</span><small>Arbeit ${f.site.work || f.site.hub} m · Nabe ${f.site.hub} m · ${fmt(f.site.wind)}/${fmt(f.site.gust)} m/s</small></button>
-    <button type="button" class="fav-del" data-k="${k}" title="Favorit löschen" aria-label="${esc(f.name)} löschen">×</button></div>`).join("");
+  const favs = loadFavs(), cur = favs.find(isCurrent);
+  $("favList").innerHTML = !favs.length
+    ? `<div class="fav-empty">Noch keine Anlagen gespeichert.</div>`
+    : favs.map((f,k) => `<div class="fav-item ${isCurrent(f)?"cur":""}">
+    <button type="button" class="fav-go" data-k="${k}"><span>${isCurrent(f)?"● ":""}${esc(f.name)}</span><small>Arbeit ${f.site.work || f.site.hub} m · Nabe ${f.site.hub} m · ${fmt(f.site.wind)}/${fmt(f.site.gust)} m/s</small></button>
+    <button type="button" class="fav-del" data-k="${k}" title="Anlage löschen" aria-label="${esc(f.name)} löschen">×</button></div>`).join("");
+  $("favSaved").hidden = !cur;
+  if(cur) $("favSaved").textContent = `„${cur.name}“ ist gespeichert. Änderungen unter „Einstellungen“ werden automatisch übernommen.`;
+  $("favSaveRow").hidden = !!cur || !siteChosen;
   $("favList").querySelectorAll(".fav-go").forEach(b => b.onclick = () => {
     const f = loadFavs()[+b.dataset.k]; if(!f) return;
     site = {...DEFAULT_SITE, ...f.site, name:f.name};
-    saveSite(); fillSettings(); toggleFavs(false);
+    siteReady(); saveSite(); fillSettings(); toggleFavs(false);
     if(map){ cancelPending(); map.setView([site.lat, site.lon], 14); }
     load();
   });
   $("favList").querySelectorAll(".fav-del").forEach(b => b.onclick = () => {
-    const f = loadFavs(); f.splice(+b.dataset.k, 1); saveFavs(f); renderFavs();
+    const f = loadFavs(), k = +b.dataset.k;
+    if(!f[k] || !confirm(`„${f[k].name}“ aus den gespeicherten Anlagen löschen?`)) return;
+    f.splice(k, 1); saveFavs(f); renderFavs();
   });
 }
 function toggleFavs(open){
@@ -1023,13 +1109,11 @@ function toggleFavs(open){
 function addFav(){
   const name = $("favName").value.trim();
   if(!name){ $("favName").focus(); return; }
-  const favs = loadFavs().filter(f => f.name !== name);
-  favs.push({name, site:{...site, name}});
-  favs.sort((a,b) => a.name.localeCompare(b.name, "de"));
-  saveFavs(favs);
-  if(site.name !== name){ site = {...site, name}; saveSite(); fillSettings(); }
+  site = {...site, name}; upsertFav(); saveSite(); fillSettings();
   renderFavs();
 }
+$("favNew").onclick = () => pointToMap(8000);
+$("heroMapBtn").onclick = () => pointToMap();
 $("favBtn").onclick = e => { e.stopPropagation(); toggleFavs($("favPanel").hidden); };
 document.addEventListener("click", e => { if(!$("favPanel").hidden && e.target.isConnected && !$("favPanel").contains(e.target)) toggleFavs(false); });
 document.addEventListener("keydown", e => { if(e.key==="Escape" && !$("favPanel").hidden) toggleFavs(false); });
@@ -1042,19 +1126,23 @@ $("settingsBtn").onclick = () => toggleSettings($("settings").hidden);
 $("cancelBtn").onclick = () => { fillSettings(); toggleSettings(false); };
 $("saveBtn").onclick = () => {
   const num = (id, d) => { const v = parseFloat($(id).value); return isNaN(v) ? d : v; };
+  const prev = site;
   site = {name: $("s_name").value.trim() || "Standort", lat:clamp(num("s_lat",site.lat),-90,90), lon:clamp(num("s_lon",site.lon),-180,180),
     hub:clamp(num("s_hub",site.hub),20,250), rotor:clamp(num("s_rotor",site.rotor),0,250),
     work: $("s_work").value.trim()==="" ? null : clamp(Math.round(num("s_work",0)),10,300), path:$("s_path").checked,
     wind:num("s_wind",site.wind), gust:num("s_gust",site.gust), from:clamp(Math.round(num("s_from",site.from)),0,23), to:clamp(Math.round(num("s_to",site.to)),0,23)};
   if(site.to < site.from) [site.from, site.to] = [site.to, site.from];
-  saveSite(); toggleSettings(false);
+  // ist die Anlage gespeichert, wird der Eintrag mit aktualisiert
+  const favs = loadFavs(), k = siteChosen ? favs.findIndex(f => sameSpot(f.site, prev)) : -1;
+  if(k >= 0){ favs[k] = {name:site.name, site:{...site}}; saveFavs(favs); }
+  siteReady(); saveSite(); toggleSettings(false);
   if(map) map.setView([site.lat, site.lon], Math.max(map.getZoom(), 13));
-  $("mapNote").textContent = "Neue Anlage: Ort suchen und Anlage antippen. Pfeil: Windrichtung zur gewählten Stunde. Radar: DWD, nur Deutschland und Grenzgebiete.";
+  $("mapNote").textContent = "Ort suchen oder direkt auf die Anlage tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Radar: DWD, nur Deutschland und Grenzgebiete.";
   load();
 };
 $("gpsBtn").onclick = () => {
   if(!navigator.geolocation){ $("gpsBtn").textContent = "GPS nicht verfügbar"; return; }
-  navigator.geolocation.getCurrentPosition(p => { if(marker) setPos(L.latLng(p.coords.latitude, p.coords.longitude)); else { $("s_lat").value=p.coords.latitude.toFixed(4); $("s_lon").value=p.coords.longitude.toFixed(4);} if(map) map.setView([p.coords.latitude,p.coords.longitude],15); },
+  navigator.geolocation.getCurrentPosition(p => { if(marker){ toggleSettings(false); pointToMap(); setPos(L.latLng(p.coords.latitude, p.coords.longitude)); } else { $("s_lat").value=p.coords.latitude.toFixed(4); $("s_lon").value=p.coords.longitude.toFixed(4);} if(map) map.setView([p.coords.latitude,p.coords.longitude],15); },
     () => { $("gpsBtn").textContent = "Standortfreigabe abgelehnt"; });
 };
 $("reloadBtn").onclick = load;
@@ -1078,7 +1166,7 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", (
 
 fillSettings();
 initMap();
-load();
+if(siteChosen) load(); else startFirstRun();
 </script>
 </body>
 </html>
