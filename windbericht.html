@@ -80,6 +80,7 @@ footer.foot{display:flex;align-items:center;gap:14px;border-top:1px solid var(--
 .warnbox div{display:flex;flex-direction:column;padding-left:10px;border-left:3px solid var(--warn)}
 .warnbox .wb-stop{border-left-color:var(--stop)} .warnbox .wb-info{border-left-color:var(--none)}
 .warnbox small{color:var(--muted)}
+.stale{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border:2px solid var(--warn);background:var(--warn-bg);border-radius:8px;font-size:14px;font-weight:600}
 .setup-hint{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:6px;padding:10px 12px;border:1px solid var(--warn);background:var(--warn-bg);border-radius:8px}
 .setup-hint div{display:flex;flex-direction:column;gap:2px;font-size:13px}
 .setup-hint b{font-size:14px}
@@ -303,6 +304,10 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
     <div class="hero-top needs-data">
       <div class="seg seg-day" role="group" aria-label="Tag" id="dayTabs"></div>
       <span class="eyebrow" id="heroDay"></span>
+    </div>
+    <div class="stale needs-data" id="staleBox" hidden>
+      <span id="staleText"></span>
+      <button class="primary" id="staleBtn" type="button">Jetzt neu laden</button>
     </div>
     <div class="hero">
       <div class="lamp" id="lamp">…</div>
@@ -916,6 +921,17 @@ function fillSettings(){
   $("settingsBtn").classList.toggle("pulse-hint", todo && $("settings").hidden);
 }
 
+/* Hinweis bei alten Daten: die Modelle rechnen mehrmals täglich neu */
+const STALE_MS = 3*36e5;
+function fmtAge(ms){ const m = Math.round(ms/6e4), h = Math.floor(m/60); return h ? `${h} h ${m%60} min` : `${m} min`; }
+function checkStale(){
+  if(!state.fetchedAt) return;
+  const age = Date.now() - state.fetchedAt, stale = age > STALE_MS;
+  $("staleBox").hidden = !stale;
+  if(stale) $("staleText").textContent = `Wetterdaten sind ${fmtAge(age)} alt (Abruf ${state.fetchedAt.toLocaleString("de-DE",{weekday:"short", hour:"2-digit", minute:"2-digit"})}). Vor der Freigabe neu laden.`;
+}
+setInterval(checkStale, 6e4);
+document.addEventListener("visibilitychange", () => { if(!document.hidden) checkStale(); });
 function renderHero(){
   const sum = buildSummary(dayHours(state.day));
   state.summary = sum;
@@ -923,6 +939,7 @@ function renderHero(){
   const dl = daylight(state.day);
   $("heroDay").textContent = `${new Date(state.day+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"})} · Arbeitszeit ${site.from}–${site.to} Uhr` + (dl.start && dl.end ? ` · hell ${dl.start}–${dl.end}` : "");
   $("headline").textContent = sum.head; $("summary").textContent = sum.text;
+  checkStale();
   const u = usableModels();
   // Warnungen, die den gewählten Tag berühren
   const {ws, kind, note} = warnState(state.day);
@@ -1330,6 +1347,7 @@ async function buildReport(){
     <div class="rep-block"><h3>Amtliche Warnungen (DWD, GeoSphere Austria)</h3><p>${(() => { const {ws, note} = warnState(state.day); return ws.map(w => `${esc(w.src)}: ${esc(w.title)} (${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))})`).concat(note ? [esc(note)] : []).join("<br>"); })()}</p></div>
     <div class="rep-block"><h3>Prognose zum Freigabezeitpunkt</h3>
       <p>Abgerufen: ${state.fetchedAt.toLocaleString("de-DE")} · Bericht erstellt: ${new Date().toLocaleString("de-DE")}</p>
+      ${Date.now() - state.fetchedAt > STALE_MS ? `<p><b>Achtung: Die Prognose war bei Berichtserstellung ${fmtAge(Date.now() - state.fetchedAt)} alt.</b></p>` : ""}
       <p><b>${esc(LAMP_TXT[sum.lamp]||"")} – ${esc(sum.head||"")}</b> ${esc(sum.text||"")}</p>
       <p>Ausgewertete Modelle (${u.length}): ${u.map(r=>esc(r.m.name+" ("+r.m.org+")")).join(", ")}</p>
       <table class="t">${HOUR_HEAD}<tbody>${hourRows(dayHours(state.day), false)}</tbody></table>
@@ -1426,6 +1444,7 @@ $("gpsBtn").onclick = () => {
     () => { $("gpsBtn").textContent = "Standortfreigabe abgelehnt"; });
 };
 $("reloadBtn").onclick = load;
+$("staleBtn").onclick = load;
 $("searchForm").onsubmit = e => { e.preventDefault(); const q = $("searchInput").value.trim(); if(q.length>=2 && map) search(q); };
 $("pickApply").onclick = () => { if(pending) applyPending(); };
 $("pickCancel").onclick = cancelPending;
