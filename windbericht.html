@@ -75,6 +75,8 @@ footer.foot{display:flex;align-items:center;gap:14px;border-top:1px solid var(--
 .settings-btn[aria-expanded="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 .settings-btn[aria-expanded="true"] .chev{transform:translateY(1px) rotate(-135deg)}
 .warnbox{display:flex;flex-direction:column;gap:6px;margin-top:6px;padding:10px 12px;border:1px solid var(--stop);background:var(--stop-bg);border-radius:8px;font-size:13px}
+.warnbox.ok{border-color:var(--go);background:var(--go-bg)}
+.warnbox.na{border-color:var(--line);background:var(--raised);color:var(--muted)}
 .warnbox div{display:flex;flex-direction:column;padding-left:10px;border-left:3px solid var(--warn)}
 .warnbox .wb-stop{border-left-color:var(--stop)} .warnbox .wb-info{border-left-color:var(--none)}
 .warnbox small{color:var(--muted)}
@@ -676,7 +678,10 @@ async function loadDwdWarnings(){
   try{
     const q = new URLSearchParams({service:"WFS", version:"2.0.0", request:"GetFeature", typeName:"dwd:Warnungen_Gemeinden", outputFormat:"application/json",
       propertyName:"EVENT,SEVERITY,EC_GROUP,ONSET,EXPIRES,HEADLINE", CQL_FILTER:`INTERSECTS(THE_GEOM,POINT(${site.lat} ${site.lon}))`});
-    const j = await (await fetch("https://maps.dwd.de/geoserver/dwd/ows?"+q)).json();
+    const area = new URLSearchParams({service:"WFS", version:"2.0.0", request:"GetFeature", typeName:"dwd:Warngebiete_Gemeinden", outputFormat:"application/json",
+      propertyName:"NAME", count:"1", CQL_FILTER:`INTERSECTS(SHAPE,POINT(${site.lat} ${site.lon}))`});
+    const [j, a] = await Promise.all([q, area].map(x => fetch("https://maps.dwd.de/geoserver/dwd/ows?"+x).then(r => r.json())));
+    if(!a.features?.length) return {ok:true, list:[], outside:true};   // Standort nicht in Deutschland
     const seen = new Set(), list = [];
     (j.features||[]).forEach(f => {
       const p = f.properties, key = p.HEADLINE+p.ONSET+p.EXPIRES;
@@ -684,7 +689,7 @@ async function loadDwdWarnings(){
       list.push({src:"DWD", lvl:DWD_LVL[p.SEVERITY]||1, title:p.HEADLINE || p.EVENT, start:Date.parse(p.ONSET), end:p.EXPIRES ? Date.parse(p.EXPIRES) : Infinity,
         relevant:String(p.EC_GROUP||"").split(";").some(g => DWD_RELEVANT.includes(g.trim()))});
     });
-    return {ok:true, list};
+    return {ok:true, list, area:a.features[0].properties.NAME};
   }catch(e){ return {ok:false, list:[]}; }
 }
 const GEO_TYPE = {1:"Sturm", 2:"Regen", 3:"Schnee", 4:"Glatteis", 5:"Gewitter", 6:"Hitze", 7:"Kälte"};
@@ -703,8 +708,23 @@ async function loadGeoWarnings(){
       return {src:"GeoSphere", lvl:l, title:`${GEO_TYPE[t]||"Warnung"}, Warnstufe ${GEO_LEVEL[l]||l}`,
         start:isNaN(start) ? -Infinity : start, end:isNaN(end) ? Infinity : end, relevant:t>=1 && t<=5};
     });
-    return {ok:true, list};
+    return {ok:true, list, area:j.properties?.location?.properties?.name};
   }catch(e){ return {ok:false, list:[]}; }
+}
+/* Zusammenfassung der Warnlage für den Tag: Liste, Entwarnung oder Hinweis auf Lücken */
+function warnState(day){
+  const d0 = localMs(day+"T00:00"), d1 = d0 + 864e5;
+  const ws = allWarnings().filter(w => w.start < d1 && w.end > d0).sort((a,b) => b.lvl-a.lvl);
+  const srcs = [["DWD", extras.dwd], ["GeoSphere Austria", extras.geo]];
+  const failed = srcs.filter(([,x]) => x && !x.ok).map(([n]) => n);
+  const covering = srcs.filter(([,x]) => x?.ok && !x.outside).map(([n,x]) => `${x.area || "Standort"} (${n})`);
+  let kind, note;
+  if(ws.length) kind = "list";
+  else if(failed.length) { kind = "na"; note = `Amtliche Warnungen nicht abrufbar (${failed.join(", ")}). Bitte selbst prüfen.`; }
+  else if(covering.length) { kind = "ok"; note = `Keine amtlichen Warnungen für ${covering.join(" und ")} am gewählten Tag.`; }
+  else { kind = "na"; note = "Für diesen Standort sind keine amtlichen Warnungen eingebunden (nur DWD und GeoSphere Austria). Bitte beim zuständigen Wetterdienst selbst prüfen."; }
+  if(ws.length && failed.length) note = `Nicht abrufbar: ${failed.join(", ")}.`;
+  return {ws, kind, note};
 }
 const allWarnings = () => [...(extras.dwd?.list||[]), ...(extras.geo?.list||[])];
 const fmtWhen = ms => !isFinite(ms) ? "offen" : new Date(ms).toLocaleString("de-DE", {timeZone:state.tz, weekday:"short", day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"});
@@ -904,11 +924,13 @@ function renderHero(){
   $("headline").textContent = sum.head; $("summary").textContent = sum.text;
   const u = usableModels();
   // Warnungen, die den gewählten Tag berühren
-  const d0 = localMs(state.day+"T00:00"), d1 = d0 + 864e5;
-  const ws = allWarnings().filter(w => w.start < d1 && w.end > d0).sort((a,b) => b.lvl-a.lvl);
-  $("warnBox").hidden = !ws.length;
-  $("warnBox").innerHTML = `<b>Amtliche Warnungen</b>` + ws.map(w => `<div class="wb-${!w.relevant ? "info" : w.lvl>=3 ? "stop" : "warn"}">
-    <span>${esc(w.src)}: ${esc(w.title)}</span><small>${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))}</small></div>`).join("");
+  const {ws, kind, note} = warnState(state.day);
+  $("warnBox").hidden = false;
+  $("warnBox").className = "warnbox needs-data " + kind;
+  $("warnBox").innerHTML = kind==="list"
+    ? `<b>Amtliche Warnungen</b>` + ws.map(w => `<div class="wb-${!w.relevant ? "info" : w.lvl>=3 ? "stop" : "warn"}">
+      <span>${esc(w.src)}: ${esc(w.title)}</span><small>${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))}</small></div>`).join("") + (note ? `<small>${esc(note)}</small>` : "")
+    : `<span>${kind==="ok" ? "✓ " : ""}${esc(note)}</span>`;
   const wsrc = [extras.dwd?.ok===false ? "DWD nicht abrufbar" : null, extras.geo?.ok===false ? "GeoSphere nicht abrufbar" : null].filter(Boolean);
   $("status").textContent = `Abgerufen ${state.fetchedAt.toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"})} · ${u.length} Modelle aktiv, davon ${u.filter(r=>r.m.hi).length} hochauflösend`
     + ` · Warnungen: ${wsrc.length ? wsrc.join(", ") : ws.length ? ws.length+" am gewählten Tag" : "keine"}`
@@ -1281,6 +1303,7 @@ async function sha256(text){
 function snapshot(){
   return {erstellt:new Date().toISOString(), abgerufen:state.fetchedAt?.toISOString(), standort:site, tag:state.day,
     bericht:{projekt:$("r_project").value, anlage:$("r_turbine").value, team:$("r_team").value, aufsicht:$("r_lead").value, taetigkeit:$("r_task").value, entscheidung:$("r_decision").value, bemerkungen:$("r_notes").value},
+    warnlage: warnState(state.day).note || null,
     warnungen: allWarnings().map(w => ({quelle:w.src, stufe:w.lvl, titel:w.title, ampelrelevant:w.relevant, beginn:isFinite(w.start)?new Date(w.start).toISOString():null, ende:isFinite(w.end)?new Date(w.end).toISOString():null})),
     fazit:{ampel:state.summary?.lamp, text:(state.summary?.head||"")+" "+(state.summary?.text||"")},
     bereich:{arbeitshoehe:workH(), bis:zoneTop(), text:zoneTxt()},
@@ -1303,7 +1326,7 @@ async function buildReport(){
     </div>
     <div class="rep-block"><h3>Grenzwerte</h3><p>Im Bereich ${zoneTxt()}: Mittelwind max. ${fmt(site.wind)} m/s · Böe max. ${fmt(site.gust)} m/s · Gewitter: Stopp ab CAPE ${CAPE_STOP} J/kg oder Gewittersignal in mind. einem Drittel der Modelle</p>
       <p>Weitere Regeln: Prüfen bei Dunkelheit (außerhalb der bürgerlichen Dämmerung), bei Windchill ab ${CHILL_WARN} °C, wenn mind. ${Math.round(ENS_WARN*100)} % der Ensemble-Läufe über Grenze liegen und bei amtlicher Warnung (Wind, Gewitter, Glatteis, Schnee, Regen); Stop bei Unwetterwarnung bzw. Warnstufe rot.</p></div>
-    <div class="rep-block"><h3>Amtliche Warnungen (DWD, GeoSphere Austria)</h3><p>${(() => { const d0 = localMs(state.day+"T00:00"), ws = allWarnings().filter(w => w.start < d0+864e5 && w.end > d0); return ws.length ? ws.map(w => `${esc(w.src)}: ${esc(w.title)} (${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))})`).join("<br>") : (extras.dwd?.ok===false || extras.geo?.ok===false ? "Nicht vollständig abrufbar." : "Keine Warnungen für den Standort."); })()}</p></div>
+    <div class="rep-block"><h3>Amtliche Warnungen (DWD, GeoSphere Austria)</h3><p>${(() => { const {ws, note} = warnState(state.day); return ws.map(w => `${esc(w.src)}: ${esc(w.title)} (${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))})`).concat(note ? [esc(note)] : []).join("<br>"); })()}</p></div>
     <div class="rep-block"><h3>Prognose zum Freigabezeitpunkt</h3>
       <p>Abgerufen: ${state.fetchedAt.toLocaleString("de-DE")} · Bericht erstellt: ${new Date().toLocaleString("de-DE")}</p>
       <p><b>${esc(LAMP_TXT[sum.lamp]||"")} – ${esc(sum.head||"")}</b> ${esc(sum.text||"")}</p>
