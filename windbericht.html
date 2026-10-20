@@ -305,7 +305,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
       </div>
     </div>
     <div class="chart-box"><canvas id="chart" aria-label="Windverlauf im Arbeitsbereich"></canvas></div>
-    <p class="note">Blaues Band: Spanne aller Modelle. Ein schmales Band heißt, die Modelle sind sich einig. Dicke Linie: Median. Gestrichelt: geschätzte Böe. Rot: euer Grenzwert.</p>
+    <p class="note">Linie: Median aller Modelle, Band: ihre Spanne (schmal = einig). Gepunktet: Böe. Rot: eure Grenzwerte.</p>
   </section>
 
   <!-- Karte + Richtung -->
@@ -343,13 +343,13 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
         <div class="compass" id="compass"></div>
         <dl class="dl" id="compassFacts"></dl>
       </div>
-      <p class="note">Dicker Pfeil: mittlere Richtung aller Modelle. Dünne Striche: einzelne Modelle. Liegen die Striche weit auseinander, ist die Richtung unsicher, etwa bei Winddrehung oder schwachem Wind.</p>
+      <p class="note">Pfeil: mittlere Richtung. Striche: einzelne Modelle. Weit gestreut heißt: Richtung unsicher.</p>
     </section>
   </div>
 
   <section class="card">
     <h2>Tagesbericht</h2>
-    <p class="note">Hält fest, welche Prognose zum Zeitpunkt der Freigabe vorlag. Über „Drucken“ als PDF speichern und in der Projektdokumentation ablegen.</p>
+    <p class="note">Dokumentiert die Prognose zum Zeitpunkt der Freigabe. Als PDF drucken und zur Projektdokumentation legen.</p>
     <div class="grid">
       <label>Projekt / Auftraggeber<input id="r_project" type="text" placeholder="z. B. Blattinspektion WP Hildesheim"></label>
       <label>Anlage / Typ<input id="r_turbine" type="text" placeholder="z. B. Nordex N149, WEA 04"></label>
@@ -380,12 +380,12 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
       <section class="card">
         <div class="card-head"><h2>Höhenprofil</h2><span class="eyebrow" id="profileHour"></span></div>
         <div class="chart-sm"><canvas id="profile" aria-label="Windgeschwindigkeit nach Höhe"></canvas></div>
-        <p class="note">Wind vom Boden bis über die Blattspitze. Zeigt, wie stark der Wind nach oben zunimmt, wichtig für Arbeiten an Turm, Gondel und Blattspitze.</p>
+        <p class="note">Wind vom Boden bis über die Blattspitze zur gewählten Stunde.</p>
       </section>
       <section class="card">
         <div class="card-head"><h2>Regen &amp; Gewitter</h2><span class="eyebrow" id="rainDay"></span></div>
         <div class="chart-sm"><canvas id="rain" aria-label="Niederschlag und Gewitterneigung"></canvas></div>
-        <p class="note">Balken: Niederschlag (Median, mm/h). Linie: Gewitterenergie CAPE. Ab etwa 300 J/kg sind Schauer und Gewitter möglich, ab 800 J/kg deutlich.</p>
+        <p class="note">Balken: Regen in mm/h. Linie: Gewitterenergie CAPE, ab 300 J/kg Schauer möglich, ab 800 J/kg Stop.</p>
       </section>
     </div>
 
@@ -393,7 +393,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
     <section class="card">
       <div class="card-head"><h2>Modell-Matrix</h2><span class="eyebrow" id="mxDay"></span></div>
       <div class="mx" id="matrix"></div>
-      <p class="note">Wind im Arbeitsbereich je Modell und Stunde (m/s). Grün unter 75 % des Grenzwerts, gelb darüber, rot ab Grenzwert. So sieht man sofort, ob nur ein Ausreißer warnt oder fast alle.</p>
+      <p class="note">Wind je Modell und Stunde in m/s. Gelb ab 75 % des Grenzwerts, rot darüber. Zeigt, ob nur ein Ausreißer warnt oder fast alle.</p>
     </section>
 
     <section class="card">
@@ -1004,7 +1004,7 @@ function saveFavs(f){ try{ localStorage.setItem("wb_favs", JSON.stringify(f)); }
 const isCurrent = f => Math.abs(f.site.lat-site.lat)<1e-4 && Math.abs(f.site.lon-site.lon)<1e-4;
 function renderFavs(){
   const favs = loadFavs();
-  if(!favs.length){ $("favList").innerHTML = `<div class="fav-empty">Noch keine Favoriten. Aktuelle Anlage unten benennen und mit + speichern.</div>`; return; }
+  if(!favs.length){ $("favList").innerHTML = `<div class="fav-empty">Noch keine Anlagen gespeichert. Aktuelle Anlage unten benennen und speichern.</div>`; return; }
   $("favList").innerHTML = favs.map((f,k) => `<div class="fav-item ${isCurrent(f)?"cur":""}">
     <button type="button" class="fav-go" data-k="${k}"><span>${esc(f.name)}</span><small>Arbeit ${f.site.work || f.site.hub} m · Nabe ${f.site.hub} m · ${fmt(f.site.wind)}/${fmt(f.site.gust)} m/s</small></button>
     <button type="button" class="fav-del" data-k="${k}" title="Favorit löschen" aria-label="${esc(f.name)} löschen">×</button></div>`).join("");
