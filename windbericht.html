@@ -62,7 +62,17 @@ input,select,textarea{font:15px var(--f-body);color:var(--fg);background:var(--r
 /* Kopf */
 header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;padding-bottom:10px;border-bottom:3px solid var(--accent)}
 header.top{position:relative}
-.site-meta{display:flex;gap:4px 12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.site-meta{display:flex;gap:4px 12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);background:none;border:0;padding:2px 0;text-align:left;font-weight:400;cursor:pointer}
+.site-meta:hover{color:var(--fg)}
+.site-meta:empty{display:none}
+.site-meta::after{content:"✎";opacity:.7}
+.settings-btn{display:inline-flex;align-items:center;gap:6px}
+.chev{width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .15s}
+.settings-btn[aria-expanded="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.settings-btn[aria-expanded="true"] .chev{transform:translateY(1px) rotate(-135deg)}
+.setup-hint{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:6px;padding:10px 12px;border:1px solid var(--warn);background:var(--warn-bg);border-radius:8px}
+.setup-hint div{display:flex;flex-direction:column;gap:2px;font-size:13px}
+.setup-hint b{font-size:14px}
 .icon-btn{font-size:18px;line-height:1;padding:7px 11px}
 .star{color:var(--accent)}
 button.link{border:0;background:none;padding:0;font:inherit;color:var(--band-line);text-decoration:underline;cursor:pointer}
@@ -210,11 +220,11 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
     <div style="min-width:0">
       <div class="eyebrow">Windberg · Windbericht</div>
       <h1 id="siteTitle">Windbericht</h1>
-      <div class="site-meta mono" id="siteMeta"></div>
+      <button class="site-meta mono" id="siteMeta" type="button" title="Einstellungen öffnen"></button>
     </div>
     <div class="row">
       <button id="favBtn" type="button" aria-expanded="false" aria-controls="favPanel"><span class="star">★</span> Anlagen</button>
-      <button id="settingsBtn" type="button" aria-expanded="false" aria-controls="settings">Einstellungen</button>
+      <button id="settingsBtn" class="settings-btn" type="button" aria-expanded="false" aria-controls="settings"><span aria-hidden="true">⚙</span> Einstellungen <span class="chev" aria-hidden="true"></span></button>
       <button id="reloadBtn" class="icon-btn" type="button" title="Wetterdaten neu laden" aria-label="Wetterdaten neu laden">↻</button>
     </div>
     <div class="fav-panel" id="favPanel" hidden>
@@ -281,6 +291,10 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
       <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
         <p class="headline" id="headline">Lade Wettermodelle…</p>
         <p class="muted" id="summary"></p>
+        <div class="setup-hint needs-data" id="setupHint" hidden>
+          <div><b>Neue Anlage: Höhen und Grenzwerte prüfen</b><span>Nabenhöhe, Arbeitshöhe und Grenzwerte sind noch Beispielwerte.</span></div>
+          <button class="primary" id="setupBtn" type="button">Einstellungen öffnen</button>
+        </div>
         <div class="only-no-site"><button class="primary" id="heroMapBtn" type="button">Anlage auf der Karte wählen</button></div>
       </div>
     </div>
@@ -664,6 +678,10 @@ function fillSettings(){
   $("s_from").value = site.from; $("s_to").value = site.to;
   $("siteTitle").textContent = site.name;
   $("siteMeta").innerHTML = `<span>Arbeit ${zoneTxt()}</span><span>Grenze ${fmt(site.wind)} · Böe ${fmt(site.gust)} m/s</span><span>${site.from}–${site.to} Uhr</span>`;
+  // Hinweis, bis die Werte dieser Anlage einmal bestätigt wurden
+  const todo = siteChosen && !site.checked;
+  $("setupHint").hidden = !todo;
+  $("settingsBtn").classList.toggle("pulse-hint", todo && $("settings").hidden);
 }
 
 function renderHero(){
@@ -921,14 +939,14 @@ function initMap(){
     if(on){ radarLayer.setParams({_t:Date.now()}); radarLayer.addTo(map); if(map.getZoom()>10) map.setZoom(9); } else map.removeLayer(radarLayer);
   };
 }
-let pending = null, pendingName = null;
+let pending = null, pendingName = null, pendingDrag = false;
 let siteChosen = (() => { try{ return localStorage.getItem("wb_site")!==null; }catch(e){ return true; } })();
 function showMarker(on){
   if(!map) return;
   [marker, rotorCircle].forEach(l => on ? (!map.hasLayer(l) && l.addTo(map)) : map.removeLayer(l));
 }
 function setPos(ll, fromDrag){
-  pending = ll;
+  pending = ll; pendingDrag = !!fromDrag && siteChosen;
   showMarker(true); stopPulse();
   marker.setLatLng(ll); rotorCircle.setLatLng(ll);
   if(arrowMarker){ map.removeLayer(arrowMarker); arrowMarker=null; }
@@ -948,7 +966,7 @@ function applyPending(){
   if(!pending) return;
   const lat = +pending.lat.toFixed(5), lon = +pending.lng.toFixed(5);
   const name = $("pickName").value.trim() || pendingName || `Standort ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
-  site = {...site, lat, lon, name};
+  site = {...site, lat, lon, name, checked: pendingDrag ? site.checked : false};
   if($("pickFav").checked) upsertFav();
   pending = null; pendingName = null;
   $("pickBar").hidden = true; map.getContainer().classList.remove("picking");
@@ -1121,7 +1139,13 @@ $("favAdd").onclick = addFav;
 $("favName").onkeydown = e => { if(e.key==="Enter"){ e.preventDefault(); addFav(); } };
 
 /* ---------- Bedienung ---------- */
-function toggleSettings(open){ $("settings").hidden = !open; $("settingsBtn").setAttribute("aria-expanded", String(open)); }
+function toggleSettings(open){
+  $("settings").hidden = !open; $("settingsBtn").setAttribute("aria-expanded", String(open));
+  $("settingsBtn").classList.toggle("pulse-hint", !open && siteChosen && !site.checked);
+  if(open){ toggleFavs(false); $("settings").scrollIntoView({behavior:"smooth", block:"start"}); }
+}
+$("siteMeta").onclick = () => toggleSettings(true);
+$("setupBtn").onclick = () => toggleSettings(true);
 $("settingsBtn").onclick = () => toggleSettings($("settings").hidden);
 $("cancelBtn").onclick = () => { fillSettings(); toggleSettings(false); };
 $("saveBtn").onclick = () => {
@@ -1132,6 +1156,7 @@ $("saveBtn").onclick = () => {
     work: $("s_work").value.trim()==="" ? null : clamp(Math.round(num("s_work",0)),10,300), path:$("s_path").checked,
     wind:num("s_wind",site.wind), gust:num("s_gust",site.gust), from:clamp(Math.round(num("s_from",site.from)),0,23), to:clamp(Math.round(num("s_to",site.to)),0,23)};
   if(site.to < site.from) [site.from, site.to] = [site.to, site.from];
+  site.checked = true;
   // ist die Anlage gespeichert, wird der Eintrag mit aktualisiert
   const favs = loadFavs(), k = siteChosen ? favs.findIndex(f => sameSpot(f.site, prev)) : -1;
   if(k >= 0){ favs[k] = {name:site.name, site:{...site}}; saveFavs(favs); }
