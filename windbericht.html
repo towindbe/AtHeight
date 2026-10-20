@@ -63,9 +63,8 @@ input,select,textarea{font:15px var(--f-body);color:var(--fg);background:var(--r
 /* Kopf */
 header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;padding-bottom:10px;border-bottom:3px solid var(--accent)}
 header.top{position:relative}
-.brand{display:flex;align-items:center;gap:12px;min-width:0}
-.logo{width:52px;height:34px;flex:none;color:var(--fg)}
-@media (max-width:480px){.logo{width:42px;height:28px}}
+footer.foot{display:flex;align-items:center;gap:14px;border-top:1px solid var(--line);padding-top:14px;margin-top:4px}
+.foot .logo{width:56px;height:36px;flex:none;color:var(--muted)}
 .rep-logo{width:70px;height:45px;color:#000;float:right}
 .site-meta{display:flex;gap:4px 12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);background:none;border:0;padding:2px 0;text-align:left;font-weight:400;cursor:pointer}
 .site-meta:hover{color:var(--fg)}
@@ -223,13 +222,10 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
 <div class="wrap">
 
   <header class="top">
-    <div class="brand">
-      <svg class="logo" role="img" aria-label="Logo Tobias Windberg"><use href="#tw-logo"/></svg>
-      <div style="min-width:0">
-        <div class="eyebrow">Windberg · Windbericht</div>
-        <h1 id="siteTitle">Windbericht</h1>
-        <button class="site-meta mono" id="siteMeta" type="button" title="Einstellungen öffnen"></button>
-      </div>
+    <div style="min-width:0">
+      <div class="eyebrow">Windberg · Windbericht</div>
+      <h1 id="siteTitle">Windbericht</h1>
+      <button class="site-meta mono" id="siteMeta" type="button" title="Einstellungen öffnen"></button>
     </div>
     <div class="row">
       <button id="favBtn" type="button" aria-expanded="false" aria-controls="favPanel"><span class="star">★</span> Anlagen</button>
@@ -449,7 +445,10 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
     </div>
   </section>
 
-  <p class="note">Wetterdaten: Open-Meteo.com (CC BY 4.0) mit Modellen von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA u. a. Radar: DWD. Karten: Esri, OpenStreetMap. Open-Meteo ist kostenlos nur für nicht-kommerzielle Nutzung. Entscheidungshilfe, ersetzt nicht die Beurteilung vor Ort durch den Aufsichtführenden.</p>
+  <footer class="foot">
+    <svg class="logo" role="img" aria-label="Logo Tobias Windberg"><use href="#tw-logo"/></svg>
+    <p class="note">Wetterdaten: Open-Meteo.com (CC BY 4.0) mit Modellen von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA u. a. Radar: DWD. Karten: Esri, OpenStreetMap. Open-Meteo ist kostenlos nur für nicht-kommerzielle Nutzung. Entscheidungshilfe, ersetzt nicht die Beurteilung vor Ort durch den Aufsichtführenden.</p>
+  </footer>
 
   <section id="report"></section>
 </div>
