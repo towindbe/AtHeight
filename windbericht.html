@@ -61,7 +61,13 @@ input,select,textarea{font:15px var(--f-body);color:var(--fg);background:var(--r
 
 /* Kopf */
 header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;padding-bottom:10px;border-bottom:3px solid var(--accent)}
+header.top{position:relative}
 .site-meta{display:flex;gap:4px 12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.icon-btn{font-size:18px;line-height:1;padding:7px 11px}
+.star{color:var(--accent)}
+button.link{border:0;background:none;padding:0;font:inherit;color:var(--band-line);text-decoration:underline;cursor:pointer}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:10px 0 0;display:flex;flex-direction:column;gap:8px;min-width:0}
+legend{font:600 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 6px 0 0}
 
 /* Entscheidung */
 .hero{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
@@ -82,8 +88,7 @@ header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:1
 /* Karte */
 #map{height:280px;border-radius:9px;border:1px solid var(--line);z-index:0}
 .map-wrap{position:relative}
-.fav-btn{position:absolute;top:10px;right:10px;z-index:500;width:38px;height:38px;padding:0;font-size:19px;line-height:1;color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.35)}
-.fav-panel{position:absolute;top:54px;right:10px;z-index:500;width:min(300px,calc(100% - 20px));background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:10px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.fav-panel{position:absolute;top:calc(100% + 6px);right:0;z-index:1500;width:min(300px,calc(100% - 20px));background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:10px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
 .fav-list{max-height:190px;overflow-y:auto;margin:6px 0 8px}
 .fav-item{display:flex;align-items:center;gap:4px;border-radius:6px}
 .fav-item.cur{background:var(--raised)}
@@ -96,7 +101,7 @@ header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:1
 .fav-empty{font-size:12px;color:var(--muted);padding:4px 2px 8px}
 .fav-add{display:flex;gap:6px;border-top:1px solid var(--line);padding-top:8px}
 .fav-add input{flex:1;min-width:0}
-.check{flex-direction:row;align-items:center;gap:8px;font-size:13px;color:var(--fg);align-self:end;padding-bottom:9px}
+.check{flex-direction:row;align-items:center;gap:8px;font-size:13px;color:var(--fg)}
 .check input{width:18px;height:18px;margin:0;flex:none;accent-color:var(--accent)}
 .wind-arrow{pointer-events:none}
 .search{display:flex;gap:8px}
@@ -113,11 +118,10 @@ header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:1
 
 /* Zeitleiste */
 .tl{overflow-x:auto;padding-bottom:4px}
-.tl-days{display:flex;gap:6px;min-width:max-content}
-.tl-day{display:flex;flex-direction:column;gap:4px}
-.tl-day .eyebrow{padding-left:2px}
-.tl-hours{display:flex;gap:2px}
-.tl-cell{width:22px;height:38px;border-radius:4px;border:0;padding:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font:500 9.5px var(--f-mono);color:#fff;cursor:pointer;position:relative}
+.tl-hours{display:flex;gap:2px;padding-top:6px}
+.tl-cell{flex:1 0 18px;height:46px;border-radius:5px;border:0;padding:0 0 4px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font:600 10.5px var(--f-mono);color:#fff;cursor:pointer;position:relative}
+.tl-cell span{text-shadow:0 1px 1px rgba(0,0,0,.35)}
+.seg-day .dot{margin-right:6px;vertical-align:0}
 .tl-cell.off{opacity:.38}
 .tl-cell.sel{outline:2px solid var(--fg);outline-offset:1px}
 .tl-cell.nowc::after{content:"";position:absolute;top:-5px;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--accent)}
@@ -163,6 +167,14 @@ td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 @media print{.raw{display:none}}
 .b-ok{background:var(--go-bg);color:var(--go)} .b-out{background:var(--raised);color:var(--muted)} .b-err{background:var(--stop-bg);color:var(--stop)} .b-ext{background:var(--warn-bg);color:var(--warn)}
 details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02em}
+.more{border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.more>summary{list-style:none;display:flex;flex-direction:column;gap:2px;padding:14px 44px 14px 14px;position:relative}
+.more>summary::-webkit-details-marker{display:none}
+.more>summary::after{content:"";position:absolute;right:18px;top:50%;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:translateY(-70%) rotate(45deg);transition:transform .15s}
+.more[open]>summary::after{transform:translateY(-30%) rotate(-135deg)}
+.more-title{font:600 20px var(--f-display)}
+.more-body{display:flex;flex-direction:column;gap:14px;padding:0 14px 14px}
+.more-body .card{background:var(--raised)}
 .error{background:var(--stop-bg);color:var(--stop);border-radius:8px;padding:10px 12px}
 #report{display:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -186,37 +198,59 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
 <div class="wrap">
 
   <header class="top">
-    <div>
-      <div class="eyebrow">Windberg · Wetter-Check für Seilarbeit an WEA</div>
+    <div style="min-width:0">
+      <div class="eyebrow">Windberg · Windbericht</div>
       <h1 id="siteTitle">Windbericht</h1>
       <div class="site-meta mono" id="siteMeta"></div>
     </div>
     <div class="row">
-      <button id="reloadBtn" type="button">Aktualisieren</button>
-      <button id="settingsBtn" type="button" aria-expanded="false" aria-controls="settings">Standort &amp; Grenzwerte</button>
+      <button id="favBtn" type="button" aria-expanded="false" aria-controls="favPanel"><span class="star">★</span> Anlagen</button>
+      <button id="settingsBtn" type="button" aria-expanded="false" aria-controls="settings">Einstellungen</button>
+      <button id="reloadBtn" class="icon-btn" type="button" title="Wetterdaten neu laden" aria-label="Wetterdaten neu laden">↻</button>
+    </div>
+    <div class="fav-panel" id="favPanel" hidden>
+      <div class="eyebrow">Gespeicherte Anlagen</div>
+      <div class="fav-list" id="favList"></div>
+      <div class="fav-add">
+        <input type="text" id="favName" placeholder="Aktuelle Anlage benennen…" maxlength="40" aria-label="Name der Anlage">
+        <button class="primary" id="favAdd" type="button" title="Aktuelle Anlage mit Höhen und Grenzwerten speichern">Speichern</button>
+      </div>
     </div>
   </header>
 
   <section class="card" id="settings" hidden>
-    <div class="card-head"><h2>Standort &amp; Grenzwerte</h2><span class="note">Tipp: Auf der Karte tippen oder den Marker ziehen, um den Standort zu setzen.</span></div>
-    <div class="grid">
-      <label>Bezeichnung<input id="s_name" type="text"></label>
-      <label>Breite (°N)<input id="s_lat" type="number" step="0.0001"></label>
-      <label>Länge (°E)<input id="s_lon" type="number" step="0.0001"></label>
-      <label>Arbeitshöhe (m)<input id="s_work" type="number" step="1" min="10" max="300" placeholder="= Nabe"></label>
-      <label class="check"><input id="s_path" type="checkbox">Seilweg bis Nabe mitbewerten</label>
-      <label>Nabenhöhe (m)<input id="s_hub" type="number" step="1" min="20" max="250"></label>
-      <label>Rotordurchmesser (m)<input id="s_rotor" type="number" step="1" min="0" max="250"></label>
-      <label>Max. Mittelwind (m/s)<input id="s_wind" type="number" step="0.5"></label>
-      <label>Max. Böe (m/s)<input id="s_gust" type="number" step="0.5"></label>
-      <label>Arbeitsbeginn (Uhr)<input id="s_from" type="number" min="0" max="23"></label>
-      <label>Arbeitsende (Uhr)<input id="s_to" type="number" min="0" max="23"></label>
-    </div>
-    <p class="note">Arbeitshöhe leer = Nabenhöhe. Mit „Seilweg mitbewerten“ zählt der stärkste Wind zwischen Arbeitshöhe und Nabe, weil ihr beim Ab- und Aufstieg auch oben im Wind hängt. Die Grenzwerte sind Beispielwerte. Tragt die Vorgaben von Hersteller und Auftraggeber für eure Tätigkeit ein.</p>
+    <h2>Einstellungen</h2>
+    <fieldset>
+      <legend>Anlage</legend>
+      <div class="grid">
+        <label>Bezeichnung<input id="s_name" type="text"></label>
+        <label>Breite (°N)<input id="s_lat" type="number" step="0.0001" inputmode="decimal"></label>
+        <label>Länge (°E)<input id="s_lon" type="number" step="0.0001" inputmode="decimal"></label>
+        <label>Nabenhöhe (m)<input id="s_hub" type="number" step="1" min="20" max="250" inputmode="numeric"></label>
+        <label>Rotordurchmesser (m)<input id="s_rotor" type="number" step="1" min="0" max="250" inputmode="numeric"></label>
+      </div>
+      <p class="note">Standort am einfachsten auf der Karte setzen: Ort suchen und Anlage antippen. <button class="link" id="gpsBtn" type="button">Oder GPS-Standort verwenden</button></p>
+    </fieldset>
+    <fieldset>
+      <legend>Einsatz</legend>
+      <div class="grid">
+        <label>Arbeitshöhe (m)<input id="s_work" type="number" step="1" min="10" max="300" placeholder="= Nabe" inputmode="numeric"></label>
+        <label>Arbeitsbeginn (Uhr)<input id="s_from" type="number" min="0" max="23" inputmode="numeric"></label>
+        <label>Arbeitsende (Uhr)<input id="s_to" type="number" min="0" max="23" inputmode="numeric"></label>
+      </div>
+      <label class="check"><input id="s_path" type="checkbox">Seilweg bis zur Nabe mitbewerten (stärkster Wind zwischen Arbeitshöhe und Nabe)</label>
+    </fieldset>
+    <fieldset>
+      <legend>Grenzwerte im Arbeitsbereich</legend>
+      <div class="grid">
+        <label>Max. Mittelwind (m/s)<input id="s_wind" type="number" step="0.5" inputmode="decimal"></label>
+        <label>Max. Böe (m/s)<input id="s_gust" type="number" step="0.5" inputmode="decimal"></label>
+      </div>
+      <p class="note">Beispielwerte. Tragt die Vorgaben von Hersteller und Auftraggeber für eure Tätigkeit ein.</p>
+    </fieldset>
     <div class="row">
-      <button class="primary" id="saveBtn" type="button">Übernehmen &amp; neu laden</button>
-      <button id="gpsBtn" type="button">Mein GPS-Standort</button>
-      <button class="ghost" id="cancelBtn" type="button">Schließen</button>
+      <button class="primary" id="saveBtn" type="button">Übernehmen</button>
+      <button class="ghost" id="cancelBtn" type="button">Abbrechen</button>
     </div>
   </section>
 
@@ -245,6 +279,35 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
     <p class="note mono" id="status"></p>
   </section>
 
+  <!-- Zeitleiste -->
+  <section class="card">
+    <div class="card-head">
+      <h2>Arbeitsfenster</h2>
+      <div class="legend">
+        <span><i class="sw c-go"></i>GO</span>
+        <span><i class="sw c-warn"></i>Prüfen: einzelne Modelle drüber, Schauer</span>
+        <span><i class="sw c-stop"></i>Stop: Median drüber, Gewitter</span>
+      </div>
+    </div>
+    <div class="tl"><div class="tl-hours" id="timeline"></div></div>
+    <p class="note">Ein Feld pro Stunde der Arbeitszeit. Antippen zeigt oben die Werte dieser Stunde.</p>
+  </section>
+
+  <!-- Verlauf -->
+  <section class="card">
+    <div class="card-head">
+      <h2 id="chartTitle">Wind</h2>
+      <div class="row">
+        <div class="seg" role="group" aria-label="Darstellung">
+          <button type="button" data-view="band" aria-pressed="true">Band</button>
+          <button type="button" data-view="all" aria-pressed="false">Einzelmodelle</button>
+        </div>
+      </div>
+    </div>
+    <div class="chart-box"><canvas id="chart" aria-label="Windverlauf im Arbeitsbereich"></canvas></div>
+    <p class="note">Blaues Band: Spanne aller Modelle. Ein schmales Band heißt, die Modelle sind sich einig. Dicke Linie: Median. Gestrichelt: geschätzte Böe. Rot: euer Grenzwert.</p>
+  </section>
+
   <!-- Karte + Richtung -->
   <div class="cols">
     <section class="card">
@@ -263,15 +326,6 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
       <ul class="results" id="searchResults" hidden></ul>
       <div class="map-wrap">
         <div id="map" role="application" aria-label="Karte des Anlagenstandorts"></div>
-        <button class="fav-btn" id="favBtn" type="button" title="Favoriten" aria-label="Favoriten" aria-expanded="false" aria-controls="favPanel">★</button>
-        <div class="fav-panel" id="favPanel" hidden>
-          <div class="eyebrow">Favoriten</div>
-          <div class="fav-list" id="favList"></div>
-          <div class="fav-add">
-            <input type="text" id="favName" placeholder="Anlage benennen…" maxlength="40" aria-label="Name des Favoriten">
-            <button class="primary" id="favAdd" type="button" title="Aktuelle Anlage mit Höhen und Grenzwerten speichern">+</button>
-          </div>
-        </div>
       </div>
       <div class="pickbar" id="pickBar" hidden>
         <span class="mono" id="pickText"></span>
@@ -280,7 +334,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
           <button class="primary" id="pickApply" type="button">Standort übernehmen</button>
         </div>
       </div>
-      <p class="note" id="mapNote">Ort suchen, dann die Anlage auf der Karte antippen. Pfeil: Windrichtung in Arbeitshöhe zur gewählten Stunde. ★: gespeicherte Anlagen. Kreis: Rotorfläche. Radar: Niederschlagsradar des DWD (Deutschland und Grenzgebiete).</p>
+      <p class="note" id="mapNote">Neue Anlage: Ort suchen und Anlage antippen. Pfeil: Windrichtung zur gewählten Stunde. Radar: DWD, nur Deutschland und Grenzgebiete.</p>
     </section>
 
     <section class="card">
@@ -292,72 +346,6 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
       <p class="note">Dicker Pfeil: mittlere Richtung aller Modelle. Dünne Striche: einzelne Modelle. Liegen die Striche weit auseinander, ist die Richtung unsicher, etwa bei Winddrehung oder schwachem Wind.</p>
     </section>
   </div>
-
-  <!-- Zeitleiste -->
-  <section class="card">
-    <div class="card-head">
-      <h2>Arbeitsfenster</h2>
-      <div class="legend">
-        <span><i class="sw c-go"></i>unter Grenzwert</span>
-        <span><i class="sw c-warn"></i>einzelne Modelle drüber / Schauer</span>
-        <span><i class="sw c-stop"></i>Median drüber / Gewitter</span>
-      </div>
-    </div>
-    <div class="tl"><div class="tl-days" id="timeline"></div></div>
-    <p class="note">Jedes Feld ist eine Stunde. Blass: außerhalb eurer Arbeitszeit. Tippen wählt die Stunde für Karte, Richtung und Höhenprofil.</p>
-  </section>
-
-  <!-- Verlauf -->
-  <section class="card">
-    <div class="card-head">
-      <h2 id="chartTitle">Wind</h2>
-      <div class="row">
-        <div class="seg" role="group" aria-label="Darstellung">
-          <button type="button" data-view="band" aria-pressed="true">Band</button>
-          <button type="button" data-view="all" aria-pressed="false">Einzelmodelle</button>
-        </div>
-      </div>
-    </div>
-    <div class="chart-box"><canvas id="chart" aria-label="Windverlauf im Arbeitsbereich"></canvas></div>
-    <p class="note">Blaues Band: Spanne aller Modelle. Ein schmales Band heißt, die Modelle sind sich einig. Dicke Linie: Median. Gestrichelt: geschätzte Böe. Rot: euer Grenzwert.</p>
-  </section>
-
-  <!-- Höhenprofil + Niederschlag -->
-  <div class="cols">
-    <section class="card">
-      <div class="card-head"><h2>Höhenprofil</h2><span class="eyebrow" id="profileHour"></span></div>
-      <div class="chart-sm"><canvas id="profile" aria-label="Windgeschwindigkeit nach Höhe"></canvas></div>
-      <p class="note">Wind vom Boden bis über die Blattspitze. Zeigt, wie stark der Wind nach oben zunimmt, wichtig für Arbeiten an Turm, Gondel und Blattspitze.</p>
-    </section>
-    <section class="card">
-      <div class="card-head"><h2>Regen &amp; Gewitter</h2><span class="eyebrow" id="rainDay"></span></div>
-      <div class="chart-sm"><canvas id="rain" aria-label="Niederschlag und Gewitterneigung"></canvas></div>
-      <p class="note">Balken: Niederschlag (Median, mm/h). Linie: Gewitterenergie CAPE. Ab etwa 300 J/kg sind Schauer und Gewitter möglich, ab 800 J/kg deutlich.</p>
-    </section>
-  </div>
-
-  <!-- Modell-Matrix -->
-  <section class="card">
-    <div class="card-head"><h2>Modell-Matrix</h2><span class="eyebrow" id="mxDay"></span></div>
-    <div class="mx" id="matrix"></div>
-    <p class="note">Wind im Arbeitsbereich je Modell und Stunde (m/s). Grün unter 75 % des Grenzwerts, gelb darüber, rot ab Grenzwert. So sieht man sofort, ob nur ein Ausreißer warnt oder fast alle.</p>
-  </section>
-
-  <section class="card">
-    <details>
-      <summary>Stunden im Detail</summary>
-      <div class="scroll" style="margin-top:10px"><table class="t" id="hourTable"></table></div>
-      <p class="note" style="margin-top:8px">Wind aus den Modellwerten in 10, 80, 120 und 180 m auf die Arbeitshöhe interpoliert. Böen liefern die Modelle nur in 10 m; die Böe in der Höhe ist daraus geschätzt und sollte mit NC2-Messwerten geprüft werden.</p>
-    </details>
-  </section>
-
-  <section class="card">
-    <details>
-      <summary>Modelle am Standort</summary>
-      <div class="scroll" style="margin-top:10px"><table class="t" id="modelTable"></table></div>
-      <p class="note" style="margin-top:8px">Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung.</p>
-    </details>
-  </section>
 
   <section class="card">
     <h2>Tagesbericht</h2>
@@ -382,6 +370,49 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
       <button id="jsonBtn" type="button">Rohdaten speichern (JSON)</button>
     </div>
   </section>
+
+  <!-- Fachdetails, standardmäßig zugeklappt -->
+  <details class="more" id="moreBox">
+    <summary><span class="more-title">Mehr Details</span><span class="note">Höhenprofil · Regen &amp; Gewitter · Modell-Matrix · Stundentabelle · Modelle</span></summary>
+    <div class="more-body">
+    <!-- Höhenprofil + Niederschlag -->
+    <div class="cols">
+      <section class="card">
+        <div class="card-head"><h2>Höhenprofil</h2><span class="eyebrow" id="profileHour"></span></div>
+        <div class="chart-sm"><canvas id="profile" aria-label="Windgeschwindigkeit nach Höhe"></canvas></div>
+        <p class="note">Wind vom Boden bis über die Blattspitze. Zeigt, wie stark der Wind nach oben zunimmt, wichtig für Arbeiten an Turm, Gondel und Blattspitze.</p>
+      </section>
+      <section class="card">
+        <div class="card-head"><h2>Regen &amp; Gewitter</h2><span class="eyebrow" id="rainDay"></span></div>
+        <div class="chart-sm"><canvas id="rain" aria-label="Niederschlag und Gewitterneigung"></canvas></div>
+        <p class="note">Balken: Niederschlag (Median, mm/h). Linie: Gewitterenergie CAPE. Ab etwa 300 J/kg sind Schauer und Gewitter möglich, ab 800 J/kg deutlich.</p>
+      </section>
+    </div>
+
+    <!-- Modell-Matrix -->
+    <section class="card">
+      <div class="card-head"><h2>Modell-Matrix</h2><span class="eyebrow" id="mxDay"></span></div>
+      <div class="mx" id="matrix"></div>
+      <p class="note">Wind im Arbeitsbereich je Modell und Stunde (m/s). Grün unter 75 % des Grenzwerts, gelb darüber, rot ab Grenzwert. So sieht man sofort, ob nur ein Ausreißer warnt oder fast alle.</p>
+    </section>
+
+    <section class="card">
+      <details>
+        <summary>Stunden im Detail</summary>
+        <div class="scroll" style="margin-top:10px"><table class="t" id="hourTable"></table></div>
+        <p class="note" style="margin-top:8px">Wind aus den Modellwerten in 10, 80, 120 und 180 m auf die Arbeitshöhe interpoliert. Böen liefern die Modelle nur in 10 m; die Böe in der Höhe ist daraus geschätzt und sollte mit NC2-Messwerten geprüft werden.</p>
+      </details>
+    </section>
+
+    <section class="card">
+      <details>
+        <summary>Modelle am Standort</summary>
+        <div class="scroll" style="margin-top:10px"><table class="t" id="modelTable"></table></div>
+        <p class="note" style="margin-top:8px">Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung.</p>
+      </details>
+    </section>
+    </div>
+  </details>
 
   <p class="note">Wetterdaten: Open-Meteo.com (CC BY 4.0) mit Modellen von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA u. a. Radar: DWD. Karten: Esri, OpenStreetMap. Open-Meteo ist kostenlos nur für nicht-kommerzielle Nutzung. Entscheidungshilfe, ersetzt nicht die Beurteilung vor Ort durch den Aufsichtführenden.</p>
 
@@ -591,7 +622,8 @@ function buildSummary(hs){
   if(c.go===hs.length){ lamp="go"; head=`Ganzer Arbeitstag im grünen Bereich (${site.from}–${site.to} Uhr).`; }
   else if(best && best.len>=2){ lamp = best.len>=4 ? "warn" : "warn"; const win = `${hh(best.start)}–${String(hourOf(best.end)+1).padStart(2,"0")} Uhr`; head=`Grün nur ${win} (${best.len} h), übrige Stunden prüfen.`; if(c.stop===0 && best.len>=hs.length-2){ lamp="go"; head=`Grün ${win}, Randstunden prüfen.`; } }
   else if(c.stop===hs.length){ lamp="stop"; head="Kein Arbeitsfenster: Grenzwerte ganztägig überschritten."; }
-  else { lamp = c.stop > hs.length/2 ? "stop" : "warn"; head="Kein sicheres grünes Fenster, nur Stunden mit Prüfbedarf."; }
+  else if(c.stop > hs.length/2){ lamp="stop"; head=`Überwiegend Stop: in ${c.stop} von ${hs.length} Stunden über Grenzwert.`; }
+  else { lamp="warn"; head="Kein sicheres grünes Fenster, nur Stunden mit Prüfbedarf."; }
   const parts = [];
   const firstStop = hs.find(h => h.lamp==="stop");
   if(firstStop && c.stop!==hs.length) parts.push(`Ab ${hh(firstStop.t)} Uhr liegen ${firstStop.over} von ${firstStop.n} Modellen über euren Grenzwerten.`);
@@ -619,7 +651,7 @@ function fillSettings(){
   $("s_hub").value = site.hub; $("s_rotor").value = site.rotor; $("s_wind").value = site.wind; $("s_gust").value = site.gust;
   $("s_from").value = site.from; $("s_to").value = site.to;
   $("siteTitle").textContent = site.name;
-  $("siteMeta").innerHTML = `<span>${fmt(site.lat,4)}° N · ${fmt(site.lon,4)}° E</span><span>Arbeit ${zoneTxt()} · Nabe ${site.hub} m · Rotor ${site.rotor} m</span><span>Grenze ${fmt(site.wind)} · Böe ${fmt(site.gust)} m/s</span>`;
+  $("siteMeta").innerHTML = `<span>Arbeit ${zoneTxt()}</span><span>Grenze ${fmt(site.wind)} · Böe ${fmt(site.gust)} m/s</span><span>${site.from}–${site.to} Uhr</span>`;
 }
 
 function renderHero(){
@@ -645,13 +677,9 @@ function renderNow(){
 }
 
 function renderTimeline(){
-  const days = [...new Set(state.times.map(t=>t.slice(0,10)))];
   const nk = nowKey();
-  $("timeline").innerHTML = days.map(d => {
-    const cells = state.hours.filter(h=>h.t.startsWith(d)).map(h =>
-      `<button type="button" class="tl-cell c-${h.lamp} ${isWork(h.t)?"":"off"} ${h.t.slice(0,13)===nk?"nowc":""}" data-i="${h.i}" aria-label="${dayLabel(d,true)} ${hh(h.t)} Uhr: ${LAMP_TXT[h.lamp]}, ${fmt(h.med)} m/s">${hourOf(h.t)%3===0?hh(h.t):""}</button>`).join("");
-    return `<div class="tl-day"><span class="eyebrow">${esc(dayLabel(d))}</span><div class="tl-hours">${cells}</div></div>`;
-  }).join("");
+  $("timeline").innerHTML = dayHours(state.day).map(h =>
+    `<button type="button" class="tl-cell c-${h.lamp} ${h.t.slice(0,13)===nk?"nowc":""}" data-i="${h.i}" aria-label="${hh(h.t)} Uhr: ${LAMP_TXT[h.lamp]}, ${fmt(h.med)} m/s"><span>${hh(h.t)}</span></button>`).join("");
   $("timeline").querySelectorAll(".tl-cell").forEach(b => b.onclick = () => selectHour(+b.dataset.i, true));
   const selEl = $("timeline").querySelector(`[data-i="${state.sel}"]`);
   if(selEl) selEl.scrollIntoView({block:"nearest", inline:"center"});
@@ -663,14 +691,15 @@ function highlightSel(){
 function selectHour(i, fromTimeline){
   state.sel = i;
   const d = state.times[i].slice(0,10);
-  if(d!==state.day){ state.day = d; renderHero(); renderDayTabs(); renderChart(); renderRain(); renderMatrix(); renderHourTable(); renderModelTable(); }
+  if(d!==state.day){ state.day = d; renderHero(); renderDayTabs(); renderTimeline(); renderChart(); renderRain(); renderMatrix(); renderHourTable(); renderModelTable(); }
   renderSelected();
   if(charts.main) charts.main.update("none");
 }
 
 function renderDayTabs(){
   const days = [...new Set(state.times.map(t=>t.slice(0,10)))];
-  $("dayTabs").innerHTML = days.map(d => `<button type="button" data-day="${d}" aria-pressed="${d===state.day}">${esc(dayLabel(d,true))}</button>`).join("");
+  $("dayTabs").innerHTML = days.map(d => { const l = buildSummary(dayHours(d)).lamp;
+    return `<button type="button" data-day="${d}" aria-pressed="${d===state.day}" aria-label="${esc(dayLabel(d,true))}: ${LAMP_TXT[l]}"><i class="dot d-${l}"></i>${esc(dayLabel(d,true))}</button>`; }).join("");
   $("dayTabs").querySelectorAll("button").forEach(b => b.onclick = () => {
     state.day = b.dataset.day; state.sel = defaultSel(state.day);
     renderHero(); renderDayTabs(); renderTimeline(); renderChart(); renderRain(); renderMatrix(); renderHourTable(); renderModelTable(); renderSelected();
@@ -722,7 +751,7 @@ function renderChart(){
   if(charts.main) charts.main.destroy();
   charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin]});
   charts.main.$idxs = idxs; charts.main.update("none");
-  $("chartTitle").textContent = "Wind " + zoneTxt() + " · " + dayLabel(state.day);
+  $("chartTitle").textContent = "Windverlauf · " + zoneTxt();
 }
 
 function renderRain(){
@@ -1004,7 +1033,9 @@ function addFav(){
   if(site.name !== name){ site = {...site, name}; saveSite(); fillSettings(); }
   renderFavs();
 }
-$("favBtn").onclick = () => toggleFavs($("favPanel").hidden);
+$("favBtn").onclick = e => { e.stopPropagation(); toggleFavs($("favPanel").hidden); };
+document.addEventListener("click", e => { if(!$("favPanel").hidden && e.target.isConnected && !$("favPanel").contains(e.target)) toggleFavs(false); });
+document.addEventListener("keydown", e => { if(e.key==="Escape" && !$("favPanel").hidden) toggleFavs(false); });
 $("favAdd").onclick = addFav;
 $("favName").onkeydown = e => { if(e.key==="Enter"){ e.preventDefault(); addFav(); } };
 
@@ -1021,7 +1052,7 @@ $("saveBtn").onclick = () => {
   if(site.to < site.from) [site.from, site.to] = [site.to, site.from];
   saveSite(); toggleSettings(false);
   if(map) map.setView([site.lat, site.lon], Math.max(map.getZoom(), 13));
-  $("mapNote").textContent = "Ort suchen, dann die Anlage auf der Karte antippen. Pfeil: Windrichtung in Arbeitshöhe zur gewählten Stunde. ★: gespeicherte Anlagen. Kreis: Rotorfläche. Radar: Niederschlagsradar des DWD (Deutschland und Grenzgebiete).";
+  $("mapNote").textContent = "Neue Anlage: Ort suchen und Anlage antippen. Pfeil: Windrichtung zur gewählten Stunde. Radar: DWD, nur Deutschland und Grenzgebiete.";
   load();
 };
 $("gpsBtn").onclick = () => {
@@ -1046,6 +1077,11 @@ $("jsonBtn").onclick = async () => {
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
   a.download = `windbericht_${site.name.replace(/\W+/g,"_")}_${state.day}.json`; document.body.appendChild(a); a.click(); a.remove();
 };
+try{ if(localStorage.getItem("wb_more")==="1") $("moreBox").open = true; }catch(e){}
+$("moreBox").addEventListener("toggle", () => {
+  try{ localStorage.setItem("wb_more", $("moreBox").open ? "1" : "0"); }catch(e){}
+  if($("moreBox").open) Object.values(charts).forEach(c => c && c.resize());
+});
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => state.fetchedAt && render());
 
 fillSettings();
