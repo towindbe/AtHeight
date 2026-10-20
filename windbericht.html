@@ -74,6 +74,10 @@ footer.foot{display:flex;align-items:center;gap:14px;border-top:1px solid var(--
 .chev{width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .15s}
 .settings-btn[aria-expanded="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 .settings-btn[aria-expanded="true"] .chev{transform:translateY(1px) rotate(-135deg)}
+.warnbox{display:flex;flex-direction:column;gap:6px;margin-top:6px;padding:10px 12px;border:1px solid var(--stop);background:var(--stop-bg);border-radius:8px;font-size:13px}
+.warnbox div{display:flex;flex-direction:column;padding-left:10px;border-left:3px solid var(--warn)}
+.warnbox .wb-stop{border-left-color:var(--stop)} .warnbox .wb-info{border-left-color:var(--none)}
+.warnbox small{color:var(--muted)}
 .setup-hint{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:6px;padding:10px 12px;border:1px solid var(--warn);background:var(--warn-bg);border-radius:8px}
 .setup-hint div{display:flex;flex-direction:column;gap:2px;font-size:13px}
 .setup-hint b{font-size:14px}
@@ -302,6 +306,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
       <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
         <p class="headline" id="headline">Lade Wettermodelle…</p>
         <p class="muted" id="summary"></p>
+        <div class="warnbox needs-data" id="warnBox" hidden></div>
         <div class="setup-hint needs-data" id="setupHint" hidden>
           <div><b>Neue Anlage: Höhen und Grenzwerte prüfen</b><span>Nabenhöhe, Arbeitshöhe und Grenzwerte sind noch Beispielwerte.</span></div>
           <button class="primary" id="setupBtn" type="button">Einstellungen öffnen</button>
@@ -631,8 +636,48 @@ async function loadExtras(){
     const j = await (await fetch("https://api.open-meteo.com/v1/forecast?"+p)).json();
     if(j.hourly){ fixTimes(j.hourly, j.timezone, j.utc_offset_seconds||0); ex.uv = new Map(j.hourly.time.map((t,i) => [t, j.hourly.uv_index[i]])); }
   }catch(e){}
+  [ex.dwd, ex.geo] = await Promise.all([loadDwdWarnings(), loadGeoWarnings()]);
   return ex;
 }
+/* Amtliche Warnungen. Ergebnis: {ok, list:[{src, lvl, title, text, relevant, start, end}]} oder {ok:false} */
+const DWD_LVL = {Minor:1, Moderate:2, Severe:3, Extreme:4};
+const DWD_RELEVANT = ["THUNDERSTORM","WIND","TORNADO","HAIL","GLAZE","SNOWDRIFT","SNOWFALL","RAIN"];
+async function loadDwdWarnings(){
+  try{
+    const q = new URLSearchParams({service:"WFS", version:"2.0.0", request:"GetFeature", typeName:"dwd:Warnungen_Gemeinden", outputFormat:"application/json",
+      propertyName:"EVENT,SEVERITY,EC_GROUP,ONSET,EXPIRES,HEADLINE", CQL_FILTER:`INTERSECTS(THE_GEOM,POINT(${site.lat} ${site.lon}))`});
+    const j = await (await fetch("https://maps.dwd.de/geoserver/dwd/ows?"+q)).json();
+    const seen = new Set(), list = [];
+    (j.features||[]).forEach(f => {
+      const p = f.properties, key = p.HEADLINE+p.ONSET+p.EXPIRES;
+      if(seen.has(key)) return; seen.add(key);
+      list.push({src:"DWD", lvl:DWD_LVL[p.SEVERITY]||1, title:p.HEADLINE || p.EVENT, start:Date.parse(p.ONSET), end:p.EXPIRES ? Date.parse(p.EXPIRES) : Infinity,
+        relevant:String(p.EC_GROUP||"").split(";").some(g => DWD_RELEVANT.includes(g.trim()))});
+    });
+    return {ok:true, list};
+  }catch(e){ return {ok:false, list:[]}; }
+}
+const GEO_TYPE = {1:"Sturm", 2:"Regen", 3:"Schnee", 4:"Glatteis", 5:"Gewitter", 6:"Hitze", 7:"Kälte"};
+const GEO_LEVEL = {1:"gelb", 2:"orange", 3:"rot"};
+async function loadGeoWarnings(){
+  try{
+    const r = await fetch(`https://warnungen.zamg.at/wsapp/api/getWarningsForCoords?lon=${site.lon}&lat=${site.lat}&lang=de`);
+    if(r.status===404) return {ok:true, list:[], outside:true};   // Standort nicht in Österreich
+    const j = await r.json();
+    const list = (j.properties?.warnings||[]).map(w => {
+      // Felder je nach Abfrage: rawinfo {wtype, wlevel, start, end} in Sekunden, sonst warntypid/warnstufeid
+      const p = w.properties || w, raw = p.rawinfo || p;
+      const t = +(raw.wtype ?? p.warntypid), l = +(raw.wlevel ?? p.warnstufeid);
+      const time = v => /^\d+$/.test(String(v)) ? +v*1000 : NaN;
+      const start = time(raw.start), end = time(raw.end);
+      return {src:"GeoSphere", lvl:l, title:`${GEO_TYPE[t]||"Warnung"}, Warnstufe ${GEO_LEVEL[l]||l}`,
+        start:isNaN(start) ? -Infinity : start, end:isNaN(end) ? Infinity : end, relevant:t>=1 && t<=5};
+    });
+    return {ok:true, list};
+  }catch(e){ return {ok:false, list:[]}; }
+}
+const allWarnings = () => [...(extras.dwd?.list||[]), ...(extras.geo?.list||[])];
+const fmtWhen = ms => !isFinite(ms) ? "offen" : new Date(ms).toLocaleString("de-DE", {timeZone:state.tz, weekday:"short", day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"});
 async function load(){
   $("errorBox").hidden = true;
   $("headline").textContent = "Lade Wettermodelle…"; $("lamp").className="lamp"; $("lamp").textContent="…";
@@ -680,6 +725,8 @@ async function load(){
       dir:circMean(pts.map(x=>x.s.dir).filter(v=>v!=null))};
     h.dark = isDark(t);
     h.chill = windChill(h.tW, h.med);
+    const a = localMs(t);
+    h.warns = allWarnings().filter(w => w.start < a + 36e5 && w.end > a);
     Object.assign(h, rate(h));
     return h;
   });
@@ -711,6 +758,7 @@ function rate(h){
   else if(h.cape!=null && h.cape >= CAPE_WARN) add("warn", `Gewitterenergie CAPE ${Math.round(h.cape)} J/kg`);
   if(h.rain!=null && h.rain >= RAIN_WARN) add("warn", `Regen ${fmt(h.rain)} mm/h`);
   if(h.dark) add("warn", "Dunkel (außerhalb der bürgerlichen Dämmerung)");
+  (h.warns||[]).forEach(w => add(!w.relevant ? "info" : w.lvl >= 3 ? "stop" : "warn", `Amtliche Warnung ${w.src}: ${w.title}`));
   if(h.chill!=null && h.chill <= CHILL_WARN) add("warn", `Gefühlt ${fmt(h.chill,0)} °C in ${workH()} m: Erfrierungsgefahr`);
   else if(h.chill!=null && h.chill <= CHILL_INFO) add("info", `Gefühlt ${fmt(h.chill,0)} °C in ${workH()} m: Kälteschutz`);
   if(h.app!=null && h.app >= HEAT_INFO) add("info", `Hitze: gefühlt ${fmt(h.app,0)} °C am Boden`);
@@ -820,7 +868,15 @@ function renderHero(){
   $("heroDay").textContent = `${new Date(state.day+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"})} · Arbeitszeit ${site.from}–${site.to} Uhr` + (dl.start && dl.end ? ` · hell ${dl.start}–${dl.end}` : "");
   $("headline").textContent = sum.head; $("summary").textContent = sum.text;
   const u = usableModels();
-  $("status").textContent = `Abgerufen ${state.fetchedAt.toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"})} · ${u.length} Modelle aktiv, davon ${u.filter(r=>r.m.hi).length} hochauflösend`;
+  // Warnungen, die den gewählten Tag berühren
+  const d0 = localMs(state.day+"T00:00"), d1 = d0 + 864e5;
+  const ws = allWarnings().filter(w => w.start < d1 && w.end > d0).sort((a,b) => b.lvl-a.lvl);
+  $("warnBox").hidden = !ws.length;
+  $("warnBox").innerHTML = `<b>Amtliche Warnungen</b>` + ws.map(w => `<div class="wb-${!w.relevant ? "info" : w.lvl>=3 ? "stop" : "warn"}">
+    <span>${esc(w.src)}: ${esc(w.title)}</span><small>${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))}</small></div>`).join("");
+  const wsrc = [extras.dwd?.ok===false ? "DWD nicht abrufbar" : null, extras.geo?.ok===false ? "GeoSphere nicht abrufbar" : null].filter(Boolean);
+  $("status").textContent = `Abgerufen ${state.fetchedAt.toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"})} · ${u.length} Modelle aktiv, davon ${u.filter(r=>r.m.hi).length} hochauflösend`
+    + ` · Warnungen: ${wsrc.length ? wsrc.join(", ") : ws.length ? ws.length+" am gewählten Tag" : "keine"}`;
 }
 
 function renderNow(){
@@ -1187,6 +1243,7 @@ async function sha256(text){
 function snapshot(){
   return {erstellt:new Date().toISOString(), abgerufen:state.fetchedAt?.toISOString(), standort:site, tag:state.day,
     bericht:{projekt:$("r_project").value, anlage:$("r_turbine").value, team:$("r_team").value, aufsicht:$("r_lead").value, taetigkeit:$("r_task").value, entscheidung:$("r_decision").value, bemerkungen:$("r_notes").value},
+    warnungen: allWarnings().map(w => ({quelle:w.src, stufe:w.lvl, titel:w.title, ampelrelevant:w.relevant, beginn:isFinite(w.start)?new Date(w.start).toISOString():null, ende:isFinite(w.end)?new Date(w.end).toISOString():null})),
     fazit:{ampel:state.summary?.lamp, text:(state.summary?.head||"")+" "+(state.summary?.text||"")},
     bereich:{arbeitshoehe:workH(), bis:zoneTop(), text:zoneTxt()},
     modelle: state.results.map(r=>({id:r.m.id, name:r.m.name, anbieter:r.m.org, status:r.status, abfrage:apiUrl(r.m),
@@ -1207,6 +1264,7 @@ async function buildReport(){
       <div><b>Aufsichtführender:</b> ${esc(b.aufsicht)||"–"}</div><div><b>Arbeitszeit:</b> ${site.from}–${site.to} Uhr</div>
     </div>
     <div class="rep-block"><h3>Grenzwerte</h3><p>Im Bereich ${zoneTxt()}: Mittelwind max. ${fmt(site.wind)} m/s · Böe max. ${fmt(site.gust)} m/s · Gewitter: Stopp ab CAPE ${CAPE_STOP} J/kg oder Gewittersignal in mind. einem Drittel der Modelle</p></div>
+    <div class="rep-block"><h3>Amtliche Warnungen (DWD, GeoSphere Austria)</h3><p>${(() => { const d0 = localMs(state.day+"T00:00"), ws = allWarnings().filter(w => w.start < d0+864e5 && w.end > d0); return ws.length ? ws.map(w => `${esc(w.src)}: ${esc(w.title)} (${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))})`).join("<br>") : (extras.dwd?.ok===false || extras.geo?.ok===false ? "Nicht vollständig abrufbar." : "Keine Warnungen für den Standort."); })()}</p></div>
     <div class="rep-block"><h3>Prognose zum Freigabezeitpunkt</h3>
       <p>Abgerufen: ${state.fetchedAt.toLocaleString("de-DE")} · Bericht erstellt: ${new Date().toLocaleString("de-DE")}</p>
       <p><b>${esc(LAMP_TXT[sum.lamp]||"")} – ${esc(sum.head||"")}</b> ${esc(sum.text||"")}</p>
