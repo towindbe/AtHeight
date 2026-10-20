@@ -1221,6 +1221,7 @@ function renderModelTable(){
 function initMap(){
   if(typeof L==="undefined"){ $("map").innerHTML = '<p class="note" style="padding:12px">Karte konnte nicht geladen werden.</p>'; return; }
   map = L.map("map", {zoomControl:true, attributionControl:true}).setView([site.lat, site.lon], 14);
+  map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');   // ohne Flaggen-Symbol
   satLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {maxZoom:19, attribution:"Esri, Maxar, Earthstar"}).addTo(map);
   radarLayer = L.tileLayer.wms("https://maps.dwd.de/geoserver/dwd/wms", {layers:"dwd:Niederschlagsradar", format:"image/png", transparent:true, opacity:.65, attribution:"Radar © DWD"});
   marker = L.marker([site.lat, site.lon], {draggable:true, title:"Anlage"}).addTo(map);
