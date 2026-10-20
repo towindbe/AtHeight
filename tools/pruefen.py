@@ -71,22 +71,27 @@ def main(path):
         if m["status"] not in ("ok", "extrap") or not m.get("werte"):
             continue
         try:
-            h = json.load(urllib.request.urlopen(m["abfrage"], timeout=30))["hourly"]
+            # In UTC abfragen: Open-Meteo rechnet Ortszeiten mit festem Versatz,
+            # über eine Zeitumstellung hinweg wären sie verschoben.
+            h = json.load(urllib.request.urlopen(m["abfrage"].replace("timezone=auto", "timezone=GMT"), timeout=30))["hourly"]
         except urllib.error.URLError as e:
             problems.append(f"{m['name']}: Abruf fehlgeschlagen ({e})")
             continue
-        idx = {t: i for i, t in enumerate(h["time"])}
+        idx = {}
+        for i, t in enumerate(h["time"]):
+            idx.setdefault(t, i)
         for w in m["werte"]:
-            if w is None or w["zeit"] not in idx:
+            if w is None or w.get("utc") not in idx:
                 continue
-            i = idx[w["zeit"]]
+            key = w["utc"]
+            i = idx[key]
             lv = [(z, h[f"wind_speed_{z}m"][i]) for z in LEVELS if h.get(f"wind_speed_{z}m") and h[f"wind_speed_{z}m"][i] is not None]
             v = max(x for x in (wind_at(lv, z) for z in heights) if x is not None)
             dirs = [(z, h[f"wind_direction_{z}m"][i]) for z in LEVELS if h.get(f"wind_direction_{z}m") and h[f"wind_direction_{z}m"][i] is not None]
             d = min(dirs, key=lambda x: abs(x[0] - work))[1] if dirs else None
             g10, v10 = h["wind_gusts_10m"][i], h["wind_speed_10m"][i]
             g = None if g10 is None or v10 is None else v * (1 + (clamp(g10 / max(v10, 1), 1, 2.5) - 1) * 0.6)
-            per_hour.setdefault(w["zeit"], []).append(v)
+            per_hour.setdefault(key, []).append(v)
             checked += 1
             bad = []
             if abs(v - w["wind"]) > TOL:
@@ -99,7 +104,7 @@ def main(path):
                 problems.append(f"{m['name']} ({m['anbieter']}) {w['zeit']}: " + "; ".join(bad))
 
     for s in exp["stunden"]:
-        vs = per_hour.get(s["zeit"])
+        vs = per_hour.get(s.get("utc"))
         if vs and s["median"] is not None and abs(statistics.median(vs) - s["median"]) > TOL:
             problems.append(f"Median {s['zeit']}: App {s['median']:.2f} / neu {statistics.median(vs):.2f}")
 

@@ -695,6 +695,7 @@ function sunElev(ms, lat, lon){
 }
 // Ortszeit "JJJJ-MM-TTTHH:MM" des Standorts → Millisekunden UTC (Sommer-/Winterzeit je Datum)
 const tzOff = ms => localParts(ms, state.tz) ? Date.UTC(...localParts(ms, state.tz)) - Math.floor(ms/6e4)*6e4 : (state.off||0)*1000;
+const utcStr = t => new Date(localMs(t)).toISOString().slice(0,16);
 function localMs(t){
   const u = Date.UTC(+t.slice(0,4), +t.slice(5,7)-1, +t.slice(8,10), +t.slice(11,13), +(t.slice(14,16)||0));
   return u - tzOff(u - tzOff(u));
@@ -1149,8 +1150,8 @@ function snapshot(){
     fazit:{ampel:state.summary?.lamp, text:(state.summary?.head||"")+" "+(state.summary?.text||"")},
     bereich:{arbeitshoehe:workH(), bis:zoneTop(), text:zoneTxt()},
     modelle: state.results.map(r=>({id:r.m.id, name:r.m.name, anbieter:r.m.org, status:r.status, abfrage:apiUrl(r.m),
-      werte: r.series ? dayHours(state.day).map(h => { const s = r.series[h.i]; return s ? {zeit:h.t, wind:s.v, boe:s.g, richtung:s.dir, hochgerechnet:s.ext} : null; }) : null})),
-    stunden: dayHours(state.day).map(h=>({zeit:h.t, ampel:h.lamp, median:h.med, min:h.min, max:h.max, boe:h.gMed, richtung:h.dir.mean, modelle:h.n, ueberGrenze:h.over, regen:h.rain, cape:h.cape, gruende:h.why.map(w=>w.t)}))};
+      werte: r.series ? dayHours(state.day).map(h => { const s = r.series[h.i]; return s ? {zeit:h.t, utc:utcStr(h.t), wind:s.v, boe:s.g, richtung:s.dir, hochgerechnet:s.ext} : null; }) : null})),
+    stunden: dayHours(state.day).map(h=>({zeit:h.t, utc:utcStr(h.t), ampel:h.lamp, median:h.med, min:h.min, max:h.max, boe:h.gMed, richtung:h.dir.mean, modelle:h.n, ueberGrenze:h.over, regen:h.rain, cape:h.cape, gruende:h.why.map(w=>w.t)}))};
 }
 async function buildReport(){
   const snap = snapshot(), hash = await sha256(JSON.stringify(snap));
