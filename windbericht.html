@@ -114,6 +114,15 @@ legend{font:600 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:upper
 /* Karte */
 #map{height:280px;border-radius:9px;border:1px solid var(--line);z-index:0}
 .map-wrap{position:relative}
+.radar-time{position:absolute;top:10px;right:10px;z-index:500;background:rgba(0,0,0,.6);color:#fff;font:600 14px var(--f-mono);padding:5px 9px;border-radius:6px;pointer-events:none}
+.radar-time span{font:600 10.5px var(--f-body);text-transform:uppercase;letter-spacing:.06em;margin-left:6px;padding:1px 6px;border-radius:4px}
+.rt-obs{background:#2e7d4f} .rt-fc{background:#b86b00}
+.radar-bar{display:grid;grid-template-columns:auto 1fr;gap:8px 10px;align-items:center}
+.radar-bar input[type=range]{width:100%;padding:0;accent-color:var(--accent)}
+.radar-legend{grid-column:1/-1}
+.rl-bar{height:8px;border-radius:4px;background:linear-gradient(90deg,#33ffff 0%,#00c8a0 7%,#009933 14%,#55b52b 21%,#99cc00 28%,#ddee00 35%,#ffee00 42%,#ffcc00 49%,#ff9900 56%,#ff6600 63%,#ff0000 70%,#e6007a 78%,#cc00aa 85%,#6600cc 92%,#0000ff 100%)}
+.rl-lab{display:flex;justify-content:space-between;font:500 10px var(--f-mono);color:var(--muted);margin-top:2px}
+.radar-bar .note{grid-column:1/-1}
 .fav-panel{position:absolute;top:calc(100% + 6px);right:0;z-index:1500;width:min(300px,calc(100% - 20px));background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:10px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
 .fav-list{max-height:190px;overflow-y:auto;margin:6px 0 8px}
 .fav-item{display:flex;align-items:center;gap:4px;border-radius:6px}
@@ -405,7 +414,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
       <div class="card-head">
         <h2>Anlage auf der Karte</h2>
         <div class="seg" role="group" aria-label="Kartenebene">
-          <button type="button" id="radarBtn" aria-pressed="false">Radar einblenden</button>
+          <button type="button" id="radarBtn" aria-pressed="false">Regenradar</button>
         </div>
       </div>
       <form class="search" id="searchForm" role="search">
@@ -415,6 +424,16 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
       <ul class="results" id="searchResults" hidden></ul>
       <div class="map-wrap">
         <div id="map" role="application" aria-label="Karte des Anlagenstandorts"></div>
+        <div class="radar-time" id="radarTime" hidden></div>
+      </div>
+      <div class="radar-bar" id="radarBar" hidden>
+        <button type="button" id="radarPlay" class="icon-btn" aria-label="Animation anhalten">⏸</button>
+        <input type="range" id="radarSlider" min="0" max="0" value="0" aria-label="Zeitpunkt des Radarbilds">
+        <div class="radar-legend" aria-label="Niederschlag in mm/h">
+          <div class="rl-bar"></div>
+          <div class="rl-lab"><span>0,1</span><span>1</span><span>5</span><span>15</span><span>45</span><span>150 mm/h</span></div>
+        </div>
+        <p class="note" id="radarNote">Regenradar DWD: letzte 90 Minuten gemessen, danach bis 2 Stunden Vorhersage. Magenta Linie: Reichweite des Radars.</p>
       </div>
       <div class="pickbar" id="pickBar" hidden>
         <div class="pick-info"><b id="pickTitle">Neuer Standort</b><span class="mono" id="pickText"></span></div>
@@ -428,7 +447,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
           <button class="ghost" id="pickCancel" type="button">Verwerfen</button>
         </div>
       </div>
-      <p class="note" id="mapNote">Ort suchen oder direkt auf die Anlage tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Radar: DWD, nur Deutschland und Grenzgebiete.</p>
+      <p class="note" id="mapNote">Ort suchen oder direkt auf die Anlage tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Regenradar: DWD, nur Deutschland und Grenzgebiete.</p>
     </section>
 
     <section class="card needs-data">
@@ -544,7 +563,7 @@ const LAMP_TXT = {go:"GO", warn:"PRÜFEN", stop:"STOP", none:"–"};
 let site = loadSite();
 let state = {results:[], times:[], hours:[], fetchedAt:null, day:null, sel:null, view:"band"};
 const charts = {};
-let map, marker, rotorCircle, arrowMarker, satLayer, radarLayer;
+let map, marker, rotorCircle, arrowMarker, satLayer;
 
 /* ---------- Hilfsfunktionen ---------- */
 function loadSite(){
@@ -1233,16 +1252,77 @@ function initMap(){
   map = L.map("map", {zoomControl:true, attributionControl:true}).setView([site.lat, site.lon], 14);
   map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');   // ohne Flaggen-Symbol
   satLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {maxZoom:19, attribution:"Map data © Esri, Maxar, Earthstar Geographics"}).addTo(map);
-  radarLayer = L.tileLayer.wms("https://maps.dwd.de/geoserver/dwd/wms", {layers:"dwd:Niederschlagsradar", format:"image/png", transparent:true, opacity:.65, attribution:"Radar © DWD"});
   marker = L.marker([site.lat, site.lon], {draggable:true, title:"Anlage"}).addTo(map);
   rotorCircle = L.circle([site.lat, site.lon], {radius:site.rotor/2, color:"#ff7a33", weight:2, fillOpacity:.08}).addTo(map);
   marker.on("dragend", () => setPos(marker.getLatLng(), true));
   map.on("click", e => setPos(e.latlng));
-  $("radarBtn").onclick = () => {
-    const on = $("radarBtn").getAttribute("aria-pressed")!=="true";
-    $("radarBtn").setAttribute("aria-pressed", String(on)); $("radarBtn").textContent = on ? "Radar ausblenden" : "Radar einblenden";
-    if(on){ radarLayer.setParams({_t:Date.now()}); radarLayer.addTo(map); if(map.getZoom()>10) map.setZoom(9); } else map.removeLayer(radarLayer);
+  $("radarBtn").onclick = () => radarToggle($("radarBtn").getAttribute("aria-pressed")!=="true");
+  $("radarPlay").onclick = () => radarPlay(!radar.playing);
+  $("radarSlider").oninput = e => { radarPlay(false); radarShow(+e.target.value); };
+  map.on("moveend", () => { if(radar.on){ clearTimeout(radar.rebuild); radar.rebuild = setTimeout(radarFrames, 300); } });
+}
+
+/* ---------- Regenradar als Animation (DWD, 5-Minuten-Bilder) ----------
+   Pro Zeitschritt ein Bild für den sichtbaren Ausschnitt (WMS GetMap), vorab geladen. */
+const RADAR_URL = "https://maps.dwd.de/geoserver/dwd/wms";
+const RADAR_PAST = 90, RADAR_AHEAD = 120, RADAR_STEP = 10;   // Minuten
+const radar = {on:false, playing:true, frames:[], idx:0, overlay:null, timer:null, rebuild:null};
+function radarToggle(on){
+  radar.on = on;
+  $("radarBtn").setAttribute("aria-pressed", String(on));
+  $("radarBar").hidden = $("radarTime").hidden = !on;
+  if(on){
+    if(map.getZoom() > 9) map.setZoom(8);   // weit genug heraus, um anziehende Schauer zu sehen
+    radarFrames(); radarPlay(true);
+  } else {
+    radarPlay(false);
+    if(radar.overlay){ map.removeLayer(radar.overlay); radar.overlay = null; }
+  }
+}
+function radarFrames(){
+  if(!radar.on) return;
+  // Letztes sicher verfügbares Bild: jetzt, auf 5 min abgerundet, minus 10 min Verarbeitung
+  const now = Date.now(), last = Math.floor(now/3e5)*3e5 - 6e5;
+  const times = [];
+  for(let m = -RADAR_PAST; m <= RADAR_AHEAD; m += RADAR_STEP) times.push(last + m*6e4);
+  const b = map.getBounds(), crs = map.options.crs, sw = crs.project(b.getSouthWest()), ne = crs.project(b.getNorthEast());
+  const size = map.getSize(), k = Math.min(1, 1024/Math.max(size.x, size.y));
+  const prev = radar.frames[radar.idx]?.t;
+  radar.frames = times.map(t => {
+    const q = new URLSearchParams({service:"WMS", version:"1.3.0", request:"GetMap", layers:"dwd:Niederschlagsradar", styles:"", format:"image/png", transparent:"true",
+      crs:"EPSG:3857", bbox:[sw.x, sw.y, ne.x, ne.y].map(v => Math.round(v)).join(","), width:Math.round(size.x*k), height:Math.round(size.y*k),
+      time:new Date(t).toISOString().replace(/\.\d+Z$/, ".000Z")});
+    const url = RADAR_URL + "?" + q, img = new Image();
+    img.src = url;   // vorladen, damit die Animation flüssig läuft
+    return {t, url, img, ahead: t > last};
+  });
+  radar.bounds = b;
+  $("radarSlider").max = String(radar.frames.length - 1);
+  const keep = radar.frames.findIndex(f => f.t===prev);
+  radarShow(keep >= 0 ? keep : radar.frames.findIndex(f => f.ahead) - 1);
+}
+function radarShow(i){
+  const f = radar.frames[i]; if(!f) return;
+  radar.idx = i; $("radarSlider").value = String(i);
+  if(!radar.overlay) radar.overlay = L.imageOverlay(f.url, radar.bounds, {opacity:.75, interactive:false, attribution:"Radar © DWD"}).addTo(map);
+  else { radar.overlay.setBounds(radar.bounds); radar.overlay.setUrl(f.url); }
+  const time = new Date(f.t).toLocaleTimeString("de-DE", {timeZone:state.tz || undefined, hour:"2-digit", minute:"2-digit"});
+  $("radarTime").innerHTML = `${time} Uhr <span class="${f.ahead ? "rt-fc" : "rt-obs"}">${f.ahead ? "Vorhersage" : "gemessen"}</span>`;
+}
+function radarPlay(on){
+  radar.playing = on;
+  $("radarPlay").textContent = on ? "⏸" : "▶";
+  $("radarPlay").setAttribute("aria-label", on ? "Animation anhalten" : "Animation abspielen");
+  clearTimeout(radar.timer);
+  if(!on) return;
+  const step = () => {
+    if(!radar.playing || !radar.on) return;
+    const n = radar.frames.length, next = (radar.idx + 1) % n;
+    // erst weiter, wenn das Bild geladen ist; am Ende kurz stehen bleiben
+    if(radar.frames[next]?.img.complete) radarShow(next);
+    radar.timer = setTimeout(step, next === n-1 ? 1600 : 450);
   };
+  radar.timer = setTimeout(step, 450);
 }
 let pending = null, pendingName = null, pendingDrag = false;
 let siteChosen = (() => { try{ return localStorage.getItem("wb_site")!==null; }catch(e){ return true; } })();
@@ -1533,7 +1613,7 @@ $("saveBtn").onclick = () => {
   if(k >= 0){ favs[k] = {name:site.name, site:{...site}}; saveFavs(favs); }
   siteReady(); saveSite(); toggleSettings(false);
   if(map) map.setView([site.lat, site.lon], Math.max(map.getZoom(), 13));
-  $("mapNote").textContent = "Ort suchen oder direkt auf die Anlage tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Radar: DWD, nur Deutschland und Grenzgebiete.";
+  $("mapNote").textContent = "Ort suchen oder direkt auf die Anlage tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Regenradar: DWD, nur Deutschland und Grenzgebiete.";
   load();
 };
 $("gpsBtn").onclick = () => {
