@@ -118,8 +118,13 @@ legend{font:600 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:upper
 
 /* Zeitleiste */
 .tl{overflow-x:auto;padding-bottom:4px}
+.tl{position:relative}
+.tl-days{display:flex;gap:10px;min-width:max-content}
+.tl-day{display:flex;flex-direction:column;gap:4px}
+.tl-day .eyebrow{padding-left:2px}
+.tl-day.cur .eyebrow{color:var(--fg)}
 .tl-hours{display:flex;gap:2px;padding-top:6px}
-.tl-cell{flex:1 0 18px;height:46px;border-radius:5px;border:0;padding:0 0 4px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font:600 10.5px var(--f-mono);color:#fff;cursor:pointer;position:relative}
+.tl-cell{width:24px;height:46px;border-radius:5px;border:0;padding:0 0 4px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font:600 10.5px var(--f-mono);color:#fff;cursor:pointer;position:relative}
 .tl-cell span{text-shadow:0 1px 1px rgba(0,0,0,.35)}
 .seg-day .dot{margin-right:6px;vertical-align:0}
 .tl-cell.off{opacity:.38}
@@ -167,14 +172,6 @@ td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 @media print{.raw{display:none}}
 .b-ok{background:var(--go-bg);color:var(--go)} .b-out{background:var(--raised);color:var(--muted)} .b-err{background:var(--stop-bg);color:var(--stop)} .b-ext{background:var(--warn-bg);color:var(--warn)}
 details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02em}
-.more{border:1px solid var(--line);border-radius:12px;background:var(--surface)}
-.more>summary{list-style:none;display:flex;flex-direction:column;gap:2px;padding:14px 44px 14px 14px;position:relative}
-.more>summary::-webkit-details-marker{display:none}
-.more>summary::after{content:"";position:absolute;right:18px;top:50%;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:translateY(-70%) rotate(45deg);transition:transform .15s}
-.more[open]>summary::after{transform:translateY(-30%) rotate(-135deg)}
-.more-title{font:600 20px var(--f-display)}
-.more-body{display:flex;flex-direction:column;gap:14px;padding:0 14px 14px}
-.more-body .card{background:var(--raised)}
 .error{background:var(--stop-bg);color:var(--stop);border-radius:8px;padding:10px 12px}
 #report{display:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -289,8 +286,8 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
         <span><i class="sw c-stop"></i>Stop: Median drüber, Gewitter</span>
       </div>
     </div>
-    <div class="tl"><div class="tl-hours" id="timeline"></div></div>
-    <p class="note">Ein Feld pro Stunde der Arbeitszeit. Antippen zeigt oben die Werte dieser Stunde.</p>
+    <div class="tl" id="tlScroll"><div class="tl-days" id="timeline"></div></div>
+    <p class="note">Ein Feld pro Stunde, seitlich durch alle Tage scrollen. Blass: außerhalb der Arbeitszeit. Antippen zeigt oben die Werte dieser Stunde.</p>
   </section>
 
   <!-- Verlauf -->
@@ -347,6 +344,41 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
     </section>
   </div>
 
+  <!-- Details -->
+  <!-- Höhenprofil + Niederschlag -->
+  <div class="cols">
+    <section class="card">
+      <div class="card-head"><h2>Höhenprofil</h2><span class="eyebrow" id="profileHour"></span></div>
+      <div class="chart-sm"><canvas id="profile" aria-label="Windgeschwindigkeit nach Höhe"></canvas></div>
+      <p class="note">Wind vom Boden bis über die Blattspitze zur gewählten Stunde.</p>
+    </section>
+    <section class="card">
+      <div class="card-head"><h2>Regen &amp; Gewitter</h2><span class="eyebrow" id="rainDay"></span></div>
+      <div class="chart-sm"><canvas id="rain" aria-label="Niederschlag und Gewitterneigung"></canvas></div>
+      <p class="note">Balken: Regen in mm/h. Linie: Gewitterenergie CAPE, ab 300 J/kg Schauer möglich, ab 800 J/kg Stop.</p>
+    </section>
+  </div>
+
+  <!-- Modell-Matrix -->
+  <section class="card">
+    <div class="card-head"><h2>Modell-Matrix</h2><span class="eyebrow" id="mxDay"></span></div>
+    <div class="mx" id="matrix"></div>
+    <p class="note">Wind je Modell und Stunde in m/s. Gelb ab 75 % des Grenzwerts, rot darüber. Zeigt, ob nur ein Ausreißer warnt oder fast alle.</p>
+  </section>
+
+  <section class="card">
+    <h2>Stunden im Detail</h2>
+    <div class="scroll"><table class="t" id="hourTable"></table></div>
+    <p class="note">Wind aus den Modellwerten in 10, 80, 120 und 180 m auf die Arbeitshöhe interpoliert. Böen liefern die Modelle nur in 10 m; die Böe in der Höhe ist daraus geschätzt und sollte mit NC2-Messwerten geprüft werden.</p>
+  </section>
+
+  <section class="card">
+    <h2>Modelle am Standort</h2>
+    <div class="scroll"><table class="t" id="modelTable"></table></div>
+    <p class="note">Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung.</p>
+  </section>
+
+  <!-- Tagesbericht -->
   <section class="card">
     <h2>Tagesbericht</h2>
     <p class="note">Dokumentiert die Prognose zum Zeitpunkt der Freigabe. Als PDF drucken und zur Projektdokumentation legen.</p>
@@ -370,49 +402,6 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
       <button id="jsonBtn" type="button">Rohdaten speichern (JSON)</button>
     </div>
   </section>
-
-  <!-- Fachdetails, standardmäßig zugeklappt -->
-  <details class="more" id="moreBox">
-    <summary><span class="more-title">Mehr Details</span><span class="note">Höhenprofil · Regen &amp; Gewitter · Modell-Matrix · Stundentabelle · Modelle</span></summary>
-    <div class="more-body">
-    <!-- Höhenprofil + Niederschlag -->
-    <div class="cols">
-      <section class="card">
-        <div class="card-head"><h2>Höhenprofil</h2><span class="eyebrow" id="profileHour"></span></div>
-        <div class="chart-sm"><canvas id="profile" aria-label="Windgeschwindigkeit nach Höhe"></canvas></div>
-        <p class="note">Wind vom Boden bis über die Blattspitze zur gewählten Stunde.</p>
-      </section>
-      <section class="card">
-        <div class="card-head"><h2>Regen &amp; Gewitter</h2><span class="eyebrow" id="rainDay"></span></div>
-        <div class="chart-sm"><canvas id="rain" aria-label="Niederschlag und Gewitterneigung"></canvas></div>
-        <p class="note">Balken: Regen in mm/h. Linie: Gewitterenergie CAPE, ab 300 J/kg Schauer möglich, ab 800 J/kg Stop.</p>
-      </section>
-    </div>
-
-    <!-- Modell-Matrix -->
-    <section class="card">
-      <div class="card-head"><h2>Modell-Matrix</h2><span class="eyebrow" id="mxDay"></span></div>
-      <div class="mx" id="matrix"></div>
-      <p class="note">Wind je Modell und Stunde in m/s. Gelb ab 75 % des Grenzwerts, rot darüber. Zeigt, ob nur ein Ausreißer warnt oder fast alle.</p>
-    </section>
-
-    <section class="card">
-      <details>
-        <summary>Stunden im Detail</summary>
-        <div class="scroll" style="margin-top:10px"><table class="t" id="hourTable"></table></div>
-        <p class="note" style="margin-top:8px">Wind aus den Modellwerten in 10, 80, 120 und 180 m auf die Arbeitshöhe interpoliert. Böen liefern die Modelle nur in 10 m; die Böe in der Höhe ist daraus geschätzt und sollte mit NC2-Messwerten geprüft werden.</p>
-      </details>
-    </section>
-
-    <section class="card">
-      <details>
-        <summary>Modelle am Standort</summary>
-        <div class="scroll" style="margin-top:10px"><table class="t" id="modelTable"></table></div>
-        <p class="note" style="margin-top:8px">Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung.</p>
-      </details>
-    </section>
-    </div>
-  </details>
 
   <p class="note">Wetterdaten: Open-Meteo.com (CC BY 4.0) mit Modellen von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA u. a. Radar: DWD. Karten: Esri, OpenStreetMap. Open-Meteo ist kostenlos nur für nicht-kommerzielle Nutzung. Entscheidungshilfe, ersetzt nicht die Beurteilung vor Ort durch den Aufsichtführenden.</p>
 
@@ -677,12 +666,20 @@ function renderNow(){
 }
 
 function renderTimeline(){
+  const days = [...new Set(state.times.map(t=>t.slice(0,10)))];
   const nk = nowKey();
-  $("timeline").innerHTML = dayHours(state.day).map(h =>
-    `<button type="button" class="tl-cell c-${h.lamp} ${h.t.slice(0,13)===nk?"nowc":""}" data-i="${h.i}" aria-label="${hh(h.t)} Uhr: ${LAMP_TXT[h.lamp]}, ${fmt(h.med)} m/s"><span>${hh(h.t)}</span></button>`).join("");
+  $("timeline").innerHTML = days.map(d => {
+    const cells = state.hours.filter(h=>h.t.startsWith(d)).map(h =>
+      `<button type="button" class="tl-cell c-${h.lamp} ${isWork(h.t)?"":"off"} ${h.t.slice(0,13)===nk?"nowc":""}" data-i="${h.i}" aria-label="${dayLabel(d,true)} ${hh(h.t)} Uhr: ${LAMP_TXT[h.lamp]}, ${fmt(h.med)} m/s"><span>${hourOf(h.t)%3===0?hh(h.t):""}</span></button>`).join("");
+    return `<div class="tl-day ${d===state.day?"cur":""}"><span class="eyebrow">${esc(dayLabel(d))}</span><div class="tl-hours">${cells}</div></div>`;
+  }).join("");
   $("timeline").querySelectorAll(".tl-cell").forEach(b => b.onclick = () => selectHour(+b.dataset.i, true));
-  const selEl = $("timeline").querySelector(`[data-i="${state.sel}"]`);
-  if(selEl) selEl.scrollIntoView({block:"nearest", inline:"center"});
+  scrollTimeline();
+}
+function scrollTimeline(){
+  // nur seitlich scrollen, die Seite selbst bleibt stehen
+  const box = $("tlScroll"), el = $("timeline").querySelector(`[data-i="${state.sel}"]`);
+  if(el) box.scrollLeft = el.offsetLeft - box.clientWidth/2 + el.offsetWidth/2;
 }
 function highlightSel(){
   $("timeline").querySelectorAll(".tl-cell").forEach(b => b.classList.toggle("sel", +b.dataset.i===state.sel));
@@ -1077,11 +1074,6 @@ $("jsonBtn").onclick = async () => {
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
   a.download = `windbericht_${site.name.replace(/\W+/g,"_")}_${state.day}.json`; document.body.appendChild(a); a.click(); a.remove();
 };
-try{ if(localStorage.getItem("wb_more")==="1") $("moreBox").open = true; }catch(e){}
-$("moreBox").addEventListener("toggle", () => {
-  try{ localStorage.setItem("wb_more", $("moreBox").open ? "1" : "0"); }catch(e){}
-  if($("moreBox").open) Object.values(charts).forEach(c => c && c.resize());
-});
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => state.fetchedAt && render());
 
 fillSettings();
