@@ -90,6 +90,10 @@ legend{font:600 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:upper
 .headline{font:600 23px/1.12 var(--f-display);margin:0}
 .hero-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .seg-day button{padding:8px 14px;font-size:14px}
+.why{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.why li{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:3px 9px;border-radius:99px;background:var(--raised);border:1px solid var(--line)}
+.why li.w-stop{border-color:var(--stop);background:var(--stop-bg)} .why li.w-warn{border-color:var(--warn);background:var(--warn-bg)} .why li.w-go{border-color:var(--go);background:var(--go-bg)}
+.tl-cell.dark,.sw.dark{background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.35) 0 3px,transparent 3px 6px)}
 .now-head{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap;font-size:14px}
 .hero p{margin:0}
 .now{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
@@ -189,6 +193,7 @@ table.t th,table.t td{padding:6px 8px;border-bottom:1px solid var(--line);text-a
 table.t th:first-child,table.t td:first-child{text-align:left}
 table.t th{font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
 td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+table.t td.why-cell{text-align:left;white-space:normal;min-width:220px;font-size:12px;color:var(--muted)}
 .over{color:var(--stop);font-weight:600}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle}
 .d-go{background:var(--go)} .d-warn{background:var(--warn)} .d-stop{background:var(--stop)} .d-none{background:var(--none)}
@@ -304,6 +309,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
       </div>
     </div>
     <div class="now-head needs-data"><b id="nowLabel">Gewählte Stunde</b><span class="note">Andere Stunde: Feld im Arbeitsfenster antippen</span></div>
+    <ul class="why needs-data" id="nowWhy"></ul>
     <div class="now needs-data" id="nowBox">
       <div><small>Wind</small><b>–</b><small>m/s Median</small></div>
       <div><small>Böe</small><b>–</b><small>m/s geschätzt</small></div>
@@ -321,6 +327,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
         <span><i class="sw c-go"></i>GO</span>
         <span><i class="sw c-warn"></i>Prüfen: einzelne Modelle drüber, Schauer</span>
         <span><i class="sw c-stop"></i>Stop: Median drüber, Gewitter</span>
+        <span><i class="sw c-go dark"></i>Schraffiert: dunkel</span>
       </div>
     </div>
     <div class="tl" id="tlScroll"><div class="tl-days" id="timeline"></div></div>
@@ -510,7 +517,32 @@ function circMean(ds){
   const R = Math.hypot(x,y);
   return {mean:(Math.atan2(y,x)*180/Math.PI+360)%360, spread: R>0 ? Math.sqrt(-2*Math.log(R))*180/Math.PI : 180};
 }
-function nowKey(){ const n=new Date(), p=x=>String(x).padStart(2,"0"); return `${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}T${p(n.getHours())}`; }
+/* Zeitzonen: Open-Meteo liefert alle Zeiten mit EINEM festen Versatz (dem bei der Abfrage gültigen).
+   Über eine Sommer-/Winterzeitumstellung hinweg wären die Uhrzeiten dann um eine Stunde verschoben.
+   Deshalb werden die Zeitstempel nach dem Abruf in die echte Ortszeit des Standorts umgerechnet. */
+const tzFmts = {};
+function localParts(ms, tz){
+  if(!tz) return null;
+  try{
+    tzFmts[tz] = tzFmts[tz] || new Intl.DateTimeFormat("en-US", {timeZone:tz, hourCycle:"h23", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit"});
+    const p = Object.fromEntries(tzFmts[tz].formatToParts(new Date(ms)).map(x => [x.type, x.value]));
+    return [+p.year, +p.month-1, +p.day, +p.hour, +p.minute];
+  }catch(e){ return null; }
+}
+const pad2 = x => String(x).padStart(2,"0");
+function toLocalStr(ms, tz){
+  const p = localParts(ms, tz); if(!p) return null;
+  return `${p[0]}-${pad2(p[1]+1)}-${pad2(p[2])}T${pad2(p[3])}:${pad2(p[4])}`;
+}
+function fixTimes(hourly, tz, offSec){
+  if(!hourly?.time) return;
+  hourly.time = hourly.time.map(t => toLocalStr(Date.UTC(+t.slice(0,4), +t.slice(5,7)-1, +t.slice(8,10), +t.slice(11,13), +t.slice(14,16)) - offSec*1000, tz) || t);
+}
+function nowKey(){
+  const k = toLocalStr(Date.now(), state.tz);
+  if(k) return k.slice(0,13);
+  const n=new Date(); return `${n.getFullYear()}-${pad2(n.getMonth()+1)}-${pad2(n.getDate())}T${pad2(n.getHours())}`;
+}
 
 /* ---------- Physik: Nabenhöhe ---------- */
 function levelsAt(h, i){
@@ -567,7 +599,8 @@ async function fetchModel(m){
     const j = await r.json().catch(() => ({}));
     if(/no data is available for this location/i.test(j.reason||"")) return {m, status:"outside", reason:j.reason};
     if(!r.ok || j.error) return {m, status:"error", reason: j.reason || ("HTTP "+r.status)};
-    return {m, status:"ok", hourly:j.hourly, tz:j.timezone};
+    fixTimes(j.hourly, j.timezone, j.utc_offset_seconds||0);
+    return {m, status:"ok", hourly:j.hourly, tz:j.timezone, off:j.utc_offset_seconds||0};
   }catch(e){ return {m, status:"error", reason:"Keine Verbindung"}; }
 }
 
@@ -583,10 +616,11 @@ async function load(){
     $("errorBox").textContent = "Es konnten keine Wetterdaten geladen werden. Prüfe die Internetverbindung. Die App muss in einem Browser wie Chrome, Safari oder Firefox laufen, nicht in einer Datei-Vorschau.";
     $("headline").textContent = "Keine Daten"; return;
   }
-  const times = okAny.hourly.time;
+  const times = [...new Set(okAny.hourly.time)];
   const results = raw.map(r => {
     if(r.status!=="ok") return r;
-    const h = r.hourly, idx = new Map(h.time.map((t,i)=>[t,i]));
+    const h = r.hourly, idx = new Map();
+    h.time.forEach((t,i) => { if(!idx.has(t)) idx.set(t,i); });
     const series = times.map(t => {
       const i = idx.get(t); if(i==null) return null;
       const lv = levelsAt(h, i);
@@ -600,6 +634,7 @@ async function load(){
     return {...r, status: series.some(s => s && s.ext) ? "extrap" : "ok", series, n};
   });
   const usable = results.filter(r => r.status==="ok" || r.status==="extrap");
+  state.off = okAny.off; state.tz = okAny.tz;
   const hours = times.map((t,i) => {
     const pts = usable.map(r => ({r, s:r.series[i]})).filter(x => x.s);
     const vs = pts.map(x=>x.s.v), gs = pts.map(x=>x.s.g).filter(v=>v!=null);
@@ -610,7 +645,8 @@ async function load(){
       storms:pts.filter(x => x.s.wc!=null && x.s.wc>=95).length,
       over:pts.filter(x => x.s.v > site.wind || (x.s.g!=null && x.s.g > site.gust)).length,
       dir:circMean(pts.map(x=>x.s.dir).filter(v=>v!=null))};
-    h.lamp = rate(h);
+    h.dark = isDark(t);
+    Object.assign(h, rate(h));
     return h;
   });
   const nk = nowKey(), today = nk.slice(0,10);
@@ -627,11 +663,56 @@ function defaultSel(day){
   return i>=0 ? i : state.times.findIndex(t=>t.startsWith(day));
 }
 
+/* Ampel pro Stunde. Jede Regel hinterlegt ihren Grund; "info" ändert die Ampel nicht. */
 function rate(h){
-  if(!h.n) return "none";
-  if((h.med!=null && h.med > site.wind) || (h.gMed!=null && h.gMed > site.gust) || h.storms >= Math.max(2, Math.ceil(h.n/3)) || (h.cape!=null && h.cape >= CAPE_STOP)) return "stop";
-  if((h.max!=null && h.max > site.wind) || (h.gMax!=null && h.gMax > site.gust) || h.storms>=1 || (h.rain!=null && h.rain >= RAIN_WARN) || (h.cape!=null && h.cape >= CAPE_WARN)) return "warn";
-  return "go";
+  if(!h.n) return {lamp:"none", why:[]};
+  const why = [], add = (l, t) => why.push({l, t});
+  if(h.med!=null && h.med > site.wind) add("stop", `Mittelwind ${fmt(h.med)} m/s über ${fmt(site.wind)}`);
+  else if(h.max!=null && h.max > site.wind) add("warn", "Einzelne Modelle über Mittelwind-Grenze");
+  if(h.gMed!=null && h.gMed > site.gust) add("stop", `Böe ${fmt(h.gMed)} m/s über ${fmt(site.gust)}`);
+  else if(h.gMax!=null && h.gMax > site.gust) add("warn", "Einzelne Modelle mit Böe über Grenze");
+  if(h.storms >= Math.max(2, Math.ceil(h.n/3))) add("stop", `Gewitter in ${h.storms} von ${h.n} Modellen`);
+  else if(h.storms >= 1) add("warn", `Gewittersignal in ${h.storms} Modell${h.storms>1?"en":""}`);
+  if(h.cape!=null && h.cape >= CAPE_STOP) add("stop", `Gewitterenergie CAPE ${Math.round(h.cape)} J/kg`);
+  else if(h.cape!=null && h.cape >= CAPE_WARN) add("warn", `Gewitterenergie CAPE ${Math.round(h.cape)} J/kg`);
+  if(h.rain!=null && h.rain >= RAIN_WARN) add("warn", `Regen ${fmt(h.rain)} mm/h`);
+  if(h.dark) add("warn", "Dunkel (außerhalb der bürgerlichen Dämmerung)");
+  const lamp = why.some(w => w.l==="stop") ? "stop" : why.some(w => w.l==="warn") ? "warn" : "go";
+  return {lamp, why};
+}
+
+/* ---------- Tageslicht: Sonnenstand nach NOAA-Näherung ---------- */
+const RAD = Math.PI/180;
+function sunElev(ms, lat, lon){
+  const d = ms/864e5 - 10957.5;                        // Tage seit J2000
+  const g = (357.529 + 0.98560028*d) * RAD;
+  const L = (280.459 + 0.98564736*d + 1.915*Math.sin(g) + 0.020*Math.sin(2*g)) * RAD;
+  const e = (23.439 - 0.00000036*d) * RAD;
+  const ra = Math.atan2(Math.cos(e)*Math.sin(L), Math.cos(L)), dec = Math.asin(Math.sin(e)*Math.sin(L));
+  const gmst = 18.697374558 + 24.06570982441908*d;     // Sternzeit Greenwich in Stunden
+  const ha = (gmst*15 + lon)*RAD - ra;
+  return Math.asin(Math.sin(lat*RAD)*Math.sin(dec) + Math.cos(lat*RAD)*Math.cos(dec)*Math.cos(ha)) / RAD;
+}
+// Ortszeit "JJJJ-MM-TTTHH:MM" des Standorts → Millisekunden UTC (Sommer-/Winterzeit je Datum)
+const tzOff = ms => localParts(ms, state.tz) ? Date.UTC(...localParts(ms, state.tz)) - Math.floor(ms/6e4)*6e4 : (state.off||0)*1000;
+function localMs(t){
+  const u = Date.UTC(+t.slice(0,4), +t.slice(5,7)-1, +t.slice(8,10), +t.slice(11,13), +(t.slice(14,16)||0));
+  return u - tzOff(u - tzOff(u));
+}
+const CIVIL = -6;  // bürgerliche Dämmerung: Sonne 6° unter dem Horizont
+// Stunde gilt als dunkel, wenn sie ganz oder teilweise außerhalb der Dämmerung liegt
+const isDark = t => { const a = localMs(t); return sunElev(a, site.lat, site.lon) < CIVIL || sunElev(a + 3599e3, site.lat, site.lon) < CIVIL; };
+function daylight(day){
+  // Beginn und Ende der bürgerlichen Dämmerung, auf 5 Minuten genau
+  let start = null, end = null, prev = null;
+  for(let m = 0; m <= 1440; m += 5){
+    const up = sunElev(localMs(`${day}T00:00`) + m*6e4, site.lat, site.lon) >= CIVIL;
+    if(prev===false && up && start===null) start = m;
+    if(prev===true && !up) end = m;
+    prev = up;
+  }
+  const f = m => m==null ? null : `${String(Math.floor(m/60)).padStart(2,"0")}:${String(m%60).padStart(2,"0")}`;
+  return {start:f(start), end:f(end)};
 }
 const isWork = t => hourOf(t)>=site.from && hourOf(t)<=site.to;
 const dayHours = day => state.hours.filter(h => h.t.startsWith(day) && isWork(h.t));
@@ -696,7 +777,8 @@ function renderHero(){
   const sum = buildSummary(dayHours(state.day));
   state.summary = sum;
   $("lamp").className = "lamp " + sum.lamp; $("lamp").textContent = LAMP_TXT[sum.lamp];
-  $("heroDay").textContent = `${new Date(state.day+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"})} · Arbeitszeit ${site.from}–${site.to} Uhr`;
+  const dl = daylight(state.day);
+  $("heroDay").textContent = `${new Date(state.day+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"})} · Arbeitszeit ${site.from}–${site.to} Uhr` + (dl.start && dl.end ? ` · hell ${dl.start}–${dl.end}` : "");
   $("headline").textContent = sum.head; $("summary").textContent = sum.text;
   const u = usableModels();
   $("status").textContent = `Abgerufen ${state.fetchedAt.toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"})} · ${u.length} Modelle aktiv, davon ${u.filter(r=>r.m.hi).length} hochauflösend`;
@@ -705,6 +787,8 @@ function renderHero(){
 function renderNow(){
   const h = state.hours[state.sel]; if(!h) return;
   $("nowLabel").textContent = `${dayLabel(h.t.slice(0,10),true)}, ${hh(h.t)} Uhr` + (isWork(h.t) ? "" : " (außerhalb der Arbeitszeit)");
+  $("nowWhy").innerHTML = (h.why.length ? h.why : [{l:"go", t:"Alle Werte unter euren Grenzwerten"}])
+    .map(w => `<li class="w-${w.l}"><span class="dot d-${w.l==="info"?"none":w.l}"></span>${esc(w.t)}</li>`).join("");
   const cells = [
     ["Wind "+zoneTxt(), fmt(h.med), "m/s Median", h.med>site.wind],
     ["Böe "+zoneTxt(), fmt(h.gMed), "m/s geschätzt", h.gMed>site.gust],
@@ -719,7 +803,7 @@ function renderTimeline(){
   const nk = nowKey();
   $("timeline").innerHTML = days.map(d => {
     const cells = state.hours.filter(h=>h.t.startsWith(d)).map(h =>
-      `<button type="button" class="tl-cell c-${h.lamp} ${isWork(h.t)?"":"off"} ${h.t.slice(0,13)===nk?"nowc":""}" data-i="${h.i}" aria-label="${dayLabel(d,true)} ${hh(h.t)} Uhr: ${LAMP_TXT[h.lamp]}, ${fmt(h.med)} m/s"><span>${hourOf(h.t)%3===0?hh(h.t):""}</span></button>`).join("");
+      `<button type="button" class="tl-cell c-${h.lamp} ${isWork(h.t)?"":"off"} ${h.dark?"dark":""} ${h.t.slice(0,13)===nk?"nowc":""}" data-i="${h.i}" title="${esc(h.why.map(w=>w.t).join(" · "))}" aria-label="${dayLabel(d,true)} ${hh(h.t)} Uhr: ${LAMP_TXT[h.lamp]}, ${fmt(h.med)} m/s"><span>${hourOf(h.t)%3===0?hh(h.t):""}</span></button>`).join("");
     return `<div class="tl-day ${d===state.day?"cur":""}"><span class="eyebrow">${esc(dayLabel(d))}</span><div class="tl-hours">${cells}</div></div>`;
   }).join("");
   $("timeline").querySelectorAll(".tl-cell").forEach(b => b.onclick = () => selectHour(+b.dataset.i, true));
@@ -892,7 +976,7 @@ function renderMatrix(){
   highlightSel();
 }
 
-const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Richtung</th><th>Über Grenze</th><th>Regen</th><th>CAPE</th><th>°C</th></tr></thead>`;
+const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Richtung</th><th>Über Grenze</th><th>Regen</th><th>CAPE</th><th>°C</th><th>Gründe</th></tr></thead>`;
 function hourRows(hs, dots){
   return hs.map(h => `<tr>
     <td class="num">${dots?`<span class="dot d-${h.lamp}"></span> `:LAMP_TXT[h.lamp]+" "}${hh(h.t)}:00</td>
@@ -903,7 +987,8 @@ function hourRows(hs, dots){
     <td class="num">${h.n ? h.over+"/"+h.n : "–"}</td>
     <td class="num">${fmt(h.rain)}</td>
     <td class="num">${h.cape==null?"–":Math.round(h.cape)}</td>
-    <td class="num">${fmt(h.t2,0)}</td></tr>`).join("");
+    <td class="num">${fmt(h.t2,0)}</td>
+    <td class="why-cell">${esc(h.why.filter(w=>w.l!=="go").map(w=>w.t).join(" · ")) || "–"}</td></tr>`).join("");
 }
 function renderHourTable(){ $("hourTable").innerHTML = HOUR_HEAD + "<tbody>" + hourRows(dayHours(state.day), true) + "</tbody>"; }
 
@@ -1065,7 +1150,7 @@ function snapshot(){
     bereich:{arbeitshoehe:workH(), bis:zoneTop(), text:zoneTxt()},
     modelle: state.results.map(r=>({id:r.m.id, name:r.m.name, anbieter:r.m.org, status:r.status, abfrage:apiUrl(r.m),
       werte: r.series ? dayHours(state.day).map(h => { const s = r.series[h.i]; return s ? {zeit:h.t, wind:s.v, boe:s.g, richtung:s.dir, hochgerechnet:s.ext} : null; }) : null})),
-    stunden: dayHours(state.day).map(h=>({zeit:h.t, ampel:h.lamp, median:h.med, min:h.min, max:h.max, boe:h.gMed, richtung:h.dir.mean, modelle:h.n, ueberGrenze:h.over, regen:h.rain, cape:h.cape}))};
+    stunden: dayHours(state.day).map(h=>({zeit:h.t, ampel:h.lamp, median:h.med, min:h.min, max:h.max, boe:h.gMed, richtung:h.dir.mean, modelle:h.n, ueberGrenze:h.over, regen:h.rain, cape:h.cape, gruende:h.why.map(w=>w.t)}))};
 }
 async function buildReport(){
   const snap = snapshot(), hash = await sha256(JSON.stringify(snap));
