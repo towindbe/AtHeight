@@ -1,0 +1,951 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f141a">
+<title>Windberg Windbericht</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* Layout: eine Spalte am Handy, zwei Spalten ab Tablet. Oben die Entscheidung, dann Karte, Zeitleiste, Verlauf, Analyse der gewählten Stunde, Modell-Matrix, Bericht */
+:root{
+  --bg:#eef1f4; --surface:#ffffff; --raised:#f6f8fa; --fg:#151d27; --muted:#5a6776; --line:#d6dde5;
+  --accent:#e2570f; --accent-ink:#ffffff; --band:rgba(56,110,170,.18); --band-line:#386eaa;
+  --go:#1d8a4b; --go-bg:#e2f3e9; --warn:#b47716; --warn-bg:#fbf0d9; --stop:#c42b2b; --stop-bg:#fbe3e3; --none:#a4aeb9;
+  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Barlow","Segoe UI",Roboto,Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1217; --surface:#151d25; --raised:#1b252f; --fg:#e9eef3; --muted:#97a4b2; --line:#26313c;
+  --accent:#ff7a33; --accent-ink:#1a0d05; --band:rgba(110,160,220,.20); --band-line:#7fb0e6;
+  --go:#46c27b; --go-bg:#11301f; --warn:#e6b04c; --warn-bg:#352a11; --stop:#ff6767; --stop-bg:#3b1616; --none:#4f5b67;
+  color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#0d1217; --surface:#151d25; --raised:#1b252f; --fg:#e9eef3; --muted:#97a4b2; --line:#26313c;
+  --accent:#ff7a33; --accent-ink:#1a0d05; --band:rgba(110,160,220,.20); --band-line:#7fb0e6;
+  --go:#46c27b; --go-bg:#11301f; --warn:#e6b04c; --warn-bg:#352a11; --stop:#ff6767; --stop-bg:#3b1616; --none:#4f5b67;
+  color-scheme:dark;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 var(--f-body);
+  padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px));padding-block:12px 48px}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;margin:0;text-wrap:balance;letter-spacing:.01em}
+h1{font-size:28px;line-height:1.05}
+h2{font-size:20px;line-height:1.1}
+.eyebrow{font:600 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.note{font-size:12px;color:var(--muted);margin:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.cols{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:760px){.cols{grid-template-columns:1fr 1fr}}
+button{font:600 14px var(--f-body);border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:8px 13px;cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button.ghost{background:transparent}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.tl-cell:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button:disabled{opacity:.5;cursor:default}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;border-radius:0;padding:6px 11px;font-size:13px}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);font-weight:500}
+input,select,textarea{font:15px var(--f-body);color:var(--fg);background:var(--raised);border:1px solid var(--line);border-radius:7px;padding:8px;width:100%}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+
+/* Kopf */
+header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;padding-bottom:10px;border-bottom:3px solid var(--accent)}
+.site-meta{display:flex;gap:4px 12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+
+/* Entscheidung */
+.hero{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.lamp{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;font:700 15px var(--f-display);letter-spacing:.08em;color:#fff;background:var(--none);box-shadow:inset 0 -6px 0 rgba(0,0,0,.15)}
+.lamp.go{background:var(--go)} .lamp.warn{background:var(--warn)} .lamp.stop{background:var(--stop)}
+.headline{font:600 23px/1.12 var(--f-display);margin:0}
+.hero p{margin:0}
+.now{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.now div{background:var(--raised);padding:8px 10px;display:flex;flex-direction:column;gap:1px;min-width:0}
+.now b{font:600 22px/1.1 var(--f-mono);font-variant-numeric:tabular-nums}
+.now small{font-size:11px;color:var(--muted)}
+.now .over b{color:var(--stop)}
+@media (max-width:480px){.now{grid-template-columns:repeat(2,1fr)}.lamp{width:58px;height:58px;font-size:13px}.headline{font-size:20px}h1{font-size:24px}}
+
+/* Karte */
+#map{height:280px;border-radius:9px;border:1px solid var(--line);z-index:0}
+.wind-arrow{pointer-events:none}
+.search{display:flex;gap:8px}
+.search input{flex:1;min-width:0}
+.results{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--raised)}
+.results li button{width:100%;text-align:left;border:0;border-radius:0;background:transparent;padding:9px 12px;font-weight:500;display:flex;flex-direction:column;gap:1px}
+.results li+li{border-top:1px solid var(--line)}
+.results li button:hover{background:var(--surface)}
+.results small{color:var(--muted);font-weight:400;font-size:12px}
+[hidden]{display:none!important}
+.pickbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;background:var(--warn-bg);border:1px solid var(--warn);border-radius:8px;padding:8px 10px;font-size:13px}
+.leaflet-container.picking{cursor:crosshair}
+.leaflet-container{font-family:var(--f-body);background:var(--raised)}
+
+/* Zeitleiste */
+.tl{overflow-x:auto;padding-bottom:4px}
+.tl-days{display:flex;gap:6px;min-width:max-content}
+.tl-day{display:flex;flex-direction:column;gap:4px}
+.tl-day .eyebrow{padding-left:2px}
+.tl-hours{display:flex;gap:2px}
+.tl-cell{width:22px;height:38px;border-radius:4px;border:0;padding:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font:500 9.5px var(--f-mono);color:#fff;cursor:pointer;position:relative}
+.tl-cell.off{opacity:.38}
+.tl-cell.sel{outline:2px solid var(--fg);outline-offset:1px}
+.tl-cell.nowc::after{content:"";position:absolute;top:-5px;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--accent)}
+.c-go{background:var(--go)} .c-warn{background:var(--warn)} .c-stop{background:var(--stop)} .c-none{background:var(--none)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+
+.chart-box{position:relative;height:270px}
+.chart-sm{position:relative;height:240px}
+
+/* Kompass */
+.compass-wrap{display:grid;grid-template-columns:minmax(0,200px) 1fr;gap:12px;align-items:center}
+@media (max-width:420px){.compass-wrap{grid-template-columns:1fr}}
+.compass svg{width:100%;height:auto;display:block}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13px;margin:0}
+.dl dt{color:var(--muted)} .dl dd{margin:0;font-family:var(--f-mono)}
+
+/* Modell-Matrix */
+.mx{overflow-x:auto}
+.mx table{border-collapse:separate;border-spacing:2px;font-size:11px}
+.mx th{font:500 10px var(--f-mono);color:var(--muted);padding:0 2px;text-align:center}
+.mx th.mname{text-align:left;font:600 12px var(--f-body);color:var(--fg);white-space:nowrap;padding-right:8px;position:sticky;left:0;background:var(--surface)}
+.mx th.mname small{font-weight:400;color:var(--muted)}
+.mx td{width:30px;min-width:30px;height:24px;text-align:center;border-radius:3px;font:500 10.5px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--fg)}
+.mx td.m-go{background:var(--go-bg)} .mx td.m-warn{background:var(--warn-bg)} .mx td.m-stop{background:var(--stop);color:#fff} .mx td.m-none{background:var(--raised);color:var(--muted)}
+.mx td.selcol{box-shadow:inset 0 0 0 2px var(--fg)}
+.mx tr.medrow th.mname{color:var(--accent)}
+
+/* Tabellen */
+.scroll{overflow-x:auto}
+table.t{border-collapse:collapse;width:100%;font-size:13px}
+table.t th,table.t td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+table.t th:first-child,table.t td:first-child{text-align:left}
+table.t th{font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.over{color:var(--stop);font-weight:600}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle}
+.d-go{background:var(--go)} .d-warn{background:var(--warn)} .d-stop{background:var(--stop)} .d-none{background:var(--none)}
+.badge{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:600}
+.b-ok{background:var(--go-bg);color:var(--go)} .b-out{background:var(--raised);color:var(--muted)} .b-err{background:var(--stop-bg);color:var(--stop)} .b-ext{background:var(--warn-bg);color:var(--warn)}
+details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02em}
+.error{background:var(--stop-bg);color:var(--stop);border-radius:8px;padding:10px 12px}
+#report{display:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  :root{--bg:#fff;--surface:#fff;--raised:#fff;--fg:#000;--muted:#444;--line:#bbb;color-scheme:light}
+  body{padding:0;font-size:11px}
+  .wrap>*:not(#report){display:none!important}
+  #report{display:block}
+  #report h1{font-size:22px}
+  #report table.t{font-size:10px}
+  #report table.t th,#report table.t td{padding:3px 5px}
+  .rep-block{break-inside:avoid}
+}
+.rep-block{margin-bottom:12px}
+.rep-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px 16px;font-size:12px}
+.sig{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:28px}
+.sig div{border-top:1px solid #000;padding-top:4px;font-size:11px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <div class="eyebrow">Windberg · Wetter-Check für Seilarbeit an WEA</div>
+      <h1 id="siteTitle">Windbericht</h1>
+      <div class="site-meta mono" id="siteMeta"></div>
+    </div>
+    <div class="row">
+      <button id="reloadBtn" type="button">Aktualisieren</button>
+      <button id="settingsBtn" type="button" aria-expanded="false" aria-controls="settings">Standort &amp; Grenzwerte</button>
+    </div>
+  </header>
+
+  <section class="card" id="settings" hidden>
+    <div class="card-head"><h2>Standort &amp; Grenzwerte</h2><span class="note">Tipp: Auf der Karte tippen oder den Marker ziehen, um den Standort zu setzen.</span></div>
+    <div class="grid">
+      <label>Bezeichnung<input id="s_name" type="text"></label>
+      <label>Breite (°N)<input id="s_lat" type="number" step="0.0001"></label>
+      <label>Länge (°E)<input id="s_lon" type="number" step="0.0001"></label>
+      <label>Nabenhöhe (m)<input id="s_hub" type="number" step="1" min="20" max="250"></label>
+      <label>Rotordurchmesser (m)<input id="s_rotor" type="number" step="1" min="0" max="250"></label>
+      <label>Max. Mittelwind Nabe (m/s)<input id="s_wind" type="number" step="0.5"></label>
+      <label>Max. Böe Nabe (m/s)<input id="s_gust" type="number" step="0.5"></label>
+      <label>Arbeitsbeginn (Uhr)<input id="s_from" type="number" min="0" max="23"></label>
+      <label>Arbeitsende (Uhr)<input id="s_to" type="number" min="0" max="23"></label>
+    </div>
+    <p class="note">Die Grenzwerte sind Beispielwerte. Tragt die Vorgaben von Hersteller und Auftraggeber für eure Tätigkeit ein.</p>
+    <div class="row">
+      <button class="primary" id="saveBtn" type="button">Übernehmen &amp; neu laden</button>
+      <button id="gpsBtn" type="button">Mein GPS-Standort</button>
+      <button class="ghost" id="cancelBtn" type="button">Schließen</button>
+    </div>
+  </section>
+
+  <div id="errorBox" class="error" hidden></div>
+
+  <!-- Entscheidung -->
+  <section class="card">
+    <div class="hero">
+      <div class="lamp" id="lamp">…</div>
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+        <div class="eyebrow" id="heroDay">Arbeitstag</div>
+        <p class="headline" id="headline">Lade Wettermodelle…</p>
+        <p class="muted" id="summary"></p>
+      </div>
+    </div>
+    <div class="now" id="nowBox">
+      <div><small>Wind Nabe</small><b>–</b><small>m/s Median</small></div>
+      <div><small>Böe Nabe</small><b>–</b><small>m/s geschätzt</small></div>
+      <div><small>Richtung</small><b>–</b><small>in Nabenhöhe</small></div>
+      <div><small>Modelle</small><b>–</b><small>über Grenze</small></div>
+    </div>
+    <p class="note mono" id="status"></p>
+  </section>
+
+  <!-- Karte + Richtung -->
+  <div class="cols">
+    <section class="card">
+      <div class="card-head">
+        <h2>Standort</h2>
+        <div class="seg" role="group" aria-label="Kartenebene">
+          <button type="button" data-layer="sat" aria-pressed="true">Satellit</button>
+          <button type="button" data-layer="osm" aria-pressed="false">Karte</button>
+          <button type="button" id="radarBtn" aria-pressed="false">Radar</button>
+        </div>
+      </div>
+      <form class="search" id="searchForm" role="search">
+        <input id="searchInput" type="search" placeholder="Ort, Adresse oder Windpark suchen" autocomplete="off" aria-label="Ort suchen">
+        <button class="primary" type="submit">Suchen</button>
+      </form>
+      <ul class="results" id="searchResults" hidden></ul>
+      <div id="map" role="application" aria-label="Karte des Anlagenstandorts"></div>
+      <div class="pickbar" id="pickBar" hidden>
+        <span class="mono" id="pickText"></span>
+        <div class="row">
+          <button class="ghost" id="pickCancel" type="button">Verwerfen</button>
+          <button class="primary" id="pickApply" type="button">Standort übernehmen</button>
+        </div>
+      </div>
+      <p class="note" id="mapNote">Ort suchen, dann die Anlage auf der Karte antippen. Pfeil: Windrichtung in Nabenhöhe zur gewählten Stunde. Kreis: Rotorfläche. Radar: Niederschlagsradar des DWD (Deutschland und Grenzgebiete).</p>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2 id="compassTitle">Windrichtung</h2><span class="eyebrow" id="compassHour"></span></div>
+      <div class="compass-wrap">
+        <div class="compass" id="compass"></div>
+        <dl class="dl" id="compassFacts"></dl>
+      </div>
+      <p class="note">Dicker Pfeil: mittlere Richtung aller Modelle. Dünne Striche: einzelne Modelle. Liegen die Striche weit auseinander, ist die Richtung unsicher, etwa bei Winddrehung oder schwachem Wind.</p>
+    </section>
+  </div>
+
+  <!-- Zeitleiste -->
+  <section class="card">
+    <div class="card-head">
+      <h2>Arbeitsfenster</h2>
+      <div class="legend">
+        <span><i class="sw c-go"></i>unter Grenzwert</span>
+        <span><i class="sw c-warn"></i>einzelne Modelle drüber / Schauer</span>
+        <span><i class="sw c-stop"></i>Median drüber / Gewitter</span>
+      </div>
+    </div>
+    <div class="tl"><div class="tl-days" id="timeline"></div></div>
+    <p class="note">Jedes Feld ist eine Stunde. Blass: außerhalb eurer Arbeitszeit. Tippen wählt die Stunde für Karte, Richtung und Höhenprofil.</p>
+  </section>
+
+  <!-- Verlauf -->
+  <section class="card">
+    <div class="card-head">
+      <h2 id="chartTitle">Wind in Nabenhöhe</h2>
+      <div class="row">
+        <div class="seg" role="group" aria-label="Tag" id="dayTabs"></div>
+        <div class="seg" role="group" aria-label="Darstellung">
+          <button type="button" data-view="band" aria-pressed="true">Band</button>
+          <button type="button" data-view="all" aria-pressed="false">Einzelmodelle</button>
+        </div>
+      </div>
+    </div>
+    <div class="chart-box"><canvas id="chart" aria-label="Windverlauf in Nabenhöhe"></canvas></div>
+    <p class="note">Blaues Band: Spanne aller Modelle. Ein schmales Band heißt, die Modelle sind sich einig. Dicke Linie: Median. Gestrichelt: geschätzte Böe. Rot: euer Grenzwert.</p>
+  </section>
+
+  <!-- Höhenprofil + Niederschlag -->
+  <div class="cols">
+    <section class="card">
+      <div class="card-head"><h2>Höhenprofil</h2><span class="eyebrow" id="profileHour"></span></div>
+      <div class="chart-sm"><canvas id="profile" aria-label="Windgeschwindigkeit nach Höhe"></canvas></div>
+      <p class="note">Wind vom Boden bis über die Blattspitze. Zeigt, wie stark der Wind nach oben zunimmt, wichtig für Arbeiten an Turm, Gondel und Blattspitze.</p>
+    </section>
+    <section class="card">
+      <div class="card-head"><h2>Regen &amp; Gewitter</h2><span class="eyebrow" id="rainDay"></span></div>
+      <div class="chart-sm"><canvas id="rain" aria-label="Niederschlag und Gewitterneigung"></canvas></div>
+      <p class="note">Balken: Niederschlag (Median, mm/h). Linie: Gewitterenergie CAPE. Ab etwa 300 J/kg sind Schauer und Gewitter möglich, ab 800 J/kg deutlich.</p>
+    </section>
+  </div>
+
+  <!-- Modell-Matrix -->
+  <section class="card">
+    <div class="card-head"><h2>Modell-Matrix</h2><span class="eyebrow" id="mxDay"></span></div>
+    <div class="mx" id="matrix"></div>
+    <p class="note">Wind in Nabenhöhe je Modell und Stunde (m/s). Grün unter 75 % des Grenzwerts, gelb darüber, rot ab Grenzwert. So sieht man sofort, ob nur ein Ausreißer warnt oder fast alle.</p>
+  </section>
+
+  <section class="card">
+    <details>
+      <summary>Stunden im Detail</summary>
+      <div class="scroll" style="margin-top:10px"><table class="t" id="hourTable"></table></div>
+      <p class="note" style="margin-top:8px">Wind in Nabenhöhe aus den Modellwerten in 80, 120 und 180 m interpoliert. Böen liefern die Modelle nur in 10 m; die Böe in Nabenhöhe ist daraus geschätzt und sollte mit NC2-Messwerten geprüft werden.</p>
+    </details>
+  </section>
+
+  <section class="card">
+    <details>
+      <summary>Modelle am Standort</summary>
+      <div class="scroll" style="margin-top:10px"><table class="t" id="modelTable"></table></div>
+      <p class="note" style="margin-top:8px">Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung.</p>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2>Tagesbericht</h2>
+    <p class="note">Hält fest, welche Prognose zum Zeitpunkt der Freigabe vorlag. Über „Drucken“ als PDF speichern und in der Projektdokumentation ablegen.</p>
+    <div class="grid">
+      <label>Projekt / Auftraggeber<input id="r_project" type="text" placeholder="z. B. Blattinspektion WP Hildesheim"></label>
+      <label>Anlage / Typ<input id="r_turbine" type="text" placeholder="z. B. Nordex N149, WEA 04"></label>
+      <label>Team<input id="r_team" type="text" placeholder="Namen"></label>
+      <label>Aufsichtführender<input id="r_lead" type="text"></label>
+      <label>Tätigkeit<input id="r_task" type="text" placeholder="z. B. Arbeiten am Rotorblatt"></label>
+      <label>Entscheidung
+        <select id="r_decision">
+          <option>Freigegeben</option>
+          <option>Eingeschränkt freigegeben</option>
+          <option>Nicht freigegeben</option>
+        </select>
+      </label>
+    </div>
+    <label>Bemerkungen / Tagesverlauf<textarea id="r_notes" rows="3" placeholder="z. B. 11:40 Abbruch, Böen 16 m/s laut NC2"></textarea></label>
+    <div class="row">
+      <button class="primary" id="printBtn" type="button">Tagesbericht drucken / PDF</button>
+      <button id="jsonBtn" type="button">Rohdaten speichern (JSON)</button>
+    </div>
+  </section>
+
+  <p class="note">Wetterdaten: Open-Meteo.com (CC BY 4.0) mit Modellen von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA u. a. Radar: DWD. Karten: Esri, OpenStreetMap. Open-Meteo ist kostenlos nur für nicht-kommerzielle Nutzung. Entscheidungshilfe, ersetzt nicht die Beurteilung vor Ort durch den Aufsichtführenden.</p>
+
+  <section id="report"></section>
+</div>
+
+<script>
+"use strict";
+const MODELS = [
+  {id:"icon_d2", name:"ICON-D2", org:"DWD", res:"2 km", hi:true},
+  {id:"meteoswiss_icon_ch1", name:"ICON-CH1", org:"MeteoSwiss", res:"1 km", hi:true},
+  {id:"meteoswiss_icon_ch2", name:"ICON-CH2", org:"MeteoSwiss", res:"2 km", hi:true},
+  {id:"geosphere_arome_austria", name:"AROME AT", org:"GeoSphere", res:"2,5 km", hi:true},
+  {id:"meteofrance_arome_france_hd", name:"AROME HD", org:"Météo-France", res:"1,5 km", hi:true},
+  {id:"knmi_harmonie_arome_europe", name:"HARMONIE", org:"KNMI", res:"5,5 km", hi:true},
+  {id:"dmi_harmonie_arome_europe", name:"HARMONIE", org:"DMI", res:"2 km", hi:true},
+  {id:"ukmo_uk_deterministic_2km", name:"UKV", org:"Met Office", res:"2 km", hi:true},
+  {id:"icon_eu", name:"ICON-EU", org:"DWD", res:"7 km", hi:false},
+  {id:"meteofrance_arpege_europe", name:"ARPEGE", org:"Météo-France", res:"11 km", hi:false},
+  {id:"ecmwf_ifs", name:"IFS HRES", org:"ECMWF", res:"9 km", hi:false},
+  {id:"ecmwf_aifs025_single", name:"AIFS (KI)", org:"ECMWF", res:"25 km", hi:false},
+  {id:"ukmo_global_deterministic_10km", name:"UKMO Global", org:"Met Office", res:"10 km", hi:false},
+  {id:"icon_global", name:"ICON Global", org:"DWD", res:"13 km", hi:false},
+  {id:"gfs_global", name:"GFS", org:"NOAA", res:"13 km", hi:false},
+  {id:"gem_global", name:"GEM", org:"Kanada", res:"15 km", hi:false}
+];
+const LEVELS = [10,80,120,180];
+const VARS = ["wind_speed_10m","wind_speed_80m","wind_speed_120m","wind_speed_180m",
+  "wind_direction_10m","wind_direction_80m","wind_direction_120m","wind_direction_180m",
+  "wind_gusts_10m","precipitation","cape","weather_code","temperature_2m"];
+const DEFAULT_SITE = {name:"Hildesheim", lat:52.1508, lon:9.9511, hub:125, rotor:149, wind:12, gust:15, from:6, to:19};
+const CAPE_WARN = 300, CAPE_STOP = 800, RAIN_WARN = 0.5;
+const COLORS = ["#3b82f6","#14b8a6","#a855f7","#f59e0b","#ec4899","#22c55e","#06b6d4","#ef4444","#64748b","#8b5cf6","#84cc16","#f97316","#0ea5e9","#d946ef","#10b981","#eab308"];
+const LAMP_TXT = {go:"GO", warn:"PRÜFEN", stop:"STOP", none:"–"};
+
+let site = loadSite();
+let state = {results:[], times:[], hours:[], fetchedAt:null, day:null, sel:null, view:"band"};
+const charts = {};
+let map, marker, rotorCircle, arrowMarker, satLayer, osmLayer, radarLayer;
+
+/* ---------- Hilfsfunktionen ---------- */
+function loadSite(){
+  try{ const s = JSON.parse(localStorage.getItem("wb_site")||"null"); if(s && typeof s.lat==="number") return {...DEFAULT_SITE, ...s}; }catch(e){}
+  return {...DEFAULT_SITE};
+}
+function saveSite(){ try{ localStorage.setItem("wb_site", JSON.stringify(site)); }catch(e){} }
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = (v, d=1) => v==null || isNaN(v) ? "–" : v.toFixed(d).replace(".", ",");
+const median = a => { if(!a.length) return null; const s=[...a].sort((x,y)=>x-y), m=s.length>>1; return s.length%2 ? s[m] : (s[m-1]+s[m])/2; };
+const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
+const hh = t => t.slice(11,13);
+const hourOf = t => parseInt(t.slice(11,13),10);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const DIRS = ["N","NNO","NO","ONO","O","OSO","SO","SSO","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+const dirName = d => d==null ? "–" : DIRS[Math.round(((d%360)+360)%360/22.5)%16];
+function circMean(ds){
+  if(!ds.length) return {mean:null, spread:null};
+  let x=0,y=0; ds.forEach(d=>{x+=Math.cos(d*Math.PI/180); y+=Math.sin(d*Math.PI/180);});
+  x/=ds.length; y/=ds.length;
+  const R = Math.hypot(x,y);
+  return {mean:(Math.atan2(y,x)*180/Math.PI+360)%360, spread: R>0 ? Math.sqrt(-2*Math.log(R))*180/Math.PI : 180};
+}
+function nowKey(){ const n=new Date(), p=x=>String(x).padStart(2,"0"); return `${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}T${p(n.getHours())}`; }
+
+/* ---------- Physik: Nabenhöhe ---------- */
+function levelsAt(h, i){
+  return LEVELS.map(z => [z, h["wind_speed_"+z+"m"]?.[i], h["wind_direction_"+z+"m"]?.[i]]).filter(([,v]) => v!=null && !isNaN(v));
+}
+function windAt(lv, z){
+  if(!lv.length) return {v:null, ext:false};
+  if(lv.length===1){ const [z0,v0]=lv[0]; return {v: v0*Math.pow(z/z0, 0.2), ext: z!==z0}; }
+  if(z <= lv[0][0]) return {v: lv[0][1]*Math.pow(Math.max(z,2)/lv[0][0], 0.2), ext:false};
+  const last = lv[lv.length-1];
+  if(z >= last[0]){
+    const prev = lv[lv.length-2];
+    let a = 0.14;
+    if(prev[1] > 0.5 && last[1] > 0.5) a = clamp(Math.log(last[1]/prev[1]) / Math.log(last[0]/prev[0]), 0.05, 0.4);
+    return {v: last[1]*Math.pow(z/last[0], a), ext: z > last[0] + 5};
+  }
+  for(let k=0;k<lv.length-1;k++){
+    const [z1,v1]=lv[k], [z2,v2]=lv[k+1];
+    if(z>=z1 && z<=z2) return {v: v1 + (v2-v1)*(z-z1)/(z2-z1), ext: z1===10 && lv.length<3};
+  }
+  return {v:null, ext:false};
+}
+function dirAt(lv, z){
+  const withDir = lv.filter(l => l[2]!=null);
+  if(!withDir.length) return null;
+  return withDir.reduce((a,b) => Math.abs(b[0]-z) < Math.abs(a[0]-z) ? b : a)[2];
+}
+function gustAt(h, i, vHub){
+  const g = h.wind_gusts_10m?.[i], v = h.wind_speed_10m?.[i];
+  if(g==null || v==null || vHub==null) return null;
+  const gf = clamp(g / Math.max(v, 1), 1, 2.5);
+  return vHub * (1 + (gf-1)*0.6);
+}
+
+/* ---------- Daten laden ---------- */
+async function fetchModel(m){
+  const p = new URLSearchParams({latitude:site.lat, longitude:site.lon, hourly:VARS.join(","), models:m.id,
+    wind_speed_unit:"ms", timezone:"auto", forecast_days:"3"});
+  try{
+    const r = await fetch("https://api.open-meteo.com/v1/forecast?"+p.toString());
+    const j = await r.json().catch(() => ({}));
+    if(!r.ok || j.error) return {m, status:"error", reason: j.reason || ("HTTP "+r.status)};
+    return {m, status:"ok", hourly:j.hourly, tz:j.timezone};
+  }catch(e){ return {m, status:"error", reason:"Keine Verbindung"}; }
+}
+
+async function load(){
+  $("errorBox").hidden = true;
+  $("headline").textContent = "Lade Wettermodelle…"; $("lamp").className="lamp"; $("lamp").textContent="…";
+  $("reloadBtn").disabled = true;
+  const raw = await Promise.all(MODELS.map(fetchModel));
+  $("reloadBtn").disabled = false;
+  const okAny = raw.find(r => r.status==="ok");
+  if(!okAny){
+    $("errorBox").hidden = false;
+    $("errorBox").textContent = "Es konnten keine Wetterdaten geladen werden. Prüfe die Internetverbindung. Die App muss in einem Browser wie Chrome, Safari oder Firefox laufen, nicht in einer Datei-Vorschau.";
+    $("headline").textContent = "Keine Daten"; return;
+  }
+  const times = okAny.hourly.time;
+  const results = raw.map(r => {
+    if(r.status!=="ok") return r;
+    const h = r.hourly, idx = new Map(h.time.map((t,i)=>[t,i]));
+    const series = times.map(t => {
+      const i = idx.get(t); if(i==null) return null;
+      const lv = levelsAt(h, i);
+      const hw = windAt(lv, site.hub);
+      if(hw.v==null) return null;
+      return {v:hw.v, ext:hw.ext, g:gustAt(h,i,hw.v), dir:dirAt(lv, site.hub), lv,
+        rain:h.precipitation?.[i], cape:h.cape?.[i], wc:h.weather_code?.[i], t2:h.temperature_2m?.[i]};
+    });
+    const n = series.filter(Boolean).length;
+    if(n===0) return {...r, status:"outside", series};
+    return {...r, status: series.some(s => s && s.ext) ? "extrap" : "ok", series, n};
+  });
+  const usable = results.filter(r => r.status==="ok" || r.status==="extrap");
+  const hours = times.map((t,i) => {
+    const pts = usable.map(r => ({r, s:r.series[i]})).filter(x => x.s);
+    const vs = pts.map(x=>x.s.v), gs = pts.map(x=>x.s.g).filter(v=>v!=null);
+    const h = {t, i, n:pts.length, med:median(vs), min:vs.length?Math.min(...vs):null, max:vs.length?Math.max(...vs):null,
+      gMed:median(gs), gMax:gs.length?Math.max(...gs):null,
+      rain:median(pts.map(x=>x.s.rain).filter(v=>v!=null)), cape:median(pts.map(x=>x.s.cape).filter(v=>v!=null)),
+      t2:median(pts.map(x=>x.s.t2).filter(v=>v!=null)),
+      storms:pts.filter(x => x.s.wc!=null && x.s.wc>=95).length,
+      over:pts.filter(x => x.s.v > site.wind || (x.s.g!=null && x.s.g > site.gust)).length,
+      dir:circMean(pts.map(x=>x.s.dir).filter(v=>v!=null))};
+    h.lamp = rate(h);
+    return h;
+  });
+  const keepDay = state.day && times.some(t=>t.startsWith(state.day)) ? state.day : times[0].slice(0,10);
+  state = {...state, results, times, hours, fetchedAt:new Date(), day:keepDay, tz:okAny.tz};
+  const nk = nowKey();
+  const nowIdx = times.findIndex(t => t.slice(0,13)===nk);
+  state.sel = nowIdx>=0 && times[nowIdx].startsWith(state.day) ? nowIdx : defaultSel(state.day);
+  render();
+}
+function defaultSel(day){
+  const i = state.times.findIndex(t => t.startsWith(day) && hourOf(t)===Math.max(site.from, 8));
+  return i>=0 ? i : state.times.findIndex(t=>t.startsWith(day));
+}
+
+function rate(h){
+  if(!h.n) return "none";
+  if((h.med!=null && h.med > site.wind) || (h.gMed!=null && h.gMed > site.gust) || h.storms >= Math.max(2, Math.ceil(h.n/3)) || (h.cape!=null && h.cape >= CAPE_STOP)) return "stop";
+  if((h.max!=null && h.max > site.wind) || (h.gMax!=null && h.gMax > site.gust) || h.storms>=1 || (h.rain!=null && h.rain >= RAIN_WARN) || (h.cape!=null && h.cape >= CAPE_WARN)) return "warn";
+  return "go";
+}
+const isWork = t => hourOf(t)>=site.from && hourOf(t)<=site.to;
+const dayHours = day => state.hours.filter(h => h.t.startsWith(day) && isWork(h.t));
+const usableModels = () => state.results.filter(r => r.status==="ok"||r.status==="extrap");
+
+function dayLabel(d, short){
+  const today = state.times[0].slice(0,10);
+  const dt = new Date(d+"T12:00:00");
+  const diff = Math.round((dt - new Date(today+"T12:00:00"))/864e5);
+  const rel = ["Heute","Morgen","Übermorgen"][diff] || "";
+  if(short) return rel || dt.toLocaleDateString("de-DE",{weekday:"short"});
+  return rel + " · " + dt.toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"});
+}
+
+function buildSummary(hs){
+  if(!hs.length || !hs.some(h=>h.n)) return {lamp:"none", head:"Für diesen Tag liegen keine Modelldaten vor.", text:""};
+  const c = {go:0,warn:0,stop:0};
+  hs.forEach(h => { if(c[h.lamp]!=null) c[h.lamp]++; });
+  let best=null, cur=null;
+  hs.forEach(h => { if(h.lamp==="go"){ cur = cur ? {...cur, end:h.t, len:cur.len+1} : {start:h.t, end:h.t, len:1}; if(!best||cur.len>best.len) best=cur; } else cur=null; });
+  let lamp, head;
+  if(c.go===hs.length){ lamp="go"; head=`Ganzer Arbeitstag im grünen Bereich (${site.from}–${site.to} Uhr).`; }
+  else if(best && best.len>=2){ lamp = best.len>=4 ? "warn" : "warn"; head=`Grünes Fenster ${hh(best.start)}–${String(hourOf(best.end)+1).padStart(2,"0")} Uhr (${best.len} h).`; if(c.stop===0 && best.len>=hs.length-2) lamp="go"; }
+  else if(c.stop===hs.length){ lamp="stop"; head="Kein Arbeitsfenster: Grenzwerte ganztägig überschritten."; }
+  else { lamp = c.stop > hs.length/2 ? "stop" : "warn"; head="Kein sicheres grünes Fenster, nur Stunden mit Prüfbedarf."; }
+  const parts = [];
+  const firstStop = hs.find(h => h.lamp==="stop");
+  if(firstStop && c.stop!==hs.length) parts.push(`Ab ${hh(firstStop.t)} Uhr liegen ${firstStop.over} von ${firstStop.n} Modellen über euren Grenzwerten.`);
+  const peak = hs.reduce((a,h) => h.med!=null && (!a || h.med>a.med) ? h : a, null);
+  if(peak) parts.push(`Stärkster Wind gegen ${hh(peak.t)} Uhr: ${fmt(peak.med)} m/s (Spanne ${fmt(peak.min)}–${fmt(peak.max)}), Böen ca. ${fmt(peak.gMed)} m/s.`);
+  const st = hs.find(h=>h.storms>0);
+  if(st) parts.push(`Gewittersignal ab ${hh(st.t)} Uhr.`);
+  const spread = median(hs.filter(h=>h.max!=null).map(h=>h.max-h.min));
+  if(spread!=null) parts.push(spread < 2.5 ? "Modelle weitgehend einig." : spread < 5 ? "Modelle streuen mäßig." : "Modelle streuen stark, Lage unsicher.");
+  return {lamp, head, text:parts.join(" "), counts:c, best, spread};
+}
+
+/* ---------- Darstellung ---------- */
+function render(){
+  fillSettings();
+  renderHero(); renderTimeline(); renderDayTabs();
+  renderChart(); renderSelected(); renderRain(); renderMatrix();
+  renderHourTable(); renderModelTable();
+}
+function renderSelected(){ renderNow(); renderCompass(); renderProfile(); updateMap(); highlightSel(); }
+
+function fillSettings(){
+  $("s_name").value = site.name; $("s_lat").value = site.lat; $("s_lon").value = site.lon;
+  $("s_hub").value = site.hub; $("s_rotor").value = site.rotor; $("s_wind").value = site.wind; $("s_gust").value = site.gust;
+  $("s_from").value = site.from; $("s_to").value = site.to;
+  $("siteTitle").textContent = site.name;
+  $("siteMeta").innerHTML = `<span>${fmt(site.lat,4)}° N · ${fmt(site.lon,4)}° E</span><span>Nabe ${site.hub} m · Rotor ${site.rotor} m</span><span>Grenze ${fmt(site.wind)} · Böe ${fmt(site.gust)} m/s</span>`;
+}
+
+function renderHero(){
+  const sum = buildSummary(dayHours(state.day));
+  state.summary = sum;
+  $("lamp").className = "lamp " + sum.lamp; $("lamp").textContent = LAMP_TXT[sum.lamp];
+  $("heroDay").textContent = `${dayLabel(state.day)} · Arbeitszeit ${site.from}–${site.to} Uhr`;
+  $("headline").textContent = sum.head; $("summary").textContent = sum.text;
+  const u = usableModels();
+  $("status").textContent = `Abgerufen ${state.fetchedAt.toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"})} · ${u.length} Modelle aktiv, davon ${u.filter(r=>r.m.hi).length} hochauflösend`;
+}
+
+function renderNow(){
+  const h = state.hours[state.sel]; if(!h) return;
+  const cells = [
+    ["Wind Nabe", fmt(h.med), `m/s · ${hh(h.t)} Uhr`, h.med>site.wind],
+    ["Böe Nabe", fmt(h.gMed), "m/s geschätzt", h.gMed>site.gust],
+    ["Richtung", dirName(h.dir.mean), h.dir.mean==null ? "" : Math.round(h.dir.mean)+"° · Nabe", false],
+    ["Modelle", h.n ? `${h.over}/${h.n}` : "–", "über Grenze", h.over>0 && h.over>=h.n/2]
+  ];
+  $("nowBox").innerHTML = cells.map(([a,b,c,o]) => `<div class="${o?"over":""}"><small>${a}</small><b>${b}</b><small>${c}</small></div>`).join("");
+}
+
+function renderTimeline(){
+  const days = [...new Set(state.times.map(t=>t.slice(0,10)))];
+  const nk = nowKey();
+  $("timeline").innerHTML = days.map(d => {
+    const cells = state.hours.filter(h=>h.t.startsWith(d)).map(h =>
+      `<button type="button" class="tl-cell c-${h.lamp} ${isWork(h.t)?"":"off"} ${h.t.slice(0,13)===nk?"nowc":""}" data-i="${h.i}" aria-label="${dayLabel(d,true)} ${hh(h.t)} Uhr: ${LAMP_TXT[h.lamp]}, ${fmt(h.med)} m/s">${hourOf(h.t)%3===0?hh(h.t):""}</button>`).join("");
+    return `<div class="tl-day"><span class="eyebrow">${esc(dayLabel(d))}</span><div class="tl-hours">${cells}</div></div>`;
+  }).join("");
+  $("timeline").querySelectorAll(".tl-cell").forEach(b => b.onclick = () => selectHour(+b.dataset.i, true));
+  const selEl = $("timeline").querySelector(`[data-i="${state.sel}"]`);
+  if(selEl) selEl.scrollIntoView({block:"nearest", inline:"center"});
+}
+function highlightSel(){
+  $("timeline").querySelectorAll(".tl-cell").forEach(b => b.classList.toggle("sel", +b.dataset.i===state.sel));
+  document.querySelectorAll(".mx td[data-i]").forEach(td => td.classList.toggle("selcol", +td.dataset.i===state.sel));
+}
+function selectHour(i, fromTimeline){
+  state.sel = i;
+  const d = state.times[i].slice(0,10);
+  if(d!==state.day){ state.day = d; renderHero(); renderDayTabs(); renderChart(); renderRain(); renderMatrix(); renderHourTable(); renderModelTable(); }
+  renderSelected();
+  if(charts.main) charts.main.update("none");
+}
+
+function renderDayTabs(){
+  const days = [...new Set(state.times.map(t=>t.slice(0,10)))];
+  $("dayTabs").innerHTML = days.map(d => `<button type="button" data-day="${d}" aria-pressed="${d===state.day}">${esc(dayLabel(d,true))}</button>`).join("");
+  $("dayTabs").querySelectorAll("button").forEach(b => b.onclick = () => {
+    state.day = b.dataset.day; state.sel = defaultSel(state.day);
+    renderHero(); renderDayTabs(); renderTimeline(); renderChart(); renderRain(); renderMatrix(); renderHourTable(); renderModelTable(); renderSelected();
+  });
+}
+
+function chartBase(yTitle){
+  const muted = css("--muted"), line = css("--line");
+  return {responsive:true, maintainAspectRatio:false, animation:false, interaction:{mode:"index", intersect:false},
+    plugins:{legend:{display:false}},
+    scales:{x:{ticks:{color:muted, font:{family:"IBM Plex Mono", size:10}, maxRotation:0, autoSkip:true}, grid:{color:line}},
+      y:{beginAtZero:true, ticks:{color:muted, font:{family:"IBM Plex Mono", size:10}}, grid:{color:line}, title:{display:!!yTitle, text:yTitle, color:muted}}}};
+}
+const dayIdx = () => state.times.map((t,i)=>[t,i]).filter(([t])=>t.startsWith(state.day)).map(([,i])=>i);
+
+/* Plugin: Arbeitszeit hinterlegen + gewählte Stunde markieren */
+const markPlugin = {id:"marks", beforeDatasetsDraw(c){
+  if(!c.$idxs) return;
+  const {ctx, chartArea:a, scales:{x}} = c; ctx.save();
+  const step = x.getPixelForValue(1)-x.getPixelForValue(0);
+  c.$idxs.forEach((gi,k) => {
+    if(!isWork(state.times[gi])){ ctx.fillStyle = css("--raised"); ctx.fillRect(x.getPixelForValue(k)-step/2, a.top, step, a.bottom-a.top); }
+  });
+  const sk = c.$idxs.indexOf(state.sel);
+  if(sk>=0){ ctx.strokeStyle = css("--accent"); ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x.getPixelForValue(sk), a.top); ctx.lineTo(x.getPixelForValue(sk), a.bottom); ctx.stroke(); }
+  ctx.restore();
+}};
+
+function renderChart(){
+  if(typeof Chart==="undefined"){ $("chartTitle").textContent = "Wind in Nabenhöhe (Diagramm nicht geladen)"; return; }
+  const idxs = dayIdx(), labels = idxs.map(i => hh(state.times[i]));
+  const H = idxs.map(i=>state.hours[i]), r2 = v => v==null?null:+v.toFixed(2);
+  const fg = css("--fg"), stop = css("--stop");
+  let ds = [];
+  if(state.view==="band"){
+    ds.push({label:"Minimum", data:H.map(h=>r2(h.min)), borderColor:"transparent", pointRadius:0, fill:false, tension:.3});
+    ds.push({label:"Maximum", data:H.map(h=>r2(h.max)), borderColor:css("--band-line"), borderWidth:.8, backgroundColor:css("--band"), pointRadius:0, fill:"-1", tension:.3});
+  } else {
+    usableModels().forEach(r => ds.push({label:r.m.name+" · "+r.m.org, data:idxs.map(i => r.series[i] ? r2(r.series[i].v) : null),
+      borderColor:COLORS[MODELS.indexOf(r.m)%COLORS.length], borderWidth:1.3, borderDash:r.m.hi?[]:[4,3], pointRadius:0, tension:.3, spanGaps:true}));
+  }
+  ds.push({label:"Median", data:H.map(h=>r2(h.med)), borderColor:fg, borderWidth:3, pointRadius:0, tension:.3});
+  ds.push({label:"Böe (gesch.)", data:H.map(h=>r2(h.gMed)), borderColor:fg, borderWidth:1.3, borderDash:[2,3], pointRadius:0, tension:.3});
+  ds.push({label:"Grenzwert", data:idxs.map(()=>site.wind), borderColor:stop, borderWidth:1.6, borderDash:[7,4], pointRadius:0});
+  ds.push({label:"Grenze Böe", data:idxs.map(()=>site.gust), borderColor:stop, borderWidth:1, borderDash:[2,4], pointRadius:0});
+  const opt = chartBase("m/s in "+site.hub+" m");
+  opt.plugins.tooltip = {filter: it => !["Minimum","Grenzwert","Grenze Böe"].includes(it.dataset.label), callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y)} m/s`}};
+  opt.onClick = (e, els, c) => { const x = c.scales.x.getValueForPixel(e.x); if(x!=null && idxs[Math.round(x)]!=null) selectHour(idxs[Math.round(x)]); };
+  if(charts.main) charts.main.destroy();
+  charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin]});
+  charts.main.$idxs = idxs; charts.main.update("none");
+  $("chartTitle").textContent = "Wind in Nabenhöhe · " + dayLabel(state.day);
+}
+
+function renderRain(){
+  if(typeof Chart==="undefined") return;
+  const idxs = dayIdx(), labels = idxs.map(i => hh(state.times[i])), H = idxs.map(i=>state.hours[i]);
+  const opt = chartBase("mm/h");
+  opt.scales.y.suggestedMax = 2;
+  opt.scales.y2 = {position:"right", beginAtZero:true, suggestedMax:1000, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"IBM Plex Mono", size:10}}, title:{display:true, text:"CAPE J/kg", color:css("--muted")}};
+  opt.plugins.tooltip = {callbacks:{label:c => c.dataset.yAxisID==="y2" ? `CAPE: ${Math.round(c.parsed.y)} J/kg` : `Regen: ${fmt(c.parsed.y)} mm`}};
+  if(charts.rain) charts.rain.destroy();
+  charts.rain = new Chart($("rain"), {data:{labels, datasets:[
+    {type:"bar", label:"Regen", data:H.map(h=>h.rain==null?null:+h.rain.toFixed(2)), backgroundColor:css("--band-line"), borderRadius:2},
+    {type:"line", label:"CAPE", yAxisID:"y2", data:H.map(h=>h.cape==null?null:Math.round(h.cape)), borderColor:css("--warn"), borderWidth:2, pointRadius:0, tension:.3},
+  ]}, options:opt});
+  $("rainDay").textContent = dayLabel(state.day);
+}
+
+function renderProfile(){
+  if(typeof Chart==="undefined") return;
+  const i = state.sel, h = state.hours[i]; if(!h) return;
+  const tip = site.hub + site.rotor/2, zs = [];
+  for(let z=10; z<=Math.max(200, tip+10); z+=10) zs.push(z);
+  const per = usableModels().map(r => r.series[i]).filter(Boolean);
+  const prof = zs.map(z => { const v = per.map(s => windAt(s.lv, z).v).filter(x=>x!=null); return {z, med:median(v), min:v.length?Math.min(...v):null, max:v.length?Math.max(...v):null}; });
+  const P = (k) => prof.map(p => p[k]==null?null:{x:+p[k].toFixed(2), y:p.z});
+  const opt = chartBase("");
+  opt.scales.x = {type:"linear", beginAtZero:true, ticks:{color:css("--muted"), font:{family:"IBM Plex Mono", size:10}}, grid:{color:css("--line")}, title:{display:true, text:"m/s", color:css("--muted")}};
+  opt.scales.y = {type:"linear", min:0, max:zs[zs.length-1], ticks:{color:css("--muted"), font:{family:"IBM Plex Mono", size:10}, stepSize:40}, grid:{color:css("--line")}, title:{display:true, text:"Höhe über Grund (m)", color:css("--muted")}};
+  opt.interaction = {mode:"nearest", intersect:false, axis:"y"};
+  opt.plugins.tooltip = {callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.x)} m/s in ${c.parsed.y} m`}};
+  const lowTip = Math.max(0, site.hub - site.rotor/2);
+  const refPlugin = {id:"ref", afterDatasetsDraw(c){
+    const {ctx, chartArea:a, scales:{x,y}} = c; ctx.save();
+    ctx.fillStyle = css("--raised"); ctx.globalAlpha=.6; ctx.fillRect(a.left, y.getPixelForValue(tip), a.right-a.left, y.getPixelForValue(lowTip)-y.getPixelForValue(tip)); ctx.globalAlpha=1;
+    ctx.strokeStyle = css("--accent"); ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(a.left, y.getPixelForValue(site.hub)); ctx.lineTo(a.right, y.getPixelForValue(site.hub)); ctx.stroke();
+    ctx.strokeStyle = css("--stop"); ctx.beginPath(); ctx.moveTo(x.getPixelForValue(site.wind), a.top); ctx.lineTo(x.getPixelForValue(site.wind), a.bottom); ctx.stroke();
+    ctx.setLineDash([]); ctx.fillStyle = css("--muted"); ctx.font = "10px IBM Plex Mono";
+    ctx.fillText("Nabe "+site.hub+" m", a.left+4, y.getPixelForValue(site.hub)-4);
+    ctx.fillText("Blattspitze "+Math.round(tip)+" m", a.left+4, y.getPixelForValue(tip)+12);
+    ctx.restore();
+  }};
+  if(charts.profile) charts.profile.destroy();
+  charts.profile = new Chart($("profile"), {type:"line", data:{datasets:[
+    {label:"Minimum", data:P("min"), borderColor:"transparent", pointRadius:0, fill:false},
+    {label:"Maximum", data:P("max"), borderColor:css("--band-line"), borderWidth:.8, backgroundColor:css("--band"), pointRadius:0, fill:"-1"},
+    {label:"Median", data:P("med"), borderColor:css("--fg"), borderWidth:3, pointRadius:0}
+  ]}, options:opt, plugins:[refPlugin]});
+  $("profileHour").textContent = `${dayLabel(state.times[i].slice(0,10),true)} · ${hh(state.times[i])} Uhr`;
+}
+
+function renderCompass(){
+  const i = state.sel, h = state.hours[i]; if(!h) return;
+  const dirs = usableModels().map(r => r.series[i]).filter(s => s && s.dir!=null);
+  const fg = "var(--fg)", muted = "var(--muted)";
+  const ticks = Array.from({length:36},(_,k)=>{ const a=k*10*Math.PI/180, r1=k%9===0?78:84; return `<line x1="${100+r1*Math.sin(a)}" y1="${100-r1*Math.cos(a)}" x2="${100+90*Math.sin(a)}" y2="${100-90*Math.cos(a)}" stroke="${muted}" stroke-width="${k%9===0?1.5:.6}"/>`; }).join("");
+  const lab = [["N",0],["O",90],["S",180],["W",270]].map(([t,d]) => { const a=d*Math.PI/180; return `<text x="${100+66*Math.sin(a)}" y="${104-66*Math.cos(a)}" text-anchor="middle" font-size="13" font-weight="600" font-family="Barlow Condensed, sans-serif" fill="${fg}">${t}</text>`; }).join("");
+  // Striche: Wind kommt aus Richtung d -> Strich vom Rand zur Mitte
+  const lines = dirs.map(s => { const a=s.dir*Math.PI/180; return `<line x1="${100+88*Math.sin(a)}" y1="${100-88*Math.cos(a)}" x2="${100+48*Math.sin(a)}" y2="${100-48*Math.cos(a)}" stroke="var(--band-line)" stroke-width="2" stroke-linecap="round" opacity=".75"/>`; }).join("");
+  let arrow = "";
+  if(h.dir.mean!=null){
+    arrow = `<g transform="rotate(${h.dir.mean} 100 100)"><line x1="100" y1="14" x2="100" y2="150" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/><polygon points="100,170 88,146 112,146" fill="var(--accent)"/></g>`;
+  }
+  $("compass").innerHTML = `<svg viewBox="0 0 200 200" role="img" aria-label="Windrichtung ${dirName(h.dir.mean)}"><circle cx="100" cy="100" r="90" fill="var(--raised)" stroke="var(--line)"/>${ticks}${lines}${lab}${arrow}<circle cx="100" cy="100" r="5" fill="${fg}"/></svg>`;
+  const sp = h.dir.spread;
+  $("compassFacts").innerHTML = `
+    <dt>Wind aus</dt><dd>${h.dir.mean==null?"–":dirName(h.dir.mean)+" · "+Math.round(h.dir.mean)+"°"}</dd>
+    <dt>Weht nach</dt><dd>${h.dir.mean==null?"–":dirName((h.dir.mean+180)%360)}</dd>
+    <dt>Streuung</dt><dd>${sp==null?"–":"±"+Math.round(sp)+"° "+(sp<20?"(einig)":sp<45?"(mäßig)":"(unsicher)")}</dd>
+    <dt>Stärke</dt><dd>${fmt(h.med)} m/s, Böe ca. ${fmt(h.gMed)}</dd>
+    <dt>Modelle</dt><dd>${dirs.length}</dd>`;
+  $("compassHour").textContent = `${dayLabel(state.times[i].slice(0,10),true)} · ${hh(state.times[i])} Uhr`;
+}
+
+function renderMatrix(){
+  const idxs = dayIdx().filter(i => isWork(state.times[i]));
+  const cls = v => v==null ? "m-none" : v >= site.wind ? "m-stop" : v >= site.wind*.75 ? "m-warn" : "m-go";
+  const u = usableModels().sort((a,b)=> (b.m.hi-a.m.hi));
+  const head = `<tr><th></th>${idxs.map(i=>`<th>${hh(state.times[i])}</th>`).join("")}</tr>`;
+  const rows = u.map(r => `<tr><th class="mname">${esc(r.m.name)} <small>${esc(r.m.org)} · ${esc(r.m.res)}</small></th>${idxs.map(i => { const s=r.series[i]; return `<td class="${cls(s?.v)}" data-i="${i}" title="${esc(r.m.name)} ${hh(state.times[i])} Uhr">${s?Math.round(s.v):"·"}</td>`; }).join("")}</tr>`).join("");
+  const med = `<tr class="medrow"><th class="mname">Median <small>alle Modelle</small></th>${idxs.map(i => { const v=state.hours[i].med; return `<td class="${cls(v)}" data-i="${i}" style="font-weight:700">${v==null?"·":Math.round(v)}</td>`; }).join("")}</tr>`;
+  $("matrix").innerHTML = `<table>${head}${rows}${med}</table>`;
+  $("matrix").querySelectorAll("td[data-i]").forEach(td => td.onclick = () => selectHour(+td.dataset.i));
+  $("mxDay").textContent = dayLabel(state.day);
+  highlightSel();
+}
+
+const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Richtung</th><th>Über Grenze</th><th>Regen</th><th>CAPE</th><th>°C</th></tr></thead>`;
+function hourRows(hs, dots){
+  return hs.map(h => `<tr>
+    <td class="num">${dots?`<span class="dot d-${h.lamp}"></span> `:LAMP_TXT[h.lamp]+" "}${hh(h.t)}:00</td>
+    <td class="num ${h.med>site.wind?"over":""}">${fmt(h.med)}</td>
+    <td class="num">${fmt(h.min)}–${fmt(h.max)}</td>
+    <td class="num ${h.gMed>site.gust?"over":""}">${fmt(h.gMed)}</td>
+    <td class="num">${dirName(h.dir.mean)}</td>
+    <td class="num">${h.n ? h.over+"/"+h.n : "–"}</td>
+    <td class="num">${fmt(h.rain)}</td>
+    <td class="num">${h.cape==null?"–":Math.round(h.cape)}</td>
+    <td class="num">${fmt(h.t2,0)}</td></tr>`).join("");
+}
+function renderHourTable(){ $("hourTable").innerHTML = HOUR_HEAD + "<tbody>" + hourRows(dayHours(state.day), true) + "</tbody>"; }
+
+function renderModelTable(){
+  const idxs = dayIdx().filter(i => isWork(state.times[i]));
+  const label = {ok:["Aktiv","b-ok"], extrap:["Hochgerechnet","b-ext"], outside:["Deckt Standort nicht ab","b-out"], error:["Nicht abrufbar","b-err"]};
+  const order = {ok:0, extrap:1, outside:2, error:3};
+  const rows = [...state.results].sort((a,b)=> order[a.status]-order[b.status] || (b.m.hi-a.m.hi)).map(r => {
+    const [txt, cls] = label[r.status];
+    let mx="–", first="–";
+    if(r.series){
+      const pts = idxs.map(i=>r.series[i] ? {t:state.times[i], ...r.series[i]} : null).filter(Boolean);
+      if(pts.length){ mx = fmt(Math.max(...pts.map(p=>p.v))); const f = pts.find(p=>p.v>site.wind || (p.g!=null && p.g>site.gust)); first = f ? hh(f.t)+" Uhr" : "nie"; }
+    }
+    return `<tr><td>${esc(r.m.name)} <span class="muted">· ${esc(r.m.org)}</span></td><td>${esc(r.m.res)}</td>
+      <td><span class="badge ${cls}" title="${esc(r.reason||"")}">${txt}</span></td><td class="num">${mx}</td><td class="num">${first}</td></tr>`;
+  });
+  $("modelTable").innerHTML = `<thead><tr><th>Modell</th><th>Auflösung</th><th>Status</th><th>Max. Nabe</th><th>Über Grenze ab</th></tr></thead><tbody>${rows.join("")}</tbody>`;
+}
+
+/* ---------- Karte ---------- */
+function initMap(){
+  if(typeof L==="undefined"){ $("map").innerHTML = '<p class="note" style="padding:12px">Karte konnte nicht geladen werden.</p>'; return; }
+  map = L.map("map", {zoomControl:true, attributionControl:true}).setView([site.lat, site.lon], 14);
+  satLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {maxZoom:19, attribution:"Esri, Maxar, Earthstar"}).addTo(map);
+  osmLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom:19, attribution:"© OpenStreetMap"});
+  radarLayer = L.tileLayer.wms("https://maps.dwd.de/geoserver/dwd/wms", {layers:"dwd:Niederschlagsradar", format:"image/png", transparent:true, opacity:.65, attribution:"Radar © DWD"});
+  marker = L.marker([site.lat, site.lon], {draggable:true, title:"Anlage"}).addTo(map);
+  rotorCircle = L.circle([site.lat, site.lon], {radius:site.rotor/2, color:"#ff7a33", weight:2, fillOpacity:.08}).addTo(map);
+  marker.on("dragend", () => setPos(marker.getLatLng()));
+  map.on("click", e => setPos(e.latlng));
+  document.querySelectorAll("[data-layer]").forEach(b => b.onclick = () => {
+    const sat = b.dataset.layer==="sat";
+    if(sat){ map.removeLayer(osmLayer); satLayer.addTo(map); } else { map.removeLayer(satLayer); osmLayer.addTo(map); }
+    document.querySelectorAll("[data-layer]").forEach(x => x.setAttribute("aria-pressed", String(x===b)));
+  });
+  $("radarBtn").onclick = () => {
+    const on = $("radarBtn").getAttribute("aria-pressed")!=="true";
+    $("radarBtn").setAttribute("aria-pressed", String(on));
+    if(on){ radarLayer.setParams({_t:Date.now()}); radarLayer.addTo(map); if(map.getZoom()>10) map.setZoom(9); } else map.removeLayer(radarLayer);
+  };
+}
+let pending = null, pendingName = null;
+function setPos(ll){
+  pending = ll;
+  marker.setLatLng(ll); rotorCircle.setLatLng(ll);
+  if(arrowMarker){ map.removeLayer(arrowMarker); arrowMarker=null; }
+  $("pickText").textContent = `${pendingName ? pendingName+" · " : ""}${ll.lat.toFixed(5)}° N, ${ll.lng.toFixed(5)}° E`;
+  $("pickBar").hidden = false; $("pickApply").disabled = false;
+}
+function applyPending(){
+  if(!pending) return;
+  site = {...site, lat:+pending.lat.toFixed(5), lon:+pending.lng.toFixed(5), name: pendingName || site.name};
+  pending = null; pendingName = null;
+  $("pickBar").hidden = true; map.getContainer().classList.remove("picking");
+  saveSite(); fillSettings(); load();
+}
+function cancelPending(){
+  pending = null; pendingName = null; $("pickBar").hidden = true; map.getContainer().classList.remove("picking");
+  updateMap(); map.setView([site.lat, site.lon], Math.max(map.getZoom(), 13));
+}
+async function search(q){
+  const box = $("searchResults");
+  box.hidden = false; box.innerHTML = `<li><button type="button" disabled>Suche…</button></li>`;
+  let items = [];
+  try{
+    const r = await fetch("https://nominatim.openstreetmap.org/search?" + new URLSearchParams({q, format:"jsonv2", limit:"6", "accept-language":"de", addressdetails:"1"}));
+    const j = await r.json();
+    items = j.map(x => ({name:x.name || x.display_name.split(",")[0], detail:x.display_name, lat:+x.lat, lon:+x.lon, type:x.type}));
+  }catch(e){}
+  if(!items.length){
+    try{
+      const r = await fetch("https://geocoding-api.open-meteo.com/v1/search?" + new URLSearchParams({name:q, count:"6", language:"de"}));
+      const j = await r.json();
+      items = (j.results||[]).map(x => ({name:x.name, detail:[x.admin2, x.admin1, x.country].filter(Boolean).join(", "), lat:x.latitude, lon:x.longitude}));
+    }catch(e){}
+  }
+  if(!items.length){ box.innerHTML = `<li><button type="button" disabled>Nichts gefunden. Versuch es mit Ortsname oder Postleitzahl.</button></li>`; return; }
+  box.innerHTML = items.map((x,k) => `<li><button type="button" data-k="${k}">${esc(x.name)}<small>${esc(x.detail)}</small></button></li>`).join("");
+  box.querySelectorAll("button[data-k]").forEach(b => b.onclick = () => {
+    const x = items[+b.dataset.k];
+    box.hidden = true; $("searchInput").value = x.name;
+    pendingName = x.name;
+    map.setView([x.lat, x.lon], 15);
+    map.getContainer().classList.add("picking");
+    $("pickText").textContent = `${x.name}: jetzt die Anlage auf der Karte antippen`;
+    $("pickBar").hidden = false; pending = null; $("pickApply").disabled = true;
+  });
+}
+function updateMap(){
+  if(!map) return;
+  const ll = [site.lat, site.lon];
+  marker.setLatLng(ll); rotorCircle.setLatLng(ll).setRadius(site.rotor/2);
+  const h = state.hours[state.sel];
+  if(arrowMarker){ map.removeLayer(arrowMarker); arrowMarker=null; }
+  if(h && h.dir.mean!=null){
+    const col = {go:"#46c27b", warn:"#e6b04c", stop:"#ff6767", none:"#999"}[h.lamp];
+    const svg = `<svg width="120" height="120" viewBox="0 0 120 120" style="transform:rotate(${h.dir.mean}deg)"><line x1="60" y1="18" x2="60" y2="96" stroke="#000" stroke-opacity=".45" stroke-width="9" stroke-linecap="round"/><line x1="60" y1="18" x2="60" y2="94" stroke="${col}" stroke-width="5" stroke-linecap="round"/><polygon points="60,110 48,88 72,88" fill="${col}" stroke="#000" stroke-opacity=".45"/></svg>`;
+    arrowMarker = L.marker(ll, {icon:L.divIcon({className:"wind-arrow", html:svg, iconSize:[120,120], iconAnchor:[60,60]}), interactive:false, keyboard:false}).addTo(map);
+    marker.bindTooltip(`${hh(h.t)} Uhr · ${fmt(h.med)} m/s aus ${dirName(h.dir.mean)}`, {direction:"top", offset:[0,-36]});
+  }
+}
+
+/* ---------- Tagesbericht ---------- */
+async function sha256(text){
+  try{ const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join(""); }
+  catch(e){ return "nicht verfügbar"; }
+}
+function snapshot(){
+  return {erstellt:new Date().toISOString(), abgerufen:state.fetchedAt?.toISOString(), standort:site, tag:state.day,
+    bericht:{projekt:$("r_project").value, anlage:$("r_turbine").value, team:$("r_team").value, aufsicht:$("r_lead").value, taetigkeit:$("r_task").value, entscheidung:$("r_decision").value, bemerkungen:$("r_notes").value},
+    fazit:{ampel:state.summary?.lamp, text:(state.summary?.head||"")+" "+(state.summary?.text||"")},
+    modelle: state.results.map(r=>({id:r.m.id, name:r.m.name, anbieter:r.m.org, status:r.status})),
+    stunden: dayHours(state.day).map(h=>({zeit:h.t, ampel:h.lamp, median:h.med, min:h.min, max:h.max, boe:h.gMed, richtung:h.dir.mean, modelle:h.n, ueberGrenze:h.over, regen:h.rain, cape:h.cape}))};
+}
+async function buildReport(){
+  const snap = snapshot(), hash = await sha256(JSON.stringify(snap));
+  const b = snap.bericht, sum = state.summary || {};
+  const u = usableModels();
+  $("report").innerHTML = `
+    <div class="rep-block"><div class="eyebrow">Windberg · Tagesbericht Wetter</div><h1>${esc(site.name)} · ${esc(dayLabel(state.day))}</h1></div>
+    <div class="rep-block rep-grid">
+      <div><b>Projekt:</b> ${esc(b.projekt)||"–"}</div><div><b>Anlage:</b> ${esc(b.anlage)||"–"}</div>
+      <div><b>Koordinaten:</b> ${fmt(site.lat,4)}° N, ${fmt(site.lon,4)}° E</div><div><b>Nabe / Rotor:</b> ${site.hub} m / ${site.rotor} m</div>
+      <div><b>Tätigkeit:</b> ${esc(b.taetigkeit)||"–"}</div><div><b>Team:</b> ${esc(b.team)||"–"}</div>
+      <div><b>Aufsichtführender:</b> ${esc(b.aufsicht)||"–"}</div><div><b>Arbeitszeit:</b> ${site.from}–${site.to} Uhr</div>
+    </div>
+    <div class="rep-block"><h3>Grenzwerte</h3><p>Mittelwind Nabe max. ${fmt(site.wind)} m/s · Böe Nabe max. ${fmt(site.gust)} m/s · Gewitter: Stopp ab CAPE ${CAPE_STOP} J/kg oder Gewittersignal in mind. einem Drittel der Modelle</p></div>
+    <div class="rep-block"><h3>Prognose zum Freigabezeitpunkt</h3>
+      <p>Abgerufen: ${state.fetchedAt.toLocaleString("de-DE")} · Bericht erstellt: ${new Date().toLocaleString("de-DE")}</p>
+      <p><b>${esc(LAMP_TXT[sum.lamp]||"")} – ${esc(sum.head||"")}</b> ${esc(sum.text||"")}</p>
+      <p>Ausgewertete Modelle (${u.length}): ${u.map(r=>esc(r.m.name+" ("+r.m.org+")")).join(", ")}</p>
+      <table class="t">${HOUR_HEAD}<tbody>${hourRows(dayHours(state.day), false)}</tbody></table>
+    </div>
+    <div class="rep-block"><h3>Entscheidung</h3><p><b>${esc(b.entscheidung)}</b></p><p>${esc(b.bemerkungen).replace(/\n/g,"<br>")||"Keine Bemerkungen."}</p></div>
+    <div class="rep-block"><p class="note">Datenquelle: Open-Meteo.com (CC BY 4.0). Wind in Nabenhöhe interpoliert, Böen in Nabenhöhe geschätzt. Prüfsumme (SHA-256) der Berichtsdaten: <span class="mono">${hash}</span></p></div>
+    <div class="sig"><div>Datum, Unterschrift Aufsichtführender</div><div>Datum, Unterschrift Auftraggeber (optional)</div></div>`;
+  return snap;
+}
+
+/* ---------- Bedienung ---------- */
+function toggleSettings(open){ $("settings").hidden = !open; $("settingsBtn").setAttribute("aria-expanded", String(open)); }
+$("settingsBtn").onclick = () => toggleSettings($("settings").hidden);
+$("cancelBtn").onclick = () => { fillSettings(); toggleSettings(false); };
+$("saveBtn").onclick = () => {
+  const num = (id, d) => { const v = parseFloat($(id).value); return isNaN(v) ? d : v; };
+  site = {name: $("s_name").value.trim() || "Standort", lat:clamp(num("s_lat",site.lat),-90,90), lon:clamp(num("s_lon",site.lon),-180,180),
+    hub:clamp(num("s_hub",site.hub),20,250), rotor:clamp(num("s_rotor",site.rotor),0,250),
+    wind:num("s_wind",site.wind), gust:num("s_gust",site.gust), from:clamp(Math.round(num("s_from",site.from)),0,23), to:clamp(Math.round(num("s_to",site.to)),0,23)};
+  if(site.to < site.from) [site.from, site.to] = [site.to, site.from];
+  saveSite(); toggleSettings(false);
+  if(map) map.setView([site.lat, site.lon], Math.max(map.getZoom(), 13));
+  $("mapNote").textContent = "Ort suchen, dann die Anlage auf der Karte antippen. Pfeil: Windrichtung in Nabenhöhe zur gewählten Stunde. Kreis: Rotorfläche. Radar: Niederschlagsradar des DWD (Deutschland und Grenzgebiete).";
+  load();
+};
+$("gpsBtn").onclick = () => {
+  if(!navigator.geolocation){ $("gpsBtn").textContent = "GPS nicht verfügbar"; return; }
+  navigator.geolocation.getCurrentPosition(p => { if(marker) setPos(L.latLng(p.coords.latitude, p.coords.longitude)); else { $("s_lat").value=p.coords.latitude.toFixed(4); $("s_lon").value=p.coords.longitude.toFixed(4);} if(map) map.setView([p.coords.latitude,p.coords.longitude],15); },
+    () => { $("gpsBtn").textContent = "Standortfreigabe abgelehnt"; });
+};
+$("reloadBtn").onclick = load;
+$("searchForm").onsubmit = e => { e.preventDefault(); const q = $("searchInput").value.trim(); if(q.length>=2 && map) search(q); };
+$("pickApply").onclick = () => { if(pending) applyPending(); };
+$("pickCancel").onclick = cancelPending;
+document.querySelectorAll("[data-view]").forEach(b => b.onclick = () => {
+  state.view = b.dataset.view;
+  document.querySelectorAll("[data-view]").forEach(x => x.setAttribute("aria-pressed", String(x===b)));
+  if(state.fetchedAt) renderChart();
+});
+$("printBtn").onclick = async () => { if(!state.fetchedAt) return; await buildReport(); window.print(); };
+$("jsonBtn").onclick = async () => {
+  if(!state.fetchedAt) return;
+  const snap = await buildReport();
+  const blob = new Blob([JSON.stringify(snap, null, 2)], {type:"application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = `windbericht_${site.name.replace(/\W+/g,"_")}_${state.day}.json`; document.body.appendChild(a); a.click(); a.remove();
+};
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => state.fetchedAt && render());
+
+fillSettings();
+initMap();
+load();
+</script>
+</body>
+</html>
