@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f141a">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%23151d25%22/%3E%3Csvg x=%227%22 y=%2213%22 width=%2250%22 height=%2238%22 viewBox=%22-6 -6 790 512%22%3E%3Cg fill=%22%23ff7a33%22 stroke=%22%23ff7a33%22 stroke-linejoin=%22miter%22%3E%3Cpath stroke-width=%223%22 d=%22M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z%22/%3E%3Cpath stroke-width=%2215%22 d=%22m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z%22/%3E%3C/g%3E%3C/svg%3E%3C/svg%3E">
 <title>Windberg Windbericht</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -62,6 +63,10 @@ input,select,textarea{font:15px var(--f-body);color:var(--fg);background:var(--r
 /* Kopf */
 header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;padding-bottom:10px;border-bottom:3px solid var(--accent)}
 header.top{position:relative}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:52px;height:34px;flex:none;color:var(--fg)}
+@media (max-width:480px){.logo{width:42px;height:28px}}
+.rep-logo{width:70px;height:45px;color:#000;float:right}
 .site-meta{display:flex;gap:4px 12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);background:none;border:0;padding:2px 0;text-align:left;font-weight:400;cursor:pointer}
 .site-meta:hover{color:var(--fg)}
 .site-meta:empty{display:none}
@@ -214,13 +219,17 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tw-logo" viewBox="-6 -6 790 512"><g fill="currentColor" stroke="currentColor" stroke-linejoin="miter"><path stroke-width="3" d="M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z"/><path stroke-width="15" d="m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z"/></g></symbol></svg>
 <div class="wrap">
 
   <header class="top">
-    <div style="min-width:0">
-      <div class="eyebrow">Windberg · Windbericht</div>
-      <h1 id="siteTitle">Windbericht</h1>
-      <button class="site-meta mono" id="siteMeta" type="button" title="Einstellungen öffnen"></button>
+    <div class="brand">
+      <svg class="logo" role="img" aria-label="Logo Tobias Windberg"><use href="#tw-logo"/></svg>
+      <div style="min-width:0">
+        <div class="eyebrow">Windberg · Windbericht</div>
+        <h1 id="siteTitle">Windbericht</h1>
+        <button class="site-meta mono" id="siteMeta" type="button" title="Einstellungen öffnen"></button>
+      </div>
     </div>
     <div class="row">
       <button id="favBtn" type="button" aria-expanded="false" aria-controls="favPanel"><span class="star">★</span> Anlagen</button>
@@ -1064,7 +1073,7 @@ async function buildReport(){
   const b = snap.bericht, sum = state.summary || {};
   const u = usableModels();
   $("report").innerHTML = `
-    <div class="rep-block"><div class="eyebrow">Windberg · Tagesbericht Wetter</div><h1>${esc(site.name)} · ${esc(dayLabel(state.day))}</h1></div>
+    <div class="rep-block"><svg class="rep-logo" aria-hidden="true"><use href="#tw-logo"/></svg><div class="eyebrow">Windberg · Tagesbericht Wetter</div><h1>${esc(site.name)} · ${esc(dayLabel(state.day))}</h1></div>
     <div class="rep-block rep-grid">
       <div><b>Projekt:</b> ${esc(b.projekt)||"–"}</div><div><b>Anlage:</b> ${esc(b.anlage)||"–"}</div>
       <div><b>Koordinaten:</b> ${fmt(site.lat,4)}° N, ${fmt(site.lon,4)}° E</div><div><b>Nabe / Rotor:</b> ${site.hub} m / ${site.rotor} m</div>
