@@ -155,6 +155,9 @@ td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle}
 .d-go{background:var(--go)} .d-warn{background:var(--warn)} .d-stop{background:var(--stop)} .d-none{background:var(--none)}
 .badge{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:600}
+.raw a{color:var(--band-line);font-size:12px;text-decoration:none}
+.raw a:hover{text-decoration:underline}
+@media print{.raw{display:none}}
 .b-ok{background:var(--go-bg);color:var(--go)} .b-out{background:var(--raised);color:var(--muted)} .b-err{background:var(--stop-bg);color:var(--stop)} .b-ext{background:var(--warn-bg);color:var(--warn)}
 details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02em}
 .error{background:var(--stop-bg);color:var(--stop);border-radius:8px;padding:10px 12px}
@@ -481,11 +484,15 @@ function gustAt(h, i, vHub){
 }
 
 /* ---------- Daten laden ---------- */
-async function fetchModel(m){
+function apiUrl(m, format){
   const p = new URLSearchParams({latitude:site.lat, longitude:site.lon, hourly:VARS.join(","), models:m.id,
     wind_speed_unit:"ms", timezone:"auto", forecast_days:"3"});
+  if(format) p.set("format", format);
+  return "https://api.open-meteo.com/v1/forecast?" + p.toString();
+}
+async function fetchModel(m){
   try{
-    const r = await fetch("https://api.open-meteo.com/v1/forecast?"+p.toString());
+    const r = await fetch(apiUrl(m));
     const j = await r.json().catch(() => ({}));
     if(/no data is available for this location/i.test(j.reason||"")) return {m, status:"outside", reason:j.reason};
     if(!r.ok || j.error) return {m, status:"error", reason: j.reason || ("HTTP "+r.status)};
@@ -824,9 +831,10 @@ function renderModelTable(){
       if(pts.length){ mx = fmt(Math.max(...pts.map(p=>p.v))); const f = pts.find(p=>p.v>site.wind || (p.g!=null && p.g>site.gust)); first = f ? hh(f.t)+" Uhr" : "nie"; }
     }
     return `<tr><td>${esc(r.m.name)} <span class="muted">· ${esc(r.m.org)}</span></td><td>${esc(r.m.res)}</td>
-      <td><span class="badge ${cls}" title="${esc(r.reason||"")}">${txt}</span></td><td class="num">${mx}</td><td class="num">${first}</td></tr>`;
+      <td><span class="badge ${cls}" title="${esc(r.reason||"")}">${txt}</span></td><td class="num">${mx}</td><td class="num">${first}</td>
+      <td class="num raw"><a href="${esc(apiUrl(r.m))}" target="_blank" rel="noopener" title="Rohdaten dieses Modells direkt von Open-Meteo">JSON</a> · <a href="${esc(apiUrl(r.m,"csv"))}" target="_blank" rel="noopener" title="Als CSV, z. B. für Excel">CSV</a></td></tr>`;
   });
-  $("modelTable").innerHTML = `<thead><tr><th>Modell</th><th>Auflösung</th><th>Status</th><th>Max. Wind</th><th>Über Grenze ab</th></tr></thead><tbody>${rows.join("")}</tbody>`;
+  $("modelTable").innerHTML = `<thead><tr><th>Modell</th><th>Auflösung</th><th>Status</th><th>Max. Wind</th><th>Über Grenze ab</th><th class="raw">Rohdaten</th></tr></thead><tbody>${rows.join("")}</tbody>`;
 }
 
 /* ---------- Karte ---------- */
@@ -921,7 +929,9 @@ function snapshot(){
   return {erstellt:new Date().toISOString(), abgerufen:state.fetchedAt?.toISOString(), standort:site, tag:state.day,
     bericht:{projekt:$("r_project").value, anlage:$("r_turbine").value, team:$("r_team").value, aufsicht:$("r_lead").value, taetigkeit:$("r_task").value, entscheidung:$("r_decision").value, bemerkungen:$("r_notes").value},
     fazit:{ampel:state.summary?.lamp, text:(state.summary?.head||"")+" "+(state.summary?.text||"")},
-    modelle: state.results.map(r=>({id:r.m.id, name:r.m.name, anbieter:r.m.org, status:r.status})),
+    bereich:{arbeitshoehe:workH(), bis:zoneTop(), text:zoneTxt()},
+    modelle: state.results.map(r=>({id:r.m.id, name:r.m.name, anbieter:r.m.org, status:r.status, abfrage:apiUrl(r.m),
+      werte: r.series ? dayHours(state.day).map(h => { const s = r.series[h.i]; return s ? {zeit:h.t, wind:s.v, boe:s.g, richtung:s.dir, hochgerechnet:s.ext} : null; }) : null})),
     stunden: dayHours(state.day).map(h=>({zeit:h.t, ampel:h.lamp, median:h.med, min:h.min, max:h.max, boe:h.gMed, richtung:h.dir.mean, modelle:h.n, ueberGrenze:h.over, regen:h.rain, cape:h.cape}))};
 }
 async function buildReport(){

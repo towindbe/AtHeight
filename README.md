@@ -16,3 +16,14 @@ python -m http.server 8765
 ```
 
 Dann http://localhost:8765/windbericht.html öffnen.
+
+## Werte prüfen
+
+- **Rohdaten:** In der Tabelle „Modelle am Standort“ führt pro Modell ein Link (JSON oder CSV) direkt zur API-Abfrage, die die App verwendet.
+- **Prüfskript:** Im Tagesbericht „Rohdaten speichern (JSON)“ klicken, dann direkt danach:
+
+```
+python tools/pruefen.py windbericht_Standort_JJJJ-MM-TT.json
+```
+
+Das Skript holt die Rohdaten neu, rechnet Wind im Arbeitsbereich, Richtung, Böe und Median unabhängig nach und meldet jede Abweichung (Exit-Code 1). Es prüft, ob die App richtig lädt und rechnet, nicht, ob die Prognose stimmt. Weil die Modelle mehrmals täglich neu rechnen, sollte der Export höchstens eine Stunde alt sein.
