@@ -492,6 +492,8 @@ const VARS = ["wind_speed_10m","wind_speed_80m","wind_speed_120m","wind_speed_18
   "wind_gusts_10m","precipitation","cape","weather_code","temperature_2m",
   "temperature_80m","temperature_120m","temperature_180m","apparent_temperature"];
 const CHILL_INFO = -10, CHILL_WARN = -27, HEAT_INFO = 32, UV_INFO = 6;
+const ENS_WARN = 0.3, ENS_INFO = 0.1;   // Anteil der Ensemble-Läufe über Grenze
+const ENSEMBLES = [{id:"icon_d2_eps", name:"ICON-D2-EPS"}, {id:"ecmwf_ifs025_ensemble", name:"ECMWF-ENS"}];
 const DEFAULT_SITE = {name:"Hildesheim", lat:52.1508, lon:9.9511, hub:125, rotor:149, work:null, path:true, wind:12, gust:15, from:6, to:19};
 const CAPE_WARN = 300, CAPE_STOP = 800, RAIN_WARN = 0.5;
 const COLORS = ["#3b82f6","#14b8a6","#a855f7","#f59e0b","#ec4899","#22c55e","#06b6d4","#ef4444","#64748b","#8b5cf6","#84cc16","#f97316","#0ea5e9","#d946ef","#10b981","#eab308"];
@@ -636,8 +638,36 @@ async function loadExtras(){
     const j = await (await fetch("https://api.open-meteo.com/v1/forecast?"+p)).json();
     if(j.hourly){ fixTimes(j.hourly, j.timezone, j.utc_offset_seconds||0); ex.uv = new Map(j.hourly.time.map((t,i) => [t, j.hourly.uv_index[i]])); }
   }catch(e){}
-  [ex.dwd, ex.geo] = await Promise.all([loadDwdWarnings(), loadGeoWarnings()]);
+  [ex.dwd, ex.geo, ex.ens] = await Promise.all([loadDwdWarnings(), loadGeoWarnings(), Promise.all(ENSEMBLES.map(loadEnsemble))]);
   return ex;
+}
+/* Ensemble: jeder Lauf wird wie ein eigenes Modell auf den Arbeitsbereich gerechnet.
+   Ergebnis je Stunde: Anteil der Läufe mit Mittelwind oder Böe über euren Grenzwerten. */
+async function loadEnsemble(e){
+  try{
+    const q = new URLSearchParams({latitude:site.lat, longitude:site.lon, models:e.id, timezone:"auto", forecast_days:"3", wind_speed_unit:"ms",
+      hourly:"wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_gusts_10m"});
+    const j = await (await fetch("https://ensemble-api.open-meteo.com/v1/ensemble?"+q)).json();
+    if(j.error || !j.hourly) return {...e, ok:false, reason:j.reason||"keine Daten"};
+    fixTimes(j.hourly, j.timezone, j.utc_offset_seconds||0);
+    const h = j.hourly;
+    const members = Object.keys(h).filter(k => k==="wind_speed_80m" || k.startsWith("wind_speed_80m_member")).map(k => k.slice("wind_speed_80m".length));
+    const p = new Map();
+    h.time.forEach((t, i) => {
+      if(p.has(t)) return;
+      let n = 0, over = 0;
+      members.forEach(m => {
+        const lv = [10,80,120].map(z => [z, h[`wind_speed_${z}m${m}`]?.[i]]).filter(([,v]) => v!=null && !isNaN(v));
+        if(!lv.length) return;
+        const v = zoneWind(lv).v; if(v==null) return;
+        const g10 = h["wind_gusts_10m"+m]?.[i], v10 = h["wind_speed_10m"+m]?.[i];
+        const g = g10==null || v10==null ? null : v * (1 + (clamp(g10/Math.max(v10,1), 1, 2.5) - 1)*0.6);
+        n++; if(v > site.wind || (g!=null && g > site.gust)) over++;
+      });
+      if(n >= 5) p.set(t, {p:over/n, n});
+    });
+    return {...e, ok:true, members:members.length, p};
+  }catch(err){ return {...e, ok:false, reason:"Keine Verbindung"}; }
 }
 /* Amtliche Warnungen. Ergebnis: {ok, list:[{src, lvl, title, text, relevant, start, end}]} oder {ok:false} */
 const DWD_LVL = {Minor:1, Moderate:2, Severe:3, Extreme:4};
@@ -727,6 +757,9 @@ async function load(){
     h.chill = windChill(h.tW, h.med);
     const a = localMs(t);
     h.warns = allWarnings().filter(w => w.start < a + 36e5 && w.end > a);
+    const ens = (extras.ens||[]).filter(e => e.ok && e.p.has(t)).map(e => e.p.get(t));
+    h.pEns = ens.length ? ens.reduce((s,x) => s + x.p, 0) / ens.length : null;   // jedes Ensemble zählt gleich
+    h.nEns = ens.reduce((s,x) => s + x.n, 0);
     Object.assign(h, rate(h));
     return h;
   });
@@ -758,6 +791,8 @@ function rate(h){
   else if(h.cape!=null && h.cape >= CAPE_WARN) add("warn", `Gewitterenergie CAPE ${Math.round(h.cape)} J/kg`);
   if(h.rain!=null && h.rain >= RAIN_WARN) add("warn", `Regen ${fmt(h.rain)} mm/h`);
   if(h.dark) add("warn", "Dunkel (außerhalb der bürgerlichen Dämmerung)");
+  if(h.pEns!=null && h.pEns >= ENS_WARN) add("warn", `Ensemble: ${Math.round(h.pEns*100)} % der Läufe über Grenze`);
+  else if(h.pEns!=null && h.pEns >= ENS_INFO) add("info", `Ensemble: ${Math.round(h.pEns*100)} % der Läufe über Grenze`);
   (h.warns||[]).forEach(w => add(!w.relevant ? "info" : w.lvl >= 3 ? "stop" : "warn", `Amtliche Warnung ${w.src}: ${w.title}`));
   if(h.chill!=null && h.chill <= CHILL_WARN) add("warn", `Gefühlt ${fmt(h.chill,0)} °C in ${workH()} m: Erfrierungsgefahr`);
   else if(h.chill!=null && h.chill <= CHILL_INFO) add("info", `Gefühlt ${fmt(h.chill,0)} °C in ${workH()} m: Kälteschutz`);
@@ -876,7 +911,8 @@ function renderHero(){
     <span>${esc(w.src)}: ${esc(w.title)}</span><small>${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))}</small></div>`).join("");
   const wsrc = [extras.dwd?.ok===false ? "DWD nicht abrufbar" : null, extras.geo?.ok===false ? "GeoSphere nicht abrufbar" : null].filter(Boolean);
   $("status").textContent = `Abgerufen ${state.fetchedAt.toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"})} · ${u.length} Modelle aktiv, davon ${u.filter(r=>r.m.hi).length} hochauflösend`
-    + ` · Warnungen: ${wsrc.length ? wsrc.join(", ") : ws.length ? ws.length+" am gewählten Tag" : "keine"}`;
+    + ` · Warnungen: ${wsrc.length ? wsrc.join(", ") : ws.length ? ws.length+" am gewählten Tag" : "keine"}`
+    + ` · Ensemble: ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(" + ") || "nicht verfügbar"}`;
 }
 
 function renderNow(){
@@ -889,6 +925,7 @@ function renderNow(){
     ["Böe "+zoneTxt(), fmt(h.gMed), "m/s geschätzt", h.gMed>site.gust],
     ["Richtung", dirName(h.dir.mean), h.dir.mean==null ? "" : Math.round(h.dir.mean)+"° · "+workH()+" m", false],
     ["Modelle", h.n ? `${h.over}/${h.n}` : "–", "über Grenze", h.over>0 && h.over>=h.n/2],
+    ["Risiko Grenzwert", h.pEns==null ? "–" : Math.round(h.pEns*100)+" %", h.pEns==null ? "Ensemble nicht verfügbar" : `der ${h.nEns} Ensemble-Läufe`, h.pEns!=null && h.pEns>=ENS_WARN],
     ["Temperatur "+workH()+" m", h.tW==null ? "–" : fmt(h.tW,0)+" °C", h.chill==null ? "" : "gefühlt "+fmt(h.chill,0)+" °C", h.chill!=null && h.chill<=CHILL_WARN]
   ];
   $("nowBox").innerHTML = cells.map(([a,b,c,o]) => `<div class="${o?"over":""}"><small>${a}</small><b>${b}</b><small>${c}</small></div>`).join("");
@@ -1072,7 +1109,7 @@ function renderMatrix(){
   highlightSel();
 }
 
-const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Richtung</th><th>Über Grenze</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th>Gründe</th></tr></thead>`;
+const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Richtung</th><th>Über Grenze</th><th>Ensemble</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th>Gründe</th></tr></thead>`;
 function hourRows(hs, dots){
   return hs.map(h => `<tr>
     <td class="num">${dots?`<span class="dot d-${h.lamp}"></span> `:LAMP_TXT[h.lamp]+" "}${hh(h.t)}:00</td>
@@ -1081,6 +1118,7 @@ function hourRows(hs, dots){
     <td class="num ${h.gMed>site.gust?"over":""}">${fmt(h.gMed)}</td>
     <td class="num">${dirName(h.dir.mean)}</td>
     <td class="num">${h.n ? h.over+"/"+h.n : "–"}</td>
+    <td class="num ${h.pEns>=ENS_WARN?"over":""}">${h.pEns==null ? "–" : Math.round(h.pEns*100)+" %"}</td>
     <td class="num">${fmt(h.rain)}</td>
     <td class="num">${h.cape==null?"–":Math.round(h.cape)}</td>
     <td class="num">${fmt(h.tW,0)}</td>
@@ -1248,7 +1286,7 @@ function snapshot(){
     bereich:{arbeitshoehe:workH(), bis:zoneTop(), text:zoneTxt()},
     modelle: state.results.map(r=>({id:r.m.id, name:r.m.name, anbieter:r.m.org, status:r.status, abfrage:apiUrl(r.m),
       werte: r.series ? dayHours(state.day).map(h => { const s = r.series[h.i]; return s ? {zeit:h.t, utc:utcStr(h.t), wind:s.v, boe:s.g, richtung:s.dir, hochgerechnet:s.ext} : null; }) : null})),
-    stunden: dayHours(state.day).map(h=>({zeit:h.t, utc:utcStr(h.t), ampel:h.lamp, median:h.med, min:h.min, max:h.max, boe:h.gMed, richtung:h.dir.mean, modelle:h.n, ueberGrenze:h.over, regen:h.rain, cape:h.cape, tempArbeit:h.tW, gefuehlt:h.chill, uv:h.uv, gruende:h.why.map(w=>w.t)}))};
+    stunden: dayHours(state.day).map(h=>({zeit:h.t, utc:utcStr(h.t), ampel:h.lamp, median:h.med, min:h.min, max:h.max, boe:h.gMed, richtung:h.dir.mean, modelle:h.n, ueberGrenze:h.over, regen:h.rain, cape:h.cape, tempArbeit:h.tW, gefuehlt:h.chill, uv:h.uv, ensembleUeberGrenze:h.pEns, ensembleLaeufe:h.nEns, gruende:h.why.map(w=>w.t)}))};
 }
 async function buildReport(){
   const snap = snapshot(), hash = await sha256(JSON.stringify(snap));
@@ -1263,7 +1301,8 @@ async function buildReport(){
       <div><b>Tätigkeit:</b> ${esc(b.taetigkeit)||"–"}</div><div><b>Team:</b> ${esc(b.team)||"–"}</div>
       <div><b>Aufsichtführender:</b> ${esc(b.aufsicht)||"–"}</div><div><b>Arbeitszeit:</b> ${site.from}–${site.to} Uhr</div>
     </div>
-    <div class="rep-block"><h3>Grenzwerte</h3><p>Im Bereich ${zoneTxt()}: Mittelwind max. ${fmt(site.wind)} m/s · Böe max. ${fmt(site.gust)} m/s · Gewitter: Stopp ab CAPE ${CAPE_STOP} J/kg oder Gewittersignal in mind. einem Drittel der Modelle</p></div>
+    <div class="rep-block"><h3>Grenzwerte</h3><p>Im Bereich ${zoneTxt()}: Mittelwind max. ${fmt(site.wind)} m/s · Böe max. ${fmt(site.gust)} m/s · Gewitter: Stopp ab CAPE ${CAPE_STOP} J/kg oder Gewittersignal in mind. einem Drittel der Modelle</p>
+      <p>Weitere Regeln: Prüfen bei Dunkelheit (außerhalb der bürgerlichen Dämmerung), bei Windchill ab ${CHILL_WARN} °C, wenn mind. ${Math.round(ENS_WARN*100)} % der Ensemble-Läufe über Grenze liegen und bei amtlicher Warnung (Wind, Gewitter, Glatteis, Schnee, Regen); Stop bei Unwetterwarnung bzw. Warnstufe rot.</p></div>
     <div class="rep-block"><h3>Amtliche Warnungen (DWD, GeoSphere Austria)</h3><p>${(() => { const d0 = localMs(state.day+"T00:00"), ws = allWarnings().filter(w => w.start < d0+864e5 && w.end > d0); return ws.length ? ws.map(w => `${esc(w.src)}: ${esc(w.title)} (${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))})`).join("<br>") : (extras.dwd?.ok===false || extras.geo?.ok===false ? "Nicht vollständig abrufbar." : "Keine Warnungen für den Standort."); })()}</p></div>
     <div class="rep-block"><h3>Prognose zum Freigabezeitpunkt</h3>
       <p>Abgerufen: ${state.fetchedAt.toLocaleString("de-DE")} · Bericht erstellt: ${new Date().toLocaleString("de-DE")}</p>
