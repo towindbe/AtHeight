@@ -125,6 +125,28 @@ function renderRain(){
   $("rainDay").textContent = dayLabel(state.day);
 }
 
+function renderTemp(){
+  if(typeof Chart==="undefined") return;
+  const idxs = dayIdx(), labels = idxs.map(i => hh(state.times[i])), H = idxs.map(i=>state.hours[i]);
+  const r1 = v => v==null ? null : +v.toFixed(1);
+  const vals = H.flatMap(h => [h.tW, h.chill]).filter(v => v!=null), lo = vals.length ? Math.min(...vals) : 0;
+  const opt = chartBase("°C");
+  opt.scales.y.beginAtZero = false;
+  opt.plugins.tooltip = {filter: it => !it.dataset.ref, callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y)} °C`}};
+  const ds = [
+    {label:"Temperatur "+workH()+" m", data:H.map(h => r1(h.tW)), borderColor:css("--accent"), borderWidth:2.5, pointRadius:0, tension:.3},
+    {label:"Gefühlt", data:H.map(h => r1(h.chill)), borderColor:css("--band-line"), borderWidth:2, borderDash:[5,4], pointRadius:0, tension:.3}
+  ];
+  // Bezugslinien nur, wenn sie in die Nähe kommen: 0 °C (Frost), −10 °C (Kälteschutz)
+  if(lo < 6) ds.push({label:"0 °C", ref:true, data:idxs.map(() => 0), borderColor:css("--muted"), borderWidth:1, borderDash:[2,3], pointRadius:0});
+  if(lo < -5) ds.push({label:"−10 °C", ref:true, data:idxs.map(() => CHILL_INFO), borderColor:css("--band-line"), borderWidth:1, borderDash:[2,3], pointRadius:0});
+  if(charts.temp) charts.temp.destroy();
+  charts.temp = new Chart($("temp"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin]});
+  charts.temp.$idxs = idxs; charts.temp.update("none");
+  $("tempTitle").textContent = "Temperatur · " + workH() + " m";
+  $("tempDay").textContent = dayLabel(state.day);
+}
+
 function renderProfile(){
   if(typeof Chart==="undefined") return;
   const i = state.sel, h = state.hours[i]; if(!h) return;

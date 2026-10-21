@@ -5,7 +5,7 @@
 function render(){
   fillSettings();
   renderHero(); renderTimeline(); renderDayTabs();
-  renderChart(); renderSelected(); renderRain(); renderMatrix();
+  renderChart(); renderSelected(); renderRain(); renderTemp(); renderMatrix();
   renderHourTable(); renderModelTable();
 }
 function renderSelected(){ renderNow(); renderCompass(); renderProfile(); updateMap(); highlightSel(); }
@@ -102,10 +102,11 @@ function highlightSel(){
 function selectHour(i, fromTimeline){
   state.sel = i;
   const d = state.times[i].slice(0,10);
-  if(d!==state.day){ state.day = d; renderHero(); renderDayTabs(); renderTimeline(); renderChart(); renderRain(); renderMatrix(); renderHourTable(); renderModelTable(); }
+  if(d!==state.day){ state.day = d; renderHero(); renderDayTabs(); renderTimeline(); renderChart(); renderRain(); renderTemp(); renderMatrix(); renderHourTable(); renderModelTable(); }
   renderSelected();
   if(charts.main) charts.main.update("none");
   if(charts.rain) charts.rain.update("none");
+  if(charts.temp) charts.temp.update("none");
 }
 
 function renderDayTabs(){
@@ -114,7 +115,7 @@ function renderDayTabs(){
     return `<button type="button" data-day="${d}" aria-pressed="${d===state.day}" aria-label="${esc(dayLabel(d,true))}: ${LAMP_TXT[l]}"><i class="dot d-${l}"></i>${esc(dayLabel(d,true))}</button>`; }).join("");
   $("dayTabs").querySelectorAll("button").forEach(b => b.onclick = () => {
     state.day = b.dataset.day; state.sel = defaultSel(state.day);
-    renderHero(); renderDayTabs(); renderTimeline(); renderChart(); renderRain(); renderMatrix(); renderHourTable(); renderModelTable(); renderSelected();
+    renderHero(); renderDayTabs(); renderTimeline(); renderChart(); renderRain(); renderTemp(); renderMatrix(); renderHourTable(); renderModelTable(); renderSelected();
   });
 }
 
