@@ -60,4 +60,15 @@ $("jsonBtn").onclick = async () => {
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
   a.download = `windbericht_${site.name.replace(/\W+/g,"_")}_${state.day}.json`; document.body.appendChild(a); a.click(); a.remove();
 };
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => state.fetchedAt && render());
+/* Hell/Dunkel: Standard dunkel, Wahl wird gespeichert; Diagramme lesen die Farben neu */
+function applyTheme(light){
+  if(light) document.documentElement.dataset.theme = "light"; else delete document.documentElement.dataset.theme;
+  try{ localStorage.setItem("wb_theme", light ? "light" : "dark"); }catch(e){}
+  $("themeBtn").textContent = light ? "☾" : "☀";
+  $("themeBtn").title = $("themeBtn").ariaLabel = light ? "Dunkle Ansicht" : "Helle Ansicht";
+  $("themeBtn").setAttribute("aria-pressed", String(light));
+  document.querySelector('meta[name="theme-color"]').content = light ? "#eef1f4" : "#0d1217";
+  if(state.fetchedAt) render();
+}
+$("themeBtn").onclick = () => applyTheme(document.documentElement.dataset.theme !== "light");
+if(document.documentElement.dataset.theme === "light") applyTheme(true);   // Knopf und Browserleiste passend zur gespeicherten Wahl

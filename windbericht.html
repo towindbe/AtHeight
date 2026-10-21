@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0f141a">
+<meta name="theme-color" content="#0d1217">
+<script>/* gespeicherte Ansicht sofort setzen, damit nichts aufblitzt */ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%23151d25%22/%3E%3Crect x=%2211%22 y=%229%22 width=%225%22 height=%2247%22 rx=%222.5%22 fill=%22%23f4f6f8%22/%3E%3Cpath d=%22M17 12 L26.5 13.6 L26.5 31.2 L17 33z%22 fill=%22%23ff7a33%22/%3E%3Cpath d=%22M26.5 13.6 L36 15.6 L36.5 29.8 L26.5 31.2z%22 fill=%22%23f4f6f8%22/%3E%3Cpath d=%22M36 15.6 L45.5 18 L46.5 28.6 L36.5 29.8z%22 fill=%22%23ff7a33%22/%3E%3Cpath d=%22M45.5 18 L54 20.6 L55.5 27.6 L46.5 28.6z%22 fill=%22%23f4f6f8%22/%3E%3Cpath d=%22M24 42h24M30 50h20%22 stroke=%22%238a96a3%22 stroke-width=%223.5%22 stroke-linecap=%22round%22/%3E%3C/svg%3E">
 <title>Windberg Windbericht</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-21g">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-21i">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tw-logo" viewBox="-6 -6 790 512"><g fill="currentColor" stroke="currentColor" stroke-linejoin="miter"><path stroke-width="3" d="M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z"/><path stroke-width="15" d="m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z"/></g></symbol></svg>
@@ -26,6 +27,7 @@
     <div class="row">
       <button id="favBtn" type="button" aria-expanded="false" aria-controls="favPanel"><span class="star">★</span> Anlagen</button>
       <button id="settingsBtn" class="settings-btn" type="button" aria-expanded="false" aria-controls="settings"><span aria-hidden="true">⚙</span> Einstellungen <span class="chev" aria-hidden="true"></span></button>
+      <button id="themeBtn" class="icon-btn" type="button" title="Helle Ansicht" aria-label="Helle Ansicht" aria-pressed="false">☀</button>
       <button id="reloadBtn" class="icon-btn" type="button" title="Wetterdaten neu laden" aria-label="Wetterdaten neu laden">↻</button>
     </div>
     <div class="fav-panel" id="favPanel" hidden>
@@ -282,21 +284,21 @@
 </div>
 
 <!-- Skripte teilen sich den globalen Gültigkeitsbereich; Reihenfolge beachten. Bei Änderungen ?v= erhöhen. -->
-<script src="js/konfiguration.js?v=2026-10-21g"></script>
-<script src="js/hilfen.js?v=2026-10-21g"></script>
-<script src="js/physik.js?v=2026-10-21g"></script>
-<script src="js/daten.js?v=2026-10-21g"></script>
-<script src="js/tageslicht.js?v=2026-10-21g"></script>
-<script src="js/bewertung.js?v=2026-10-21g"></script>
-<script src="js/anzeige.js?v=2026-10-21g"></script>
-<script src="js/diagramme.js?v=2026-10-21g"></script>
-<script src="js/tabellen.js?v=2026-10-21g"></script>
-<script src="js/modellvergleich.js?v=2026-10-21g"></script>
-<script src="js/karte.js?v=2026-10-21g"></script>
-<script src="js/radar.js?v=2026-10-21g"></script>
-<script src="js/bericht.js?v=2026-10-21g"></script>
-<script src="js/anlagen.js?v=2026-10-21g"></script>
-<script src="js/bedienung.js?v=2026-10-21g"></script>
-<script src="js/start.js?v=2026-10-21g"></script>
+<script src="js/konfiguration.js?v=2026-10-21i"></script>
+<script src="js/hilfen.js?v=2026-10-21i"></script>
+<script src="js/physik.js?v=2026-10-21i"></script>
+<script src="js/daten.js?v=2026-10-21i"></script>
+<script src="js/tageslicht.js?v=2026-10-21i"></script>
+<script src="js/bewertung.js?v=2026-10-21i"></script>
+<script src="js/anzeige.js?v=2026-10-21i"></script>
+<script src="js/diagramme.js?v=2026-10-21i"></script>
+<script src="js/tabellen.js?v=2026-10-21i"></script>
+<script src="js/modellvergleich.js?v=2026-10-21i"></script>
+<script src="js/karte.js?v=2026-10-21i"></script>
+<script src="js/radar.js?v=2026-10-21i"></script>
+<script src="js/bericht.js?v=2026-10-21i"></script>
+<script src="js/anlagen.js?v=2026-10-21i"></script>
+<script src="js/bedienung.js?v=2026-10-21i"></script>
+<script src="js/start.js?v=2026-10-21i"></script>
 </body>
 </html>

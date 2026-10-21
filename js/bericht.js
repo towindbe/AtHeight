@@ -92,7 +92,7 @@ async function buildReport(){
 
     <div class="rp-sec">
       <h3>Prognose je Stunde · Wind und Böe im Bereich ${zoneTxt()} (m/s)</h3>
-      <table class="rp-t"><thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Ri.</th><th title="Anzahl der Modelle mit Mittelwind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th>Szenarien</th><th>Regen</th><th>CAPE</th><th>°C</th><th>Gefühlt</th><th>Gründe</th></tr></thead>
+      <table class="rp-t"><thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Ri.</th><th title="Anzahl der Modelle mit Mittelwind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th>Szenarien</th><th>Regen</th><th>CAPE</th><th>°C ${workH()} m</th><th>Gefühlt</th><th>Gründe</th></tr></thead>
       <tbody>${reportRows(hs)}</tbody></table>
       <div class="rp-small" style="margin-top:3px">Gelb: ab 75 % des Grenzwerts bzw. Hinweis · Rot: über Grenzwert · Schraffiert: Nacht</div>
     </div>

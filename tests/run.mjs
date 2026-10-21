@@ -6,6 +6,7 @@
 // Ergebnis mit tests/expected.json verglichen.
 //
 //   node tests/run.mjs            Test (vergleicht mit expected.json)
+//   node tests/run.mjs --accept   gewollte Änderung: aktuelles Ergebnis als Referenz übernehmen
 //   node tests/run.mjs --record   neue Aufzeichnung + neue Referenz (nur bewusst ausführen!)
 //
 // Lokal wird Microsoft Edge verwendet, auf GitHub Actions Chromium.
@@ -20,6 +21,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FIX = path.join(ROOT, "tests", "fixtures", "api.json");
 const EXP = path.join(ROOT, "tests", "expected.json");
 const RECORD = process.argv.includes("--record");
+const ACCEPT = process.argv.includes("--accept");   // gewollte Änderung: Ergebnis als neue Referenz übernehmen
 const OUT = process.argv.find(a => a.startsWith("--out="))?.slice(6);
 
 // Wetter- und Warndienste: werden aufgezeichnet bzw. abgespielt
@@ -123,6 +125,12 @@ if(RECORD){
   process.exit(0);
 }
 if(OUT) fs.writeFileSync(OUT, JSON.stringify(result, null, 1));
+if(ACCEPT){
+  if(errors.length || missing.length){ console.log("Nicht übernommen, es gibt Fehler: " + [...errors, ...missing].join(" | ")); process.exit(1); }
+  fs.writeFileSync(EXP, JSON.stringify(result, null, 1));
+  console.log("Neue Referenz übernommen (tests/expected.json). Änderungen vor dem Commit mit git diff prüfen.");
+  process.exit(0);
+}
 
 // Vergleich mit der Referenz
 const expected = JSON.parse(fs.readFileSync(EXP, "utf8"));

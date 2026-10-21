@@ -67,4 +67,4 @@ npm test
 
 `tests/run.mjs` öffnet die App ohne Fenster (lokal Edge, auf GitHub Chromium), spielt aufgezeichnete Antworten der Wetterdienste ab (`tests/fixtures/api.json`), friert die Uhrzeit ein und vergleicht Bewertung, Texte, Modellvergleich, Tagesbericht und Prüfsumme mit `tests/expected.json`. Läuft bei jedem Push über GitHub Actions (`.github/workflows/test.yml`).
 
-Ändert sich das Verhalten **gewollt** (z. B. neue Regel oder anderer Text), die Referenz bewusst neu erzeugen: `npm run test:record` und das Ergebnis vor dem Commit prüfen.
+Ändert sich das Verhalten **gewollt** (z. B. neue Regel oder anderer Text): `npm run test:accept` übernimmt das neue Ergebnis als Referenz (mit denselben aufgezeichneten Wetterdaten); vor dem Commit mit `git diff tests/expected.json` prüfen, dass sich nur das Gewollte geändert hat. `npm run test:record` zeichnet zusätzlich neue Wetterdaten auf (nur selten nötig).

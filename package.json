@@ -4,6 +4,7 @@
   "description": "Tests für den Windbericht (die App selbst braucht keinen Build).",
   "scripts": {
     "test": "node tests/run.mjs",
+    "test:accept": "node tests/run.mjs --accept",
     "test:record": "node tests/run.mjs --record"
   },
   "devDependencies": {
