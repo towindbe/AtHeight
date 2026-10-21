@@ -1,4 +1,4 @@
-# Windberg Windbericht
+# Windbericht für Höhenarbeit
 
 Wind- und Wetterbericht in Nabenhöhe für Seilarbeiten an Windenergieanlagen. Eigenständige Web-App (eine HTML-Datei, kein Build).
 
