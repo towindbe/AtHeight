@@ -207,7 +207,7 @@ body.no-site .only-no-site{display:block}
 .mx th{font:500 10px var(--f-mono);color:var(--muted);padding:0 2px;text-align:center}
 .mx th.mname{text-align:left;font:600 12px var(--f-body);color:var(--fg);white-space:nowrap;padding-right:8px;position:sticky;left:0;background:var(--surface)}
 .mx th.mname small{font-weight:400;color:var(--muted)}
-.mx td{width:30px;min-width:30px;height:24px;text-align:center;border-radius:3px;font:500 10.5px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--fg)}
+.mx td{width:36px;min-width:36px;height:24px;text-align:center;border-radius:3px;font:500 10.5px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--fg)}
 .mx td.m-go{background:var(--go-bg)} .mx td.m-warn{background:var(--warn-bg)} .mx td.m-stop{background:var(--stop);color:#fff} .mx td.m-none{background:var(--raised);color:var(--muted)}
 .mx td.selcol{box-shadow:inset 0 0 0 2px var(--fg)}
 .mx tr.medrow th.mname{color:var(--accent)}
@@ -497,7 +497,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
   <section class="card needs-data">
     <div class="card-head"><h2>Modell-Matrix</h2><span class="eyebrow" id="mxDay"></span></div>
     <div class="mx" id="matrix"></div>
-    <p class="note">Wind je Modell und Stunde in m/s. Gelb ab 75 % des Grenzwerts, rot darüber. Zeigt, ob nur ein Ausreißer warnt oder fast alle.</p>
+    <p class="note">Mittelwind je Modell und Stunde in m/s. Gelb ab 75 % des Grenzwerts, rot über dem Grenzwert. Mit der Maus über ein Feld fahren zeigt auch die Böe. Zeigt, ob nur ein Ausreißer warnt oder fast alle.</p>
   </section>
 
   <section class="card needs-data">
@@ -1291,11 +1291,14 @@ function renderCompass(){
 
 function renderMatrix(){
   const idxs = dayIdx().filter(i => isWork(state.times[i]));
-  const cls = v => v==null ? "m-none" : v >= site.wind ? "m-stop" : v >= site.wind*.75 ? "m-warn" : "m-go";
+  // gleiche Regel wie überall: rot erst ÜBER der Grenze, gelb ab 75 %; angezeigt mit einer Nachkommastelle
+  const cls = v => v==null ? "m-none" : v > site.wind ? "m-stop" : v >= site.wind*.75 ? "m-warn" : "m-go";
+  // knapp über der Grenze (gerundet gleich dem Grenzwert): zwei Nachkommastellen, damit Rot nachvollziehbar ist
+  const num = v => v > site.wind && Math.round(v*10)/10 <= site.wind ? fmt(v,2) : fmt(v);
   const u = usableModels().sort((a,b)=> (b.m.hi-a.m.hi));
   const head = `<tr><th></th>${idxs.map(i=>`<th>${hh(state.times[i])}</th>`).join("")}</tr>`;
-  const rows = u.map(r => `<tr><th class="mname">${esc(r.m.name)} <small>${esc(r.m.org)} · ${esc(r.m.res)}</small></th>${idxs.map(i => { const s=r.series[i]; return `<td class="${cls(s?.v)}" data-i="${i}" title="${esc(r.m.name)} ${hh(state.times[i])} Uhr">${s?Math.round(s.v):"·"}</td>`; }).join("")}</tr>`).join("");
-  const med = `<tr class="medrow"><th class="mname">Median <small>alle Modelle</small></th>${idxs.map(i => { const v=state.hours[i].med; return `<td class="${cls(v)}" data-i="${i}" style="font-weight:700">${v==null?"·":Math.round(v)}</td>`; }).join("")}</tr>`;
+  const rows = u.map(r => `<tr><th class="mname">${esc(r.m.name)} <small>${esc(r.m.org)} · ${esc(r.m.res)}</small></th>${idxs.map(i => { const s=r.series[i]; return `<td class="${cls(s?.v)}" data-i="${i}" title="${esc(r.m.name)} ${hh(state.times[i])} Uhr: Wind ${fmt(s?.v)} m/s, Böe ${fmt(s?.g)} m/s">${s?num(s.v):"·"}</td>`; }).join("")}</tr>`).join("");
+  const med = `<tr class="medrow"><th class="mname">Median <small>alle Modelle</small></th>${idxs.map(i => { const v=state.hours[i].med; return `<td class="${cls(v)}" data-i="${i}" style="font-weight:700">${v==null?"·":num(v)}</td>`; }).join("")}</tr>`;
   $("matrix").innerHTML = `<table>${head}${rows}${med}</table>`;
   $("matrix").querySelectorAll("td[data-i]").forEach(td => td.onclick = () => selectHour(+td.dataset.i));
   $("mxDay").textContent = dayLabel(state.day);
