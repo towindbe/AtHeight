@@ -330,4 +330,4 @@ body.info-open{overflow:hidden}
 .now-sel button{width:34px;height:34px;flex:0 0 34px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);font-size:22px;line-height:1;cursor:pointer}
 .now-sel button:hover:not(:disabled){border-color:var(--accent)}
 .now-sel button:disabled{opacity:.35;cursor:default}
-.now-hint{font-size:12px;line-height:1.4;max-width:300px}
+.now-head .why{flex:1 1 260px;min-width:0}
