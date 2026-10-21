@@ -14,6 +14,7 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import {fileURLToPath} from "node:url";
+import crypto from "node:crypto";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FIX = path.join(ROOT, "tests", "fixtures", "api.json");
@@ -126,11 +127,18 @@ if(OUT) fs.writeFileSync(OUT, JSON.stringify(result, null, 1));
 // Vergleich mit der Referenz
 const expected = JSON.parse(fs.readFileSync(EXP, "utf8"));
 const diffs = [];
+// Die Prüfsumme hängt an den letzten Nachkommastellen und unterscheidet sich je nach Betriebssystem.
+// Geprüft wird deshalb, ob sie korrekt aus den Berichtsdaten berechnet ist (wie in tools/pruefen.py).
+const calc = crypto.createHash("sha256").update(JSON.stringify(result.export), "utf8").digest("hex");
+if(calc !== result.bericht.pruefsumme) diffs.push(`bericht.pruefsumme: passt nicht zu den Berichtsdaten (${result.bericht.pruefsumme} / ${calc})`);
+delete expected.bericht.pruefsumme; delete result.bericht.pruefsumme;
+// Zahlen dürfen in den letzten Stellen abweichen (Fließkomma unter Windows/Linux), Texte nicht
+const sameNum = (a, b) => a === b || Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
 (function cmp(a, b, p){
   if(typeof a !== typeof b || Array.isArray(a) !== Array.isArray(b) || (a===null) !== (b===null)) return diffs.push(`${p}: erwartet ${JSON.stringify(a)?.slice(0,120)}, erhalten ${JSON.stringify(b)?.slice(0,120)}`);
   if(a && typeof a === "object"){
     for(const k of new Set([...Object.keys(a), ...Object.keys(b)])) cmp(a[k], b[k], p ? `${p}.${k}` : k);
-  } else if(a !== b) diffs.push(`${p}: erwartet ${JSON.stringify(a)?.slice(0,160)}, erhalten ${JSON.stringify(b)?.slice(0,160)}`);
+  } else if(typeof a === "number" ? !sameNum(a, b) : a !== b) diffs.push(`${p}: erwartet ${JSON.stringify(a)?.slice(0,160)}, erhalten ${JSON.stringify(b)?.slice(0,160)}`);
 })(expected, result, "");
 
 if(missing.length) errors.push(`${missing.length} Abfragen nicht in der Aufzeichnung, z. B. ${missing[0].slice(0,140)}`);
