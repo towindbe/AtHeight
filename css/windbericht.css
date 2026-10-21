@@ -280,7 +280,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
 .loadbar{display:flex;flex-direction:column;gap:4px;margin-top:4px;max-width:420px}
 .lb-track{height:8px;border-radius:4px;background:var(--raised);border:1px solid var(--line);overflow:hidden}
 .lb-fill{height:100%;width:0;border-radius:4px;transition:width .25s ease;
-  background:linear-gradient(90deg,var(--accent) 0%,#ffb27f 50%,var(--accent) 100%);background-size:200% 100%;animation:lbShine 1.2s linear infinite}
+  background:linear-gradient(90deg,var(--band-line) 0%,#c4dcf5 50%,var(--band-line) 100%);background-size:200% 100%;animation:lbShine 1.2s linear infinite}
 @keyframes lbShine{from{background-position:200% 0}to{background-position:0 0}}
 /* 7-Tage-Ausblick */
 .ol-scroll{overflow-x:auto;padding-bottom:4px}

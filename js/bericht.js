@@ -105,13 +105,25 @@ async function buildReport(){
       Ausgewertete Modelle (${u.length}): ${u.map(r=>esc(r.m.name+" ("+r.m.org+")")).join(", ")}.
       ${(() => { const x = state.results.filter(r => isExcluded(r) && (r.status==="ok"||r.status==="extrap")); return x.length ? `<b>Von Hand ausgeschlossen:</b> ${x.map(r=>esc(r.m.name+" ("+r.m.org+")")).join(", ")}.` : ""; })()}
       Szenarien: ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(", ") || "nicht verfügbar"}.
-      Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle, CAPE ab ${CAPE_STOP} J/kg oder Unwetterwarnung bzw. Warnstufe rot.
-      Prüfen bei einzelnen Modellen über Grenzwert, Schauer, CAPE ab ${CAPE_WARN} J/kg, Nacht, Windchill ab ${CHILL_WARN} °C, mind. ${Math.round(ENS_WARN*100)} % der Szenarien über Grenze oder amtlicher Warnung.
+      Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle (mind. 2), CAPE ab ${CAPE_STOP} J/kg oder Unwetterwarnung bzw. Warnstufe rot.
+      Prüfen bei einzelnen Modellen über Grenzwert, Gewittersignal, CAPE ab ${CAPE_WARN} J/kg, Regen ab ${fmt(RAIN_WARN)} mm/h, Nacht, Windchill ab ${CHILL_WARN} °C, mind. ${Math.round(ENS_WARN*100)} % der Szenarien über Grenze oder amtlicher Warnung.
       Wind als Stundenwert der Modelle; kurzzeitig (z. B. im 10-Minuten-Mittel der Anlage) kann der Wind darüber liegen. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0).
       Entscheidungshilfe; die Freigabe trifft der Aufsichtführende.
     </div>
 
     <div class="sig"><div>Datum, Unterschrift Aufsichtführender</div><div>Datum, Unterschrift Auftraggeber (optional)</div></div>
     <div class="rp-small" style="margin-top:8px">Prüfsumme (SHA-256) der Berichtsdaten: <span class="mono">${hash}</span> · dieselbe Zahl steht in der zugehörigen JSON-Datei (prüfbar mit tools/pruefen.py).</div>`;
+  fitReport();
   return {snap, hash};
+}
+
+/* Bericht auf eine A4-Seite bringen: unsichtbar in Druckbreite messen und bei Bedarf verkleinern (höchstens auf 75 %) */
+const MM = 96/25.4, PAGE_W = 186*MM, PAGE_H = 272*MM;   // A4 abzüglich Rand (@page 11/12 mm), etwas Reserve
+function fitReport(){
+  const r = $("report");
+  r.style.zoom = "";
+  r.style.cssText += `;display:block;position:absolute;left:-10000px;top:0;width:${PAGE_W}px`;
+  const h = r.scrollHeight;
+  r.style.display = r.style.position = r.style.left = r.style.top = r.style.width = "";
+  if(h > PAGE_H) r.style.zoom = Math.max(0.75, PAGE_H / h).toFixed(3);
 }
