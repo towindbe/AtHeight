@@ -1105,6 +1105,7 @@ function selectHour(i, fromTimeline){
   if(d!==state.day){ state.day = d; renderHero(); renderDayTabs(); renderTimeline(); renderChart(); renderRain(); renderMatrix(); renderHourTable(); renderModelTable(); }
   renderSelected();
   if(charts.main) charts.main.update("none");
+  if(charts.rain) charts.rain.update("none");
 }
 
 function renderDayTabs(){
@@ -1135,10 +1136,36 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
   c.$idxs.forEach((gi,k) => {
     if(!isWork(state.times[gi])){ ctx.fillStyle = css("--raised"); ctx.fillRect(x.getPixelForValue(k)-step/2, a.top, step, a.bottom-a.top); }
   });
-  const sk = c.$idxs.indexOf(state.sel);
-  if(sk>=0){ ctx.strokeStyle = css("--accent"); ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x.getPixelForValue(sk), a.top); ctx.lineTo(x.getPixelForValue(sk), a.bottom); ctx.stroke(); }
+  ctx.restore();
+}, afterDatasetsDraw(c){
+  // Verschiebbarer Zeitmarker: Linie mit Griff und Uhrzeit
+  if(!c.$idxs) return;
+  const sk = c.$idxs.indexOf(state.sel); if(sk < 0) return;
+  const {ctx, chartArea:a, scales:{x}} = c, px = x.getPixelForValue(sk), acc = css("--accent");
+  ctx.save();
+  ctx.strokeStyle = acc; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(px, a.top); ctx.lineTo(px, a.bottom); ctx.stroke();
+  const label = hh(state.times[state.sel]) + " Uhr";
+  ctx.font = "600 11px " + css("--f-body"); const w = ctx.measureText(label).width + 14, h = 18;
+  const bx = Math.min(Math.max(px - w/2, a.left), a.right - w);
+  ctx.fillStyle = acc; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, a.top, w, h, 9) : ctx.rect(bx, a.top, w, h); ctx.fill();
+  ctx.fillStyle = css("--accent-ink"); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(label, bx + w/2, a.top + h/2 + 0.5);
   ctx.restore();
 }};
+/* Zeitmarker mit Maus oder Finger ziehen (waagrecht); senkrechtes Wischen scrollt weiter die Seite */
+function attachScrub(canvasId, chartKey){
+  const cv = $(canvasId); if(!cv) return;
+  let drag = false;
+  cv.style.touchAction = "pan-y"; cv.style.cursor = "ew-resize";
+  const pick = e => {
+    const c = charts[chartKey]; if(!c || !c.$idxs) return;
+    const r = cv.getBoundingClientRect(), v = c.scales.x.getValueForPixel(e.clientX - r.left);
+    const k = Math.max(0, Math.min(c.$idxs.length - 1, Math.round(v))), gi = c.$idxs[k];
+    if(gi!=null && gi!==state.sel) selectHour(gi);
+  };
+  cv.addEventListener("pointerdown", e => { drag = true; try{ cv.setPointerCapture(e.pointerId); }catch(err){} pick(e); });
+  cv.addEventListener("pointermove", e => { if(drag) pick(e); });
+  ["pointerup", "pointercancel", "lostpointercapture"].forEach(t => cv.addEventListener(t, () => { drag = false; }));
+}
 
 function renderChart(){
   if(typeof Chart==="undefined"){ $("chartTitle").textContent = "Wind (Diagramm nicht geladen)"; return; }
@@ -1159,7 +1186,6 @@ function renderChart(){
   ds.push({label:"Grenze Böe", data:idxs.map(()=>site.gust), borderColor:stop, borderWidth:1, borderDash:[2,4], pointRadius:0});
   const opt = chartBase("m/s in "+zoneTxt());
   opt.plugins.tooltip = {filter: it => !["Minimum","Grenzwert","Grenze Böe"].includes(it.dataset.label), callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y)} m/s`}};
-  opt.onClick = (e, els, c) => { const x = c.scales.x.getValueForPixel(e.x); if(x!=null && idxs[Math.round(x)]!=null) selectHour(idxs[Math.round(x)]); };
   if(charts.main) charts.main.destroy();
   charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin]});
   charts.main.$idxs = idxs; charts.main.update("none");
@@ -1177,7 +1203,8 @@ function renderRain(){
   charts.rain = new Chart($("rain"), {data:{labels, datasets:[
     {type:"bar", label:"Regen", data:H.map(h=>h.rain==null?null:+h.rain.toFixed(2)), backgroundColor:css("--band-line"), borderRadius:2},
     {type:"line", label:"CAPE", yAxisID:"y2", data:H.map(h=>h.cape==null?null:Math.round(h.cape)), borderColor:css("--warn"), borderWidth:2, pointRadius:0, tension:.3},
-  ]}, options:opt});
+  ]}, options:opt, plugins:[markPlugin]});
+  charts.rain.$idxs = idxs; charts.rain.update("none");
   $("rainDay").textContent = dayLabel(state.day);
 }
 
@@ -1864,6 +1891,7 @@ $("jsonBtn").onclick = async () => {
 };
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => state.fetchedAt && render());
 
+attachScrub("chart", "main"); attachScrub("rain", "rain");
 fillSettings();
 initMap();
 if(siteChosen) load(); else startFirstRun();
