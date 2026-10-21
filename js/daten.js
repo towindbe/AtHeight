@@ -186,4 +186,5 @@ async function load(){
   state = {...state, results, times, hours, fetchedAt:new Date(), day:keepDay, tz:okAny.tz};
   state.sel = defaultSel(state.day);
   render();
+  outlookPromise = loadOutlook().finally(() => { outlookPromise = null; });   // Ausblick im Hintergrund nachladen
 }

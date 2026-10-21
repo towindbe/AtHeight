@@ -3870,6 +3870,7 @@
    }
   ]
  },
+ "ausblick": "Heute 21.10.\nPRÜFEN\nDETAIL OBEN\nWind max\n9 m/s\nSpanne\n7–12\nBöe max\n15 m/s\nSzenarien\n24 %\nRegen\n8,0 mm\n°C\n7 … 10\nMorgen 22.10.\nPRÜFEN\nDETAIL OBEN\nWind max\n9 m/s\nSpanne\n8–11\nBöe max\n13 m/s\nSzenarien\n14 %\nRegen\n0,0 mm\n°C\n4 … 10\nÜbermorgen 23.10.\nPRÜFEN\nDETAIL OBEN\nWind max\n12 m/s\nSpanne\n10–16\nBöe max\n16 m/s\nSzenarien\n82 %\nRegen\n0,1 mm\n°C\n6 … 12\nSa 24.10.\nSTOP\nTENDENZ\nWind max\n14 m/s\nSpanne\n12–14\nBöe max\n21 m/s\nSzenarien\n96 %\nRegen\n0,2 mm\n°C\n4 … 8\nSo 25.10.\nSTOP\nTENDENZ\nWind max\n16 m/s\nSpanne\n13–16\nBöe max\n25 m/s\nSzenarien\n100 %\nRegen\n13,8 mm\n°C\n4 … 10\nMo 26.10.\nGO\nTENDENZ\nWind max\n5 m/s\nSpanne\n5–9\nBöe max\n10 m/s\nSzenarien\n27 %\nRegen\n0,0 mm\n°C\n4 … 10\nDi 27.10.\nPRÜFEN\nTENDENZ\nWind max\n6 m/s\nSpanne\n4–6\nBöe max\n8 m/s\nSzenarien\n35 %\nRegen\n0,0 mm\n°C\n5 … 13\n\nGrobe Tendenz für eure Arbeitszeit und den Arbeitsbereich 80–125 m: höchster Mittelwind und höchste Böe des Tages (Median von ECMWF IFS, ICON Global, GFS, GEM), Regensumme, Temperatur von–bis. Szenarien: Anteil der 51 ECMWF-Szenarien mit mindestens einer Arbeitsstunde über Grenze. Ab Tag 4 nur zur Planung; für die Freigabe gilt die Detailprognose.",
  "ohneGFS": [
   "warn 2.370",
   "warn 1.265",

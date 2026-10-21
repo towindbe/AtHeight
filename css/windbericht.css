@@ -283,3 +283,16 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
 .lb-fill{height:100%;width:0;border-radius:4px;transition:width .25s ease;
   background:linear-gradient(90deg,var(--accent) 0%,#ffb27f 50%,var(--accent) 100%);background-size:200% 100%;animation:lbShine 1.2s linear infinite}
 @keyframes lbShine{from{background-position:200% 0}to{background-position:0 0}}
+/* 7-Tage-Ausblick */
+.ol-scroll{overflow-x:auto;padding-bottom:4px}
+.ol-days{display:grid;grid-template-columns:repeat(7,minmax(118px,1fr));gap:8px;min-width:max-content}
+@media (min-width:900px){.ol-days{min-width:0}}
+.ol-day{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:10px;border-radius:10px;background:var(--raised);border:1px solid var(--line);font-weight:400;cursor:default}
+.ol-day.detail{cursor:pointer} .ol-day.detail:hover{border-color:var(--fg)}
+.ol-day.cur{outline:2px solid var(--accent);outline-offset:-1px}
+.ol-day:disabled{opacity:1;color:var(--fg)}
+.ol-date{font-size:13px} .ol-date b{font:600 15px var(--f-display)}
+.ol-kind{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.ol-row{display:flex;justify-content:space-between;width:100%;gap:6px;font:500 12.5px var(--f-mono)}
+.ol-row small{font:400 11px var(--f-body);color:var(--muted)}
+.ol-row b{font-size:14px}

@@ -6,7 +6,7 @@ function render(){
   fillSettings();
   renderHero(); renderTimeline(); renderDayTabs();
   renderChart(); renderSelected(); renderRain(); renderTemp(); renderMatrix();
-  renderHourTable(); renderModelTable();
+  renderHourTable(); renderModelTable(); renderOutlook();
 }
 function renderSelected(){ renderNow(); renderCompass(); renderProfile(); updateMap(); highlightSel(); }
 

@@ -21,7 +21,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FIX = path.join(ROOT, "tests", "fixtures", "api.json");
 const EXP = path.join(ROOT, "tests", "expected.json");
 const RECORD = process.argv.includes("--record");
-const ACCEPT = process.argv.includes("--accept");   // gewollte Änderung: Ergebnis als neue Referenz übernehmen
+const ACCEPT = process.argv.includes("--accept");
+const RECORD_MISSING = process.argv.includes("--record-missing");   // neue Datenquellen nachzeichnen, Rest bleibt   // gewollte Änderung: Ergebnis als neue Referenz übernehmen
 const OUT = process.argv.find(a => a.startsWith("--out="))?.slice(6);
 
 // Wetter- und Warndienste: werden aufgezeichnet bzw. abgespielt
@@ -41,7 +42,7 @@ await new Promise(r => server.listen(0, "127.0.0.1", r));
 const base = `http://127.0.0.1:${server.address().port}`;
 
 const fixture = RECORD ? {fixed: Date.now(), responses: {}} : JSON.parse(fs.readFileSync(FIX, "utf8"));
-const missing = [];
+const missing = []; let added = 0;
 
 const browser = await chromium.launch(process.env.CI ? {} : {channel: "msedge"});
 const page = await browser.newPage({viewport: {width: 1100, height: 900}, locale: "de-DE", timezoneId: "Europe/Berlin"});
@@ -65,7 +66,10 @@ await page.route(API, async route => {
     fixture.responses[url] = {status: resp.status(), body};
     return route.fulfill({status: resp.status(), body, headers: {"content-type": "application/json", "access-control-allow-origin": "*"}});
   }
-  const hit = fixture.responses[url];
+  let hit = fixture.responses[url];
+  if(!hit && RECORD_MISSING){
+    const resp = await route.fetch(); hit = fixture.responses[url] = {status: resp.status(), body: await resp.text()}; added++;
+  }
   if(!hit){ missing.push(url); return route.fulfill({status: 599, body: '{"error":true,"reason":"nicht aufgezeichnet"}', headers: {"access-control-allow-origin": "*"}}); }
   return route.fulfill({status: hit.status, body: hit.body, headers: {"content-type": "application/json", "access-control-allow-origin": "*"}});
 });
@@ -107,6 +111,9 @@ const result = await page.evaluate(async () => {
   out.bericht = {text: report.innerText.replace(/\s+/g, " ").trim(), pruefsumme: rep.hash};
   out.export = rep.snap;
 
+  if(outlookPromise) await outlookPromise;
+  out.ausblick = text("#outlook");
+
   setModelUsed("gfs_global", false);
   out.ohneGFS = hours().map(h => h.lamp + " " + (h.med==null ? "-" : h.med.toFixed(3)));
   setModelUsed("gfs_global", true);
@@ -114,6 +121,7 @@ const result = await page.evaluate(async () => {
 });
 
 await browser.close();
+if(RECORD_MISSING && added){ fs.writeFileSync(FIX, JSON.stringify(fixture)); console.log(`${added} neue Antworten zur Aufzeichnung hinzugefügt.`); }
 server.close();
 
 if(RECORD){
