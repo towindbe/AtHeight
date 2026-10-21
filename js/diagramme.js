@@ -106,7 +106,7 @@ function renderChart(){
   ds.push({label:"Böe (gesch.)", data:H.map(h=>r2(h.gMed)), borderColor:fg, borderWidth:1.3, borderDash:[2,3], pointRadius:0, tension:.3});
   ds.push({label:"Grenzwert", data:idxs.map(()=>site.wind), borderColor:stop, borderWidth:1.6, borderDash:[7,4], pointRadius:0});
   ds.push({label:"Grenze Böe", data:idxs.map(()=>site.gust), borderColor:stop, borderWidth:1, borderDash:[2,4], pointRadius:0});
-  const opt = chartBase("m/s in "+zoneTxt()); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
+  const opt = chartBase("m/s · "+zoneTxt()); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
   opt.plugins.tooltip = {filter: it => !["Minimum","Grenzwert","Grenze Böe"].includes(it.dataset.label), callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y)} m/s`}};
   if(charts.main) charts.main.destroy();
   charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, limitLabels]});

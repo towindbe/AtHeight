@@ -7,7 +7,7 @@
 <script>try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
 <title>So funktioniert der Windbericht</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-21x">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-21z">
 <style>
   .info h2{margin-bottom:2px}
   .info p,.info li{margin:0;font-size:15px;line-height:1.55}
@@ -61,7 +61,7 @@
     <h2>Arbeitsbereich und Höhe</h2>
     <ul>
       <li><b>Arbeitshöhe:</b> die Höhe, in der ihr arbeitet (z. B. 80 m am Turm). Leer = Nabenhöhe.</li>
-      <li><b>Seilweg bis Nabe mitbewerten:</b> ist das Häkchen gesetzt, zählt der stärkste Wind zwischen Arbeitshöhe und Nabe, weil ihr beim Ab- und Aufstieg auch oben im Wind hängt. Angezeigt z. B. als „80–125 m“.</li>
+      <li><b>Zugang zur Arbeitshöhe:</b> bewertet wird der stärkste Wind auf dem ganzen Seilweg. <i>Vom Boden am Seil nach oben</i> (Standard): 10 m bis Arbeitshöhe, angezeigt als „bis 80 m“. <i>Von der Gondel am Seil nach unten</i>: Arbeitshöhe bis Nabe, angezeigt als „80–125 m“. <i>Nur Arbeitshöhe</i>: nur diese eine Höhe. Meist ist der Wind oben am stärksten; bei Inversionen oder Strahlströmen in geringer Höhe kann es weiter unten windiger sein.</li>
       <li>Die Modelle liefern Wind in 10, 80, 120 und 180 m. Dazwischen rechnet der Windbericht geradlinig um, darüber mit einem Höhen-Exponenten aus den beiden obersten Höhen. Modelle, die nur 10-m-Wind liefern, werden mit einer Faustformel hochgerechnet und als „hochgerechnet“ gekennzeichnet.</li>
       <li>Die Temperatur in Arbeitshöhe kommt aus den Höhenwerten der Modelle, sonst 0,65 °C kälter je 100 m. Die gefühlte Temperatur berücksichtigt den Wind (Windchill).</li>
     </ul>

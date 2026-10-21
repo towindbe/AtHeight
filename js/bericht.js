@@ -21,7 +21,7 @@ function snapshot(){
     warnlage: warnState(state.day).note || null,
     warnungen: allWarnings().map(w => ({quelle:w.src, stufe:w.lvl, titel:w.title, ampelrelevant:w.relevant, beginn:isFinite(w.start)?new Date(w.start).toISOString():null, ende:isFinite(w.end)?new Date(w.end).toISOString():null})),
     fazit:{ampel:state.summary?.lamp, text:(state.summary?.head||"")+" "+(state.summary?.text||"")},
-    bereich:{arbeitshoehe:workH(), bis:zoneTop(), text:zoneTxt()},
+    bereich:{arbeitshoehe:workH(), von:zoneBottom(), bis:zoneTop(), zugang:accessMode(), text:zoneTxt()},
     modelle: state.results.map(r=>({id:r.m.id, name:r.m.name, anbieter:r.m.org, status:isExcluded(r) && (r.status==="ok"||r.status==="extrap") ? "ausgeschlossen" : r.status, abfrage:apiUrl(r.m),
       werte: r.series ? dayHours(state.day).map(h => { const s = r.series[h.i]; return s ? {zeit:h.t, utc:utcStr(h.t), wind:s.v, boe:s.g, richtung:s.dir, hochgerechnet:s.ext} : null; }) : null})),
     stunden: dayHours(state.day).map(h=>({zeit:h.t, utc:utcStr(h.t), ampel:h.lamp, median:h.med, min:h.min, max:h.max, boe:h.gMed, richtung:h.dir.mean, modelle:h.n, ueberGrenze:h.over, regen:h.rain, cape:h.cape, tempArbeit:h.tW, gefuehlt:h.chill, uv:h.uv, ensembleUeberGrenze:h.pEns, ensembleLaeufe:h.nEns, gruende:h.why.map(w=>w.t)}))};
@@ -81,7 +81,7 @@ async function buildReport(){
     <div class="rp-sec rp-cols">
       <div class="rp-box"><h3>Einsatz</h3>${kv([["Projekt", esc(b.projekt)], ["Anlage / Typ", esc(b.anlage)], ["Tätigkeit", esc(b.taetigkeit)], ["Team", esc(b.team)], ["Aufsicht", esc(b.aufsicht)]])}</div>
       <div class="rp-box"><h3>Standort &amp; Grenzwerte</h3>${kv([["Koordinaten", `${fmt(site.lat,4)}° N, ${fmt(site.lon,4)}° E`], ["Nabe / Rotor", `${site.hub} m / ${site.rotor} m`],
-        ["Arbeitsbereich", zoneTxt() + (zoneTop()!==workH() ? " (Seilweg bis Nabe)" : "")], ["Max. Windstärke", fmt(site.wind)+" m/s"], ["Max. Böe", fmt(site.gust)+" m/s"]])}</div>
+        ["Arbeitsbereich", `${zoneTxt()} (${ACCESS_TXT[accessMode()]})`], ["Max. Windstärke", fmt(site.wind)+" m/s"], ["Max. Böe", fmt(site.gust)+" m/s"]])}</div>
     </div>
 
     <div class="rp-sec rp-box rp-warn ${kind==="list" ? (ws.some(w=>w.relevant && w.lvl>=3) ? "stop" : "warn") : kind==="ok" ? "go" : "na"}">

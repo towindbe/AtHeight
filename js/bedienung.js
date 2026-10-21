@@ -21,7 +21,7 @@ $("saveBtn").onclick = () => {
   const prev = site;
   site = {name: $("s_name").value.trim() || "Standort", lat:clamp(num("s_lat",site.lat),-90,90), lon:clamp(num("s_lon",site.lon),-180,180),
     hub:clamp(num("s_hub",site.hub),20,250), rotor:clamp(num("s_rotor",site.rotor),0,250),
-    work: $("s_work").value.trim()==="" ? null : clamp(Math.round(num("s_work",0)),10,300), path:$("s_path").checked,
+    work: $("s_work").value.trim()==="" ? null : clamp(Math.round(num("s_work",0)),10,300), access:$("s_access").value,
     wind:num("s_wind",site.wind), gust:num("s_gust",site.gust), from:clamp(Math.round(num("s_from",site.from)),0,23), to:clamp(Math.round(num("s_to",site.to)),0,23)};
   if(site.to < site.from) [site.from, site.to] = [site.to, site.from];
   site.checked = true;

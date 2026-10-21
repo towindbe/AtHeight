@@ -12,7 +12,7 @@ function renderSelected(){ renderNow(); renderCompass(); renderProfile(); update
 
 function fillSettings(){
   $("s_name").value = site.name; $("s_lat").value = site.lat; $("s_lon").value = site.lon;
-  $("s_work").value = site.work ?? ""; $("s_path").checked = !!site.path;
+  $("s_work").value = site.work ?? ""; $("s_access").value = accessMode();
   $("s_hub").value = site.hub; $("s_rotor").value = site.rotor; $("s_wind").value = site.wind; $("s_gust").value = site.gust;
   $("s_from").value = site.from; $("s_to").value = site.to;
   $("siteTitle").textContent = site.name;

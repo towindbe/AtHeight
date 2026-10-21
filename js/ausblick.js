@@ -9,7 +9,7 @@ const OUTLOOK_DAYS = 7, OUTLOOK_DETAIL_DAYS = 3;
 let outlook = null, outlookPromise = null;
 
 // Schlüssel: neu rechnen, wenn Standort, Arbeitsbereich, Grenzwerte oder Arbeitszeit sich ändern
-const outlookKey = () => [site.lat, site.lon, workH(), zoneTop(), site.wind, site.gust, site.from, site.to].join("|");
+const outlookKey = () => [site.lat, site.lon, workH(), zoneBottom(), zoneTop(), site.wind, site.gust, site.from, site.to].join("|");
 
 async function loadOutlook(){
   const key = outlookKey();

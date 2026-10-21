@@ -69,7 +69,8 @@ def main(path):
         print("Hinweis: Datei enthält keine Prüfsumme (älterer Export).")
     site = exp["standort"]
     work, top = exp["bereich"]["arbeitshoehe"], exp["bereich"]["bis"]
-    heights = sorted({work, top, *[z for z in LEVELS if work < z < top]})
+    low = exp["bereich"].get("von", work)   # Zugang vom Boden: ab 10 m
+    heights = sorted({low, top, *[z for z in LEVELS if low < z < top]})
 
     print(f"Standort: {site['name']} ({site['lat']}, {site['lon']}) · Bereich {exp['bereich']['text']} · Tag {exp['tag']}")
     if exp.get("abgerufen"):

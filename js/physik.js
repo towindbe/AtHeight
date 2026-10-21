@@ -22,12 +22,19 @@ function windAt(lv, z){
   }
   return {v:null, ext:false};
 }
-/* Arbeitsbereich: Arbeitshöhe, bei "Seilweg mitbewerten" bis hinauf zur Nabe */
+/* Arbeitsbereich je nach Zugang zur Arbeitshöhe:
+   ground  = vom Boden am Seil nach oben: 10 m bis Arbeitshöhe (Standard)
+   nacelle = von der Gondel am Seil nach unten: Arbeitshöhe bis Nabe
+   none    = nur die Arbeitshöhe
+   Bewertet wird der stärkste Wind im Bereich. */
 const workH = () => site.work || site.hub;
-const zoneTop = () => site.path && workH() < site.hub ? site.hub : workH();
-const zoneTxt = () => zoneTop() !== workH() ? `${workH()}–${zoneTop()} m` : `${workH()} m`;
+const accessMode = () => site.access || "ground";
+const zoneBottom = () => accessMode()==="ground" ? Math.min(10, workH()) : workH();
+const zoneTop = () => accessMode()==="nacelle" && workH() < site.hub ? site.hub : workH();
+const zoneTxt = () => zoneBottom() < workH() ? `bis ${workH()} m` : zoneTop() !== workH() ? `${workH()}–${zoneTop()} m` : `${workH()} m`;
+const ACCESS_TXT = {ground:"Aufstieg vom Boden", nacelle:"Abstieg von der Gondel", none:"nur Arbeitshöhe"};
 function zoneWind(lv){
-  const lo = workH(), hi = zoneTop();
+  const lo = zoneBottom(), hi = zoneTop();
   const zs = [...new Set([lo, ...LEVELS.filter(z => z>lo && z<hi), hi])];
   return zs.map(z => windAt(lv, z)).filter(w => w.v!=null).reduce((a,b) => !a || b.v > a.v ? b : a, null) || {v:null, ext:false};
 }

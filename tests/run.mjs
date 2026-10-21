@@ -86,7 +86,7 @@ const result = await page.evaluate(async () => {
 
   out.erststart = text("#headline");
   siteChosen = true; document.body.classList.remove("no-site");
-  site = {...DEFAULT_SITE, name:"Testanlage", lat:47.955, lon:9.64, hub:125, rotor:149, work:80, path:true, wind:12, gust:15, from:6, to:19, checked:true};
+  site = {...DEFAULT_SITE, name:"Testanlage", lat:47.955, lon:9.64, hub:125, rotor:149, work:80, path:true, access:"nacelle", wind:12, gust:15, from:6, to:19, checked:true};
   await load();
 
   out.modelle = state.results.map(r => r.m.id + ":" + r.status);
@@ -113,6 +113,11 @@ const result = await page.evaluate(async () => {
 
   if(outlookPromise) await outlookPromise;
   out.ausblick = text("#outlook");
+
+  // Zugang vom Boden: Bereich 10 m bis Arbeitshöhe
+  site = {...site, access:"ground"}; state.hours = computeHours(state.results, state.times);
+  out.vomBoden = {bereich: zoneTxt(), stunden: state.hours.filter((h,i) => i%6===0).map(h => h.lamp + " " + (h.med==null ? "-" : h.med.toFixed(3)))};
+  site = {...site, access:"nacelle"}; state.hours = computeHours(state.results, state.times);
 
   setModelUsed("gfs_global", false);
   out.ohneGFS = hours().map(h => h.lamp + " " + (h.med==null ? "-" : h.med.toFixed(3)));
