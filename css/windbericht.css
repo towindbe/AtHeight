@@ -393,3 +393,13 @@ body.info-open{overflow:hidden}
 #mapCard:not(.map-max) #map{flex:1 1 280px;min-height:280px}
 /* Tagesbericht: Auswahl der Entscheidung breiter */
 .card .grid label:has(#r_decision){grid-column:span 2;min-width:0}
+/* Statuskästen: feiner Rahmen rundum in der Statusfarbe */
+.status-row > div{border:1px solid var(--line);border-radius:10px}
+.status-row > .warnbox{border-color:var(--stop)}
+.status-row > .warnbox.ok{border-color:var(--go);background:var(--go-bg)}
+.status-row > .warnbox.na{border-color:var(--line)}
+.status-row > .rigbox{border-color:var(--go);background:var(--go-bg)}
+.status-row > .rigbox.r-warn{border-color:var(--warn);background:var(--warn-bg)}
+.status-row > .rigbox.r-stop{border-color:var(--stop);background:var(--stop-bg)}
+.status-row > .spreadbox.s-einig{border-color:var(--go)}
+.status-row > .spreadbox.s-unsicher{border-color:var(--band-line)}
