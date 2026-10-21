@@ -72,3 +72,14 @@ $("infoBtn").onclick = () => infoShow(true);
 $("infoLink").onclick = e => { e.preventDefault(); infoShow(true); };
 $("infoClose").onclick = () => infoShow(false);
 document.addEventListener("keydown", e => { if(e.key==="Escape" && !$("infoOverlay").hidden) infoShow(false); });
+
+/* Windverlauf vergrößern (wie die Karte) */
+function chartMax(on){
+  $("chartCard").classList.toggle("chart-max", on);
+  document.body.classList.toggle("map-open", on);
+  $("chartMaxBtn").setAttribute("aria-pressed", String(on));
+  $("chartMaxBtn").textContent = on ? "✕ Schließen" : "⤢ Vergrößern";
+  if(!on) setTimeout(() => $("chartCard").scrollIntoView({block:"start"}), 60);
+}
+$("chartMaxBtn").onclick = () => chartMax(!$("chartCard").classList.contains("chart-max"));
+document.addEventListener("keydown", e => { if(e.key==="Escape" && $("chartCard").classList.contains("chart-max")) chartMax(false); });
