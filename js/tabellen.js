@@ -6,10 +6,10 @@ function renderMatrix(){
   // gleiche Regel wie überall: rot erst ÜBER der Grenze, gelb ab 75 %; angezeigt mit einer Nachkommastelle
   const cls = v => v==null ? "m-none" : v > site.wind ? "m-stop" : v >= site.wind*.75 ? "m-warn" : "m-go";
   // knapp über der Grenze (gerundet gleich dem Grenzwert): zwei Nachkommastellen, damit Rot nachvollziehbar ist
-  const num = v => v > site.wind && Math.round(v*10)/10 <= site.wind ? fmt(v,2) : fmt(v);
+  const num = v => { const d = U().d, r = x => Math.round(cw(x)*10**d)/10**d; return v > site.wind && r(v) <= r(site.wind) ? fw(v, d+1) : fw(v); };
   const u = usableModels().sort((a,b)=> (b.m.hi-a.m.hi));
   const head = `<tr><th></th>${idxs.map(i=>`<th>${hh(state.times[i])}</th>`).join("")}</tr>`;
-  const rows = u.map(r => `<tr><th class="mname">${esc(r.m.name)} <small>${esc(r.m.org)} · ${esc(r.m.res)}</small></th>${idxs.map(i => { const s=r.series[i]; return `<td class="${cls(s?.v)}" data-i="${i}" title="${esc(r.m.name)} ${hh(state.times[i])} Uhr: Wind ${fmt(s?.v)} m/s, Böe ${fmt(s?.g)} m/s">${s?num(s.v):"·"}</td>`; }).join("")}</tr>`).join("");
+  const rows = u.map(r => `<tr><th class="mname">${esc(r.m.name)} <small>${esc(r.m.org)} · ${esc(r.m.res)}</small></th>${idxs.map(i => { const s=r.series[i]; return `<td class="${cls(s?.v)}" data-i="${i}" title="${esc(r.m.name)} ${hh(state.times[i])} Uhr: Wind ${fwu(s?.v)}, Böe ${fwu(s?.g)}">${s?num(s.v):"·"}</td>`; }).join("")}</tr>`).join("");
   const med = `<tr class="medrow"><th class="mname">Median <small>alle Modelle</small></th>${idxs.map(i => { const v=state.hours[i].med; return `<td class="${cls(v)}" data-i="${i}" style="font-weight:700">${v==null?"·":num(v)}</td>`; }).join("")}</tr>`;
   $("matrix").innerHTML = `<table>${head}${rows}${med}</table>`;
   $("matrix").querySelectorAll("td[data-i]").forEach(td => td.onclick = () => selectHour(+td.dataset.i));
@@ -17,13 +17,13 @@ function renderMatrix(){
   highlightSel();
 }
 
-const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Richtung</th><th title="Anzahl der Modelle mit Wind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th title="Anteil der Szenarien, in denen Wind oder Böe über Grenze liegen">Zu windig</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th>Gründe</th></tr></thead>`;
+const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind <span class="wu">m/s</span></th><th>Spanne</th><th>Böe</th><th>Richtung</th><th title="Anzahl der Modelle mit Wind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th title="Anteil der Szenarien, in denen Wind oder Böe über Grenze liegen">Zu windig</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th>Gründe</th></tr></thead>`;
 function hourRows(hs, dots){
   return hs.map(h => `<tr>
     <td class="num">${dots?`<span class="dot d-${h.lamp}"></span> `:LAMP_TXT[h.lamp]+" "}${hh(h.t)}:00</td>
-    <td class="num ${h.med>site.wind?"over":""}">${fmt(h.med)}</td>
-    <td class="num">${fmt(h.min)}–${fmt(h.max)}</td>
-    <td class="num ${h.gMed>site.gust?"over":""}">${fmt(h.gMed)}</td>
+    <td class="num ${h.med>site.wind?"over":""}">${fw(h.med)}</td>
+    <td class="num">${fw(h.min)}–${fw(h.max)}</td>
+    <td class="num ${h.gMed>site.gust?"over":""}">${fw(h.gMed)}</td>
     <td class="num">${dirName(h.dir.mean)}</td>
     <td class="num">${h.n ? h.over+"/"+h.n : "–"}</td>
     <td class="num ${h.pEns>=ENS_WARN?"over":""}">${riskTen(h.pEns)}</td>

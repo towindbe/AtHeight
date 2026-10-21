@@ -22,6 +22,7 @@ function snapshot(){
     warnungen: allWarnings().map(w => ({quelle:w.src, stufe:w.lvl, titel:w.title, ampelrelevant:w.relevant, beginn:isFinite(w.start)?new Date(w.start).toISOString():null, ende:isFinite(w.end)?new Date(w.end).toISOString():null})),
     fazit:{ampel:state.summary?.lamp, text:(state.summary?.head||"")+" "+(state.summary?.text||"")},
     nacht:(() => { const n = nightRig(state.day); return n && {status:n.lvl, von:n.from, bis:n.to, vollstaendig:n.complete, grenzeWind:nightWind(), grenzeBoe:nightGust(), maxWind:n.v, maxBoe:n.g, maxBoeEinzelmodell:n.gMax}; })(),
+    einheit:{daten:"m/s", anzeige:WU()},
     bereich:{arbeitshoehe:workH(), von:zoneBottom(), bis:zoneTop(), zugang:accessMode(), text:zoneTxt()},
     modelle: state.results.map(r=>({id:r.m.id, name:r.m.name, anbieter:r.m.org, status:isExcluded(r) && (r.status==="ok"||r.status==="extrap") ? "ausgeschlossen" : r.status, abfrage:apiUrl(r.m),
       werte: r.series ? dayHours(state.day).map(h => { const s = r.series[h.i]; return s ? {zeit:h.t, utc:utcStr(h.t), wind:s.v, boe:s.g, richtung:s.dir, hochgerechnet:s.ext} : null; }) : null})),
@@ -40,9 +41,9 @@ const shortWhy = t => t
 function reportRows(hs){
   return hs.map(h => `<tr class="${h.dark?"dk":""}">
     <td><span class="rp-pill ${h.lamp}">${LAMP_TXT[h.lamp]}</span>${hh(h.t)}:00</td>
-    <td class="${level(h.med, site.wind)}">${fmt(h.med)}</td>
-    <td>${fmt(h.min)}–${fmt(h.max)}</td>
-    <td class="${level(h.gMed, site.gust)}">${fmt(h.gMed)}</td>
+    <td class="${level(h.med, site.wind)}">${fw(h.med)}</td>
+    <td>${fw(h.min)}–${fw(h.max)}</td>
+    <td class="${level(h.gMed, site.gust)}">${fw(h.gMed)}</td>
     <td>${dirName(h.dir.mean)}</td>
     <td class="${h.n && h.over>=h.n/2 ? "over" : h.over>0 ? "near" : ""}">${h.n ? h.over+"/"+h.n : "–"}</td>
     <td class="${h.pEns==null ? "" : h.pEns>=ENS_WARN ? "over" : h.pEns>=ENS_INFO ? "near" : ""}">${h.pEns==null ? "–" : riskTen(h.pEns)}</td>
@@ -82,7 +83,7 @@ async function buildReport(){
     <div class="rp-sec rp-cols">
       <div class="rp-box"><h3>Einsatz</h3>${kv([["Projekt", esc(b.projekt)], ["Anlage / Typ", esc(b.anlage)], ["Tätigkeit", esc(b.taetigkeit)], ["Team", esc(b.team)], ["Aufsicht", esc(b.aufsicht)]])}</div>
       <div class="rp-box"><h3>Standort &amp; Grenzwerte</h3>${kv([["Koordinaten", `${fmt(site.lat,4)}° N, ${fmt(site.lon,4)}° E`], ["Nabe / Rotor", `${site.hub} m / ${site.rotor} m`],
-        ["Arbeitsbereich", `${zoneTxt()} (${ACCESS_TXT[accessMode()]})`], ["Max. Windstärke", fmt(site.wind)+" m/s"], ["Max. Böe", fmt(site.gust)+" m/s"]])}</div>
+        ["Arbeitsbereich", `${zoneTxt()} (${ACCESS_TXT[accessMode()]})`], ["Max. Windstärke", fwu(site.wind)], ["Max. Böe", fwu(site.gust)]])}</div>
     </div>
 
     <div class="rp-sec rp-box rp-warn ${kind==="list" ? (ws.some(w=>w.relevant && w.lvl>=3) ? "stop" : "warn") : kind==="ok" ? "go" : "na"}">
@@ -93,7 +94,7 @@ async function buildReport(){
     ${(nt => nt ? `<div class="rp-sec rp-box ${nt.lvl}"><h3>Seile und Bühne über Nacht</h3><b>${nt.lvl==="go" ? "✓ " : ""}${esc(nt.head)}.</b> ${esc(nt.text)}</div>` : "")(nightText(nightRig(state.day)))}
 
     <div class="rp-sec">
-      <h3>Prognose je Stunde · Wind und Böe im Bereich ${zoneTxt()} (m/s)</h3>
+      <h3>Prognose je Stunde · Wind und Böe im Bereich ${zoneTxt()} (${WU()})</h3>
       <table class="rp-t"><thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Ri.</th><th title="Anzahl der Modelle mit Wind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th title="Anteil der Szenarien über Grenze">Zu windig</th><th>Regen</th><th>CAPE</th><th>°C ${workH()} m</th><th>Gefühlt</th><th>Gründe</th></tr></thead>
       <tbody>${reportRows(hs)}</tbody></table>
       <div class="rp-small" style="margin-top:3px">Gelb: ab 75 % des Grenzwerts bzw. Hinweis · Rot: über Grenzwert · Schraffiert: Nacht</div>

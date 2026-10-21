@@ -94,7 +94,7 @@ function renderOutlook(){
   const cards = outlook.days.map(o => {
     const isDetail = detail.has(o.d);
     // Tage mit Detailprognose: Ampel und Wind wie oben, damit beides übereinstimmt
-    let lamp = o.lamp, vTxt = o.n ? `${fmt(o.vMed,0)} m/s` : "–", vSpan = o.n ? `${fmt(o.vLo,0)}–${fmt(o.vHi,0)}` : "", gTxt = o.gMed!=null ? fmt(o.gMed,0) : "–";
+    let lamp = o.lamp, vTxt = o.n ? fwu(o.vMed,0) : "–", vSpan = o.n ? `${fw(o.vLo,0)}–${fw(o.vHi,0)}` : "", gTxt = o.gMed!=null ? fw(o.gMed,0) : "–";
     let rain = o.rain, storm = o.storm, tMin = o.tMin, tMax = o.tMax;
     if(isDetail){
       // gleiche Bedeutung wie bei den Tendenz-Tagen: Tageshöchstwert je Modell, davon Median und Spanne
@@ -104,8 +104,8 @@ function renderOutlook(){
         .map(r => Math.max(...hs.map(h => r.series[h.i]?.v ?? -1))).filter(v => v >= 0);
       if(hs.length && maxima.length){
         lamp = buildSummary(hs).lamp;
-        vTxt = `${fmt(median(maxima),0)} m/s`; vSpan = `${fmt(Math.min(...maxima),0)}–${fmt(Math.max(...maxima),0)}`;
-        gTxt = fmt(Math.max(...hs.map(h => h.gMed ?? 0)),0);
+        vTxt = fwu(median(maxima),0); vSpan = `${fw(Math.min(...maxima),0)}–${fw(Math.max(...maxima),0)}`;
+        gTxt = fw(Math.max(...hs.map(h => h.gMed ?? 0)),0);
         rain = hs.reduce((s,h) => s + (h.rain ?? 0), 0); storm = hs.some(h => h.storms > 0) ? 1 : 0;
         const ts = hs.map(h => h.tW).filter(v => v!=null); if(ts.length){ tMin = Math.min(...ts); tMax = Math.max(...ts); }
       }
@@ -118,7 +118,7 @@ function renderOutlook(){
       <span class="ol-kind">${isDetail ? "Detail oben" : "Tendenz"}</span>
       <span class="ol-row"><small>Wind max</small><b>${vTxt}</b></span>
       <span class="ol-row" title="Höchster Wind des Tages: vom vorsichtigsten bis zum stürmischsten Modell. Schmal = einig, breit = unsicher."><small>Spanne</small>${vSpan}</span>
-      <span class="ol-row"><small>Böe max</small>${gTxt} m/s</span>
+      <span class="ol-row"><small>Böe max</small>${gTxt} ${WU()}</span>
       <span class="ol-row"><small>Zu windig</small>${riskHtml(o.pEns, outlook.ens?.members)}</span>
       <span class="ol-row"><small>Regen</small>${rain==null ? "–" : fmt(rain,1)+" mm"}${storm > 0 ? ` <span title="Gewittersignal">⚡</span>` : ""}</span>
       <span class="ol-row"><small>°C</small>${tMin==null ? "–" : `${fmt(tMin,0)} … ${fmt(tMax,0)}`}</span>

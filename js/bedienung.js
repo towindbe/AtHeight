@@ -22,7 +22,7 @@ $("saveBtn").onclick = () => {
   site = {name: $("s_name").value.trim() || "Standort", lat:clamp(num("s_lat",site.lat),-90,90), lon:clamp(num("s_lon",site.lon),-180,180),
     hub:clamp(num("s_hub",site.hub),20,250), rotor:clamp(num("s_rotor",site.rotor),0,250),
     work: $("s_work").value.trim()==="" ? null : clamp(Math.round(num("s_work",0)),10,300), access:$("s_access").value,
-    wind:num("s_wind",site.wind), gust:num("s_gust",site.gust), nightWind:num("s_nwind",nightWind()), nightGust:num("s_ngust",nightGust()), from:clamp(Math.round(num("s_from",site.from)),0,23), to:clamp(Math.round(num("s_to",site.to)),0,23)};
+    wind:windField("s_wind",site.wind), gust:windField("s_gust",site.gust), nightWind:windField("s_nwind",nightWind()), nightGust:windField("s_ngust",nightGust()), from:clamp(Math.round(num("s_from",site.from)),0,23), to:clamp(Math.round(num("s_to",site.to)),0,23)};
   if(site.to < site.from) [site.from, site.to] = [site.to, site.from];
   site.checked = true;
   // ist die Anlage gespeichert, wird der Eintrag mit aktualisiert
@@ -51,6 +51,28 @@ document.querySelectorAll("[data-view]").forEach(b => b.onclick = () => {
 });
 $("nowPrev").onclick = () => selectHour(state.sel - 1);
 $("nowNext").onclick = () => selectHour(state.sel + 1);
+/* Windfelder in den Einstellungen: angezeigt in der gewählten Einheit, gemerkt in m/s (data-ms),
+   damit ein Wechsel der Einheit die Grenzwerte nicht durch Rundung verschiebt */
+function setWindField(id, ms){
+  const el = $(id); el.dataset.ms = ms ?? ""; el.step = U().step;
+  el.value = ms==null ? "" : +(ms * U().f).toFixed(windUnit==="ms" ? 2 : 1);
+}
+function windField(id, d){ const v = parseFloat($(id).dataset.ms); return isNaN(v) || v <= 0 ? d : v; }
+["s_wind","s_gust","s_nwind","s_ngust"].forEach(id => $(id).oninput = () => { const v = parseFloat($(id).value); if(!isNaN(v)) $(id).dataset.ms = v / U().f; });
+function applyUnitLabels(){
+  document.querySelectorAll(".wu").forEach(e => e.textContent = WU());
+  document.querySelectorAll("span[data-ms]").forEach(e => e.textContent = fwu(+e.dataset.ms, 0));
+}
+$("s_unit").onchange = () => {
+  const keep = ["s_wind","s_gust","s_nwind","s_ngust"].map(id => [id, parseFloat($(id).dataset.ms)]);
+  windUnit = UNITS[$("s_unit").value] ? $("s_unit").value : "ms";
+  try{ localStorage.setItem("wb_unit", windUnit); }catch(e){}
+  keep.forEach(([id, ms]) => setWindField(id, isNaN(ms) ? null : ms));
+  applyUnitLabels();
+  if(state.fetchedAt){ state.hours = computeHours(state.results, state.times); render(); }
+  renderRanking();
+};
+applyUnitLabels();
 $("printBtn").onclick = async () => { if(!state.fetchedAt) return; await buildReport(); window.print(); };
 const appTitle = document.title;
 window.addEventListener("beforeprint", () => { if(state.fetchedAt) document.title = `Tagesbericht ${site.name} ${state.day}`; });

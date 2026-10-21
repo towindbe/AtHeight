@@ -55,9 +55,9 @@ function defaultSel(day){
 function rate(h){
   if(!h.n) return {lamp:"none", why:[]};
   const why = [], add = (l, t) => why.push({l, t});
-  if(h.med!=null && h.med > site.wind) add("stop", `Wind ${fmt(h.med)} m/s über ${fmt(site.wind)}`);
+  if(h.med!=null && h.med > site.wind) add("stop", `Wind ${fwu(h.med)} über ${fw(site.wind)}`);
   else if(h.max!=null && h.max > site.wind) add("warn", "Einzelne Modelle über Wind-Grenze");
-  if(h.gMed!=null && h.gMed > site.gust) add("stop", `Böe ${fmt(h.gMed)} m/s über ${fmt(site.gust)}`);
+  if(h.gMed!=null && h.gMed > site.gust) add("stop", `Böe ${fwu(h.gMed)} über ${fw(site.gust)}`);
   else if(h.gMax!=null && h.gMax > site.gust) add("warn", "Einzelne Modelle mit Böe über Grenze");
   if(h.storms >= Math.max(2, Math.ceil(h.n/3))) add("stop", `Gewitter in ${h.storms} von ${h.n} Modellen`);
   else if(h.storms >= 1) add("warn", `Gewittersignal in ${h.storms} Modell${h.storms>1?"en":""}`);
@@ -104,11 +104,11 @@ function nightRig(day){
 function nightText(n){
   if(!n) return null;
   const span = `${hh(n.from)}–${String((hourOf(n.to)+1)%24).padStart(2,"0")} Uhr`;
-  const lim = `Grenze Wind ${fmt(nightWind())} / Böe ${fmt(nightGust())} m/s`;
+  const lim = `Grenze Wind ${fw(nightWind())} / Böe ${fwu(nightGust())}`;
   const part = n.complete ? "" : " (nur bis Ende der Prognose)";
-  if(n.lvl==="stop") return {lvl:"stop", head:"Seile und Bühne heute abbauen", text:`Über Nacht (${span}${part}) Böen bis ${fmt(n.g)} m/s gegen ${hh(n.gT)} Uhr, Wind bis ${fmt(n.v)} m/s, über Grenze ab ${hh(n.firstOver)} Uhr. ${lim}, 10 m bis Nabe.`};
-  if(n.lvl==="warn") return {lvl:"warn", head:"Seile und Bühne über Nacht: prüfen", text:`Einzelne Modelle über Grenze (Böe bis ${fmt(n.gMax)}, Wind bis ${fmt(n.vMax)} m/s), Median Böe ${fmt(n.g)} m/s, ${span}${part}. ${lim}.`};
-  return {lvl:"go", head:"Seile und Bühne können über Nacht hängen bleiben", text:`${span}${part}: Böen bis ${fmt(n.g)} m/s, Wind bis ${fmt(n.v)} m/s. ${lim}.`};
+  if(n.lvl==="stop") return {lvl:"stop", head:"Seile und Bühne heute abbauen", text:`Über Nacht (${span}${part}) Böen bis ${fwu(n.g)} gegen ${hh(n.gT)} Uhr, Wind bis ${fwu(n.v)}, über Grenze ab ${hh(n.firstOver)} Uhr. ${lim}, 10 m bis Nabe.`};
+  if(n.lvl==="warn") return {lvl:"warn", head:"Seile und Bühne über Nacht: prüfen", text:`Einzelne Modelle über Grenze (Böe bis ${fw(n.gMax)}, Wind bis ${fwu(n.vMax)}), Median Böe ${fwu(n.g)}, ${span}${part}. ${lim}.`};
+  return {lvl:"go", head:"Seile und Bühne können über Nacht hängen bleiben", text:`${span}${part}: Böen bis ${fwu(n.g)}, Wind bis ${fwu(n.v)}. ${lim}.`};
 }
 const isWork = t => hourOf(t)>=site.from && hourOf(t)<=site.to;
 const dayHours = day => state.hours.filter(h => h.t.startsWith(day) && isWork(h.t));
@@ -139,7 +139,7 @@ function buildSummary(hs){
   const firstStop = hs.find(h => h.lamp==="stop");
   if(firstStop && c.stop!==hs.length) parts.push(`Ab ${hh(firstStop.t)} Uhr liegen ${firstStop.over} von ${firstStop.n} Modellen über euren Grenzwerten.`);
   const peak = hs.reduce((a,h) => h.med!=null && (!a || h.med>a.med) ? h : a, null);
-  if(peak) parts.push(`Stärkster Wind gegen ${hh(peak.t)} Uhr: ${fmt(peak.med)} m/s (Spanne ${fmt(peak.min)}–${fmt(peak.max)}), Böen ca. ${fmt(peak.gMed)} m/s.`);
+  if(peak) parts.push(`Stärkster Wind gegen ${hh(peak.t)} Uhr: ${fwu(peak.med)} (Spanne ${fw(peak.min)}–${fw(peak.max)}), Böen ca. ${fwu(peak.gMed)}.`);
   const st = hs.find(h=>h.storms>0);
   if(st) parts.push(`Gewittersignal ab ${hh(st.t)} Uhr.`);
   const spread = median(hs.filter(h=>h.max!=null).map(h=>h.max-h.min));

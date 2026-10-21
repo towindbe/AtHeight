@@ -4,6 +4,15 @@
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt = (v, d=1) => v==null || isNaN(v) ? "–" : v.toFixed(d).replace(".", ",");
+/* Einheit der Windangaben (nur Anzeige; gerechnet und gespeichert wird immer in m/s) */
+const UNITS = {ms:{f:1, l:"m/s", d:1, step:0.5}, kmh:{f:3.6, l:"km/h", d:0, step:1}, kn:{f:1.943844, l:"kn", d:0, step:1}};
+let windUnit = (() => { try{ return localStorage.getItem("wb_unit"); }catch(e){ return null; } })();
+if(!UNITS[windUnit]) windUnit = "ms";
+const U = () => UNITS[windUnit];
+const WU = () => U().l;
+const cw = v => v==null || isNaN(v) ? null : v * U().f;                 // m/s -> Anzeigeeinheit
+const fw = (v, d) => fmt(cw(v), d ?? U().d);                            // Wind formatiert in Anzeigeeinheit
+const fwu = (v, d) => v==null || isNaN(v) ? "–" : fw(v, d) + " " + WU();   // mit Einheit
 const median = a => { if(!a.length) return null; const s=[...a].sort((x,y)=>x-y), m=s.length>>1; return s.length%2 ? s[m] : (s[m-1]+s[m])/2; };
 const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
 const hh = t => t.slice(11,13);

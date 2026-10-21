@@ -128,16 +128,16 @@ function renderRanking(){
   const pct = v => v==null ? "–" : Math.round(v*100)+" %";
   $("rankOut").innerHTML = `
     <p class="rank-sum">${narrow
-      ? `<b>Alle Modelle treffen hier etwa gleich gut</b> (Fehler im Verlauf ${fmt(best,2)}–${fmt(worst,2)} m/s). Für oder gegen einzelne Modelle lässt sich daraus keine Empfehlung ableiten.`
+      ? `<b>Alle Modelle treffen hier etwa gleich gut</b> (Fehler im Verlauf ${fw(best,U().d+1)}–${fwu(worst,U().d+1)}). Für oder gegen einzelne Modelle lässt sich daraus keine Empfehlung ableiten.`
       : `<b>Gut:</b> ${good.map(r => esc(name(r.id))).join(", ")}.
          ${poor.length ? `<br><b>Deutlich schlechter:</b> ${poor.map(r => esc(name(r.id))).join(", ")}. Ausschließen kannst du sie oben per Häkchen.` : ""}
          <br><span class="muted">Die übrigen liegen im Mittelfeld. Innerhalb einer Gruppe sind die Unterschiede gering, deshalb alphabetisch sortiert.</span>`}
-      ${sameSign && Math.abs(medBias) >= 0.5 ? `<br><span class="muted">Alle Modelle liegen hier in dieselbe Richtung daneben (im Mittel ${medBias>0 ? "+" : "−"}${fmt(Math.abs(medBias))} m/s, ${medBias>0 ? "Station misst weniger" : "Station misst mehr"} als die Modelle). Das liegt eher an der Lage der Station als an den Modellen und zählt deshalb nicht für die Einstufung.</span>` : ""}</p>
+      ${sameSign && Math.abs(medBias) >= 0.5 ? `<br><span class="muted">Alle Modelle liegen hier in dieselbe Richtung daneben (im Mittel ${medBias>0 ? "+" : "−"}${fwu(Math.abs(medBias))}, ${medBias>0 ? "Station misst weniger" : "Station misst mehr"} als die Modelle). Das liegt eher an der Lage der Station als an den Modellen und zählt deshalb nicht für die Einstufung.</span>` : ""}</p>
     <div class="scroll"><table class="t rank-t"><thead><tr><th>Einstufung</th><th>Modell</th><th title="Mittlerer Fehler nach Abzug der Grundtendenz">Fehler Verlauf</th><th title="Windigste 25 % der Stunden richtig erkannt">Treffer windig</th><th>Fehler gesamt</th><th>Tendenz</th><th>Fehler Böe</th><th>Stunden</th></tr></thead><tbody>
     ${rows.map(r => `<tr class="${group(r)==="poor" ? "poor" : group(r)==="good" ? "top" : ""}"><td><span class="gpill ${GROUP[group(r)][1]}">${GROUP[group(r)][0]}</span></td><td>${esc(name(r.id))}${(site.excluded||[]).includes(r.id) ? ' <span class="muted">(ausgeschlossen)</span>' : ""}</td>
-      <td class="num">${fmt(r.cen,2)} m/s</td><td class="num">${pct(r.csi)}</td><td class="num">${fmt(r.mae,2)} m/s</td>
-      <td class="num">${r.bias>=0 ? "+" : "−"}${fmt(Math.abs(r.bias))} ${Math.abs(r.bias)<0.3 ? "" : r.bias>0 ? "zu viel" : "zu wenig"}</td>
-      <td class="num">${r.gmae==null ? "–" : fmt(r.gmae)+" m/s"}</td><td class="num">${r.n}</td></tr>`).join("")}
+      <td class="num">${fwu(r.cen,U().d+1)}</td><td class="num">${pct(r.csi)}</td><td class="num">${fwu(r.mae,U().d+1)}</td>
+      <td class="num">${r.bias>=0 ? "+" : "−"}${fw(Math.abs(r.bias))} ${Math.abs(r.bias)<0.3 ? "" : r.bias>0 ? "zu viel" : "zu wenig"}</td>
+      <td class="num">${r.gmae==null ? "–" : fwu(r.gmae)}</td><td class="num">${r.n}</td></tr>`).join("")}
     </tbody></table></div>
     ${(() => { const miss = (res.models||[]).filter(id => !res.rows.some(r => r.id===id)); return miss.length ? `<p class="note">Ohne Vergleichsdaten (keine archivierten Vortagesprognosen): ${miss.map(id => esc(name(id))).join(", ")}.</p>` : ""; })()}
     <p class="note"><b>So wird gerechnet:</b> Vortagesprognose für 10 m gegen Station <b>${esc(st.name)}</b> (${esc(st.src)}, ${fmt(st.dist,1)} km entfernt${st.alt!=null ? `, ${Math.round(st.alt)} m ü. NN` : ""}${dAlt!=null && Math.abs(dAlt) > 150 ? `, ${Math.abs(dAlt)} m ${dAlt>0 ? "tiefer" : "höher"} als der Standort` : ""}),

@@ -130,6 +130,6 @@ function updateMap(){
     const col = {go:"#46c27b", warn:"#e6b04c", stop:"#e5484d", none:"#999"}[h.lamp];
     const svg = `<svg width="120" height="120" viewBox="0 0 120 120" style="transform:rotate(${h.dir.mean}deg)"><line x1="60" y1="18" x2="60" y2="96" stroke="#000" stroke-opacity=".45" stroke-width="9" stroke-linecap="round"/><line x1="60" y1="18" x2="60" y2="94" stroke="${col}" stroke-width="5" stroke-linecap="round"/><polygon points="60,110 48,88 72,88" fill="${col}" stroke="#000" stroke-opacity=".45"/></svg>`;
     arrowMarker = L.marker(ll, {icon:L.divIcon({className:"wind-arrow", html:svg, iconSize:[120,120], iconAnchor:[60,60]}), interactive:false, keyboard:false}).addTo(map);
-    marker.bindTooltip(`${hh(h.t)} Uhr · ${fmt(h.med)} m/s aus ${dirName(h.dir.mean)}`, {direction:"top", offset:[0,-36]});
+    marker.bindTooltip(`${hh(h.t)} Uhr · ${fwu(h.med)} aus ${dirName(h.dir.mean)}`, {direction:"top", offset:[0,-36]});
   }
 }

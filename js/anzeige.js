@@ -7,17 +7,18 @@ function render(){
   renderHero(); renderTimeline(); renderDayTabs();
   renderChart(); renderSelected(); renderRain(); renderTemp(); renderMatrix();
   renderHourTable(); renderModelTable(); renderOutlook();
+  if(typeof applyUnitLabels==="function") applyUnitLabels();
 }
 function renderSelected(){ renderNow(); renderCompass(); renderProfile(); updateMap(); highlightSel(); }
 
 function fillSettings(){
   $("s_name").value = site.name; $("s_lat").value = site.lat; $("s_lon").value = site.lon;
   $("s_work").value = site.work ?? ""; $("s_access").value = accessMode();
-  $("s_hub").value = site.hub; $("s_rotor").value = site.rotor; $("s_wind").value = site.wind; $("s_gust").value = site.gust;
-  $("s_nwind").value = nightWind(); $("s_ngust").value = nightGust();
+  $("s_hub").value = site.hub; $("s_rotor").value = site.rotor; $("s_unit").value = windUnit;
+  setWindField("s_wind", site.wind); setWindField("s_gust", site.gust); setWindField("s_nwind", nightWind()); setWindField("s_ngust", nightGust());
   $("s_from").value = site.from; $("s_to").value = site.to;
   $("siteTitle").textContent = site.name;
-  $("siteMeta").innerHTML = `<span>Arbeit ${zoneTxt()}</span><span>Grenze ${fmt(site.wind)} · Böe ${fmt(site.gust)} m/s</span><span>${site.from}–${site.to} Uhr</span>`;
+  $("siteMeta").innerHTML = `<span>Arbeit ${zoneTxt()}</span><span>Grenze ${fw(site.wind)} · Böe ${fwu(site.gust)}</span><span>${site.from}–${site.to} Uhr</span>`;
   // Hinweis, bis die Werte dieser Anlage einmal bestätigt wurden
   const todo = siteChosen && !site.checked;
   $("setupHint").hidden = !todo;
@@ -71,8 +72,8 @@ function renderNow(){
   $("nowWhy").innerHTML = (h.why.length ? h.why : [{l:"go", t:"Alle Werte unter euren Grenzwerten"}])
     .map(w => `<li class="w-${w.l}"><span class="dot d-${w.l==="info"?"none":w.l}"></span>${esc(w.t)}</li>`).join("");
   const cells = [
-    ["Wind "+zoneTxt(), fmt(h.med), "m/s Median", h.med>site.wind],
-    ["Böe "+zoneTxt(), fmt(h.gMed), "m/s geschätzt", h.gMed>site.gust],
+    ["Wind "+zoneTxt(), fw(h.med), WU()+" Median", h.med>site.wind],
+    ["Böe "+zoneTxt(), fw(h.gMed), WU()+" geschätzt", h.gMed>site.gust],
     ["Richtung", dirName(h.dir.mean), h.dir.mean==null ? "" : Math.round(h.dir.mean)+"° · "+workH()+" m", false],
     ["Modelle", h.n ? `${h.over}/${h.n}` : "–", "über Grenze", h.over>0 && h.over>=h.n/2],
     ['Zu windig <button type="button" class="info-btn" id="ensInfoBtn" aria-expanded="false" aria-controls="ensInfo" title="Was bedeutet das?">?</button>', h.pEns==null ? "–" : riskTen(h.pEns), h.pEns==null ? "Szenarien nicht verfügbar" : riskHtml(h.pEns, h.nEns).replace(/>[^<]*<\/span>$/, `>der ${h.nEns} Szenarien</span>`), h.pEns!=null && h.pEns>=ENS_WARN],
@@ -88,7 +89,7 @@ function renderTimeline(){
   const nk = nowKey();
   $("timeline").innerHTML = days.map(d => {
     const cells = state.hours.filter(h=>h.t.startsWith(d)).map(h =>
-      `<button type="button" class="tl-cell c-${h.lamp} ${isWork(h.t)?"":"off"} ${h.dark?"dark":""} ${h.t.slice(0,13)===nk?"nowc":""}" data-i="${h.i}" title="${esc(h.why.map(w=>w.t).join(" · "))}" aria-label="${dayLabel(d,true)} ${hh(h.t)} Uhr: ${LAMP_TXT[h.lamp]}, ${fmt(h.med)} m/s"><span>${hourOf(h.t)%3===0?hh(h.t):""}</span></button>`).join("");
+      `<button type="button" class="tl-cell c-${h.lamp} ${isWork(h.t)?"":"off"} ${h.dark?"dark":""} ${h.t.slice(0,13)===nk?"nowc":""}" data-i="${h.i}" title="${esc(h.why.map(w=>w.t).join(" · "))}" aria-label="${dayLabel(d,true)} ${hh(h.t)} Uhr: ${LAMP_TXT[h.lamp]}, ${fwu(h.med)}"><span>${hourOf(h.t)%3===0?hh(h.t):""}</span></button>`).join("");
     return `<div class="tl-day ${d===state.day?"cur":""}"><span class="eyebrow">${esc(dayLabel(d))}</span><div class="tl-hours">${cells}</div></div>`;
   }).join("");
   $("timeline").querySelectorAll(".tl-cell").forEach(b => b.onclick = () => selectHour(+b.dataset.i, true));

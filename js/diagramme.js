@@ -59,8 +59,8 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
 /* Beschriftung der Grenzlinien rechts am Rand */
 const limitLabels = {id:"limitLabels", afterDatasetsDraw(c){
   const {ctx, chartArea:a, scales:{y}} = c;
-  const items = [[site.wind, `Grenze Wind ${fmt(site.wind)} m/s`], [site.gust, `Grenze Böe ${fmt(site.gust)} m/s`]]
-    .map(([v, t]) => ({t, py:y.getPixelForValue(v)})).filter(o => o.py >= a.top && o.py <= a.bottom).sort((p,q) => p.py-q.py);
+  const items = [[site.wind, `Grenze Wind ${fwu(site.wind)}`], [site.gust, `Grenze Böe ${fwu(site.gust)}`]]
+    .map(([v, t]) => ({t, py:y.getPixelForValue(cw(v))})).filter(o => o.py >= a.top && o.py <= a.bottom).sort((p,q) => p.py-q.py);
   // liegen die Linien dicht beieinander, Beschriftungen auseinanderziehen
   for(let k = 1; k < items.length; k++) if(items[k].py - items[k-1].py < 13) items[k].py = items[k-1].py + 13;
   ctx.save(); ctx.font = "600 10.5px " + css("--f-body"); ctx.textAlign = "right"; ctx.textBaseline = "bottom";
@@ -92,7 +92,7 @@ function attachScrub(canvasId, chartKey){
 function renderChart(){
   if(typeof Chart==="undefined"){ $("chartTitle").textContent = "Wind (Diagramm nicht geladen)"; return; }
   const idxs = dayIdx(), labels = idxs.map(i => hh(state.times[i]));
-  const H = idxs.map(i=>state.hours[i]), r2 = v => v==null?null:+v.toFixed(2);
+  const H = idxs.map(i=>state.hours[i]), r2 = v => v==null?null:+cw(v).toFixed(2);
   const fg = css("--fg"), stop = css("--stop");
   let ds = [];
   if(state.view==="band"){
@@ -104,10 +104,10 @@ function renderChart(){
   }
   ds.push({label:"Median", data:H.map(h=>r2(h.med)), borderColor:fg, borderWidth:3, pointRadius:0, tension:.3});
   ds.push({label:"Böe (gesch.)", data:H.map(h=>r2(h.gMed)), borderColor:fg, borderWidth:1.3, borderDash:[2,3], pointRadius:0, tension:.3});
-  ds.push({label:"Grenzwert", data:idxs.map(()=>site.wind), borderColor:stop, borderWidth:1.6, borderDash:[7,4], pointRadius:0});
-  ds.push({label:"Grenze Böe", data:idxs.map(()=>site.gust), borderColor:stop, borderWidth:1, borderDash:[2,4], pointRadius:0});
-  const opt = chartBase("m/s · "+zoneTxt()); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
-  opt.plugins.tooltip = {filter: it => !["Minimum","Grenzwert","Grenze Böe"].includes(it.dataset.label), callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y)} m/s`}};
+  ds.push({label:"Grenzwert", data:idxs.map(()=>cw(site.wind)), borderColor:stop, borderWidth:1.6, borderDash:[7,4], pointRadius:0});
+  ds.push({label:"Grenze Böe", data:idxs.map(()=>cw(site.gust)), borderColor:stop, borderWidth:1, borderDash:[2,4], pointRadius:0});
+  const opt = chartBase(WU()+" · "+zoneTxt()); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
+  opt.plugins.tooltip = {filter: it => !["Minimum","Grenzwert","Grenze Böe"].includes(it.dataset.label), callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y, U().d)} ${WU()}`}};
   if(charts.main) charts.main.destroy();
   charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, limitLabels]});
   charts.main.$idxs = idxs; charts.main.update("none");
@@ -166,12 +166,12 @@ function renderProfile(){
   for(let z=10; z<=Math.max(200, tip+10); z+=10) zs.push(z);
   const per = usableModels().map(r => r.series[i]).filter(Boolean);
   const prof = zs.map(z => { const v = per.map(s => windAt(s.lv, z).v).filter(x=>x!=null); return {z, med:median(v), min:v.length?Math.min(...v):null, max:v.length?Math.max(...v):null}; });
-  const P = (k) => prof.map(p => p[k]==null?null:{x:+p[k].toFixed(2), y:p.z});
+  const P = (k) => prof.map(p => p[k]==null?null:{x:+cw(p[k]).toFixed(2), y:p.z});
   const opt = chartBase("");
-  opt.scales.x = {type:"linear", beginAtZero:true, ticks:{color:css("--muted"), font:{family:"IBM Plex Mono", size:10}}, grid:{color:css("--line")}, title:{display:true, text:"m/s", color:css("--muted")}};
+  opt.scales.x = {type:"linear", beginAtZero:true, ticks:{color:css("--muted"), font:{family:"IBM Plex Mono", size:10}}, grid:{color:css("--line")}, title:{display:true, text:WU(), color:css("--muted")}};
   opt.scales.y = {type:"linear", min:0, max:zs[zs.length-1], ticks:{color:css("--muted"), font:{family:"IBM Plex Mono", size:10}, stepSize:40}, grid:{color:css("--line")}, title:{display:true, text:"Höhe über Grund (m)", color:css("--muted")}};
   opt.interaction = {mode:"nearest", intersect:false, axis:"y"};
-  opt.plugins.tooltip = {callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.x)} m/s in ${c.parsed.y} m`}};
+  opt.plugins.tooltip = {callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.x, U().d)} ${WU()} in ${c.parsed.y} m`}};
   const lowTip = Math.max(0, site.hub - site.rotor/2);
   const refPlugin = {id:"ref", beforeDatasetsDraw(c){
     // hinter den Linien: Rotorfläche und Band der Modellspanne (Fläche zwischen Minimum und Maximum je Höhe)
@@ -181,15 +181,15 @@ function renderProfile(){
     const pts = prof.filter(p => p.min!=null && p.max!=null);
     if(pts.length > 1){
       ctx.beginPath();
-      pts.forEach((p,k) => ctx[k ? "lineTo" : "moveTo"](x.getPixelForValue(p.max), y.getPixelForValue(p.z)));
-      [...pts].reverse().forEach(p => ctx.lineTo(x.getPixelForValue(p.min), y.getPixelForValue(p.z)));
+      pts.forEach((p,k) => ctx[k ? "lineTo" : "moveTo"](x.getPixelForValue(cw(p.max)), y.getPixelForValue(p.z)));
+      [...pts].reverse().forEach(p => ctx.lineTo(x.getPixelForValue(cw(p.min)), y.getPixelForValue(p.z)));
       ctx.closePath(); ctx.fillStyle = css("--band"); ctx.fill();
     }
     ctx.restore();
   }, afterDatasetsDraw(c){
     const {ctx, chartArea:a, scales:{x,y}} = c; ctx.save();
     ctx.strokeStyle = css("--accent"); ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(a.left, y.getPixelForValue(site.hub)); ctx.lineTo(a.right, y.getPixelForValue(site.hub)); ctx.stroke();
-    ctx.strokeStyle = css("--stop"); ctx.beginPath(); ctx.moveTo(x.getPixelForValue(site.wind), a.top); ctx.lineTo(x.getPixelForValue(site.wind), a.bottom); ctx.stroke();
+    ctx.strokeStyle = css("--stop"); ctx.beginPath(); ctx.moveTo(x.getPixelForValue(cw(site.wind)), a.top); ctx.lineTo(x.getPixelForValue(cw(site.wind)), a.bottom); ctx.stroke();
     ctx.setLineDash([]); ctx.fillStyle = css("--muted"); ctx.font = "10px IBM Plex Mono";
     ctx.fillText("Nabe "+site.hub+" m", a.left+4, y.getPixelForValue(site.hub)-4);
     if(workH() !== site.hub){
@@ -226,7 +226,7 @@ function renderCompass(){
     <dt>Wind aus</dt><dd>${h.dir.mean==null?"–":dirName(h.dir.mean)+" · "+Math.round(h.dir.mean)+"°"}</dd>
     <dt>Weht nach</dt><dd>${h.dir.mean==null?"–":dirName((h.dir.mean+180)%360)}</dd>
     <dt>Streuung</dt><dd>${sp==null?"–":"±"+Math.round(sp)+"° "+(sp<20?"(einig)":sp<45?"(mäßig)":"(unsicher)")}</dd>
-    <dt>Stärke</dt><dd>${fmt(h.med)} m/s, Böe ca. ${fmt(h.gMed)}</dd>
+    <dt>Stärke</dt><dd>${fwu(h.med)}, Böe ca. ${fw(h.gMed)}</dd>
     <dt>Modelle</dt><dd>${dirs.length}</dd>`;
   $("compassHour").textContent = `${dayLabel(state.times[i].slice(0,10),true)} · ${hh(state.times[i])} Uhr`;
   renderDirStrip();
@@ -243,7 +243,7 @@ function renderDirStrip(){
     const d = h.dir.mean;
     const arrow = d==null ? `<span class="dir-na">–</span>`
       : `<svg viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(${(d+180)%360} 12 12)"><line x1="12" y1="20" x2="12" y2="7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><polygon points="12,2 6.5,10 17.5,10" fill="currentColor"/></g></svg>`;
-    return `<button type="button" class="dir-cell d-${h.lamp} ${h.i===state.sel?"sel":""}" data-i="${h.i}" title="${hh(h.t)} Uhr: aus ${dirName(d)}${d==null?"":" ("+Math.round(d)+"°)"}, ${fmt(h.med)} m/s">${arrow}<span>${hh(h.t)}</span></button>`;
+    return `<button type="button" class="dir-cell d-${h.lamp} ${h.i===state.sel?"sel":""}" data-i="${h.i}" title="${hh(h.t)} Uhr: aus ${dirName(d)}${d==null?"":" ("+Math.round(d)+"°)"}, ${fwu(h.med)}">${arrow}<span>${hh(h.t)}</span></button>`;
   }).join("");
   $("dirStrip").querySelectorAll(".dir-cell").forEach(b => b.onclick = () => selectHour(+b.dataset.i));
   // Lee-Seite zur gewählten Stunde
