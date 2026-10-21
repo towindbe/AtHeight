@@ -112,16 +112,23 @@ function renderChart(){
   $("chartTitle").textContent = "Windverlauf · " + zoneTxt();
 }
 
+// Regenbalken: je mehr Modelle Regen vorhersagen (ab 0,1 mm), desto kräftiger die Farbe
+function rainColor(h){
+  const hex = css("--band-line").replace("#",""), [r,g,b] = [0,2,4].map(k => parseInt(hex.slice(k,k+2),16));
+  const share = h.rainN ? h.rainYes/h.rainN : 0;
+  return `rgba(${r},${g},${b},${(0.2 + 0.8*share).toFixed(2)})`;
+}
 function renderRain(){
   if(typeof Chart==="undefined") return;
   const idxs = dayIdx(), labels = idxs.map(i => hh(state.times[i])), H = idxs.map(i=>state.hours[i]);
   const opt = chartBase("mm/h"); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
   opt.scales.y.suggestedMax = 2;
   opt.scales.y2 = {position:"right", beginAtZero:true, suggestedMax:1000, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"IBM Plex Mono", size:10}}, title:{display:true, text:"CAPE J/kg", color:css("--muted")}};
-  opt.plugins.tooltip = {callbacks:{label:c => c.dataset.yAxisID==="y2" ? `CAPE: ${Math.round(c.parsed.y)} J/kg` : `Regen: ${fmt(c.parsed.y)} mm`}};
+  opt.plugins.tooltip = {callbacks:{label:c => c.dataset.yAxisID==="y2" ? `CAPE: ${Math.round(c.parsed.y)} J/kg`
+    : `Regen: ${fmt(c.parsed.y)} mm` + (H[c.dataIndex]?.rainN ? ` · ${H[c.dataIndex].rainYes} von ${H[c.dataIndex].rainN} Modellen` : "")}};
   if(charts.rain) charts.rain.destroy();
   charts.rain = new Chart($("rain"), {data:{labels, datasets:[
-    {type:"bar", label:"Regen", data:H.map(h=>h.rain==null?null:+h.rain.toFixed(2)), backgroundColor:css("--band-line"), borderRadius:2},
+    {type:"bar", label:"Regen", data:H.map(h=>h.rain==null?null:+h.rain.toFixed(2)), backgroundColor:H.map(h => rainColor(h)), borderColor:css("--band-line"), borderRadius:2},
     {type:"line", label:"CAPE", yAxisID:"y2", data:H.map(h=>h.cape==null?null:Math.round(h.cape)), borderColor:css("--warn"), borderWidth:2, pointRadius:0, tension:.3},
   ]}, options:opt, plugins:[markPlugin]});
   charts.rain.$idxs = idxs; charts.rain.update("none");

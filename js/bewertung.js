@@ -11,7 +11,9 @@ function computeHours(results, times){
     const vs = pts.map(x=>x.s.v), gs = pts.map(x=>x.s.g).filter(v=>v!=null);
     const h = {t, i, n:pts.length, med:median(vs), min:vs.length?Math.min(...vs):null, max:vs.length?Math.max(...vs):null,
       gMed:median(gs), gMax:gs.length?Math.max(...gs):null,
-      rain:median(pts.map(x=>x.s.rain).filter(v=>v!=null)), cape:median(pts.map(x=>x.s.cape).filter(v=>v!=null)),
+      rain:median(pts.map(x=>x.s.rain).filter(v=>v!=null)),
+      rainN:pts.filter(x => x.s.rain!=null).length, rainYes:pts.filter(x => x.s.rain!=null && x.s.rain >= 0.1).length,   // Einigkeit der Modelle beim Regen
+      cape:median(pts.map(x=>x.s.cape).filter(v=>v!=null)),
       t2:median(pts.map(x=>x.s.t2).filter(v=>v!=null)),
       tW:median(pts.map(x=>x.s.tW).filter(v=>v!=null)), app:median(pts.map(x=>x.s.app).filter(v=>v!=null)),
       uv:extras.uv?.get(t) ?? null,
