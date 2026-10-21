@@ -521,11 +521,11 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
     <h2>Tagesbericht</h2>
     <p class="note">Dokumentiert die Prognose zum Zeitpunkt der Freigabe. Als PDF drucken und zur Projektdokumentation legen.</p>
     <div class="grid">
-      <label>Projekt / Auftraggeber<input id="r_project" type="text" placeholder="z. B. Blattinspektion WP Hildesheim"></label>
-      <label>Anlage / Typ<input id="r_turbine" type="text" placeholder="z. B. Nordex N149, WEA 04"></label>
-      <label>Team<input id="r_team" type="text" placeholder="Namen"></label>
+      <label>Projekt / Auftraggeber<input id="r_project" type="text"></label>
+      <label>Anlage / Typ<input id="r_turbine" type="text"></label>
+      <label>Team<input id="r_team" type="text"></label>
       <label>Aufsichtführender<input id="r_lead" type="text"></label>
-      <label>Tätigkeit<input id="r_task" type="text" placeholder="z. B. Arbeiten am Rotorblatt"></label>
+      <label>Tätigkeit<input id="r_task" type="text"></label>
       <label>Entscheidung
         <select id="r_decision">
           <option>Freigegeben</option>
@@ -534,7 +534,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
         </select>
       </label>
     </div>
-    <label>Bemerkungen / Tagesverlauf<textarea id="r_notes" rows="3" placeholder="z. B. 11:40 Abbruch, Böen 16 m/s laut NC2"></textarea></label>
+    <label>Bemerkungen / Tagesverlauf<textarea id="r_notes" rows="3"></textarea></label>
     <div class="row">
       <button class="primary" id="printBtn" type="button">Tagesbericht drucken / PDF</button>
       <button id="jsonBtn" type="button">Rohdaten speichern (JSON)</button>
@@ -1136,6 +1136,27 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
   c.$idxs.forEach((gi,k) => {
     if(!isWork(state.times[gi])){ ctx.fillStyle = css("--raised"); ctx.fillRect(x.getPixelForValue(k)-step/2, a.top, step, a.bottom-a.top); }
   });
+  ctx.restore();
+}, afterDraw(c){
+  // Tageslicht: gelblicher Balken von Dämmerungsbeginn bis -ende mit Sonnensymbol
+  if(!c.$idxs?.length) return;
+  const dl = daylight(state.times[c.$idxs[0]].slice(0,10)); if(!dl.start || !dl.end) return;
+  const {ctx, chartArea:a, scales:{x}} = c, step = x.getPixelForValue(1) - x.getPixelForValue(0);
+  const h0 = hourOf(state.times[c.$idxs[0]]), toH = t => +t.slice(0,2) + +t.slice(3,5)/60;
+  const xs = Math.max(a.left, x.getPixelForValue(0) + (toH(dl.start) - h0)*step), xe = Math.min(a.right, x.getPixelForValue(0) + (toH(dl.end) - h0)*step);
+  if(xe <= xs) return;
+  const y = a.bottom - 3, sun = "#f2b632";
+  ctx.save();
+  ctx.strokeStyle = sun; ctx.globalAlpha = .9; ctx.lineWidth = 4; ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(xs, y); ctx.lineTo(xe, y); ctx.stroke();
+  // Sonne in der Mitte
+  const cx = (xs + xe)/2, cy = y - 11; ctx.globalAlpha = 1; ctx.fillStyle = sun; ctx.lineWidth = 1.6;
+  ctx.beginPath(); ctx.arc(cx, cy, 3.6, 0, 2*Math.PI); ctx.fill();
+  for(let k = 0; k < 8; k++){ const w = k*Math.PI/4; ctx.beginPath(); ctx.moveTo(cx + Math.cos(w)*5.6, cy + Math.sin(w)*5.6); ctx.lineTo(cx + Math.cos(w)*8, cy + Math.sin(w)*8); ctx.stroke(); }
+  // Uhrzeiten an den Enden
+  ctx.fillStyle = sun; ctx.font = "600 10px " + css("--f-mono"); ctx.textBaseline = "bottom";
+  ctx.textAlign = "left"; ctx.fillText(dl.start, xs + 2, y - 4);
+  ctx.textAlign = "right"; ctx.fillText(dl.end, xe - 2, y - 4);
   ctx.restore();
 }, afterDatasetsDraw(c){
   // Verschiebbarer Zeitmarker: Linie mit Griff und Uhrzeit
