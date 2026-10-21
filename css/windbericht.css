@@ -342,7 +342,6 @@ body.info-open{overflow:hidden}
 .spreadbox small{color:var(--muted);font-size:12.5px}
 .spreadbox .sg{display:flex;flex-wrap:wrap;gap:0 8px;align-items:baseline}
 .spreadbox .sg b{font-family:var(--f-mono);font-weight:500;white-space:nowrap} .spreadbox .sg small{white-space:nowrap}
-.spreadbox.s-einig{border-left-color:var(--go)} .spreadbox.s-maessig{border-left-color:var(--warn)}
 .spreadbox.s-einig b:first-child{color:var(--go)}
 /* Grenzwerte in den Einstellungen */
 /* Zahlenfelder kompakt statt über die ganze Breite */
@@ -408,5 +407,6 @@ body.info-open{overflow:hidden}
 .status-row > .rigbox{border-color:var(--go);background:var(--go-bg)}
 .status-row > .rigbox.r-warn{border-color:var(--warn);background:var(--warn-bg)}
 .status-row > .rigbox.r-stop{border-color:var(--stop);background:var(--stop-bg)}
+.status-row > .spreadbox{border-color:var(--line)}
 .status-row > .spreadbox.s-einig{border-color:var(--go)}
 .status-row > .spreadbox.s-unsicher{border-color:var(--band-line)}
