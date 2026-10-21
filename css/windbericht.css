@@ -332,3 +332,8 @@ body.info-open{overflow:hidden}
 .now-sel button:hover:not(:disabled){border-color:var(--accent)}
 .now-sel button:disabled{opacity:.35;cursor:default}
 .now-head .why{flex:1 1 260px;min-width:0}
+/* Seile und Bühne über Nacht */
+.rigbox{display:flex;flex-direction:column;gap:2px;margin-top:6px;padding:8px 12px;border:1px solid var(--line);border-left:4px solid var(--go);border-radius:0 8px 8px 0;background:var(--raised);font-size:13px}
+.rigbox small{color:var(--muted);font-size:12.5px}
+.rigbox.r-warn{border-color:var(--warn);background:var(--warn-bg)} .rigbox.r-stop{border-color:var(--stop);background:var(--stop-bg)}
+.rigbox.r-stop b{color:var(--stop)} .rigbox.r-warn b{color:var(--warn)}

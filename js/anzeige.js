@@ -14,6 +14,7 @@ function fillSettings(){
   $("s_name").value = site.name; $("s_lat").value = site.lat; $("s_lon").value = site.lon;
   $("s_work").value = site.work ?? ""; $("s_access").value = accessMode();
   $("s_hub").value = site.hub; $("s_rotor").value = site.rotor; $("s_wind").value = site.wind; $("s_gust").value = site.gust;
+  $("s_nwind").value = nightWind(); $("s_ngust").value = nightGust();
   $("s_from").value = site.from; $("s_to").value = site.to;
   $("siteTitle").textContent = site.name;
   $("siteMeta").innerHTML = `<span>Arbeit ${zoneTxt()}</span><span>Grenze ${fmt(site.wind)} · Böe ${fmt(site.gust)} m/s</span><span>${site.from}–${site.to} Uhr</span>`;
@@ -51,6 +52,9 @@ function renderHero(){
     ? `<b>Amtliche Warnungen</b>` + ws.map(w => `<div class="wb-${!w.relevant ? "info" : w.lvl>=3 ? "stop" : "warn"}">
       <span>${esc(w.src)}: ${esc(w.title)}</span><small>${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))}</small></div>`).join("") + (note ? `<small>${esc(note)}</small>` : "")
     : `<span>${kind==="ok" ? "✓ " : ""}${esc(note)}</span>`;
+  const nt = nightText(nightRig(state.day));
+  $("rigBox").hidden = !nt;
+  if(nt){ $("rigBox").className = "rigbox needs-data r-" + nt.lvl; $("rigBox").innerHTML = `<b>${nt.lvl==="go" ? "✓ " : "⚠ "}${esc(nt.head)}</b><small>${esc(nt.text)}</small>`; }
   const wsrc = [extras.dwd?.ok===false ? "DWD nicht abrufbar" : null, extras.geo?.ok===false ? "GeoSphere nicht abrufbar" : null].filter(Boolean);
   $("status").textContent = `Abgerufen ${state.fetchedAt.toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"})} · ${u.length} Modelle aktiv, davon ${u.filter(r=>r.m.hi).length} hochauflösend`
     + ` · Warnungen: ${wsrc.length ? wsrc.join(", ") : ws.length ? ws.length+" am gewählten Tag" : "keine"}`

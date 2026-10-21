@@ -76,6 +76,40 @@ function rate(h){
   return {lamp, why};
 }
 
+/* Über Nacht (Arbeitsende bis Arbeitsbeginn am Folgetag): dürfen Seile und Bühne hängen bleiben?
+   Bewertet wird der Median der Modelle von 10 m bis Nabe; einzelne Modelle darüber ergeben einen Prüfhinweis. */
+const nightWind = () => site.nightWind ?? 15, nightGust = () => site.nightGust ?? 20;
+function nightRig(day){
+  if(!day || !state.times?.length) return null;
+  const next = new Date(Date.parse(day+"T12:00:00Z") + 864e5).toISOString().slice(0,10);
+  const idx = state.times.map((t,i) => i).filter(i => { const t = state.times[i], h = hourOf(t);
+    return (t.startsWith(day) && h > site.to) || (t.startsWith(next) && h < site.from); });
+  if(!idx.length) return null;
+  const usable = state.results.filter(isUsed);
+  const hrs = idx.map(i => {
+    const s = usable.map(r => r.series[i]).filter(x => x && x.vR!=null);
+    const gs = s.map(x => x.gR).filter(v => v!=null);
+    return {t:state.times[i], n:s.length, v:median(s.map(x => x.vR)), g:median(gs),
+      vMax:s.length ? Math.max(...s.map(x => x.vR)) : null, gMax:gs.length ? Math.max(...gs) : null};
+  }).filter(h => h.n);
+  if(!hrs.length) return null;
+  const pick = k => hrs.reduce((a,h) => h[k]!=null && (!a || h[k] > a[k]) ? h : a, null);
+  const pv = pick("v"), pg = pick("g"), mv = pick("vMax"), mg = pick("gMax");
+  const over = (pv && pv.v > nightWind()) || (pg && pg.g > nightGust());
+  const some = (mv && mv.vMax > nightWind()) || (mg && mg.gMax > nightGust());
+  const firstOver = hrs.find(h => h.v > nightWind() || (h.g!=null && h.g > nightGust()));
+  return {lvl: over ? "stop" : some ? "warn" : "go", from:hrs[0].t, to:hrs[hrs.length-1].t, complete: idx.length === (23 - site.to) + site.from,
+    v:pv?.v ?? null, g:pg?.g ?? null, gT:pg?.t ?? null, vMax:mv?.vMax ?? null, gMax:mg?.gMax ?? null, firstOver:firstOver?.t ?? null};
+}
+function nightText(n){
+  if(!n) return null;
+  const span = `${hh(n.from)}–${String((hourOf(n.to)+1)%24).padStart(2,"0")} Uhr`;
+  const lim = `Grenze Wind ${fmt(nightWind())} / Böe ${fmt(nightGust())} m/s`;
+  const part = n.complete ? "" : " (nur bis Ende der Prognose)";
+  if(n.lvl==="stop") return {lvl:"stop", head:"Seile und Bühne heute abbauen", text:`Über Nacht (${span}${part}) Böen bis ${fmt(n.g)} m/s gegen ${hh(n.gT)} Uhr, Wind bis ${fmt(n.v)} m/s, über Grenze ab ${hh(n.firstOver)} Uhr. ${lim}, 10 m bis Nabe.`};
+  if(n.lvl==="warn") return {lvl:"warn", head:"Seile und Bühne über Nacht: prüfen", text:`Einzelne Modelle über Grenze (Böe bis ${fmt(n.gMax)}, Wind bis ${fmt(n.vMax)} m/s), Median Böe ${fmt(n.g)} m/s, ${span}${part}. ${lim}.`};
+  return {lvl:"go", head:"Seile und Bühne können über Nacht hängen bleiben", text:`${span}${part}: Böen bis ${fmt(n.g)} m/s, Wind bis ${fmt(n.v)} m/s. ${lim}.`};
+}
 const isWork = t => hourOf(t)>=site.from && hourOf(t)<=site.to;
 const dayHours = day => state.hours.filter(h => h.t.startsWith(day) && isWork(h.t));
 const usableModels = () => state.results.filter(isUsed);

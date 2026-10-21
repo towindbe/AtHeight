@@ -33,6 +33,11 @@ const zoneBottom = () => accessMode()==="ground" ? Math.min(10, workH()) : workH
 const zoneTop = () => accessMode()==="nacelle" && workH() < site.hub ? site.hub : workH();
 const zoneTxt = () => zoneBottom() < workH() ? `bis ${workH()} m` : zoneTop() !== workH() ? `${workH()}–${zoneTop()} m` : `${workH()} m`;
 const ACCESS_TXT = {ground:"Aufstieg vom Boden", nacelle:"Abstieg von der Gondel", none:"nur Arbeitshöhe"};
+/* Hängende Seile und Bühne über Nacht: stärkster Wind von 10 m bis zur Nabe */
+function rigWind(lv){
+  const hi = site.hub, zs = [...new Set([Math.min(10, hi), ...LEVELS.filter(z => z>10 && z<hi), hi])];
+  return zs.map(z => windAt(lv, z).v).filter(v => v!=null).reduce((a,b) => a==null || b > a ? b : a, null);
+}
 function zoneWind(lv){
   const lo = zoneBottom(), hi = zoneTop();
   const zs = [...new Set([lo, ...LEVELS.filter(z => z>lo && z<hi), hi])];

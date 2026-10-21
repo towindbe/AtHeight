@@ -21,6 +21,7 @@ function snapshot(){
     warnlage: warnState(state.day).note || null,
     warnungen: allWarnings().map(w => ({quelle:w.src, stufe:w.lvl, titel:w.title, ampelrelevant:w.relevant, beginn:isFinite(w.start)?new Date(w.start).toISOString():null, ende:isFinite(w.end)?new Date(w.end).toISOString():null})),
     fazit:{ampel:state.summary?.lamp, text:(state.summary?.head||"")+" "+(state.summary?.text||"")},
+    nacht:(() => { const n = nightRig(state.day); return n && {status:n.lvl, von:n.from, bis:n.to, vollstaendig:n.complete, grenzeWind:nightWind(), grenzeBoe:nightGust(), maxWind:n.v, maxBoe:n.g, maxBoeEinzelmodell:n.gMax}; })(),
     bereich:{arbeitshoehe:workH(), von:zoneBottom(), bis:zoneTop(), zugang:accessMode(), text:zoneTxt()},
     modelle: state.results.map(r=>({id:r.m.id, name:r.m.name, anbieter:r.m.org, status:isExcluded(r) && (r.status==="ok"||r.status==="extrap") ? "ausgeschlossen" : r.status, abfrage:apiUrl(r.m),
       werte: r.series ? dayHours(state.day).map(h => { const s = r.series[h.i]; return s ? {zeit:h.t, utc:utcStr(h.t), wind:s.v, boe:s.g, richtung:s.dir, hochgerechnet:s.ext} : null; }) : null})),
@@ -89,6 +90,7 @@ async function buildReport(){
       ${ws.map(w => `<div class="wb-${!w.relevant ? "info" : w.lvl>=3 ? "stop" : "warn"}"><b>${esc(w.src)}: ${esc(w.title)}</b> · ${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))}</div>`).join("")}
       ${note ? `<div style="border:0;padding:0">${kind==="ok" ? "✓ " : ""}${esc(note)}</div>` : ""}
     </div>
+    ${(nt => nt ? `<div class="rp-sec rp-box ${nt.lvl}"><h3>Seile und Bühne über Nacht</h3><b>${nt.lvl==="go" ? "✓ " : ""}${esc(nt.head)}.</b> ${esc(nt.text)}</div>` : "")(nightText(nightRig(state.day)))}
 
     <div class="rp-sec">
       <h3>Prognose je Stunde · Wind und Böe im Bereich ${zoneTxt()} (m/s)</h3>

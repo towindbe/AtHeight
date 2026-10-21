@@ -170,7 +170,8 @@ async function load(){
       const lv = levelsAt(h, i);
       const hw = zoneWind(lv);
       if(hw.v==null) return null;
-      return {v:hw.v, ext:hw.ext, g:gustAt(h,i,hw.v), dir:dirAt(lv, workH()), lv,
+      const vR = rigWind(lv);
+      return {v:hw.v, ext:hw.ext, g:gustAt(h,i,hw.v), vR, gR:gustAt(h,i,vR), dir:dirAt(lv, workH()), lv,
         rain:h.precipitation?.[i], cape:h.cape?.[i], wc:h.weather_code?.[i], t2:h.temperature_2m?.[i],
         tW:tempAt(h, i, workH()), app:h.apparent_temperature?.[i]};
     });
