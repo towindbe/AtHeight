@@ -344,3 +344,10 @@ body.info-open{overflow:hidden}
 .spreadbox .sg b{font-family:var(--f-mono);font-weight:500;white-space:nowrap} .spreadbox .sg small{white-space:nowrap}
 .spreadbox.s-einig{border-left-color:var(--go)} .spreadbox.s-maessig{border-left-color:var(--warn)}
 .spreadbox.s-einig b:first-child{color:var(--go)}
+/* Grenzwerte in den Einstellungen */
+/* Zahlenfelder kompakt statt über die ganze Breite */
+#settings .grid{grid-template-columns:repeat(auto-fill,minmax(130px,170px))}
+#settings .grid label:has(#s_name){grid-column:span 2}
+#settings label:has(#s_access){max-width:360px}
+.lim-group{display:flex;flex-direction:column;gap:6px}
+.lim-head{font-size:13px;font-weight:600;color:var(--fg)}
