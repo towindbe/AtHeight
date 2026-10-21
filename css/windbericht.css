@@ -368,7 +368,14 @@ body.info-open{overflow:hidden}
 .mchip small{color:var(--muted);font-size:11px}
 .mchip.on{color:var(--fg);border-color:var(--c)} .mchip.on i{background:var(--c)}
 /* Statuszeile unter der Tagesbewertung: Warnungen, Nacht, Einigkeit nebeneinander */
-.status-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:8px;margin-top:12px}
+.status-row{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px;align-items:start}
+/* breit: kurze Kästen (Warnungen, Nacht) links übereinander, Einigkeit rechts daneben */
+@media (min-width:760px){
+  .status-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .status-row > .warnbox{grid-column:1;grid-row:1}
+  .status-row > .rigbox{grid-column:1;grid-row:2}
+  .status-row > .spreadbox{grid-column:2;grid-row:1 / span 2;align-self:stretch}
+}
 .status-row:not(:has(> :not([hidden]))){display:none}
 .warnbox.ok > b:first-child{color:var(--go)}
 .warnbox{gap:2px} .warnbox small{font-size:12.5px}
