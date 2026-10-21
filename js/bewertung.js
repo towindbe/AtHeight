@@ -110,6 +110,20 @@ function nightText(n){
   if(n.lvl==="warn") return {lvl:"warn", head:"Seile und Bühne über Nacht: prüfen", text:`Einzelne Modelle über Grenze (Böe bis ${fw(n.gMax)}, Wind bis ${fwu(n.vMax)}), Median Böe ${fwu(n.g)}, ${span}${part}. ${lim}.`};
   return {lvl:"go", head:"Seile und Bühne können über Nacht hängen bleiben", text:`${span}${part}: Böen bis ${fwu(n.g)}, Wind bis ${fwu(n.v)}. ${lim}.`};
 }
+/* Große Streuung: hochauflösende und gröbere Modelle getrennt zeigen (Tageshöchstwert Wind in der Arbeitszeit).
+   Nur zur Einordnung; es wird kein Modell aus der Bewertung genommen. */
+const SPREAD_HINT = 5;   // ab dieser mittleren Spanne (m/s) gilt die Lage als unsicher, wie in der Tageszusammenfassung
+function spreadGroups(day){
+  const hs = dayHours(day).filter(h => h.n);
+  const sum = buildSummary(hs);
+  if(!hs.length || sum.spread==null || sum.spread < SPREAD_HINT) return null;
+  const maxima = usableModels().filter(r => hs.filter(h => r.series[h.i]).length >= hs.length*0.75)
+    .map(r => ({r, v:Math.max(...hs.map(h => r.series[h.i]?.v ?? -1))})).filter(x => x.v >= 0);
+  const grp = list => list.length ? {n:list.length, lo:Math.min(...list.map(x=>x.v)), hi:Math.max(...list.map(x=>x.v)), med:median(list.map(x=>x.v))} : null;
+  const top = maxima.reduce((a,x) => !a || x.v > a.v ? x : a, null);
+  const pMax = hs.reduce((a,h) => h.pEns!=null && (a==null || h.pEns > a) ? h.pEns : a, null);
+  return {spread:sum.spread, hi:grp(maxima.filter(x => x.r.m.hi)), lo:grp(maxima.filter(x => !x.r.m.hi)), top, pMax};
+}
 const isWork = t => hourOf(t)>=site.from && hourOf(t)<=site.to;
 const dayHours = day => state.hours.filter(h => h.t.startsWith(day) && isWork(h.t));
 const usableModels = () => state.results.filter(isUsed);

@@ -53,6 +53,18 @@ function renderHero(){
     ? `<b>Amtliche Warnungen</b>` + ws.map(w => `<div class="wb-${!w.relevant ? "info" : w.lvl>=3 ? "stop" : "warn"}">
       <span>${esc(w.src)}: ${esc(w.title)}</span><small>${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))}</small></div>`).join("") + (note ? `<small>${esc(note)}</small>` : "")
     : `<span>${kind==="ok" ? "✓ " : ""}${esc(note)}</span>`;
+  const sg = spreadGroups(state.day);
+  $("spreadBox").hidden = !sg;
+  if(sg){
+    const row = (t, g) => g ? `<span class="sg"><span>${t} (${g.n}):</span><b>${fw(g.lo)}–${fwu(g.hi)}</b><small>Mitte ${fw(g.med)}</small></span>` : "";
+    $("spreadBox").innerHTML = `<b>Lage unsicher: die Modelle sind sich nicht einig</b>
+      <small>Höchster Wind in der Arbeitszeit je Modellgruppe (hochauflösend 1–5 km, sonst 7–25 km):</small>
+      ${row("Hochauflösend", sg.hi)}${row("Regional/Global", sg.lo)}
+      ${sg.hi ? "" : `<small>Hochauflösende Modelle reichen nur 1–2 Tage weit.</small>`}
+      <small>Am stürmischsten: ${esc(sg.top.r.m.name)} (${esc(sg.top.r.m.org)}) mit ${fwu(sg.top.v)}${sg.pMax!=null ? ` · Zu windig bis ${riskTen(sg.pMax)} der Szenarien` : ""}.
+      </small>
+      <small>Ausreißer nicht einfach ausschließen, sie können recht haben. Neuere Läufe abwarten, vor der Abfahrt neu laden, vor Ort messen.</small>`;
+  }
   const nt = nightText(nightRig(state.day));
   $("rigBox").hidden = !nt;
   if(nt){ $("rigBox").className = "rigbox needs-data r-" + nt.lvl; $("rigBox").innerHTML = `<b>${nt.lvl==="go" ? "✓ " : "⚠ "}${esc(nt.head)}</b><small>${esc(nt.text)}</small>`; }
