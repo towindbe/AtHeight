@@ -528,7 +528,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
       <label>Tätigkeit<input id="r_task" type="text"></label>
       <label>Entscheidung
         <select id="r_decision">
-          <option>Freigegeben</option>
+          <option>Freigegeben zum Arbeiten</option>
           <option>Eingeschränkt freigegeben</option>
           <option>Nicht freigegeben</option>
         </select>
@@ -1710,7 +1710,7 @@ function snapshot(){
 }
 /* Einfärbung im Bericht: gelb ab 75 % des Grenzwerts, rot darüber */
 const level = (v, lim) => v==null ? "" : v > lim ? "over" : v >= 0.75*lim ? "near" : "";
-const DECISION = {"Freigegeben":"go", "Eingeschränkt freigegeben":"warn", "Nicht freigegeben":"stop"};
+const DECISION = {"Freigegeben zum Arbeiten":"go", "Freigegeben":"go", "Eingeschränkt freigegeben":"warn", "Nicht freigegeben":"stop"};
 // Kurzform der Gründe für die Berichtstabelle (Details stehen im Warnkasten bzw. in der App)
 const shortWhy = t => t
   .replace(/^Amtliche Warnung (\S+): .*/, "Warnung $1")
