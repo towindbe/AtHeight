@@ -10,6 +10,7 @@ Aufruf:  python tools/pruefen.py windbericht_Standort_2026-10-21.json
 Wichtig: Direkt nach dem Export ausführen. Die Modelle rechnen mehrmals am Tag
 neu; ist der Export älter als ein neuer Modelllauf, weichen die Werte ab.
 """
+import hashlib
 import json
 import math
 import statistics
@@ -54,6 +55,18 @@ def wind_at(lv, z):
 
 def main(path):
     exp = json.load(open(path, encoding="utf-8"))
+
+    # Prüfsumme: SHA-256 über die Daten ohne das Feld "pruefsumme", kompakt wie JSON.stringify
+    if "pruefsumme" in exp:
+        data = {k: v for k, v in exp.items() if k != "pruefsumme"}
+        calc = hashlib.sha256(json.dumps(data, ensure_ascii=False, separators=(",", ":")).encode("utf-8")).hexdigest()
+        if calc == exp["pruefsumme"]:
+            print(f"Prüfsumme OK: {calc}  (muss mit der Zahl im gedruckten Bericht übereinstimmen)")
+        else:
+            print(f"PRÜFSUMME FALSCH: Datei {exp['pruefsumme']} / berechnet {calc}. Die Datei wurde verändert.")
+            return 1
+    else:
+        print("Hinweis: Datei enthält keine Prüfsumme (älterer Export).")
     site = exp["standort"]
     work, top = exp["bereich"]["arbeitshoehe"], exp["bereich"]["bis"]
     heights = sorted({work, top, *[z for z in LEVELS if work < z < top]})
