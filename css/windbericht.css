@@ -2,7 +2,7 @@
 :root{
   /* Dunkles Design auf allen Geräten (wie TargetMate); der Druck des Tagesberichts ist hell */
   --bg:#0d1217; --surface:#151d25; --raised:#1b252f; --fg:#e9eef3; --muted:#97a4b2; --line:#26313c;
-  --accent:#ff7a33; --accent-ink:#1a0d05; --band:rgba(110,160,220,.20); --band-line:#7fb0e6;
+  --accent:#ff7a33; --accent-ink:#1a0d05; --band:rgba(110,160,220,.20); --band-line:#7fb0e6; --gust:#c4a7ff;
   --go:#46c27b; --go-bg:#11301f; --warn:#e6b04c; --warn-bg:#352a11; --stop:#e5484d; --stop-bg:#3a1517; --none:#4f5b67;
   --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
   --f-body:"Barlow","Segoe UI",Roboto,Arial,sans-serif;

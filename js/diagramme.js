@@ -103,7 +103,7 @@ function renderChart(){
       borderColor:COLORS[MODELS.indexOf(r.m)%COLORS.length], borderWidth:1.3, borderDash:r.m.hi?[]:[4,3], pointRadius:0, tension:.3, spanGaps:true}));
   }
   ds.push({label:"Median", data:H.map(h=>r2(h.med)), borderColor:fg, borderWidth:3, pointRadius:0, tension:.3});
-  ds.push({label:"Böe (gesch.)", data:H.map(h=>r2(h.gMed)), borderColor:fg, borderWidth:1.3, borderDash:[2,3], pointRadius:0, tension:.3});
+  ds.push({label:"Böe (gesch.)", data:H.map(h=>r2(h.gMed)), borderColor:css("--gust"), backgroundColor:css("--gust"), borderWidth:1.8, borderDash:[2,3], pointRadius:0, tension:.3});
   ds.push({label:"Grenzwert", data:idxs.map(()=>cw(site.wind)), borderColor:stop, borderWidth:1.6, borderDash:[7,4], pointRadius:0});
   ds.push({label:"Grenze Böe", data:idxs.map(()=>cw(site.gust)), borderColor:stop, borderWidth:1, borderDash:[2,4], pointRadius:0});
   const opt = chartBase(WU()+" · "+zoneTxt()); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
