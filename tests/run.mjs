@@ -137,6 +137,8 @@ if(missing.length) errors.push(`${missing.length} Abfragen nicht in der Aufzeich
 if(diffs.length || errors.length){
   console.log(`TEST FEHLGESCHLAGEN: ${diffs.length} Abweichung(en), ${errors.length} Fehler`);
   [...errors, ...diffs.slice(0, 40)].forEach(d => console.log("  " + d));
+  // auf GitHub zusätzlich als Annotation, damit die Ursache ohne Anmeldung beim Lauf sichtbar ist
+  if(process.env.GITHUB_ACTIONS) [...errors, ...diffs].slice(0, 10).forEach(d => console.log("::error title=Ablauftest::" + d.replace(/%/g, "%25").replace(/\s+/g, " ")));
   process.exit(1);
 }
 console.log("TEST OK: App verhält sich wie die Referenz, keine Fehler.");

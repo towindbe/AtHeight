@@ -8,15 +8,30 @@ function apiUrl(m, format){
   if(format) p.set("format", format);
   return "https://api.open-meteo.com/v1/forecast?" + p.toString();
 }
+/* Abruf mit Zeitlimit: hängt ein Dienst, bricht die Abfrage nach FETCH_TIMEOUT ab */
+const FETCH_TIMEOUT = 20000;
+function fetchT(url, ms = FETCH_TIMEOUT){
+  const c = new AbortController(), t = setTimeout(() => c.abort(), ms);
+  return fetch(url, {signal:c.signal}).finally(() => clearTimeout(t));
+}
 async function fetchModel(m){
+  const r = await fetchModelOnce(m);
+  // bei Verbindungs- oder Serverfehler bzw. Nutzungsgrenze einmal nach kurzer Pause wiederholen
+  if(r.status==="error" && /Keine Verbindung|Zeitüberschreitung|HTTP (429|5\d\d)|too many/i.test(r.reason||"")){
+    await new Promise(x => setTimeout(x, 1500));
+    return fetchModelOnce(m);
+  }
+  return r;
+}
+async function fetchModelOnce(m){
   try{
-    const r = await fetch(apiUrl(m));
+    const r = await fetchT(apiUrl(m));
     const j = await r.json().catch(() => ({}));
     if(/no data is available for this location/i.test(j.reason||"")) return {m, status:"outside", reason:j.reason};
     if(!r.ok || j.error) return {m, status:"error", reason: j.reason || (r.status===429 ? "HTTP 429 Too Many Requests" : "HTTP "+r.status)};
     fixTimes(j.hourly, j.timezone, j.utc_offset_seconds||0);
     return {m, status:"ok", hourly:j.hourly, tz:j.timezone, off:j.utc_offset_seconds||0, elev:j.elevation};
-  }catch(e){ return {m, status:"error", reason:"Keine Verbindung"}; }
+  }catch(e){ return {m, status:"error", reason: e.name==="AbortError" ? "Zeitüberschreitung" : "Keine Verbindung"}; }
 }
 
 /* Zusätzliche Quellen neben den Wettermodellen. Fällt eine aus, läuft die App ohne sie weiter. */
@@ -25,7 +40,7 @@ async function loadExtras(){
   const ex = {};
   try{
     const p = new URLSearchParams({latitude:site.lat, longitude:site.lon, hourly:"uv_index", timezone:"auto", forecast_days:"3"});
-    const j = await (await fetch("https://api.open-meteo.com/v1/forecast?"+p)).json();
+    const j = await (await fetchT("https://api.open-meteo.com/v1/forecast?"+p)).json();
     if(j.hourly){ fixTimes(j.hourly, j.timezone, j.utc_offset_seconds||0); ex.uv = new Map(j.hourly.time.map((t,i) => [t, j.hourly.uv_index[i]])); }
   }catch(e){}
   [ex.dwd, ex.geo, ex.ens] = await Promise.all([loadDwdWarnings(), loadGeoWarnings(), Promise.all(ENSEMBLES.map(loadEnsemble))]);
@@ -37,7 +52,7 @@ async function loadEnsemble(e){
   try{
     const q = new URLSearchParams({latitude:site.lat, longitude:site.lon, models:e.id, timezone:"auto", forecast_days:"3", wind_speed_unit:"ms",
       hourly:"wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_gusts_10m"});
-    const j = await (await fetch("https://ensemble-api.open-meteo.com/v1/ensemble?"+q)).json();
+    const j = await (await fetchT("https://ensemble-api.open-meteo.com/v1/ensemble?"+q)).json();
     if(j.error || !j.hourly) return {...e, ok:false, reason:j.reason||"keine Daten"};
     fixTimes(j.hourly, j.timezone, j.utc_offset_seconds||0);
     const h = j.hourly;
@@ -68,7 +83,7 @@ async function loadDwdWarnings(){
       propertyName:"EVENT,SEVERITY,EC_GROUP,ONSET,EXPIRES,HEADLINE", CQL_FILTER:`INTERSECTS(THE_GEOM,POINT(${site.lat} ${site.lon}))`});
     const area = new URLSearchParams({service:"WFS", version:"2.0.0", request:"GetFeature", typeName:"dwd:Warngebiete_Gemeinden", outputFormat:"application/json",
       propertyName:"NAME", count:"1", CQL_FILTER:`INTERSECTS(SHAPE,POINT(${site.lat} ${site.lon}))`});
-    const [j, a] = await Promise.all([q, area].map(x => fetch("https://maps.dwd.de/geoserver/dwd/ows?"+x).then(r => r.json())));
+    const [j, a] = await Promise.all([q, area].map(x => fetchT("https://maps.dwd.de/geoserver/dwd/ows?"+x).then(r => r.json())));
     if(!a.features?.length) return {ok:true, list:[], outside:true};   // Standort nicht in Deutschland
     const seen = new Set(), list = [];
     (j.features||[]).forEach(f => {
@@ -84,7 +99,7 @@ const GEO_TYPE = {1:"Sturm", 2:"Regen", 3:"Schnee", 4:"Glatteis", 5:"Gewitter", 
 const GEO_LEVEL = {1:"gelb", 2:"orange", 3:"rot"};
 async function loadGeoWarnings(){
   try{
-    const r = await fetch(`https://warnungen.zamg.at/wsapp/api/getWarningsForCoords?lon=${site.lon}&lat=${site.lat}&lang=de`);
+    const r = await fetchT(`https://warnungen.zamg.at/wsapp/api/getWarningsForCoords?lon=${site.lon}&lat=${site.lat}&lang=de`);
     if(r.status===404) return {ok:true, list:[], outside:true};   // Standort nicht in Österreich
     const j = await r.json();
     const list = (j.properties?.warnings||[]).map(w => {
@@ -118,9 +133,15 @@ const allWarnings = () => [...(extras.dwd?.list||[]), ...(extras.geo?.list||[])]
 const fmtWhen = ms => !isFinite(ms) ? "offen" : new Date(ms).toLocaleString("de-DE", {timeZone:state.tz, weekday:"short", day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"});
 async function load(){
   $("errorBox").hidden = true;
-  $("headline").textContent = "Lade Wettermodelle…"; $("lamp").className="lamp"; $("lamp").textContent="…";
+  $("headline").textContent = "Lade Wettermodelle…"; $("summary").textContent = ""; $("lamp").className="lamp"; $("lamp").textContent="…";
   $("reloadBtn").disabled = true;
-  const [raw, ex] = await Promise.all([Promise.all(MODELS.map(fetchModel)), loadExtras()]);
+  // Ladebalken: ein Schritt je Wettermodell plus Zusatzdaten (Szenarien, Warnungen, UV)
+  const total = MODELS.length + 1; let done = 0;
+  const tick = () => { done++; $("loadFill").style.width = Math.round(100*done/total) + "%";
+    $("loadText").textContent = done <= MODELS.length ? `${Math.min(done, MODELS.length)} von ${MODELS.length} Modellen` : "Szenarien und Warnungen"; };
+  $("loadFill").style.width = "0%"; $("loadText").textContent = `0 von ${MODELS.length} Modellen`; $("loadBar").hidden = false;
+  const [raw, ex] = await Promise.all([Promise.all(MODELS.map(m => fetchModel(m).then(r => (tick(), r)))), loadExtras().then(r => (tick(), r))]);
+  $("loadBar").hidden = true;
   extras = ex;
   $("reloadBtn").disabled = false;
   const okAny = raw.find(r => r.status==="ok");
@@ -129,6 +150,8 @@ async function load(){
     const reasons = raw.map(r => r.reason || "");
     const msg = reasons.some(x => /429|too many|limit/i.test(x))
       ? "Open-Meteo meldet zu viele Anfragen (Nutzungsgrenze). Bitte in ein paar Minuten erneut versuchen."
+      : reasons.every(x => x==="Zeitüberschreitung" || x==="Keine Verbindung") && reasons.includes("Zeitüberschreitung")
+        ? "Die Wetterdienste antworten nicht (Zeitüberschreitung). Bitte in einem Moment erneut versuchen."
       : reasons.every(x => x==="Keine Verbindung")
         ? "Keine Verbindung zu Open-Meteo. Bitte Internetverbindung prüfen."
         : `Wetterdaten konnten nicht geladen werden (${reasons.find(Boolean) || "unbekannter Fehler"}).`;

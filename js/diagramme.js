@@ -1,6 +1,12 @@
 /* Windbericht · Windverlauf, Regen & Gewitter, Höhenprofil, Windrichtung, Zeitmarker */
 "use strict";
 
+// Farbkästchen im Infofenster mit der Linienfarbe füllen (Linien haben nur eine Strichfarbe)
+if(typeof Chart !== "undefined") Chart.defaults.plugins.tooltip.callbacks.labelColor = ctx => {
+  const c = ctx.dataset.borderColor && ctx.dataset.borderColor !== "transparent" ? ctx.dataset.borderColor : ctx.dataset.backgroundColor;
+  return {borderColor:c, backgroundColor:c};
+};
+
 /* Plugin: Arbeitszeit hinterlegen + gewählte Stunde markieren */
 const markPlugin = {id:"marks", beforeDatasetsDraw(c){
   if(!c.$idxs) return;
@@ -11,7 +17,7 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
     if(!isWork(state.times[gi])){ ctx.fillStyle = css("--raised"); ctx.fillRect(x.getPixelForValue(k)-step/2, a.top, step, a.bottom-a.top); }
   });
   ctx.restore();
-}, afterDraw(c){
+}, daylightDraw(c){
   // Tageslicht: gelblicher Balken von Dämmerungsbeginn bis -ende mit Sonnensymbol
   if(!c.$idxs?.length) return;
   const dl = daylight(state.times[c.$idxs[0]].slice(0,10)); if(!dl.start || !dl.end) return;
@@ -33,6 +39,7 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
   ctx.textAlign = "right"; ctx.fillText(dl.end, xe - 2, y - 4);
   ctx.restore();
 }, afterDatasetsDraw(c){
+  markPlugin.daylightDraw(c);   // vor dem Infofenster zeichnen, damit es obenauf liegt
   // Verschiebbarer Zeitmarker: Linie mit Griff und Uhrzeit
   if(!c.$idxs) return;
   const sk = c.$idxs.indexOf(state.sel); if(sk < 0) return;

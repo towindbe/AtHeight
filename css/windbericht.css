@@ -280,3 +280,9 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
 .rp-alert{color:var(--stop);font-weight:700}
 .sig{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:26px;break-inside:avoid}
 .sig div{border-top:1px solid #000;padding-top:4px;font-size:10px}
+/* Ladebalken beim Abruf der Wettermodelle */
+.loadbar{display:flex;flex-direction:column;gap:4px;margin-top:4px;max-width:420px}
+.lb-track{height:8px;border-radius:4px;background:var(--raised);border:1px solid var(--line);overflow:hidden}
+.lb-fill{height:100%;width:0;border-radius:4px;transition:width .25s ease;
+  background:linear-gradient(90deg,var(--accent) 0%,#ffb27f 50%,var(--accent) 100%);background-size:200% 100%;animation:lbShine 1.2s linear infinite}
+@keyframes lbShine{from{background-position:200% 0}to{background-position:0 0}}
