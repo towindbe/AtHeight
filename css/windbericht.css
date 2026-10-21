@@ -84,7 +84,7 @@ legend{font:600 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:upper
 .why li.w-stop{border-color:var(--stop);background:var(--stop-bg)} .why li.w-warn{border-color:var(--warn);background:var(--warn-bg)} .why li.w-go{border-color:var(--go);background:var(--go-bg)}
 .sw-dark{background-color:#fff;box-shadow:inset 0 0 0 1px var(--line)}
 .tl-cell.dark,.sw.dark{background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.35) 0 3px,transparent 3px 6px)}
-.now-head{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap;font-size:14px}
+.now-head{display:flex;justify-content:space-between;align-items:center;gap:4px 10px;flex-wrap:wrap;font-size:14px}
 .hero p{margin:0}
 .now{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
 @media (min-width:900px){.now{grid-template-columns:repeat(6,1fr)}}
@@ -318,3 +318,12 @@ body.info-open{overflow:hidden}
 .dir-turn{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;margin-top:8px}
 .dir-turn b{color:var(--muted);font-weight:500}
 .dir-ok{color:var(--go)} .dir-warn{color:var(--warn)}
+/* Gewählte Stunde: deutlich als Bezug der Werte darunter */
+.now-sel{display:flex;align-items:center;gap:10px;padding:6px 8px;border:1px solid var(--line);border-left:5px solid var(--none);border-radius:10px;background:var(--raised)}
+.now-sel.s-go{border-left-color:var(--go)} .now-sel.s-warn{border-left-color:var(--warn)} .now-sel.s-stop{border-left-color:var(--stop)}
+.now-sel > div{display:flex;flex-direction:column;min-width:0}
+.now-sel b{font:700 24px/1.1 var(--f-display);letter-spacing:.01em;color:var(--fg)}
+.now-off{font-size:12px;color:var(--warn)}
+.now-sel button{width:34px;height:34px;flex:0 0 34px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);font-size:22px;line-height:1;cursor:pointer}
+.now-sel button:hover:not(:disabled){border-color:var(--accent)}
+.now-sel button:disabled{opacity:.35;cursor:default}

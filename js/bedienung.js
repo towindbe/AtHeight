@@ -49,6 +49,8 @@ document.querySelectorAll("[data-view]").forEach(b => b.onclick = () => {
   document.querySelectorAll("[data-view]").forEach(x => x.setAttribute("aria-pressed", String(x===b)));
   if(state.fetchedAt) renderChart();
 });
+$("nowPrev").onclick = () => selectHour(state.sel - 1);
+$("nowNext").onclick = () => selectHour(state.sel + 1);
 $("printBtn").onclick = async () => { if(!state.fetchedAt) return; await buildReport(); window.print(); };
 const appTitle = document.title;
 window.addEventListener("beforeprint", () => { if(state.fetchedAt) document.title = `Tagesbericht ${site.name} ${state.day}`; });

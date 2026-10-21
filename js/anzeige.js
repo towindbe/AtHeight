@@ -59,7 +59,11 @@ function renderHero(){
 
 function renderNow(){
   const h = state.hours[state.sel]; if(!h) return;
-  $("nowLabel").textContent = `${dayLabel(h.t.slice(0,10),true)}, ${hh(h.t)} Uhr` + (isWork(h.t) ? "" : " (außerhalb der Arbeitszeit)");
+  $("nowLabel").textContent = `${dayLabel(h.t.slice(0,10),true)}, ${hh(h.t)} Uhr`;
+  $("nowOff").hidden = isWork(h.t);
+  $("nowSel").className = `now-sel s-${h.lamp}`;
+  $("nowPrev").disabled = state.sel <= 0;
+  $("nowNext").disabled = state.sel >= state.hours.length - 1;
   $("nowWhy").innerHTML = (h.why.length ? h.why : [{l:"go", t:"Alle Werte unter euren Grenzwerten"}])
     .map(w => `<li class="w-${w.l}"><span class="dot d-${w.l==="info"?"none":w.l}"></span>${esc(w.t)}</li>`).join("");
   const cells = [
