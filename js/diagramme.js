@@ -119,6 +119,8 @@ function renderChips(note){
     return `<button type="button" class="mchip ${on?"on":""}" style="--c:${modelColor(r.m)}" data-id="${r.m.id}" aria-pressed="${on}" title="${esc(r.m.org)} · ${esc(r.m.res)}${r.m.hi?"":" (gestrichelt)"}"><i></i>${esc(r.m.name)}${r.m.name==="HARMONIE" ? ` <small>${esc(r.m.org)}</small>` : ""}</button>`; }).join("");
   $("modelChips").querySelectorAll(".mchip").forEach(b => b.onclick = () => { const id = b.dataset.id; state.show.has(id) ? state.show.delete(id) : state.show.add(id); setShown(state.show); });
   $("chipNote").textContent = note || "Nur Anzeige: Ampel und Median nutzen weiter alle aktiven Modelle.";
+  const n = u.filter(r => state.show.has(r.m.id)).length;
+  $("mCount").textContent = n ? `· ${n} eingeblendet` : "";
 }
 function setShown(ids, note){
   state.show = new Set(ids);

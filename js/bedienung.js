@@ -45,6 +45,14 @@ $("searchForm").onsubmit = e => { e.preventDefault(); const q = $("searchInput")
 $("pickApply").onclick = () => { if(pending) applyPending(); };
 $("pickCancel").onclick = cancelPending;
 document.querySelectorAll("[data-q]").forEach(b => b.onclick = () => { if(state.fetchedAt) showQuick(b.dataset.q); });
+/* Modellauswahl im Windverlauf auf- und zuklappen; Zustand merken */
+function mpickOpen(on){
+  $("mBody").hidden = !on; $("mToggle").setAttribute("aria-expanded", String(on));
+  $("mToggle").querySelector(".mt-arrow").textContent = on ? "▾" : "▸";
+  try{ localStorage.setItem("wb_mpick", on ? "1" : "0"); }catch(e){}
+}
+$("mToggle").onclick = () => mpickOpen($("mBody").hidden);
+mpickOpen((() => { try{ return localStorage.getItem("wb_mpick")==="1"; }catch(e){ return false; } })());
 $("nowPrev").onclick = () => selectHour(state.sel - 1);
 $("nowNext").onclick = () => selectHour(state.sel + 1);
 /* Windfelder in den Einstellungen: angezeigt in der gewählten Einheit, gemerkt in m/s (data-ms),

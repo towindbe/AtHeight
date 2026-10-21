@@ -356,7 +356,10 @@ body.info-open{overflow:hidden}
 /* Modell-Chips unter dem Windverlauf */
 .mpick{margin-top:8px;display:flex;flex-direction:column;gap:6px}
 .mq{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:12px;color:var(--muted)}
-.mq span{margin-right:4px}
+.mtoggle{align-self:flex-start;background:none;border:0;padding:3px 4px;color:var(--band-line);font:500 13px var(--f-body);cursor:pointer;border-radius:6px}
+.mtoggle:hover{background:var(--raised)} .mtoggle small{color:var(--muted);font-size:12px}
+.mt-arrow{display:inline-block;width:12px}
+.mbody{display:flex;flex-direction:column;gap:6px}
 .mq button{background:none;border:0;padding:3px 6px;color:var(--band-line);font:500 12.5px var(--f-body);cursor:pointer;border-radius:6px}
 .mq button:hover{background:var(--raised)}
 .mchips{display:flex;flex-wrap:wrap;gap:6px}
