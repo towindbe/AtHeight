@@ -1087,6 +1087,7 @@ const dayIdx = () => state.times.map((t,i)=>[t,i]).filter(([t])=>t.startsWith(st
 const markPlugin = {id:"marks", beforeDatasetsDraw(c){
   if(!c.$idxs) return;
   const {ctx, chartArea:a, scales:{x}} = c; ctx.save();
+  ctx.beginPath(); ctx.rect(a.left, a.top, a.right-a.left, a.bottom-a.top); ctx.clip();   // nicht über die Achsenbeschriftung malen
   const step = x.getPixelForValue(1)-x.getPixelForValue(0);
   c.$idxs.forEach((gi,k) => {
     if(!isWork(state.times[gi])){ ctx.fillStyle = css("--raised"); ctx.fillRect(x.getPixelForValue(k)-step/2, a.top, step, a.bottom-a.top); }
