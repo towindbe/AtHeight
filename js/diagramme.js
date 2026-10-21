@@ -254,7 +254,7 @@ function renderCompass(){
     <dt>Wind aus</dt><dd>${h.dir.mean==null?"–":dirName(h.dir.mean)+" · "+Math.round(h.dir.mean)+"°"}</dd>
     <dt>Weht nach</dt><dd>${h.dir.mean==null?"–":dirName((h.dir.mean+180)%360)}</dd>
     <dt>Streuung</dt><dd>${sp==null?"–":"±"+Math.round(sp)+"° "+(sp<20?"(einig)":sp<45?"(mäßig)":"(unsicher)")}</dd>
-    <dt>Stärke</dt><dd>${fwu(h.med)}, Böe ca. ${fw(h.gMed)}</dd>
+    <dt>Stärke</dt><dd>${fwu(h.med)} · Böe ${fw(h.gMed)}</dd>
     <dt>Modelle</dt><dd>${dirs.length}</dd>`;
   $("compassHour").textContent = `${dayLabel(state.times[i].slice(0,10),true)} · ${hh(state.times[i])} Uhr`;
   renderDirStrip();

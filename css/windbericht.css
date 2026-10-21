@@ -183,7 +183,7 @@ body.no-site .only-no-site{display:block}
 
 /* Kompass */
 .compass-wrap{display:grid;grid-template-columns:minmax(0,200px) 1fr;gap:12px;align-items:center}
-@media (max-width:420px){.compass-wrap{grid-template-columns:1fr}}
+@media (max-width:420px){.compass-wrap{grid-template-columns:130px minmax(0,1fr);gap:10px}.compass-wrap .dl{font-size:12px;gap:2px 8px}}
 .compass svg{width:100%;height:auto;display:block}
 .dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13px;margin:0}
 .dl dt{color:var(--muted)} .dl dd{margin:0;font-family:var(--f-mono)}
