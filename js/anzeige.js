@@ -16,7 +16,7 @@ function fillSettings(){
   $("s_work").value = site.work ?? ""; $("s_access").value = accessMode();
   $("s_hub").value = site.hub; $("s_rotor").value = site.rotor; $("s_unit").value = windUnit;
   setWindField("s_wind", site.wind); setWindField("s_gust", site.gust); setWindField("s_nwind", nightWind()); setWindField("s_ngust", nightGust());
-  $("s_from").value = site.from; $("s_to").value = site.to;
+  $("s_from").value = site.from; $("s_to").value = site.to; $("s_mintemp").value = minTemp();
   $("siteTitle").textContent = site.name;
   $("siteMeta").innerHTML = `<span>Arbeit ${zoneTxt()}</span><span>Grenze ${fw(site.wind)} · Böe ${fwu(site.gust)}</span><span>${site.from}–${site.to} Uhr</span>`;
   // Hinweis, bis die Werte dieser Anlage einmal bestätigt wurden
@@ -93,7 +93,7 @@ function renderNow(){
     ["Richtung", dirName(h.dir.mean), h.dir.mean==null ? "" : Math.round(h.dir.mean)+"° · "+workH()+" m", false],
     ["Modelle", h.n ? `${h.over}/${h.n}` : "–", "über Grenze", h.over>0 && h.over>=h.n/2],
     ['Zu windig <button type="button" class="info-btn" id="ensInfoBtn" aria-expanded="false" aria-controls="ensInfo" title="Was bedeutet das?">?</button>', h.pEns==null ? "–" : riskTen(h.pEns), h.pEns==null ? "Szenarien nicht verfügbar" : riskHtml(h.pEns, h.nEns).replace(/>[^<]*<\/span>$/, `>der ${h.nEns} Szenarien</span>`), h.pEns!=null && h.pEns>=ENS_WARN],
-    ["Temperatur "+workH()+" m", h.tW==null ? "–" : fmt(h.tW,0)+" °C", h.chill==null ? "" : "gefühlt "+fmt(h.chill,0)+" °C", h.chill!=null && h.chill<=CHILL_WARN]
+    ["Temperatur "+workH()+" m", h.tW==null ? "–" : fmt(h.tW,0)+" °C", h.chill==null ? "" : "gefühlt "+fmt(h.chill,0)+" °C", h.tW!=null && h.tW<minTemp()]
   ];
   const infoOpen = $("ensInfo") && !$("ensInfo").hidden;
   $("nowBox").innerHTML = cells.map(([a,b,c,o]) => `<div class="${o?"over":""}"><small>${a}</small><b>${b}</b><small>${c}</small></div>`).join("");

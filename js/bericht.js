@@ -49,8 +49,8 @@ function reportRows(hs){
     <td class="${h.pEns==null ? "" : h.pEns>=ENS_WARN ? "over" : h.pEns>=ENS_INFO ? "near" : ""}">${h.pEns==null ? "–" : riskTen(h.pEns)}</td>
     <td class="${h.rain>=RAIN_WARN ? "near" : ""}">${fmt(h.rain)}</td>
     <td class="${h.cape>=CAPE_STOP ? "over" : h.cape>=CAPE_WARN ? "near" : ""}">${h.cape==null?"–":Math.round(h.cape)}</td>
-    <td>${fmt(h.tW,0)}</td>
-    <td class="${h.chill!=null && h.chill<=CHILL_WARN ? "over" : h.chill!=null && h.chill<=CHILL_INFO ? "near" : ""}">${fmt(h.chill,0)}</td>
+    <td class="${h.tW!=null && h.tW<minTemp() ? "over" : ""}">${fmt(h.tW,0)}</td>
+    <td class="${h.chill!=null && h.chill<=CHILL_INFO ? "near" : ""}">${fmt(h.chill,0)}</td>
     <td class="why">${esc(h.why.filter(w=>w.l!=="go").map(w=>shortWhy(w.t)).join(" · ")) || "–"}</td></tr>`).join("");
 }
 async function buildReport(){
@@ -108,8 +108,8 @@ async function buildReport(){
       Ausgewertete Modelle (${u.length}): ${u.map(r=>esc(r.m.name+" ("+r.m.org+")")).join(", ")}.
       ${(() => { const x = state.results.filter(r => isExcluded(r) && (r.status==="ok"||r.status==="extrap")); return x.length ? `<b>Von Hand ausgeschlossen:</b> ${x.map(r=>esc(r.m.name+" ("+r.m.org+")")).join(", ")}.` : ""; })()}
       Szenarien: ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(", ") || "nicht verfügbar"}.
-      Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle (mind. 2), CAPE ab ${CAPE_STOP} J/kg oder Unwetterwarnung bzw. Warnstufe rot.
-      Prüfen bei einzelnen Modellen über Grenzwert, Gewittersignal, CAPE ab ${CAPE_WARN} J/kg, Regen ab ${fmt(RAIN_WARN)} mm/h, Nacht, Windchill ab ${CHILL_WARN} °C, mind. ${Math.round(ENS_WARN*100)} % der Szenarien über Grenze oder amtlicher Warnung.
+      Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle (mind. 2), CAPE ab ${CAPE_STOP} J/kg, Temperatur in Arbeitshöhe unter ${fmt(minTemp(),0)} °C oder Unwetterwarnung bzw. Warnstufe rot.
+      Prüfen bei einzelnen Modellen über Grenzwert, Gewittersignal, CAPE ab ${CAPE_WARN} J/kg, Regen ab ${fmt(RAIN_WARN)} mm/h, mind. ${Math.round(ENS_WARN*100)} % der Szenarien über Grenze oder amtlicher Warnung. Nacht nur als Hinweis.
       Wind als Stundenwert der Modelle; kurzzeitig (z. B. im 10-Minuten-Mittel der Anlage) kann der Wind darüber liegen. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0).
       Entscheidungshilfe; die Freigabe trifft der Aufsichtführende.
     </div>

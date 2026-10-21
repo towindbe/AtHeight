@@ -24,10 +24,11 @@ const VARS = ["wind_speed_10m","wind_speed_80m","wind_speed_120m","wind_speed_18
   "wind_direction_10m","wind_direction_80m","wind_direction_120m","wind_direction_180m",
   "wind_gusts_10m","precipitation","cape","weather_code","temperature_2m",
   "temperature_80m","temperature_120m","temperature_180m","apparent_temperature"];
-const CHILL_INFO = -10, CHILL_WARN = -27, HEAT_INFO = 32, UV_INFO = 6;
+const CHILL_INFO = -10, HEAT_INFO = 32, UV_INFO = 6;
+const minTemp = () => site.minTemp ?? 0;   // Mindesttemperatur (Luft in Arbeitshöhe), darunter Stop
 const ENS_WARN = 0.3, ENS_INFO = 0.1;   // Anteil der Ensemble-Läufe über Grenze
 const ENSEMBLES = [{id:"icon_d2_eps", name:"ICON-D2-EPS"}, {id:"ecmwf_ifs025_ensemble", name:"ECMWF-ENS"}];
-const DEFAULT_SITE = {name:"Hildesheim", lat:52.1508, lon:9.9511, hub:125, rotor:149, work:null, path:true, access:"ground", wind:12, gust:15, nightWind:15, nightGust:20, from:6, to:19};
+const DEFAULT_SITE = {name:"Hildesheim", lat:52.1508, lon:9.9511, hub:125, rotor:149, work:null, path:true, access:"ground", wind:12, gust:15, nightWind:15, nightGust:20, minTemp:0, from:6, to:19};
 const CAPE_WARN = 300, CAPE_STOP = 800, RAIN_WARN = 0.5;
 const COLORS = ["#3b82f6","#14b8a6","#a855f7","#f59e0b","#ec4899","#22c55e","#06b6d4","#ef4444","#64748b","#8b5cf6","#84cc16","#f97316","#0ea5e9","#d946ef","#10b981","#eab308"];
 const LAMP_TXT = {go:"GO", warn:"PRÜFEN", stop:"STOP", none:"–"};

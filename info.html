@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0d1217">
 <title>So funktioniert der Windbericht</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-22z">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-23b">
 <style>
   .info h2{margin-bottom:2px}
   .info p,.info li{margin:0;font-size:15px;line-height:1.55}
@@ -71,11 +71,11 @@
     <p>Jede Stunde wird nach festen Regeln bewertet. Jede Regel hinterlegt ihren Grund; die Gründe stehen neben der gewählten Stunde, in der Stundentabelle und im Tagesbericht.</p>
     <table>
       <tr><th>Stufe</th><th>Wann</th></tr>
-      <tr><td><span class="tag stop">STOP</span></td><td>Median aller Modelle über der Wind- oder Böengrenze · Gewitter in mind. einem Drittel der Modelle (mind. 2) · Gewitterenergie CAPE ab 800 J/kg · amtliche Unwetterwarnung bzw. Warnstufe rot</td></tr>
-      <tr><td><span class="tag warn">PRÜFEN</span></td><td>einzelne Modelle über einer Grenze · Gewittersignal in einem Modell · CAPE ab 300 J/kg · Regen ab 0,5 mm/h · Nacht (außerhalb der bürgerlichen Dämmerung) · gefühlt −27 °C oder kälter · „Zu windig“ in mind. 30 % der Szenarien · amtliche Warnung zu Wind, Gewitter, Glatteis, Schnee oder Regen</td></tr>
+      <tr><td><span class="tag stop">STOP</span></td><td>Median aller Modelle über der Wind- oder Böengrenze · Gewitter in mind. einem Drittel der Modelle (mind. 2) · Gewitterenergie CAPE ab 800 J/kg · Lufttemperatur in Arbeitshöhe unter eurer Mindesttemperatur (Einstellungen, Start 0 °C; genau 0 °C ist noch erlaubt) · amtliche Unwetterwarnung bzw. Warnstufe rot</td></tr>
+      <tr><td><span class="tag warn">PRÜFEN</span></td><td>einzelne Modelle über einer Grenze · Gewittersignal in einem Modell · CAPE ab 300 J/kg · Regen ab 0,5 mm/h · „Zu windig“ in mind. 30 % der Szenarien · amtliche Warnung zu Wind, Gewitter, Glatteis, Schnee oder Regen</td></tr>
       <tr><td><span class="tag go">GO</span></td><td>keine der Regeln greift</td></tr>
     </table>
-    <p><b>Hinweise</b> ohne Einfluss auf die Ampel: Kälteschutz ab gefühlt −10 °C, Hitze ab gefühlt 32 °C, UV-Index ab 6, „Zu windig“ in 10–29 % der Szenarien, Warnungen zu Frost, Nebel, Hitze oder UV.</p>
+    <p><b>Hinweise</b> ohne Einfluss auf die Ampel: Nacht (außerhalb der bürgerlichen Dämmerung), Kälteschutz ab gefühlt −10 °C, Hitze ab gefühlt 32 °C, UV-Index ab 6, „Zu windig“ in 10–29 % der Szenarien, Warnungen zu Frost, Nebel, Hitze oder UV.</p>
     <p>Die Tagesbewertung oben fasst die Stunden eurer Arbeitszeit zusammen, z. B. „Grün nur 10–16 Uhr“.</p>
   </section>
 
@@ -103,7 +103,7 @@
       <li><b>Warnungen:</b> DWD (Deutschland) und GeoSphere Austria (Österreich) für die Gemeinde des Standorts. Ohne Warnung steht dort „Keine amtlichen Warnungen für …“. Für Standorte außerhalb von Deutschland und Österreich bitte beim zuständigen Wetterdienst selbst prüfen.</li>
       <li><b>Seile und Bühne über Nacht:</b> von Arbeitsende bis Arbeitsbeginn am Folgetag prüft die App den Wind von 10 m bis zur Nabe gegen eigene Grenzwerte (Einstellungen, Start 15 m/s Wind und 20 m/s Böe). Rot „abbauen“: der Median der Modelle liegt darüber. Gelb „prüfen“: einzelne Modelle darüber. Kein Einfluss auf die Ampel der Arbeitsstunden; steht auch im Tagesbericht.</li>
       <li><b>Windrichtung:</b> Kompass mit mittlerer Richtung und den einzelnen Modellen, darunter ein Pfeil je Arbeitsstunde (wohin der Wind weht, Farbe wie die Ampel). Lee-Seite = windabgewandte Turmseite. Dreht der Wind während der Arbeitszeit um 45° oder mehr, erscheint ein Hinweis; Stunden unter 2 m/s zählen dabei nicht. Kein Einfluss auf die Ampel.</li>
-      <li><b>Tageslicht:</b> bürgerliche Dämmerung (Sonne bis 6° unter dem Horizont), aus dem Sonnenstand berechnet. Stunden außerhalb sind schraffiert und gelten als „Prüfen“.</li>
+      <li><b>Tageslicht:</b> bürgerliche Dämmerung (Sonne bis 6° unter dem Horizont), aus dem Sonnenstand berechnet. Stunden außerhalb sind schraffiert und bekommen den Hinweis „Nacht“; die Ampelfarbe richtet sich nur nach dem Wetter.</li>
       <li><b>Regenradar:</b> DWD, letzte 90 Minuten gemessen und bis 2 Stunden Vorhersage; deckt Deutschland und Grenzgebiete ab.</li>
     </ul>
   </section>

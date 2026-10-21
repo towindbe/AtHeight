@@ -21,9 +21,9 @@
  "stunden": [
   {
    "t": "2026-10-21T00:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 2.228970326661141,
@@ -42,9 +42,9 @@
   },
   {
    "t": "2026-10-21T01:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 1.2138235297550346,
@@ -63,9 +63,9 @@
   },
   {
    "t": "2026-10-21T02:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 1.6206996089482808,
@@ -84,9 +84,9 @@
   },
   {
    "t": "2026-10-21T03:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 2.41125,
@@ -105,9 +105,9 @@
   },
   {
    "t": "2026-10-21T04:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 3.0216683074670536,
@@ -126,9 +126,9 @@
   },
   {
    "t": "2026-10-21T05:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 3.557949709536993,
@@ -147,9 +147,9 @@
   },
   {
    "t": "2026-10-21T06:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 3.421810342003327,
@@ -168,9 +168,9 @@
   },
   {
    "t": "2026-10-21T07:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 2.987774858602373,
@@ -399,7 +399,7 @@
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
     "warn:Regen 0,6 mm/h",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 7.648333333333334,
@@ -422,7 +422,7 @@
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
     "warn:Regen 0,8 mm/h",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 7.84008461394304,
@@ -445,7 +445,7 @@
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
     "warn:Regen 0,7 mm/h",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 7.98276148747465,
@@ -467,7 +467,7 @@
    "lamp": "warn",
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 8.858248720140727,
@@ -489,7 +489,7 @@
    "lamp": "warn",
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 9.16491657831082,
@@ -511,7 +511,7 @@
    "lamp": "warn",
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)",
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)",
     "info:Zu windig in 12 % der Szenarien"
    ],
    "n": 16,
@@ -534,7 +534,7 @@
    "lamp": "warn",
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 9.131163019883893,
@@ -556,7 +556,7 @@
    "lamp": "warn",
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 8.040422723743381,
@@ -578,7 +578,7 @@
    "lamp": "warn",
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 8.427344820807983,
@@ -600,7 +600,7 @@
    "lamp": "warn",
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 8.860235906228219,
@@ -622,7 +622,7 @@
    "lamp": "warn",
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 8.551066853226962,
@@ -644,7 +644,7 @@
    "lamp": "warn",
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 8.32375,
@@ -666,7 +666,7 @@
    "lamp": "warn",
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 8.047019424791488,
@@ -688,7 +688,7 @@
    "lamp": "warn",
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 16,
    "med": 7.526666666666667,
@@ -907,9 +907,9 @@
   },
   {
    "t": "2026-10-22T18:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 15,
    "med": 6.1875,
@@ -928,9 +928,9 @@
   },
   {
    "t": "2026-10-22T19:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 15,
    "med": 6.529937126859104,
@@ -949,9 +949,9 @@
   },
   {
    "t": "2026-10-22T20:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 15,
    "med": 5.966666666666667,
@@ -970,9 +970,9 @@
   },
   {
    "t": "2026-10-22T21:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 15,
    "med": 5.746853076131069,
@@ -991,9 +991,9 @@
   },
   {
    "t": "2026-10-22T22:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 15,
    "med": 5.323726692849898,
@@ -1012,9 +1012,9 @@
   },
   {
    "t": "2026-10-22T23:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 15,
    "med": 4.474512923408983,
@@ -1033,9 +1033,9 @@
   },
   {
    "t": "2026-10-23T00:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 15,
    "med": 3.8116221199409845,
@@ -1054,9 +1054,9 @@
   },
   {
    "t": "2026-10-23T01:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 15,
    "med": 3.5416666666666665,
@@ -1075,9 +1075,9 @@
   },
   {
    "t": "2026-10-23T02:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 15,
    "med": 3.415,
@@ -1096,9 +1096,9 @@
   },
   {
    "t": "2026-10-23T03:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 15,
    "med": 3.234166666666667,
@@ -1117,9 +1117,9 @@
   },
   {
    "t": "2026-10-23T04:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 15,
    "med": 3.07,
@@ -1138,9 +1138,9 @@
   },
   {
    "t": "2026-10-23T05:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 15,
    "med": 3.3054933848612684,
@@ -1159,9 +1159,9 @@
   },
   {
    "t": "2026-10-23T06:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 15,
    "med": 3.4154803130344624,
@@ -1180,9 +1180,9 @@
   },
   {
    "t": "2026-10-23T07:00",
-   "lamp": "warn",
+   "lamp": "go",
    "why": [
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)"
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)"
    ],
    "n": 15,
    "med": 3.314454017339987,
@@ -1414,7 +1414,7 @@
    "why": [
     "warn:Einzelne Modelle über Wind-Grenze",
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)",
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)",
     "warn:Zu windig in 74 % der Szenarien"
    ],
    "n": 11,
@@ -1438,7 +1438,7 @@
    "why": [
     "warn:Einzelne Modelle über Wind-Grenze",
     "stop:Böe 16,3 m/s über 15,0",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)",
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)",
     "warn:Zu windig in 76 % der Szenarien"
    ],
    "n": 11,
@@ -1462,7 +1462,7 @@
    "why": [
     "stop:Wind 13,2 m/s über 12,0",
     "stop:Böe 20,1 m/s über 15,0",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)",
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)",
     "warn:Zu windig in 74 % der Szenarien"
    ],
    "n": 10,
@@ -1486,7 +1486,7 @@
    "why": [
     "stop:Wind 14,0 m/s über 12,0",
     "stop:Böe 23,3 m/s über 15,0",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)",
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)",
     "warn:Zu windig in 82 % der Szenarien"
    ],
    "n": 10,
@@ -1510,7 +1510,7 @@
    "why": [
     "stop:Wind 13,4 m/s über 12,0",
     "stop:Böe 23,1 m/s über 15,0",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)",
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)",
     "warn:Zu windig in 90 % der Szenarien"
    ],
    "n": 9,
@@ -1534,7 +1534,7 @@
    "why": [
     "stop:Wind 13,5 m/s über 12,0",
     "stop:Böe 21,9 m/s über 15,0",
-    "warn:Nacht (außerhalb der bürgerlichen Dämmerung)",
+    "info:Nacht (außerhalb der bürgerlichen Dämmerung)",
     "warn:Zu windig in 92 % der Szenarien"
    ],
    "n": 9,
@@ -1555,7 +1555,7 @@
  ],
  "ansicht": {
   "kopf": "WINDBERG · WINDBERICHT\nTestanlage\nArbeit 80–125 m\nGrenze 12,0 · Böe 15,0 m/s\n6–19 Uhr\n★ Anlagen\n⚙\nEinstellungen\n?\n↻",
-  "entscheidung": "Grün nur 08–13 Uhr (5 h), übrige Stunden prüfen.",
+  "entscheidung": "Grün nur 06–13 Uhr (7 h), übrige Stunden prüfen.",
   "zusammenfassung": "Stärkster Wind gegen 16 Uhr: 8,7 m/s (Spanne 6,8–12,0), Böen ca. 14,5 m/s. Modelle streuen mäßig.",
   "tag": "MI., 21.10. · ARBEITSZEIT 6–19 UHR · HELL 07:20–18:55",
   "warnungen": "✓ Keine amtlichen Warnungen für Stadt Aulendorf (DWD) am gewählten Tag.",
@@ -1574,14 +1574,14 @@
   "richtung": "Wind aus\nWSW · 248°\nWeht nach\nONO\nStreuung\n±19° (einig)\nStärke\n6,8 m/s, Böe ca. 10,4\nModelle\n16"
  },
  "morgen": {
-  "entscheidung": "Grün nur 14–18 Uhr (4 h), übrige Stunden prüfen.",
+  "entscheidung": "Grün nur 14–20 Uhr (6 h), übrige Stunden prüfen.",
   "zusammenfassung": "Stärkster Wind gegen 13 Uhr: 8,6 m/s (Spanne 7,7–10,1), Böen ca. 13,5 m/s. Modelle streuen mäßig.",
   "tage": "Heute\nMorgen\nÜbermorgen"
  },
  "modellvergleich": "Alle Modelle treffen hier etwa gleich gut (Fehler im Verlauf 0,66–0,83 m/s). Für oder gegen einzelne Modelle lässt sich daraus keine Empfehlung ableiten.\n\nEINSTUFUNG MODELL FEHLER VERLAUF TREFFER WINDIG FEHLER GESAMT TENDENZ FEHLER BÖE STUNDEN\ngleichwertig AIFS (KI) (ECMWF) 0,67 m/s 63 % 0,69 m/s −0,3 – 420\ngleichwertig AROME AT (GeoSphere) 0,66 m/s 52 % 0,79 m/s −0,6 zu wenig 1,1 m/s 420\ngleichwertig AROME HD (Météo-France) 0,77 m/s 51 % 0,78 m/s −0,0 1,3 m/s 420\ngleichwertig ARPEGE (Météo-France) 0,75 m/s 52 % 0,75 m/s −0,1 1,1 m/s 420\ngleichwertig GEM (Kanada) 0,74 m/s 56 % 0,75 m/s +0,2 1,4 m/s 420\ngleichwertig GFS (NOAA) 0,72 m/s 57 % 0,76 m/s +0,3 1,8 m/s 420\ngleichwertig HARMONIE (DMI) 0,83 m/s 44 % 0,84 m/s −0,2 1,2 m/s 420\ngleichwertig HARMONIE (KNMI) 0,83 m/s 41 % 0,87 m/s −0,4 zu wenig 1,2 m/s 420\ngleichwertig ICON Global (DWD) 0,74 m/s 52 % 0,75 m/s −0,2 1,3 m/s 420\ngleichwertig ICON-CH2 (MeteoSwiss) 0,66 m/s 50 % 0,68 m/s −0,3 1,2 m/s 420\ngleichwertig ICON-D2 (DWD) 0,70 m/s 48 % 0,74 m/s −0,4 zu wenig 1,2 m/s 420\ngleichwertig ICON-EU (DWD) 0,72 m/s 51 % 0,76 m/s −0,3 zu wenig 1,3 m/s 420\ngleichwertig IFS HRES (ECMWF) 0,74 m/s 52 % 0,74 m/s +0,0 – 420\ngleichwertig UKMO Global (Met Office) 0,70 m/s 55 % 0,70 m/s −0,0 1,1 m/s 420\ngleichwertig UKV (Met Office) 0,76 m/s 50 % 0,77 m/s +0,1 1,3 m/s 420\n\nOhne Vergleichsdaten (keine archivierten Vortagesprognosen): ICON-CH1 (MeteoSwiss).\n\nSo wird gerechnet: Vortagesprognose für 10 m gegen Station Aulendorf-Blönried (DWD, 4,8 km entfernt, 567 m ü. NN), 21.9.2026–20.10.2026, nur Arbeitsstunden. Fehler Verlauf: mittlerer Fehler, nachdem die Grundtendenz des Modells abgezogen ist; so werden glatte, grobe Modelle nicht bevorzugt. Treffer windig: Anteil der windigsten 25 % der Stunden, die das Modell richtig erkannt hat. gut: höchstens 15 % mehr Fehler im Verlauf als das beste Modell und mind. 85 % von dessen Trefferquote; deutlich schlechter: mind. 40 % und 0,5 m/s mehr Fehler oder höchstens 60 % der besten Trefferquote. Unterscheiden sich alle um weniger als 30 %, gelten sie als gleichwertig. Gilt für Bodenwind in der Region, nicht für die Nabenhöhe. 10.26, 11:47.",
  "bericht": {
-  "text": "Tagesbericht WetterTestanlage Mittwoch, 21. Oktober 2026 · Arbeitszeit 6–19 Uhr · hell 07:20–18:55 PRÜFENGrün nur 08–13 Uhr (5 h), übrige Stunden prüfen. Stärkster Wind gegen 16 Uhr: 8,7 m/s (Spanne 6,8–12,0), Böen ca. 14,5 m/s. Modelle streuen mäßig. Entscheidung AufsichtführenderEingeschränkt freigegeben Arbeitsfenster 0607080910111213141516171819 GOPrüfenStopNacht EinsatzProjektTestprojektAnlage / TypTesttyp, WEA 1TätigkeitTurmreparaturTeamA. TestAufsichtB. Test Standort & GrenzwerteKoordinaten47,9550° N, 9,6400° ENabe / Rotor125 m / 149 mArbeitsbereich80–125 m (Abstieg von der Gondel)Max. Windstärke12,0 m/sMax. Böe15,0 m/s Amtliche Warnungen (DWD, GeoSphere Austria) ✓ Keine amtlichen Warnungen für Stadt Aulendorf (DWD) am gewählten Tag. Seile und Bühne über Nacht✓ Seile und Bühne können über Nacht hängen bleiben. 20–06 Uhr: Böen bis 14,4 m/s, Wind bis 9,2 m/s. Grenze Wind 15,0 / Böe 20,0 m/s. Prognose je Stunde · Wind und Böe im Bereich 80–125 m (m/s) UhrWindSpanneBöeRi.Modelle über GrenzeZu windigRegenCAPE°C 80 mGefühltGründe PRÜFEN06:00 3,4 0,8–5,2 4,9 SW 0/16 0 % 0,3 0 8 6 Nacht PRÜFEN07:00 3,0 1,6–5,0 4,3 SW 0/16 0 % 0,3 0 8 6 Nacht GO08:00 2,6 1,1–4,5 3,8 SW 0/16 0 % 0,4 0 8 7 – GO09:00 2,1 0,7–3,6 2,8 WSW 0/16 0 % 0,2 0 8 7 – GO10:00 1,9 0,9–3,4 2,5 WSW 0/16 0 % 0,0 0 9 8 – GO11:00 1,9 0,7–4,6 3,0 W 0/16 0 % 0,0 0 9 8 – GO12:00 2,6 0,6–5,0 3,5 W 0/16 0 % 0,1 0 9 8 – PRÜFEN13:00 3,5 1,7–5,8 4,5 W 0/16 0 % 0,5 0 9 8 Regen 0,5 mm/h PRÜFEN14:00 4,6 3,1–6,4 7,2 WSW 0/16 0 % 0,8 5 10 7 Regen 0,8 mm/h PRÜFEN15:00 6,8 3,5–11,8 10,4 WSW 2/16 0 % 1,6 10 9 6 Einzelmodelle Böe über Grenze · Regen 1,6 mm/h PRÜFEN16:00 8,7 6,8–12,0 14,5 WSW 7/16 20 % 1,4 20 9 5 Einzelmodelle Wind über Grenze · Einzelmodelle Böe über Grenze · Regen 1,4 mm/h · Zu windig 20 % PRÜFEN17:00 7,7 5,1–9,8 13,2 WSW 2/16 14 % 1,1 0 8 4 Einzelmodelle Böe über Grenze · Regen 1,1 mm/h · Zu windig 14 % PRÜFEN18:00 7,6 4,2–10,2 11,2 SW 3/16 8 % 0,6 0 7 3 Einzelmodelle Böe über Grenze · Regen 0,6 mm/h · Nacht PRÜFEN19:00 7,8 5,6–11,1 10,8 SW 2/16 2 % 0,8 10 7 3 Einzelmodelle Böe über Grenze · Regen 0,8 mm/h · Nacht Gelb: ab 75 % des Grenzwerts bzw. Hinweis · Rot: über Grenzwert · Schraffiert: Nacht Bemerkungen / TagesverlaufBemerkungzweite Zeile Grundlagen. Abgerufen 21.10.2026, 11:47:44, Bericht erstellt 21.10.2026, 11:47:44. Ausgewertete Modelle (16): ICON-D2 (DWD), ICON-CH1 (MeteoSwiss), ICON-CH2 (MeteoSwiss), AROME AT (GeoSphere), AROME HD (Météo-France), HARMONIE (KNMI), HARMONIE (DMI), UKV (Met Office), ICON-EU (DWD), ARPEGE (Météo-France), IFS HRES (ECMWF), AIFS (KI) (ECMWF), UKMO Global (Met Office), ICON Global (DWD), GFS (NOAA), GEM (Kanada). Szenarien: ICON-D2-EPS (20), ECMWF-ENS (51). Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle (mind. 2), CAPE ab 800 J/kg oder Unwetterwarnung bzw. Warnstufe rot. Prüfen bei einzelnen Modellen über Grenzwert, Gewittersignal, CAPE ab 300 J/kg, Regen ab 0,5 mm/h, Nacht, Windchill ab -27 °C, mind. 30 % der Szenarien über Grenze oder amtlicher Warnung. Wind als Stundenwert der Modelle; kurzzeitig (z. B. im 10-Minuten-Mittel der Anlage) kann der Wind darüber liegen. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0). Entscheidungshilfe; die Freigabe trifft der Aufsichtführende. Datum, Unterschrift AufsichtführenderDatum, Unterschrift Auftraggeber (optional) Prüfsumme (SHA-256) der Berichtsdaten: c03651e340a7f163e186cacbb516c862d8953aa7caba45d728b63270c957dea1 · dieselbe Zahl steht in der zugehörigen JSON-Datei (prüfbar mit tools/pruefen.py).",
-  "pruefsumme": "c03651e340a7f163e186cacbb516c862d8953aa7caba45d728b63270c957dea1"
+  "text": "Tagesbericht WetterTestanlage Mittwoch, 21. Oktober 2026 · Arbeitszeit 6–19 Uhr · hell 07:20–18:55 PRÜFENGrün nur 06–13 Uhr (7 h), übrige Stunden prüfen. Stärkster Wind gegen 16 Uhr: 8,7 m/s (Spanne 6,8–12,0), Böen ca. 14,5 m/s. Modelle streuen mäßig. Entscheidung AufsichtführenderEingeschränkt freigegeben Arbeitsfenster 0607080910111213141516171819 GOPrüfenStopNacht EinsatzProjektTestprojektAnlage / TypTesttyp, WEA 1TätigkeitTurmreparaturTeamA. TestAufsichtB. Test Standort & GrenzwerteKoordinaten47,9550° N, 9,6400° ENabe / Rotor125 m / 149 mArbeitsbereich80–125 m (Abstieg von der Gondel)Max. Windstärke12,0 m/sMax. Böe15,0 m/s Amtliche Warnungen (DWD, GeoSphere Austria) ✓ Keine amtlichen Warnungen für Stadt Aulendorf (DWD) am gewählten Tag. Seile und Bühne über Nacht✓ Seile und Bühne können über Nacht hängen bleiben. 20–06 Uhr: Böen bis 14,4 m/s, Wind bis 9,2 m/s. Grenze Wind 15,0 / Böe 20,0 m/s. Prognose je Stunde · Wind und Böe im Bereich 80–125 m (m/s) UhrWindSpanneBöeRi.Modelle über GrenzeZu windigRegenCAPE°C 80 mGefühltGründe GO06:00 3,4 0,8–5,2 4,9 SW 0/16 0 % 0,3 0 8 6 Nacht GO07:00 3,0 1,6–5,0 4,3 SW 0/16 0 % 0,3 0 8 6 Nacht GO08:00 2,6 1,1–4,5 3,8 SW 0/16 0 % 0,4 0 8 7 – GO09:00 2,1 0,7–3,6 2,8 WSW 0/16 0 % 0,2 0 8 7 – GO10:00 1,9 0,9–3,4 2,5 WSW 0/16 0 % 0,0 0 9 8 – GO11:00 1,9 0,7–4,6 3,0 W 0/16 0 % 0,0 0 9 8 – GO12:00 2,6 0,6–5,0 3,5 W 0/16 0 % 0,1 0 9 8 – PRÜFEN13:00 3,5 1,7–5,8 4,5 W 0/16 0 % 0,5 0 9 8 Regen 0,5 mm/h PRÜFEN14:00 4,6 3,1–6,4 7,2 WSW 0/16 0 % 0,8 5 10 7 Regen 0,8 mm/h PRÜFEN15:00 6,8 3,5–11,8 10,4 WSW 2/16 0 % 1,6 10 9 6 Einzelmodelle Böe über Grenze · Regen 1,6 mm/h PRÜFEN16:00 8,7 6,8–12,0 14,5 WSW 7/16 20 % 1,4 20 9 5 Einzelmodelle Wind über Grenze · Einzelmodelle Böe über Grenze · Regen 1,4 mm/h · Zu windig 20 % PRÜFEN17:00 7,7 5,1–9,8 13,2 WSW 2/16 14 % 1,1 0 8 4 Einzelmodelle Böe über Grenze · Regen 1,1 mm/h · Zu windig 14 % PRÜFEN18:00 7,6 4,2–10,2 11,2 SW 3/16 8 % 0,6 0 7 3 Einzelmodelle Böe über Grenze · Regen 0,6 mm/h · Nacht PRÜFEN19:00 7,8 5,6–11,1 10,8 SW 2/16 2 % 0,8 10 7 3 Einzelmodelle Böe über Grenze · Regen 0,8 mm/h · Nacht Gelb: ab 75 % des Grenzwerts bzw. Hinweis · Rot: über Grenzwert · Schraffiert: Nacht Bemerkungen / TagesverlaufBemerkungzweite Zeile Grundlagen. Abgerufen 21.10.2026, 11:47:44, Bericht erstellt 21.10.2026, 11:47:44. Ausgewertete Modelle (16): ICON-D2 (DWD), ICON-CH1 (MeteoSwiss), ICON-CH2 (MeteoSwiss), AROME AT (GeoSphere), AROME HD (Météo-France), HARMONIE (KNMI), HARMONIE (DMI), UKV (Met Office), ICON-EU (DWD), ARPEGE (Météo-France), IFS HRES (ECMWF), AIFS (KI) (ECMWF), UKMO Global (Met Office), ICON Global (DWD), GFS (NOAA), GEM (Kanada). Szenarien: ICON-D2-EPS (20), ECMWF-ENS (51). Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle (mind. 2), CAPE ab 800 J/kg, Temperatur in Arbeitshöhe unter 0 °C oder Unwetterwarnung bzw. Warnstufe rot. Prüfen bei einzelnen Modellen über Grenzwert, Gewittersignal, CAPE ab 300 J/kg, Regen ab 0,5 mm/h, mind. 30 % der Szenarien über Grenze oder amtlicher Warnung. Nacht nur als Hinweis. Wind als Stundenwert der Modelle; kurzzeitig (z. B. im 10-Minuten-Mittel der Anlage) kann der Wind darüber liegen. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0). Entscheidungshilfe; die Freigabe trifft der Aufsichtführende. Datum, Unterschrift AufsichtführenderDatum, Unterschrift Auftraggeber (optional) Prüfsumme (SHA-256) der Berichtsdaten: 21cb683f221a53577eb8abd776d55afe0b03f8718f124141c2d4eae78c9eb90d · dieselbe Zahl steht in der zugehörigen JSON-Datei (prüfbar mit tools/pruefen.py).",
+  "pruefsumme": "21cb683f221a53577eb8abd776d55afe0b03f8718f124141c2d4eae78c9eb90d"
  },
  "export": {
   "erstellt": "2026-10-21T09:47:44.066Z",
@@ -1599,6 +1599,7 @@
    "gust": 15,
    "nightWind": 15,
    "nightGust": 20,
+   "minTemp": 0,
    "from": 6,
    "to": 19,
    "checked": true
@@ -1617,7 +1618,7 @@
   "warnungen": [],
   "fazit": {
    "ampel": "warn",
-   "text": "Grün nur 08–13 Uhr (5 h), übrige Stunden prüfen. Stärkster Wind gegen 16 Uhr: 8,7 m/s (Spanne 6,8–12,0), Böen ca. 14,5 m/s. Modelle streuen mäßig."
+   "text": "Grün nur 06–13 Uhr (7 h), übrige Stunden prüfen. Stärkster Wind gegen 16 Uhr: 8,7 m/s (Spanne 6,8–12,0), Böen ca. 14,5 m/s. Modelle streuen mäßig."
   },
   "nacht": {
    "status": "go",
@@ -3583,7 +3584,7 @@
    {
     "zeit": "2026-10-21T06:00",
     "utc": "2026-10-21T04:00",
-    "ampel": "warn",
+    "ampel": "go",
     "median": 3.421810342003327,
     "min": 0.8286135043349967,
     "max": 5.235833333333334,
@@ -3605,7 +3606,7 @@
    {
     "zeit": "2026-10-21T07:00",
     "utc": "2026-10-21T05:00",
-    "ampel": "warn",
+    "ampel": "go",
     "median": 2.987774858602373,
     "min": 1.63,
     "max": 4.980667921989984,
@@ -3894,29 +3895,29 @@
  "vomBoden": {
   "bereich": "bis 80 m",
   "stunden": [
-   "warn 2.229",
-   "warn 3.422",
+   "go 2.229",
+   "go 3.422",
    "go 2.608",
    "warn 7.648",
    "warn 9.131",
    "warn 8.047",
    "warn 8.470",
-   "warn 6.188",
-   "warn 3.812",
-   "warn 3.415",
+   "go 6.188",
+   "go 3.812",
+   "go 3.415",
    "go 4.276",
    "warn 9.283"
   ]
  },
  "ohneGFS": [
-  "warn 2.370",
-  "warn 1.265",
-  "warn 1.554",
-  "warn 2.299",
-  "warn 2.983",
-  "warn 3.470",
-  "warn 3.314",
-  "warn 2.817",
+  "go 2.370",
+  "go 1.265",
+  "go 1.554",
+  "go 2.299",
+  "go 2.983",
+  "go 3.470",
+  "go 3.314",
+  "go 2.817",
   "go 2.361",
   "go 2.259",
   "go 2.000",
@@ -3951,20 +3952,20 @@
   "go 7.958",
   "go 7.720",
   "go 6.440",
-  "warn 6.181",
-  "warn 6.564",
-  "warn 6.053",
-  "warn 5.606",
-  "warn 4.982",
-  "warn 4.689",
-  "warn 4.142",
-  "warn 3.677",
-  "warn 3.448",
-  "warn 3.315",
-  "warn 3.187",
-  "warn 3.320",
-  "warn 3.448",
-  "warn 3.365",
+  "go 6.181",
+  "go 6.564",
+  "go 6.053",
+  "go 5.606",
+  "go 4.982",
+  "go 4.689",
+  "go 4.142",
+  "go 3.677",
+  "go 3.448",
+  "go 3.315",
+  "go 3.187",
+  "go 3.320",
+  "go 3.448",
+  "go 3.365",
   "go 3.695",
   "go 4.197",
   "go 3.250",
