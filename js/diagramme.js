@@ -132,9 +132,21 @@ function renderProfile(){
   opt.interaction = {mode:"nearest", intersect:false, axis:"y"};
   opt.plugins.tooltip = {callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.x)} m/s in ${c.parsed.y} m`}};
   const lowTip = Math.max(0, site.hub - site.rotor/2);
-  const refPlugin = {id:"ref", afterDatasetsDraw(c){
+  const refPlugin = {id:"ref", beforeDatasetsDraw(c){
+    // hinter den Linien: Rotorfläche und Band der Modellspanne (Fläche zwischen Minimum und Maximum je Höhe)
     const {ctx, chartArea:a, scales:{x,y}} = c; ctx.save();
-    ctx.fillStyle = css("--raised"); ctx.globalAlpha=.6; ctx.fillRect(a.left, y.getPixelForValue(tip), a.right-a.left, y.getPixelForValue(lowTip)-y.getPixelForValue(tip)); ctx.globalAlpha=1;
+    ctx.beginPath(); ctx.rect(a.left, a.top, a.right-a.left, a.bottom-a.top); ctx.clip();
+    ctx.fillStyle = css("--raised"); ctx.fillRect(a.left, y.getPixelForValue(tip), a.right-a.left, y.getPixelForValue(lowTip)-y.getPixelForValue(tip));
+    const pts = prof.filter(p => p.min!=null && p.max!=null);
+    if(pts.length > 1){
+      ctx.beginPath();
+      pts.forEach((p,k) => ctx[k ? "lineTo" : "moveTo"](x.getPixelForValue(p.max), y.getPixelForValue(p.z)));
+      [...pts].reverse().forEach(p => ctx.lineTo(x.getPixelForValue(p.min), y.getPixelForValue(p.z)));
+      ctx.closePath(); ctx.fillStyle = css("--band"); ctx.fill();
+    }
+    ctx.restore();
+  }, afterDatasetsDraw(c){
+    const {ctx, chartArea:a, scales:{x,y}} = c; ctx.save();
     ctx.strokeStyle = css("--accent"); ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(a.left, y.getPixelForValue(site.hub)); ctx.lineTo(a.right, y.getPixelForValue(site.hub)); ctx.stroke();
     ctx.strokeStyle = css("--stop"); ctx.beginPath(); ctx.moveTo(x.getPixelForValue(site.wind), a.top); ctx.lineTo(x.getPixelForValue(site.wind), a.bottom); ctx.stroke();
     ctx.setLineDash([]); ctx.fillStyle = css("--muted"); ctx.font = "10px IBM Plex Mono";
@@ -143,13 +155,13 @@ function renderProfile(){
       ctx.strokeStyle = css("--go"); ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(a.left, y.getPixelForValue(workH())); ctx.lineTo(a.right, y.getPixelForValue(workH())); ctx.stroke(); ctx.setLineDash([]);
       ctx.fillStyle = css("--go"); ctx.fillText("Arbeit "+workH()+" m", a.left+4, y.getPixelForValue(workH())-4);
     }
-    ctx.fillText("Blattspitze "+Math.round(tip)+" m", a.left+4, y.getPixelForValue(tip)+12);
+    ctx.fillStyle = css("--muted"); ctx.fillText("Blattspitze "+Math.round(tip)+" m", a.left+4, y.getPixelForValue(tip)+12);
     ctx.restore();
   }};
   if(charts.profile) charts.profile.destroy();
   charts.profile = new Chart($("profile"), {type:"line", data:{datasets:[
-    {label:"Minimum", data:P("min"), borderColor:"transparent", pointRadius:0, fill:false},
-    {label:"Maximum", data:P("max"), borderColor:css("--band-line"), borderWidth:.8, backgroundColor:css("--band"), pointRadius:0, fill:"-1"},
+    {label:"Minimum", data:P("min"), borderColor:css("--band-line"), borderWidth:.8, pointRadius:0, fill:false},
+    {label:"Maximum", data:P("max"), borderColor:css("--band-line"), borderWidth:.8, pointRadius:0, fill:false},
     {label:"Median", data:P("med"), borderColor:css("--fg"), borderWidth:3, pointRadius:0}
   ]}, options:opt, plugins:[refPlugin]});
   $("profileHour").textContent = `${dayLabel(state.times[i].slice(0,10),true)} · ${hh(state.times[i])} Uhr`;
