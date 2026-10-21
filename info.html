@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0d1217">
 <title>So funktioniert der Windbericht</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-22v">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-22w">
 <style>
   .info h2{margin-bottom:2px}
   .info p,.info li{margin:0;font-size:15px;line-height:1.55}
@@ -90,7 +90,7 @@
     <ul>
       <li>Der Windbericht nutzt bis zu 16 Wettermodelle von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA, KNMI, DMI und Kanada. Modelle, die den Standort nicht abdecken, fallen automatisch weg. Einzelne Modelle lassen sich in der Modelltabelle per Häkchen ausschließen.</li>
       <li><b>Median:</b> der mittlere Wert aller Modelle; er ist robust gegen einzelne Ausreißer.</li>
-      <li><b>Lage unsicher:</b> streuen die Modelle stark (mittlere Spanne ab 5 m/s), zeigt die App den höchsten Wind der Arbeitszeit getrennt für hochauflösende Modelle (1–5 km) und regionale/globale Modelle (7–25 km), dazu das stürmischste Modell. Es wird dabei kein Modell aus der Bewertung genommen: Ausreißer können recht haben.</li>
+      <li><b>Einigkeit der Modelle:</b> oben steht immer, wie einig sich die Modelle sind (grün „weitgehend einig“, gelb „streuen mäßig“, blau „Lage unsicher“), mit dem höchsten Wind der Arbeitszeit. <b>Lage unsicher:</b> streuen die Modelle stark (mittlere Spanne ab 5 m/s), zeigt die App den höchsten Wind der Arbeitszeit getrennt für hochauflösende Modelle (1–5 km) und regionale/globale Modelle (7–25 km), dazu das stürmischste Modell. Es wird dabei kein Modell aus der Bewertung genommen: Ausreißer können recht haben.</li>
       <li><b>Spanne:</b> vom vorsichtigsten bis zum stürmischsten Modell. Schmal heißt: die Modelle sind sich einig. Breit heißt: unsicher.</li>
       <li><b>Modellvergleich:</b> vergleicht für die letzten 30 Tage die Vortagesprognose jedes Modells mit der nächsten Messstation (DWD oder GeoSphere, 10 m) und teilt die Modelle in „gut“, „Mittelfeld“ und „deutlich schlechter“ ein. Liegen alle eng beieinander, gelten sie als gleichwertig.</li>
       <li><b>Ausblick 7 Tage:</b> Tage 1–3 aus der Detailprognose, ab Tag 4 grobe Tendenz aus vier Globalmodellen und den ECMWF-Szenarien. Nur zur Planung.</li>

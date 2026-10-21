@@ -342,3 +342,5 @@ body.info-open{overflow:hidden}
 .spreadbox small{color:var(--muted);font-size:12.5px}
 .spreadbox .sg{display:flex;flex-wrap:wrap;gap:0 8px;align-items:baseline}
 .spreadbox .sg b{font-family:var(--f-mono);font-weight:500;white-space:nowrap} .spreadbox .sg small{white-space:nowrap}
+.spreadbox.s-einig{border-left-color:var(--go)} .spreadbox.s-maessig{border-left-color:var(--warn)}
+.spreadbox.s-einig b:first-child{color:var(--go)}

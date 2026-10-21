@@ -54,16 +54,20 @@ function renderHero(){
       <span>${esc(w.src)}: ${esc(w.title)}</span><small>${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))}</small></div>`).join("") + (note ? `<small>${esc(note)}</small>` : "")
     : `<span>${kind==="ok" ? "✓ " : ""}${esc(note)}</span>`;
   const sg = spreadGroups(state.day);
-  $("spreadBox").hidden = !sg;
-  if(sg){
+  $("spreadBox").hidden = !sg || !sg.all;
+  if(sg && sg.all){
     const row = (t, g) => g ? `<span class="sg"><span>${t} (${g.n}):</span><b>${fw(g.lo)}–${fwu(g.hi)}</b><small>Mitte ${fw(g.med)}</small></span>` : "";
-    $("spreadBox").innerHTML = `<b>Lage unsicher: die Modelle sind sich nicht einig</b>
+    $("spreadBox").className = "spreadbox needs-data s-" + sg.lvl;
+    $("spreadBox").innerHTML = sg.lvl==="unsicher"
+      ? `<b>Lage unsicher: die Modelle sind sich nicht einig</b>
       <small>Höchster Wind in der Arbeitszeit je Modellgruppe (hochauflösend 1–5 km, sonst 7–25 km):</small>
       ${row("Hochauflösend", sg.hi)}${row("Regional/Global", sg.lo)}
       ${sg.hi ? "" : `<small>Hochauflösende Modelle reichen nur 1–2 Tage weit.</small>`}
-      <small>Am stürmischsten: ${esc(sg.top.r.m.name)} (${esc(sg.top.r.m.org)}) mit ${fwu(sg.top.v)}${sg.pMax!=null ? ` · Zu windig bis ${riskTen(sg.pMax)} der Szenarien` : ""}.
-      </small>
-      <small>Ausreißer nicht einfach ausschließen, sie können recht haben. Neuere Läufe abwarten, vor der Abfahrt neu laden, vor Ort messen.</small>`;
+      <small>Am stürmischsten: ${esc(sg.top.r.m.name)} (${esc(sg.top.r.m.org)}) mit ${fwu(sg.top.v)}${sg.pMax!=null ? ` · Zu windig bis ${riskTen(sg.pMax)} der Szenarien` : ""}.</small>
+      <small>Ausreißer nicht einfach ausschließen, sie können recht haben. Neuere Läufe abwarten, vor der Abfahrt neu laden, vor Ort messen.</small>`
+      : `<b>${sg.lvl==="einig" ? "✓ Modelle weitgehend einig" : "Modelle streuen mäßig"}</b>
+      ${row("Höchster Wind in der Arbeitszeit, alle Modelle", sg.all)}
+      ${sg.lvl==="maessig" ? `<small>Am stürmischsten: ${esc(sg.top.r.m.name)} (${esc(sg.top.r.m.org)}) mit ${fwu(sg.top.v)}.</small>` : ""}`;
   }
   const nt = nightText(nightRig(state.day));
   $("rigBox").hidden = !nt;
