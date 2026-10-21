@@ -107,7 +107,7 @@ async function buildReport(){
       Szenarien: ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(", ") || "nicht verfügbar"}.
       Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle, CAPE ab ${CAPE_STOP} J/kg oder Unwetterwarnung bzw. Warnstufe rot.
       Prüfen bei einzelnen Modellen über Grenzwert, Schauer, CAPE ab ${CAPE_WARN} J/kg, Nacht, Windchill ab ${CHILL_WARN} °C, mind. ${Math.round(ENS_WARN*100)} % der Szenarien über Grenze oder amtlicher Warnung.
-      Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0).
+      Mittelwind als Stundenwert der Modelle; kurzzeitig (z. B. im 10-Minuten-Mittel der Anlage) kann der Wind darüber liegen. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0).
       Entscheidungshilfe; die Freigabe trifft der Aufsichtführende.
     </div>
 
