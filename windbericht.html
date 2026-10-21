@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-21n">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-21o">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tw-logo" viewBox="-6 -6 790 512"><g fill="currentColor" stroke="currentColor" stroke-linejoin="miter"><path stroke-width="3" d="M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z"/><path stroke-width="15" d="m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z"/></g></symbol></svg>
@@ -134,18 +134,6 @@
     <p class="note">Ein Feld pro Stunde, seitlich durch alle Tage scrollen. Blass: außerhalb der Arbeitszeit. Antippen zeigt oben die Werte dieser Stunde.</p>
   </section>
 
-  <!-- 7-Tage-Ausblick -->
-  <section class="card needs-data">
-    <div class="card-head"><h2>Ausblick 7 Tage <button type="button" class="info-btn" id="olInfoBtn" aria-expanded="false" aria-controls="olInfo" title="Was bedeuten die Werte?">ⓘ</button></h2><span class="eyebrow">grobe Tendenz</span></div>
-    <p class="info-text" id="olInfo" hidden><b>So liest du den Ausblick:</b> Alle Werte gelten für eure Arbeitszeit und den Arbeitsbereich.<br>
-      <b>Wind max:</b> Für jedes Modell wird der stärkste Mittelwind des Tages ermittelt; angezeigt ist der mittlere dieser Werte (Median).<br>
-      <b>Spanne:</b> vom vorsichtigsten bis zum stürmischsten Modell. Schmal (2–3 m/s) heißt: die Modelle sind sich einig, die Prognose ist recht verlässlich. Breit (ab etwa 5 m/s) heißt: unsicher, z. B. weil eine Front zeitlich noch nicht klar ist. Liegt das obere Ende über eurer Grenze, den Tag im Blick behalten.<br>
-      <b>Böe max:</b> stärkste geschätzte Böe des Tages (Median der Modelle).<br>
-      <b>Szenarien:</b> Anteil der 51 ECMWF-Szenarien, in denen an diesem Tag mindestens eine Arbeitsstunde über eurer Grenze liegt.<br>
-      <b>Detail oben / Tendenz:</b> Die ersten 3 Tage stammen aus der Detailprognose mit allen Modellen (antippen wechselt zu diesem Tag). Ab Tag 4 rechnen nur noch 4 Globalmodelle (ECMWF, ICON, GFS, GEM); das ist eine grobe Tendenz für die Planung, nicht für die Freigabe.</p>
-    <div id="outlook"></div>
-  </section>
-
   <!-- Verlauf -->
   <section class="card needs-data">
     <div class="card-head">
@@ -259,6 +247,18 @@
     <p class="note">Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung. Mit dem Häkchen lassen sich einzelne Modelle für diese Anlage ausschließen, z. B. grobe Globalmodelle im Gebirge. Die Auswahl wird mit der Anlage gespeichert.</p>
   </section>
 
+  <!-- 7-Tage-Ausblick -->
+  <section class="card needs-data">
+    <div class="card-head"><h2>Ausblick 7 Tage <button type="button" class="info-btn" id="olInfoBtn" aria-expanded="false" aria-controls="olInfo" title="Was bedeuten die Werte?">ⓘ</button></h2><span class="eyebrow">grobe Tendenz</span></div>
+    <p class="info-text" id="olInfo" hidden><b>So liest du den Ausblick:</b> Alle Werte gelten für eure Arbeitszeit und den Arbeitsbereich.<br>
+      <b>Wind max:</b> Für jedes Modell wird der stärkste Mittelwind des Tages ermittelt; angezeigt ist der mittlere dieser Werte (Median).<br>
+      <b>Spanne:</b> vom vorsichtigsten bis zum stürmischsten Modell. Schmal (2–3 m/s) heißt: die Modelle sind sich einig, die Prognose ist recht verlässlich. Breit (ab etwa 5 m/s) heißt: unsicher, z. B. weil eine Front zeitlich noch nicht klar ist. Liegt das obere Ende über eurer Grenze, den Tag im Blick behalten.<br>
+      <b>Böe max:</b> stärkste geschätzte Böe des Tages (Median der Modelle).<br>
+      <b>Szenarien:</b> Anteil der 51 ECMWF-Szenarien, in denen an diesem Tag mindestens eine Arbeitsstunde über eurer Grenze liegt.<br>
+      <b>Detail oben / Tendenz:</b> Die ersten 3 Tage stammen aus der Detailprognose mit allen Modellen (antippen wechselt zu diesem Tag). Ab Tag 4 rechnen nur noch 4 Globalmodelle (ECMWF, ICON, GFS, GEM); das ist eine grobe Tendenz für die Planung, nicht für die Freigabe.</p>
+    <div id="outlook"></div>
+  </section>
+
   <!-- Tagesbericht -->
   <section class="card needs-data">
     <h2>Tagesbericht</h2>
@@ -296,22 +296,22 @@
 </div>
 
 <!-- Skripte teilen sich den globalen Gültigkeitsbereich; Reihenfolge beachten. Bei Änderungen ?v= erhöhen. -->
-<script src="js/konfiguration.js?v=2026-10-21n"></script>
-<script src="js/hilfen.js?v=2026-10-21n"></script>
-<script src="js/physik.js?v=2026-10-21n"></script>
-<script src="js/daten.js?v=2026-10-21n"></script>
-<script src="js/tageslicht.js?v=2026-10-21n"></script>
-<script src="js/bewertung.js?v=2026-10-21n"></script>
-<script src="js/anzeige.js?v=2026-10-21n"></script>
-<script src="js/diagramme.js?v=2026-10-21n"></script>
-<script src="js/tabellen.js?v=2026-10-21n"></script>
-<script src="js/modellvergleich.js?v=2026-10-21n"></script>
-<script src="js/ausblick.js?v=2026-10-21n"></script>
-<script src="js/karte.js?v=2026-10-21n"></script>
-<script src="js/radar.js?v=2026-10-21n"></script>
-<script src="js/bericht.js?v=2026-10-21n"></script>
-<script src="js/anlagen.js?v=2026-10-21n"></script>
-<script src="js/bedienung.js?v=2026-10-21n"></script>
-<script src="js/start.js?v=2026-10-21n"></script>
+<script src="js/konfiguration.js?v=2026-10-21o"></script>
+<script src="js/hilfen.js?v=2026-10-21o"></script>
+<script src="js/physik.js?v=2026-10-21o"></script>
+<script src="js/daten.js?v=2026-10-21o"></script>
+<script src="js/tageslicht.js?v=2026-10-21o"></script>
+<script src="js/bewertung.js?v=2026-10-21o"></script>
+<script src="js/anzeige.js?v=2026-10-21o"></script>
+<script src="js/diagramme.js?v=2026-10-21o"></script>
+<script src="js/tabellen.js?v=2026-10-21o"></script>
+<script src="js/modellvergleich.js?v=2026-10-21o"></script>
+<script src="js/ausblick.js?v=2026-10-21o"></script>
+<script src="js/karte.js?v=2026-10-21o"></script>
+<script src="js/radar.js?v=2026-10-21o"></script>
+<script src="js/bericht.js?v=2026-10-21o"></script>
+<script src="js/anlagen.js?v=2026-10-21o"></script>
+<script src="js/bedienung.js?v=2026-10-21o"></script>
+<script src="js/start.js?v=2026-10-21o"></script>
 </body>
 </html>
