@@ -403,7 +403,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
         <span><i class="sw c-go"></i>GO</span>
         <span><i class="sw c-warn"></i>Prüfen: einzelne Modelle drüber, Schauer</span>
         <span><i class="sw c-stop"></i>Stop: Median drüber, Gewitter</span>
-        <span><i class="sw sw-dark dark"></i>Schraffiert: dunkel</span>
+        <span><i class="sw sw-dark dark"></i>Schraffiert: Nacht</span>
       </div>
     </div>
     <div class="tl" id="tlScroll"><div class="tl-days" id="timeline"></div></div>
@@ -918,7 +918,7 @@ function rate(h){
   if(h.cape!=null && h.cape >= CAPE_STOP) add("stop", `Gewitterenergie CAPE ${Math.round(h.cape)} J/kg`);
   else if(h.cape!=null && h.cape >= CAPE_WARN) add("warn", `Gewitterenergie CAPE ${Math.round(h.cape)} J/kg`);
   if(h.rain!=null && h.rain >= RAIN_WARN) add("warn", `Regen ${fmt(h.rain)} mm/h`);
-  if(h.dark) add("warn", "Dunkel (außerhalb der bürgerlichen Dämmerung)");
+  if(h.dark) add("warn", "Nacht (außerhalb der bürgerlichen Dämmerung)");
   if(h.pEns!=null && h.pEns >= ENS_WARN) add("warn", `Szenarien: ${Math.round(h.pEns*100)} % über Grenze`);
   else if(h.pEns!=null && h.pEns >= ENS_INFO) add("info", `Szenarien: ${Math.round(h.pEns*100)} % über Grenze`);
   (h.warns||[]).forEach(w => add(!w.relevant ? "info" : w.lvl >= 3 ? "stop" : "warn", `Amtliche Warnung ${w.src}: ${w.title}`));
@@ -1757,7 +1757,7 @@ async function buildReport(){
     <div class="rp-sec">
       <h3>Arbeitsfenster</h3>
       <div class="rp-strip">${hs.map(h => `<div class="${h.lamp} ${h.dark?"dark":""}">${hh(h.t)}</div>`).join("")}</div>
-      <div class="rp-legend"><span><i style="background:var(--go)"></i>GO</span><span><i style="background:var(--warn)"></i>Prüfen</span><span><i style="background:var(--stop)"></i>Stop</span><span><i style="background:#fff;border:1px solid var(--line);background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.35) 0 2px,transparent 2px 4px)"></i>dunkel</span></div>
+      <div class="rp-legend"><span><i style="background:var(--go)"></i>GO</span><span><i style="background:var(--warn)"></i>Prüfen</span><span><i style="background:var(--stop)"></i>Stop</span><span><i style="background:#fff;border:1px solid var(--line);background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.35) 0 2px,transparent 2px 4px)"></i>Nacht</span></div>
     </div>
 
     <div class="rp-sec rp-cols">
@@ -1776,7 +1776,7 @@ async function buildReport(){
       <h3>Prognose je Stunde · Wind und Böe im Bereich ${zoneTxt()} (m/s)</h3>
       <table class="rp-t"><thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Ri.</th><th>Modelle über</th><th>Szenarien</th><th>Regen</th><th>CAPE</th><th>°C</th><th>Gefühlt</th><th>Gründe</th></tr></thead>
       <tbody>${reportRows(hs)}</tbody></table>
-      <div class="rp-small" style="margin-top:3px">Gelb: ab 75 % des Grenzwerts bzw. Hinweis · Rot: über Grenzwert · Schraffiert: dunkel</div>
+      <div class="rp-small" style="margin-top:3px">Gelb: ab 75 % des Grenzwerts bzw. Hinweis · Rot: über Grenzwert · Schraffiert: Nacht</div>
     </div>
 
     <div class="rp-sec rp-box"><h3>Bemerkungen / Tagesverlauf</h3>${esc(b.bemerkungen).replace(/\n/g,"<br>") || "Keine Bemerkungen."}</div>
@@ -1788,7 +1788,7 @@ async function buildReport(){
       ${(() => { const x = state.results.filter(r => isExcluded(r) && (r.status==="ok"||r.status==="extrap")); return x.length ? `<b>Von Hand ausgeschlossen:</b> ${x.map(r=>esc(r.m.name+" ("+r.m.org+")")).join(", ")}.` : ""; })()}
       Szenarien: ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(", ") || "nicht verfügbar"}.
       Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle, CAPE ab ${CAPE_STOP} J/kg oder Unwetterwarnung bzw. Warnstufe rot.
-      Prüfen bei einzelnen Modellen über Grenzwert, Schauer, CAPE ab ${CAPE_WARN} J/kg, Dunkelheit, Windchill ab ${CHILL_WARN} °C, mind. ${Math.round(ENS_WARN*100)} % der Szenarien über Grenze oder amtlicher Warnung.
+      Prüfen bei einzelnen Modellen über Grenzwert, Schauer, CAPE ab ${CAPE_WARN} J/kg, Nacht, Windchill ab ${CHILL_WARN} °C, mind. ${Math.round(ENS_WARN*100)} % der Szenarien über Grenze oder amtlicher Warnung.
       Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0).
       Entscheidungshilfe; die Freigabe trifft der Aufsichtführende.
     </div>
