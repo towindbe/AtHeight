@@ -11,6 +11,8 @@
   .info h2{margin-bottom:2px}
   .info p,.info li{margin:0;font-size:15px;line-height:1.55}
   .info ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+  .info ol{margin:6px 0;padding-left:22px;display:flex;flex-direction:column;gap:3px}
+  .info ol li{font-size:14px}
   .info table{border-collapse:collapse;width:100%;font-size:14px}
   .info th,.info td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
   .info th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
@@ -92,7 +94,16 @@
       <li><b>Median:</b> der mittlere Wert aller Modelle; er ist robust gegen einzelne Ausreißer.</li>
       <li><b>Einigkeit der Modelle:</b> oben steht immer, wie einig sich die Modelle sind (grün „weitgehend einig“, gelb „streuen mäßig“, blau „Lage unsicher“), mit dem höchsten Wind der Arbeitszeit. <b>Lage unsicher:</b> streuen die Modelle stark (mittlere Spanne ab 5 m/s), zeigt die App den höchsten Wind der Arbeitszeit getrennt für hochauflösende Modelle (1–5 km) und regionale/globale Modelle (7–25 km), dazu das stürmischste Modell. Es wird dabei kein Modell aus der Bewertung genommen: Ausreißer können recht haben.</li>
       <li><b>Spanne:</b> vom vorsichtigsten bis zum stürmischsten Modell. Schmal heißt: die Modelle sind sich einig. Breit heißt: unsicher.</li>
-      <li><b>Modellvergleich:</b> vergleicht für die letzten 30 Tage die Vortagesprognose jedes Modells mit der nächsten Messstation (DWD oder GeoSphere, 10 m) und teilt die Modelle in „gut“, „Mittelfeld“ und „deutlich schlechter“ ein. Liegen alle eng beieinander, gelten sie als gleichwertig. Der Vergleich läuft für jede Anlage automatisch im Hintergrund und wird nach 7 Tagen erneuert; „Am besten bewertet“ unter dem Windverlauf blendet die als „gut“ eingestuften Modelle ein.</li>
+      <li><b>Modellvergleich – so wird gerechnet:</b>
+        <ol>
+          <li><b>Zeitraum:</b> die letzten 30 Tage.</li>
+          <li><b>Prognose:</b> für jeden dieser Tage die <i>Vortagesprognose</i> jedes Modells, also das, was das Modell am Tag davor vorhergesagt hat (wie bei eurer Planung am Vorabend).</li>
+          <li><b>Messung:</b> die nächste Wetterstation (DWD über Bright Sky, in Österreich GeoSphere), Stunde für Stunde. Name, Entfernung und Höhe der Station stehen beim Ergebnis.</li>
+          <li><b>Kennzahlen je Modell</b> aus bis zu rund 720 Stundenpaaren: Fehler im Verlauf (nach Abzug der Grundtendenz), Treffer bei den windigsten 25 % der Stunden, Grundtendenz (zu viel oder zu wenig) und Fehler bei den Böen.</li>
+          <li><b>Einstufung:</b> „gut“, „Mittelfeld“ oder „deutlich schlechter“; liegen alle eng beieinander, gelten sie als gleichwertig. Bewusst keine Rangliste, weil kleine Unterschiede sonst eine Genauigkeit vortäuschen.</li>
+          <li><b>Aktualität:</b> läuft für jede Anlage automatisch im Hintergrund und wird nach 7 Tagen erneuert, von Hand über „Vergleich neu berechnen“. „Am besten bewertet“ unter dem Windverlauf blendet die als „gut“ eingestuften Modelle ein.</li>
+        </ol>
+        <b>Grenzen:</b> die Station misst in 10 m Höhe und steht oft einige Kilometer entfernt; über den Wind in Arbeitshöhe sagt der Vergleich deshalb nur begrenzt etwas. 30 Tage sind ein Kompromiss zwischen „passt zur aktuellen Wetterlage“ und „genug Daten“. Die Bewertung (Ampel, Median) nutzt unabhängig davon alle aktiven Modelle.</li>
       <li><b>Ausblick 7 Tage:</b> Tage 1–3 aus der Detailprognose, ab Tag 4 grobe Tendenz aus vier Globalmodellen und den ECMWF-Szenarien. Nur zur Planung.</li>
     </ul>
   </section>
