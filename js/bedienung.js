@@ -61,10 +61,13 @@ $("jsonBtn").onclick = async () => {
   a.download = `windbericht_${site.name.replace(/\W+/g,"_")}_${state.day}.json`; document.body.appendChild(a); a.click(); a.remove();
 };
 /* Hell/Dunkel: Standard dunkel, Wahl wird gespeichert; Diagramme lesen die Farben neu */
+// Symbole als SVG, damit sie auf allen Geräten gleich aussehen (☀/☾ werden je nach Schrift unklar dargestellt)
+const ICON_SUN = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg>';
+const ICON_MOON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>';
 function applyTheme(light){
   if(light) document.documentElement.dataset.theme = "light"; else delete document.documentElement.dataset.theme;
   try{ localStorage.setItem("wb_theme", light ? "light" : "dark"); }catch(e){}
-  $("themeBtn").textContent = light ? "☾" : "☀";
+  $("themeBtn").innerHTML = light ? ICON_MOON : ICON_SUN;
   $("themeBtn").title = $("themeBtn").ariaLabel = light ? "Dunkle Ansicht" : "Helle Ansicht";
   $("themeBtn").setAttribute("aria-pressed", String(light));
   document.querySelector('meta[name="theme-color"]').content = light ? "#eef1f4" : "#0d1217";

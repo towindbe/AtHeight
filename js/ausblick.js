@@ -117,7 +117,7 @@ function renderOutlook(){
       <span class="rp-pill ${lamp}">${LAMP_TXT[lamp]}</span>
       <span class="ol-kind">${isDetail ? "Detail oben" : "Tendenz"}</span>
       <span class="ol-row"><small>Wind max</small><b>${vTxt}</b></span>
-      <span class="ol-row"><small>Spanne</small>${vSpan}</span>
+      <span class="ol-row" title="Höchster Mittelwind des Tages: vom vorsichtigsten bis zum stürmischsten Modell. Schmal = einig, breit = unsicher."><small>Spanne</small>${vSpan}</span>
       <span class="ol-row"><small>Böe max</small>${gTxt} m/s</span>
       <span class="ol-row"><small>Szenarien</small>${o.pEns==null ? "–" : Math.round(o.pEns*100)+" %"}</span>
       <span class="ol-row"><small>Regen</small>${rain==null ? "–" : fmt(rain,1)+" mm"}${storm > 0 ? ` <span title="Gewittersignal">⚡</span>` : ""}</span>
@@ -132,3 +132,5 @@ function renderOutlook(){
     document.querySelector(".hero").scrollIntoView({behavior:"smooth", block:"start"});
   });
 }
+
+$("olInfoBtn").onclick = () => { const open = $("olInfo").hidden; $("olInfo").hidden = !open; $("olInfoBtn").setAttribute("aria-expanded", String(open)); };
