@@ -1,0 +1,27 @@
+# Automatischer Test bei jedem Hochladen (Push) und bei Pull Requests.
+# Prüft die Syntax aller Skripte und spielt die App mit aufgezeichneten Wetterdaten durch
+# (tests/run.mjs). Ergebnis muss mit tests/expected.json übereinstimmen.
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Abhängigkeiten
+        run: npm ci
+      - name: Browser für den Test
+        run: npx playwright install --with-deps chromium
+      - name: Syntax der Skripte
+        run: for f in js/*.js; do node --check "$f"; done
+      - name: Ablauftest gegen Referenz
+        run: npm test
