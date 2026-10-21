@@ -105,6 +105,14 @@ async function computeRanking(){
     if(wantBest){ wantBest = false; showQuick("best"); }
   } finally { btn.disabled = false; if(wantBest){ wantBest = false; renderChips("Modellvergleich nicht möglich, Details unten bei „Welche Modelle treffen hier?“."); } }
 }
+/* Modellvergleich automatisch im Hintergrund, wenn für die Anlage keiner vorliegt oder er älter als 7 Tage ist */
+const RANK_MAX_AGE = 7*864e5;
+function autoRank(){
+  if(navigator.webdriver) return;   // im automatischen Test keine zusätzlichen Abrufe
+  let res = null; try{ res = JSON.parse(localStorage.getItem(rankKey())||"null"); }catch(e){}
+  if(res && res.v===2 && Date.now() - Date.parse(res.date) < RANK_MAX_AGE) return;
+  if(!$("rankBtn").disabled) computeRanking();
+}
 /* Gruppen aus dem gespeicherten Modellvergleich (null, wenn noch keiner vorliegt) */
 function rankGroups(){
   let res = null; try{ res = JSON.parse(localStorage.getItem(rankKey())||"null"); }catch(e){}
