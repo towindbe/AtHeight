@@ -59,15 +59,17 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
 /* Beschriftung der Grenzlinien rechts am Rand */
 const limitLabels = {id:"limitLabels", afterDatasetsDraw(c){
   const {ctx, chartArea:a, scales:{y}} = c;
-  const items = [[site.wind, `Grenze Mittelwind ${fmt(site.wind)}`], [site.gust, `Grenze Böe ${fmt(site.gust)}`]]
+  const items = [[site.wind, `Grenze 10-min-Mittel ${fmt(site.wind)} m/s`], [site.gust, `Grenze Böe ${fmt(site.gust)} m/s`]]
     .map(([v, t]) => ({t, py:y.getPixelForValue(v)})).filter(o => o.py >= a.top && o.py <= a.bottom).sort((p,q) => p.py-q.py);
   // liegen die Linien dicht beieinander, Beschriftungen auseinanderziehen
   for(let k = 1; k < items.length; k++) if(items[k].py - items[k-1].py < 13) items[k].py = items[k-1].py + 13;
   ctx.save(); ctx.font = "600 10.5px " + css("--f-body"); ctx.textAlign = "right"; ctx.textBaseline = "bottom";
   items.forEach(o => {
     const w = ctx.measureText(o.t).width;
-    ctx.fillStyle = css("--surface"); ctx.globalAlpha = .75; ctx.fillRect(a.right - w - 8, o.py - 14, w + 6, 13); ctx.globalAlpha = 1;
-    ctx.fillStyle = css("--stop"); ctx.fillText(o.t, a.right - 5, o.py - 2);
+    // oben ist der Griff des Zeitmarkers: dort die Beschriftung unter die Linie setzen
+    const top = o.py - 14 < a.top + 20 ? o.py + 2 : o.py - 14;
+    ctx.fillStyle = css("--surface"); ctx.globalAlpha = .75; ctx.fillRect(a.right - w - 8, top, w + 6, 13); ctx.globalAlpha = 1;
+    ctx.fillStyle = css("--stop"); ctx.fillText(o.t, a.right - 5, top + 12);
   });
   ctx.restore();
 }};
