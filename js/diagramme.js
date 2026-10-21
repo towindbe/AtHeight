@@ -229,4 +229,34 @@ function renderCompass(){
     <dt>Stärke</dt><dd>${fmt(h.med)} m/s, Böe ca. ${fmt(h.gMed)}</dd>
     <dt>Modelle</dt><dd>${dirs.length}</dd>`;
   $("compassHour").textContent = `${dayLabel(state.times[i].slice(0,10),true)} · ${hh(state.times[i])} Uhr`;
+  renderDirStrip();
+}
+
+/* Richtung je Arbeitsstunde als Pfeilreihe, dazu Lee-Seite und Winddrehung */
+const DIR_TURN = 45;      // ab dieser Drehung (Grad) Hinweis
+const DIR_CALM = 2;       // darunter zählt die Richtung für die Drehung nicht
+const angDiff = (a, b) => { const d = Math.abs(a - b) % 360; return d > 180 ? 360 - d : d; };
+function renderDirStrip(){
+  const hs = dayHours(state.day);
+  if(!hs.length){ $("dirStrip").innerHTML = ""; $("dirTurn").innerHTML = ""; return; }
+  $("dirStrip").innerHTML = hs.map(h => {
+    const d = h.dir.mean;
+    const arrow = d==null ? `<span class="dir-na">–</span>`
+      : `<svg viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(${(d+180)%360} 12 12)"><line x1="12" y1="20" x2="12" y2="7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><polygon points="12,2 6.5,10 17.5,10" fill="currentColor"/></g></svg>`;
+    return `<button type="button" class="dir-cell d-${h.lamp} ${h.i===state.sel?"sel":""}" data-i="${h.i}" title="${hh(h.t)} Uhr: aus ${dirName(d)}${d==null?"":" ("+Math.round(d)+"°)"}, ${fmt(h.med)} m/s">${arrow}<span>${hh(h.t)}</span></button>`;
+  }).join("");
+  $("dirStrip").querySelectorAll(".dir-cell").forEach(b => b.onclick = () => selectHour(+b.dataset.i));
+  // Lee-Seite zur gewählten Stunde
+  const cur = state.hours[state.sel], lee = cur && cur.dir.mean!=null ? dirName((cur.dir.mean+180)%360) : null;
+  // größte Drehung zwischen zwei Arbeitsstunden mit Wind
+  const ws = hs.filter(h => h.dir.mean!=null && h.med!=null && h.med >= DIR_CALM);
+  let best = null;
+  for(let a = 0; a < ws.length; a++) for(let b = a+1; b < ws.length; b++){
+    const x = angDiff(ws[a].dir.mean, ws[b].dir.mean);
+    if(!best || x > best.x) best = {x, a:ws[a], b:ws[b]};
+  }
+  const turn = !best || best.x < DIR_TURN
+    ? `<span class="dir-ok">Richtung bleibt stabil${best ? ` (max. ${Math.round(best.x)}°)` : ""}</span>`
+    : `<span class="dir-warn">Wind dreht um ca. ${Math.round(best.x)}°: ${hh(best.a.t)} Uhr aus ${dirName(best.a.dir.mean)}, ${hh(best.b.t)} Uhr aus ${dirName(best.b.dir.mean)}. Lee-Seite wechselt.</span>`;
+  $("dirTurn").innerHTML = `<span><b>Lee-Seite</b> ${hh(cur.t)} Uhr: ${lee ?? "–"}</span>${turn}`;
 }

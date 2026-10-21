@@ -306,3 +306,15 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
 .info-overlay iframe{flex:1;width:100%;border:0;background:var(--bg)}
 body.info-open{overflow:hidden}
 #infoBtn{font:700 17px/1 var(--f-body);min-width:36px}
+/* Richtung in der Arbeitszeit */
+.dir-sub{font-size:13px;font-weight:600;color:var(--muted);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.06em}
+.dir-strip{display:flex;gap:3px;overflow-x:auto;padding-bottom:2px}
+.dir-cell{flex:1 0 24px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0 3px;border:1px solid var(--line);border-radius:6px;background:var(--raised);color:var(--fg);cursor:pointer;font:inherit}
+.dir-cell svg{width:22px;height:22px;display:block}
+.dir-cell span{font-size:11px;color:var(--muted);font-family:var(--f-mono)}
+.dir-cell.d-go{color:var(--go)} .dir-cell.d-warn{color:var(--warn)} .dir-cell.d-stop{color:var(--stop)} .dir-cell.d-none{color:var(--none)}
+.dir-cell.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.dir-na{font-size:16px;line-height:22px}
+.dir-turn{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;margin-top:8px}
+.dir-turn b{color:var(--muted);font-weight:500}
+.dir-ok{color:var(--go)} .dir-warn{color:var(--warn)}
