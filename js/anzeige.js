@@ -37,7 +37,7 @@ document.addEventListener("visibilitychange", () => { if(!document.hidden) check
 function renderHero(){
   const sum = buildSummary(dayHours(state.day));
   state.summary = sum;
-  $("lamp").className = "lamp " + sum.lamp; $("lamp").textContent = LAMP_TXT[sum.lamp];
+  $("lamp").className = "lamp " + sum.lamp; $("lamp").innerHTML = (LAMP_ICON[sum.lamp] || "") + `<span>${LAMP_TXT[sum.lamp]}</span>`;
   const dl = daylight(state.day);
   $("heroDay").textContent = `${new Date(state.day+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"})} · Arbeitszeit ${site.from}–${site.to} Uhr` + (dl.start && dl.end ? ` · hell ${dl.start}–${dl.end}` : "");
   $("headline").textContent = sum.head; $("summary").textContent = sum.text;

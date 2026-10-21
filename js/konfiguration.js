@@ -31,6 +31,12 @@ const DEFAULT_SITE = {name:"Hildesheim", lat:52.1508, lon:9.9511, hub:125, rotor
 const CAPE_WARN = 300, CAPE_STOP = 800, RAIN_WARN = 0.5;
 const COLORS = ["#3b82f6","#14b8a6","#a855f7","#f59e0b","#ec4899","#22c55e","#06b6d4","#ef4444","#64748b","#8b5cf6","#84cc16","#f97316","#0ea5e9","#d946ef","#10b981","#eab308"];
 const LAMP_TXT = {go:"GO", warn:"PRÜFEN", stop:"STOP", none:"–"};
+/* Symbole der Ampelkachel: Haken, Warndreieck, Achteck mit Balken */
+const LAMP_ICON = {
+  go:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 7"/></svg>`,
+  warn: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5L22 20.5H2z"/><path d="M12 10v4.5"/><path d="M12 17.6v.1"/></svg>`,
+  stop: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5h8l5.5 5.5v8L16 21.5H8L2.5 16V8z"/><path d="M7.5 12h9" stroke-width="2.8" stroke-linecap="round"/></svg>`
+};
 
 let site = loadSite();
 let state = {results:[], times:[], hours:[], fetchedAt:null, day:null, sel:null, view:"band"};
