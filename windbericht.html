@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f141a">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%23151d25%22/%3E%3Csvg x=%227%22 y=%2213%22 width=%2250%22 height=%2238%22 viewBox=%22-6 -6 790 512%22%3E%3Cg fill=%22%23ff7a33%22 stroke=%22%23ff7a33%22 stroke-linejoin=%22miter%22%3E%3Cpath stroke-width=%223%22 d=%22M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z%22/%3E%3Cpath stroke-width=%2215%22 d=%22m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z%22/%3E%3C/g%3E%3C/svg%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%23151d25%22/%3E%3Ccircle cx=%2241%22 cy=%2220%22 r=%229%22 fill=%22%23ffb020%22/%3E%3Cg fill=%22%23e9eef3%22%3E%3Ccircle cx=%2224%22 cy=%2236%22 r=%229%22/%3E%3Ccircle cx=%2235%22 cy=%2231%22 r=%2211%22/%3E%3Ccircle cx=%2246%22 cy=%2238%22 r=%227%22/%3E%3Crect x=%2215%22 y=%2236%22 width=%2238%22 height=%229%22 rx=%224.5%22/%3E%3C/g%3E%3Cpath d=%22M12 52h30M20 58h26%22 stroke=%22%23ff7a33%22 stroke-width=%224%22 stroke-linecap=%22round%22 fill=%22none%22/%3E%3C/svg%3E">
 <title>Windberg Windbericht</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -115,6 +115,11 @@ legend{font:600 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:upper
 
 /* Karte */
 #map{height:280px;border-radius:9px;border:1px solid var(--line);z-index:0}
+/* Große Kartenansicht: Karte samt Suche über die ganze Seite */
+#mapCard.map-max{position:fixed;inset:0;z-index:3000;border-radius:0;border:0;padding:12px max(12px,env(safe-area-inset-left,0px));overflow:auto;background:var(--surface)}
+#mapCard.map-max #map{height:calc(100dvh - 170px);min-height:260px}
+#mapCard.map-max #mapNote{display:none}
+body.map-open{overflow:hidden}
 .map-wrap{position:relative}
 .radar-time{position:absolute;top:10px;right:10px;z-index:500;background:rgba(0,0,0,.6);color:#fff;font:600 14px var(--f-mono);padding:5px 9px;border-radius:6px;pointer-events:none}
 .radar-time span{font:600 10.5px var(--f-body);text-transform:uppercase;letter-spacing:.06em;margin-left:6px;padding:1px 6px;border-radius:4px}
@@ -245,7 +250,6 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
 #report h3{font:600 12px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 5px}
 .rp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border-bottom:3px solid var(--accent);padding-bottom:8px;margin-bottom:10px}
 .rp-head .sub{font-size:12px;color:var(--muted)}
-.rep-logo{width:64px;height:41px;color:#000;flex:none}
 .rp-sec{margin-bottom:10px;break-inside:avoid}
 .rp-verdict{display:grid;grid-template-columns:1fr 190px;gap:8px}
 .rp-box{border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:#fff}
@@ -421,6 +425,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
         <h2>Anlage auf der Karte</h2>
         <div class="seg" role="group" aria-label="Kartenebene">
           <button type="button" id="radarBtn" aria-pressed="false">Regenradar</button>
+          <button type="button" id="mapMaxBtn" aria-pressed="false" title="Karte groß anzeigen">⤢ Vergrößern</button>
         </div>
       </div>
       <form class="search" id="searchForm" role="search">
@@ -1287,12 +1292,22 @@ function initMap(){
   rotorCircle = L.circle([site.lat, site.lon], {radius:site.rotor/2, color:"#ff7a33", weight:2, fillOpacity:.08}).addTo(map);
   marker.on("dragend", () => setPos(marker.getLatLng(), true));
   map.on("click", e => setPos(e.latlng));
+  $("mapMaxBtn").onclick = () => mapMax(!$("mapCard").classList.contains("map-max"));
+  document.addEventListener("keydown", e => { if(e.key==="Escape" && $("mapCard").classList.contains("map-max")) mapMax(false); });
   $("radarBtn").onclick = () => radarToggle($("radarBtn").getAttribute("aria-pressed")!=="true");
   $("radarPlay").onclick = () => radarPlay(!radar.playing);
   $("radarSlider").oninput = e => { radarPlay(false); radarShow(+e.target.value); };
   map.on("moveend", () => { if(radar.on){ clearTimeout(radar.rebuild); radar.rebuild = setTimeout(radarFrames, 300); } });
 }
 
+function mapMax(on, stay){
+  $("mapCard").classList.toggle("map-max", on);
+  document.body.classList.toggle("map-open", on);
+  $("mapMaxBtn").setAttribute("aria-pressed", String(on));
+  $("mapMaxBtn").textContent = on ? "✕ Schließen" : "⤢ Vergrößern";
+  setTimeout(() => { map.invalidateSize(); if(!on && !stay) $("mapCard").scrollIntoView({block:"start"}); }, 60);
+  if(on && matchMedia("(pointer:fine)").matches) $("searchInput").focus({preventScroll:true});   // am Handy keine Tastatur aufklappen
+}
 /* ---------- Regenradar als Animation (DWD, 5-Minuten-Bilder) ----------
    Pro Zeitschritt ein Bild für den sichtbaren Ausschnitt (WMS GetMap), vorab geladen. */
 const RADAR_URL = "https://maps.dwd.de/geoserver/dwd/wms";
@@ -1387,6 +1402,7 @@ function applyPending(){
   pending = null; pendingName = null;
   $("pickBar").hidden = true; map.getContainer().classList.remove("picking");
   siteReady(); saveSite(); fillSettings(); load();
+  if($("mapCard").classList.contains("map-max")) mapMax(false, true);
   window.scrollTo({top:0, behavior:"smooth"});
 }
 function cancelPending(){
@@ -1520,9 +1536,8 @@ async function buildReport(){
   const kv = rows => `<dl class="rp-kv">${rows.map(([k,v]) => `<dt>${k}</dt><dd>${v || "–"}</dd>`).join("")}</dl>`;
   $("report").innerHTML = `
     <div class="rp-head">
-      <div><div class="eyebrow">Windberg · Tagesbericht Wetter</div><h1>${esc(site.name)}</h1>
+      <div><div class="eyebrow">Tagesbericht Wetter</div><h1>${esc(site.name)}</h1>
         <div class="sub">${esc(longDay)} · Arbeitszeit ${site.from}–${site.to} Uhr${dl.start && dl.end ? ` · hell ${dl.start}–${dl.end}` : ""}</div></div>
-      <svg class="rep-logo" aria-hidden="true"><use href="#tw-logo"/></svg>
     </div>
 
     <div class="rp-sec rp-verdict">
@@ -1678,6 +1693,9 @@ document.querySelectorAll("[data-view]").forEach(b => b.onclick = () => {
   if(state.fetchedAt) renderChart();
 });
 $("printBtn").onclick = async () => { if(!state.fetchedAt) return; await buildReport(); window.print(); };
+const appTitle = document.title;
+window.addEventListener("beforeprint", () => { if(state.fetchedAt) document.title = `Tagesbericht ${site.name} ${state.day}`; });
+window.addEventListener("afterprint", () => { document.title = appTitle; });
 $("jsonBtn").onclick = async () => {
   if(!state.fetchedAt) return;
   const {snap, hash} = await buildReport();
