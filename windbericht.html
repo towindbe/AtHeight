@@ -219,6 +219,11 @@ table.t th,table.t td{padding:6px 8px;border-bottom:1px solid var(--line);text-a
 table.t th:first-child,table.t td:first-child{text-align:left}
 table.t th{font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
 td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.rank{border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:8px}
+.rank h3{font:600 16px var(--f-display);margin:0}
+.rank-sum{margin:0;font-size:14px}
+table.t.rank-t th:nth-child(2),table.t.rank-t td:nth-child(2){text-align:left}
+table.rank-t tr.top td{background:var(--go-bg)} table.rank-t tr.poor td{background:var(--stop-bg)}
 table.t td.use{width:1%;text-align:center}
 table.t td.use input{width:18px;height:18px;margin:0;accent-color:var(--accent);cursor:pointer}
 table.t tr.excl td:not(.use){opacity:.45}
@@ -502,6 +507,10 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
   <section class="card needs-data">
     <h2>Modelle am Standort</h2>
     <div class="scroll"><table class="t" id="modelTable"></table></div>
+    <div class="rank">
+      <div class="card-head"><h3>Welche Modelle treffen hier am besten?</h3><button type="button" id="rankBtn">Rangliste berechnen</button></div>
+      <div id="rankOut"></div>
+    </div>
     <p class="note">Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung. Mit dem Häkchen lassen sich einzelne Modelle für diese Anlage ausschließen, z. B. grobe Globalmodelle im Gebirge. Die Auswahl wird mit der Anlage gespeichert.</p>
   </section>
 
@@ -697,7 +706,7 @@ async function fetchModel(m){
     if(/no data is available for this location/i.test(j.reason||"")) return {m, status:"outside", reason:j.reason};
     if(!r.ok || j.error) return {m, status:"error", reason: j.reason || (r.status===429 ? "HTTP 429 Too Many Requests" : "HTTP "+r.status)};
     fixTimes(j.hourly, j.timezone, j.utc_offset_seconds||0);
-    return {m, status:"ok", hourly:j.hourly, tz:j.timezone, off:j.utc_offset_seconds||0};
+    return {m, status:"ok", hourly:j.hourly, tz:j.timezone, off:j.utc_offset_seconds||0, elev:j.elevation};
   }catch(e){ return {m, status:"error", reason:"Keine Verbindung"}; }
 }
 
@@ -837,7 +846,7 @@ async function load(){
     if(n===0) return {...r, status:"outside", series};
     return {...r, status: series.some(s => s && s.ext) ? "extrap" : "ok", series, n};
   });
-  state.off = okAny.off; state.tz = okAny.tz;
+  state.off = okAny.off; state.tz = okAny.tz; state.elev = okAny.elev;
   const hours = computeHours(results, times);
   const nk = nowKey(), today = nk.slice(0,10);
   const startDay = new Date().getHours() > site.to ? times.find(t => t.slice(0,10) > today)?.slice(0,10) : today;
@@ -1280,6 +1289,107 @@ function renderModelTable(){
   });
   $("modelTable").innerHTML = `<thead><tr><th title="Häkchen: Modell geht in die Bewertung ein">Nutzen</th><th>Modell</th><th>Auflösung</th><th>Status</th><th>Max. Wind</th><th>Über Grenze ab</th><th class="raw">Rohdaten</th></tr></thead><tbody>${rows.join("")}</tbody>`;
   $("modelTable").querySelectorAll("input[data-model]").forEach(c => c.onchange = () => setModelUsed(c.dataset.model, c.checked));
+  renderRanking();
+}
+
+/* ---------- Modell-Rangliste: Vortagesprognose gegen Messwerte der nächsten Station ----------
+   Vergleicht für die letzten 14 Tage, was jedes Modell am Vortag für 10 m vorhergesagt hat,
+   mit Wind und Spitzenböe der nächsten Station (DWD über Bright Sky, GeoSphere Austria). Nur Arbeitsstunden. */
+const RANK_DAYS = 14, RANK_MAX_KM = 60;
+const rankKey = () => `wb_rank_${site.lat.toFixed(3)}_${site.lon.toFixed(3)}`;
+function distKm(a, b, c, d){
+  const x = (c-a)*RAD, y = (d-b)*RAD, h = Math.sin(x/2)**2 + Math.cos(a*RAD)*Math.cos(c*RAD)*Math.sin(y/2)**2;
+  return 2*6371*Math.asin(Math.sqrt(h));
+}
+const isoDay = ms => new Date(ms).toISOString().slice(0,10);
+async function stationDwd(start, end){
+  try{
+    const q = new URLSearchParams({lat:site.lat, lon:site.lon, date:start, last_date:isoDay(Date.parse(end)+864e5), units:"si", tz:"Etc/UTC", max_dist:String(RANK_MAX_KM*1000)});
+    const r = await fetch("https://api.brightsky.dev/weather?"+q); if(!r.ok) return null;
+    const j = await r.json();
+    // Bright Sky füllt Lücken mit weiter entfernten Stationen auf; verwendet wird nur die nächste Station
+    const src = (j.sources||[]).filter(x => x.observation_type==="historical").sort((a,b) => a.distance-b.distance)[0];
+    if(!src) return null;
+    const obs = new Map();
+    (j.weather||[]).forEach(w => { if(w.source_id===src.id && w.wind_speed!=null) obs.set(w.timestamp.slice(0,13), {v:w.wind_speed, g:w.wind_gust_speed}); });
+    return obs.size ? {name:src.station_name, src:"DWD", lat:src.lat, lon:src.lon, alt:src.height, dist:src.distance/1000, obs} : null;
+  }catch(e){ return null; }
+}
+let geoMeta = null;
+async function stationGeo(start, end){
+  try{
+    const base = "https://dataset.api.hub.geosphere.at/v1/station/historical/klima-v2-1h";
+    geoMeta = geoMeta || await (await fetch(base+"/metadata")).json();
+    const cand = (geoMeta.stations||[]).filter(x => x.is_active).map(x => ({...x, d:distKm(site.lat, site.lon, x.lat, x.lon)}))
+      .filter(x => x.d <= RANK_MAX_KM).sort((a,b) => a.d-b.d).slice(0,3);
+    for(const st of cand){
+      const q = new URLSearchParams({parameters:"ff,ffx", station_ids:String(st.id), start:start+"T00:00", end:end+"T23:00", output_format:"geojson"});
+      const j = await (await fetch(base+"?"+q)).json();
+      const pr = j.features?.[0]?.properties?.parameters; if(!pr) continue;
+      const obs = new Map();
+      (j.timestamps||[]).forEach((t,i) => { const v = pr.ff?.data[i]; if(v!=null) obs.set(t.slice(0,13), {v, g:pr.ffx?.data[i] ?? null}); });
+      if(obs.size > 24) return {name:st.name, src:"GeoSphere", lat:st.lat, lon:st.lon, alt:st.altitude, dist:st.d, obs};
+    }
+  }catch(e){}
+  return null;
+}
+async function prevRun(m, st, start, end){
+  try{
+    const q = new URLSearchParams({latitude:st.lat, longitude:st.lon, models:m.id, wind_speed_unit:"ms", timezone:"GMT", start_date:start, end_date:end,
+      hourly:"wind_speed_10m_previous_day1,wind_gusts_10m_previous_day1"});
+    const j = await (await fetch("https://previous-runs-api.open-meteo.com/v1/forecast?"+q)).json();
+    return j.error || !j.hourly ? null : j.hourly;
+  }catch(e){ return null; }
+}
+async function computeRanking(){
+  const btn = $("rankBtn"); btn.disabled = true; $("rankOut").innerHTML = `<p class="note">Suche Station und lade Vortagesprognosen der letzten ${RANK_DAYS} Tage…</p>`;
+  try{
+    const end = isoDay(Date.now() - 864e5), start = isoDay(Date.now() - RANK_DAYS*864e5);
+    const sts = (await Promise.all([stationDwd(start, end), stationGeo(start, end)])).filter(Boolean).sort((a,b) => a.dist-b.dist);
+    const st = sts[0];
+    if(!st){ $("rankOut").innerHTML = `<p class="note">Keine Messstation von DWD oder GeoSphere im Umkreis von ${RANK_MAX_KM} km gefunden.</p>`; return; }
+    const models = state.results.filter(r => r.status==="ok" || r.status==="extrap").map(r => r.m);
+    const runs = await Promise.all(models.map(m => prevRun(m, st, start, end)));
+    const rows = models.map((m, k) => {
+      const h = runs[k]; if(!h) return {id:m.id, n:0};
+      let n=0, sAbs=0, sBias=0, gn=0, gAbs=0;
+      h.time.forEach((t, i) => {
+        const o = st.obs.get(t.slice(0,13)); if(!o) return;
+        const loc = toLocalStr(Date.parse(t+":00Z"), state.tz); if(!loc || !isWork(loc)) return;
+        const f = h.wind_speed_10m_previous_day1?.[i];
+        if(f!=null){ n++; sAbs += Math.abs(f-o.v); sBias += f-o.v; }
+        const fg = h.wind_gusts_10m_previous_day1?.[i];
+        if(fg!=null && o.g!=null){ gn++; gAbs += Math.abs(fg-o.g); }
+      });
+      return {id:m.id, n, mae:n ? sAbs/n : null, bias:n ? sBias/n : null, gmae:gn ? gAbs/gn : null};
+    }).filter(r => r.n >= 24).sort((a,b) => a.mae-b.mae);
+    const res = {date:new Date().toISOString(), start, end, models:models.map(m => m.id), station:{name:st.name, src:st.src, dist:st.dist, alt:st.alt}, elev:state.elev ?? null, rows};
+    try{ localStorage.setItem(rankKey(), JSON.stringify(res)); }catch(e){}
+    renderRanking();
+  } finally { btn.disabled = false; }
+}
+function renderRanking(){
+  if(!$("rankOut")) return;
+  let res = null; try{ res = JSON.parse(localStorage.getItem(rankKey())||"null"); }catch(e){}
+  $("rankBtn").textContent = res ? "Rangliste neu berechnen" : "Rangliste berechnen";
+  if(!res){ $("rankOut").innerHTML = ""; return; }
+  if(!res.rows.length){ $("rankOut").innerHTML = `<p class="note">Für ${esc(res.station.name)} lagen zu wenige vergleichbare Stunden vor.</p>`; return; }
+  const byId = id => MODELS.find(m => m.id===id), best = res.rows[0].mae;
+  const poor = res.rows.filter(r => r.mae > best*1.5 && r.mae > best+1);
+  const name = id => { const m = byId(id); return m ? `${m.name} (${m.org})` : id; };
+  const st = res.station, dAlt = res.elev!=null && st.alt!=null ? Math.round(res.elev - st.alt) : null;
+  $("rankOut").innerHTML = `
+    <p class="rank-sum"><b>Am besten trafen zuletzt:</b> ${res.rows.slice(0,3).map(r => esc(name(r.id))).join(", ")}.
+      ${poor.length ? `<br><b>Deutlich schlechter:</b> ${poor.map(r => esc(name(r.id))).join(", ")}. Ausschließen kannst du sie oben per Häkchen.` : ""}</p>
+    <div class="scroll"><table class="t rank-t"><thead><tr><th>Rang</th><th>Modell</th><th>Fehler Wind</th><th>Tendenz</th><th>Fehler Böe</th><th>Stunden</th></tr></thead><tbody>
+    ${res.rows.map((r,k) => `<tr class="${poor.includes(r) ? "poor" : k<3 ? "top" : ""}"><td class="num">${k+1}</td><td>${esc(name(r.id))}${(site.excluded||[]).includes(r.id) ? ' <span class="muted">(ausgeschlossen)</span>' : ""}</td>
+      <td class="num">${fmt(r.mae)} m/s</td><td class="num">${r.bias>=0 ? "+" : "−"}${fmt(Math.abs(r.bias))} ${Math.abs(r.bias)<0.3 ? "" : r.bias>0 ? "zu viel" : "zu wenig"}</td>
+      <td class="num">${r.gmae==null ? "–" : fmt(r.gmae)+" m/s"}</td><td class="num">${r.n}</td></tr>`).join("")}
+    </tbody></table></div>
+    ${(() => { const miss = (res.models||[]).filter(id => !res.rows.some(r => r.id===id)); return miss.length ? `<p class="note">Ohne Vergleichsdaten (keine archivierten Vortagesprognosen): ${miss.map(id => esc(name(id))).join(", ")}.</p>` : ""; })()}
+    <p class="note">Vergleich: Vortagesprognose (10 m) gegen Station <b>${esc(st.name)}</b> (${esc(st.src)}, ${fmt(st.dist,1)} km entfernt${st.alt!=null ? `, ${Math.round(st.alt)} m ü. NN` : ""}${dAlt!=null && Math.abs(dAlt) > 150 ? `, ${Math.abs(dAlt)} m ${dAlt>0 ? "tiefer" : "höher"} als der Standort` : ""}),
+      ${esc(new Date(res.start).toLocaleDateString("de-DE"))}–${esc(new Date(res.end).toLocaleDateString("de-DE"))}, nur Arbeitsstunden. Berechnet ${esc(new Date(res.date).toLocaleString("de-DE",{dateStyle:"short", timeStyle:"short"}))}.
+      Gilt für Bodenwind in der Region, nicht für die Nabenhöhe. Im Gebirge misst eine Talstation oft anderen Wind als der Standort.</p>`;
 }
 
 /* ---------- Karte ---------- */
@@ -1683,6 +1793,7 @@ $("gpsBtn").onclick = () => {
     () => { $("gpsBtn").textContent = "Standortfreigabe abgelehnt"; });
 };
 $("reloadBtn").onclick = load;
+$("rankBtn").onclick = computeRanking;
 $("staleBtn").onclick = load;
 $("searchForm").onsubmit = e => { e.preventDefault(); const q = $("searchInput").value.trim(); if(q.length>=2 && map) search(q); };
 $("pickApply").onclick = () => { if(pending) applyPending(); };
