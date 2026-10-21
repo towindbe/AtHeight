@@ -30,7 +30,7 @@ const ENS_WARN = 0.3, ENS_INFO = 0.1;   // Anteil der Ensemble-Läufe über Gren
 const ENSEMBLES = [{id:"icon_d2_eps", name:"ICON-D2-EPS"}, {id:"ecmwf_ifs025_ensemble", name:"ECMWF-ENS"}];
 const DEFAULT_SITE = {name:"Hildesheim", lat:52.1508, lon:9.9511, hub:125, rotor:149, work:null, path:true, access:"ground", wind:12, gust:15, nightWind:15, nightGust:20, minTemp:0, from:6, to:19};
 const CAPE_WARN = 300, CAPE_STOP = 800, RAIN_WARN = 0.5;
-const COLORS = ["#3b82f6","#14b8a6","#a855f7","#f59e0b","#ec4899","#22c55e","#06b6d4","#ef4444","#64748b","#8b5cf6","#84cc16","#f97316","#0ea5e9","#d946ef","#10b981","#eab308"];
+const COLORS = ["#3b82f6","#14b8a6","#a855f7","#f59e0b","#ec4899","#22c55e","#06b6d4","#67e8f9","#64748b","#8b5cf6","#84cc16","#f97316","#0ea5e9","#d946ef","#10b981","#eab308"];
 const LAMP_TXT = {go:"GO", warn:"PRÜFEN", stop:"STOP", none:"–"};
 /* Symbole der Ampelkachel: Haken, Warndreieck, Achteck mit Balken */
 const LAMP_ICON = {
@@ -40,7 +40,8 @@ const LAMP_ICON = {
 };
 
 let site = loadSite();
-let state = {results:[], times:[], hours:[], fetchedAt:null, day:null, sel:null, view:"band"};
+let state = {results:[], times:[], hours:[], fetchedAt:null, day:null, sel:null,
+  show:new Set((() => { try{ return JSON.parse(localStorage.getItem("wb_show")||"[]"); }catch(e){ return []; } })())};   // im Windverlauf eingeblendete Modelle (nur Anzeige)
 const charts = {};
 let map, marker, rotorCircle, arrowMarker, satLayer;
 

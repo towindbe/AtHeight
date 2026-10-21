@@ -102,7 +102,18 @@ async function computeRanking(){
     const res = {v:2, date:new Date().toISOString(), start, end, models:models.map(m => m.id), station:{name:st.name, src:st.src, dist:st.dist, alt:st.alt}, elev:state.elev ?? null, rows};
     try{ localStorage.setItem(rankKey(), JSON.stringify(res)); }catch(e){}
     renderRanking();
-  } finally { btn.disabled = false; }
+    if(wantBest){ wantBest = false; showQuick("best"); }
+  } finally { btn.disabled = false; if(wantBest){ wantBest = false; renderChips("Modellvergleich nicht möglich, Details unten bei „Welche Modelle treffen hier?“."); } }
+}
+/* Gruppen aus dem gespeicherten Modellvergleich (null, wenn noch keiner vorliegt) */
+function rankGroups(){
+  let res = null; try{ res = JSON.parse(localStorage.getItem(rankKey())||"null"); }catch(e){}
+  if(!res || res.v !== 2 || !res.rows?.length) return null;
+  const cens = res.rows.map(r => r.cen), best = Math.min(...cens), worst = Math.max(...cens), bestCsi = Math.max(...res.rows.map(r => r.csi ?? 0));
+  const isPoor = r => (r.cen > best*1.4 && r.cen > best+0.5) || (r.csi!=null && r.csi <= bestCsi*0.6);
+  const isGood = r => r.cen <= best*1.15 && (r.csi==null || r.csi >= bestCsi*0.85);
+  const narrow = (worst - best)/best < RANK_NARROW && !res.rows.some(isPoor);
+  return {narrow, good:res.rows.filter(r => !narrow && !isPoor(r) && isGood(r)).map(r => r.id)};
 }
 function renderRanking(){
   if(!$("rankOut")) return;

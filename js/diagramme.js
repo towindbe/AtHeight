@@ -95,13 +95,10 @@ function renderChart(){
   const H = idxs.map(i=>state.hours[i]), r2 = v => v==null?null:+cw(v).toFixed(2);
   const fg = css("--fg"), stop = css("--stop");
   let ds = [];
-  if(state.view==="band"){
-    ds.push({label:"Minimum", data:H.map(h=>r2(h.min)), borderColor:"transparent", pointRadius:0, fill:false, tension:.3});
-    ds.push({label:"Maximum", data:H.map(h=>r2(h.max)), borderColor:css("--band-line"), borderWidth:.8, backgroundColor:css("--band"), pointRadius:0, fill:"-1", tension:.3});
-  } else {
-    usableModels().forEach(r => ds.push({label:r.m.name+" · "+r.m.org, data:idxs.map(i => r.series[i] ? r2(r.series[i].v) : null),
-      borderColor:COLORS[MODELS.indexOf(r.m)%COLORS.length], borderWidth:1.3, borderDash:r.m.hi?[]:[4,3], pointRadius:0, tension:.3, spanGaps:true}));
-  }
+  ds.push({label:"Minimum", data:H.map(h=>r2(h.min)), borderColor:"transparent", pointRadius:0, fill:false, tension:.3});
+  ds.push({label:"Maximum", data:H.map(h=>r2(h.max)), borderColor:css("--band-line"), borderWidth:.8, backgroundColor:css("--band"), pointRadius:0, fill:"-1", tension:.3});
+  usableModels().filter(r => state.show.has(r.m.id)).forEach(r => ds.push({label:r.m.name+" · "+r.m.org, data:idxs.map(i => r.series[i] ? r2(r.series[i].v) : null),
+    borderColor:modelColor(r.m), borderWidth:1.8, borderDash:r.m.hi?[]:[5,3], pointRadius:0, tension:.3, spanGaps:true}));
   ds.push({label:"Median", data:H.map(h=>r2(h.med)), borderColor:fg, borderWidth:3, pointRadius:0, tension:.3});
   ds.push({label:"Böe (gesch.)", data:H.map(h=>r2(h.gMed)), borderColor:css("--gust"), backgroundColor:css("--gust"), borderWidth:1.8, borderDash:[2,3], pointRadius:0, tension:.3});
   ds.push({label:"Grenzwert", data:idxs.map(()=>cw(site.wind)), borderColor:stop, borderWidth:1.6, borderDash:[7,4], pointRadius:0});
@@ -112,6 +109,34 @@ function renderChart(){
   charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, limitLabels]});
   charts.main.$idxs = idxs; charts.main.update("none");
   $("chartTitle").textContent = "Windverlauf · " + zoneTxt();
+  renderChips();
+}
+const modelColor = m => COLORS[MODELS.indexOf(m) % COLORS.length];
+/* Modell-Chips unter dem Windverlauf: einzelne Modelle ein- und ausblenden (ändert die Bewertung nicht) */
+function renderChips(note){
+  const u = usableModels().sort((a,b) => (b.m.hi-a.m.hi));
+  $("modelChips").innerHTML = u.map(r => { const on = state.show.has(r.m.id);
+    return `<button type="button" class="mchip ${on?"on":""}" style="--c:${modelColor(r.m)}" data-id="${r.m.id}" aria-pressed="${on}" title="${esc(r.m.org)} · ${esc(r.m.res)}${r.m.hi?"":" (gestrichelt)"}"><i></i>${esc(r.m.name)}${r.m.name==="HARMONIE" ? ` <small>${esc(r.m.org)}</small>` : ""}</button>`; }).join("");
+  $("modelChips").querySelectorAll(".mchip").forEach(b => b.onclick = () => { const id = b.dataset.id; state.show.has(id) ? state.show.delete(id) : state.show.add(id); setShown(state.show); });
+  $("chipNote").textContent = note || "Nur Anzeige: Ampel und Median nutzen weiter alle aktiven Modelle.";
+}
+function setShown(ids, note){
+  state.show = new Set(ids);
+  try{ localStorage.setItem("wb_show", JSON.stringify([...state.show])); }catch(e){}
+  renderChart(); if(note) renderChips(note);
+}
+let wantBest = false;
+function showQuick(q){
+  const u = usableModels();
+  if(q==="all") return setShown(u.map(r => r.m.id));
+  if(q==="none") return setShown([]);
+  if(q==="hi") return setShown(u.filter(r => r.m.hi).map(r => r.m.id), u.some(r => r.m.hi) ? null : "Für diesen Standort liefert kein hochauflösendes Modell Daten.");
+  // am besten bewertet: aus dem Modellvergleich dieser Anlage
+  const rk = rankGroups();
+  if(!rk){ wantBest = true; renderChips("Noch kein Modellvergleich für diese Anlage: wird jetzt berechnet (unten bei „Welche Modelle treffen hier?“) …"); computeRanking(); return; }
+  if(rk.narrow) return setShown(u.filter(r => r.m.hi).map(r => r.m.id), "Laut Modellvergleich treffen hier alle Modelle etwa gleich gut. Eingeblendet: die hochauflösenden.");
+  const ids = rk.good.filter(id => u.some(r => r.m.id===id));
+  setShown(ids, `Am besten bewertet laut Modellvergleich (${ids.length}). Nur Anzeige, Ampel und Median nutzen weiter alle aktiven Modelle.`);
 }
 
 // Regenbalken: je mehr Modelle Regen vorhersagen (ab 0,1 mm), desto kräftiger die Farbe

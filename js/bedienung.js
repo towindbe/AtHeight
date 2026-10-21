@@ -44,11 +44,7 @@ $("staleBtn").onclick = load;
 $("searchForm").onsubmit = e => { e.preventDefault(); const q = $("searchInput").value.trim(); if(q.length>=2 && map) search(q); };
 $("pickApply").onclick = () => { if(pending) applyPending(); };
 $("pickCancel").onclick = cancelPending;
-document.querySelectorAll("[data-view]").forEach(b => b.onclick = () => {
-  state.view = b.dataset.view;
-  document.querySelectorAll("[data-view]").forEach(x => x.setAttribute("aria-pressed", String(x===b)));
-  if(state.fetchedAt) renderChart();
-});
+document.querySelectorAll("[data-q]").forEach(b => b.onclick = () => { if(state.fetchedAt) showQuick(b.dataset.q); });
 $("nowPrev").onclick = () => selectHour(state.sel - 1);
 $("nowNext").onclick = () => selectHour(state.sel + 1);
 /* Windfelder in den Einstellungen: angezeigt in der gewählten Einheit, gemerkt in m/s (data-ms),

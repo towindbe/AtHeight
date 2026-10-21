@@ -353,3 +353,14 @@ body.info-open{overflow:hidden}
 #settings .grid:has(#s_work){grid-template-columns:repeat(2,minmax(0,1fr))}
 .lim-group{display:flex;flex-direction:column;gap:6px}
 .lim-head{font-size:13px;font-weight:600;color:var(--fg)}
+/* Modell-Chips unter dem Windverlauf */
+.mpick{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.mq{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:12px;color:var(--muted)}
+.mq span{margin-right:4px}
+.mq button{background:none;border:0;padding:3px 6px;color:var(--band-line);font:500 12.5px var(--f-body);cursor:pointer;border-radius:6px}
+.mq button:hover{background:var(--raised)}
+.mchips{display:flex;flex-wrap:wrap;gap:6px}
+.mchip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;border:1px solid var(--line);background:var(--raised);color:var(--muted);font:500 12.5px var(--f-body);cursor:pointer}
+.mchip i{width:14px;height:3px;border-radius:2px;background:var(--none)}
+.mchip small{color:var(--muted);font-size:11px}
+.mchip.on{color:var(--fg);border-color:var(--c)} .mchip.on i{background:var(--c)}
