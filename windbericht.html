@@ -385,7 +385,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
     </div>
     <div class="now-head needs-data"><b id="nowLabel">Gewählte Stunde</b><span class="note">Andere Stunde: Feld im Arbeitsfenster antippen</span></div>
     <ul class="why needs-data" id="nowWhy"></ul>
-    <p class="info-text needs-data" id="ensInfo" hidden><b>Ensemble:</b> Dasselbe Wettermodell wird viele Male mit leicht veränderten Startwerten gerechnet, weil die Messwerte am Start nie ganz genau sind (ICON-D2-EPS: 20 Läufe, ECMWF-ENS: 51 Läufe). Liegen die Läufe eng beieinander, ist die Lage sicher; laufen sie auseinander, ist sie unsicher. „Risiko Grenzwert“ zeigt, in wie vielen Läufen Mittelwind oder Böe im Arbeitsbereich über euren Grenzwerten liegen. Ab 30 % wird die Stunde gelb (Prüfen), ab 10 % erscheint ein Hinweis. Es ist ein Anteil der Läufe, keine geprüfte Wahrscheinlichkeit.</p>
+    <p class="info-text needs-data" id="ensInfo" hidden><b>Was sind Szenarien?</b> Die Wetterdienste rechnen ihre Vorhersage nicht nur einmal, sondern viele Male: der DWD 20-mal (ICON-D2-EPS), das europäische Zentrum ECMWF 51-mal (ECMWF-ENS). Jedes Szenario startet mit minimal veränderten Ausgangswerten, weil die Messungen, mit denen eine Vorhersage beginnt, nie ganz genau sind. Liegen die Szenarien eng beieinander, ist die Lage sicher; gehen sie auseinander, ist sie unsicher.<br><br><b>Was die App daraus macht:</b> Das Wetter rechnen die Großrechner der Wetterdienste. Die App übernimmt die fertigen Szenarien, rechnet den Wind jedes Szenarios auf euren Arbeitsbereich um und zählt, in wie vielen Mittelwind oder Böe über euren Grenzwerten liegen. Ab 30 % wird die Stunde gelb (Prüfen), ab 10 % erscheint ein Hinweis. Die Zahl ist ein Anteil der Szenarien, keine geprüfte Wahrscheinlichkeit.</p>
     <div class="now needs-data" id="nowBox">
       <div><small>Wind</small><b>–</b><small>m/s Median</small></div>
       <div><small>Böe</small><b>–</b><small>m/s geschätzt</small></div>
@@ -919,8 +919,8 @@ function rate(h){
   else if(h.cape!=null && h.cape >= CAPE_WARN) add("warn", `Gewitterenergie CAPE ${Math.round(h.cape)} J/kg`);
   if(h.rain!=null && h.rain >= RAIN_WARN) add("warn", `Regen ${fmt(h.rain)} mm/h`);
   if(h.dark) add("warn", "Dunkel (außerhalb der bürgerlichen Dämmerung)");
-  if(h.pEns!=null && h.pEns >= ENS_WARN) add("warn", `Ensemble: ${Math.round(h.pEns*100)} % der Läufe über Grenze`);
-  else if(h.pEns!=null && h.pEns >= ENS_INFO) add("info", `Ensemble: ${Math.round(h.pEns*100)} % der Läufe über Grenze`);
+  if(h.pEns!=null && h.pEns >= ENS_WARN) add("warn", `Szenarien: ${Math.round(h.pEns*100)} % über Grenze`);
+  else if(h.pEns!=null && h.pEns >= ENS_INFO) add("info", `Szenarien: ${Math.round(h.pEns*100)} % über Grenze`);
   (h.warns||[]).forEach(w => add(!w.relevant ? "info" : w.lvl >= 3 ? "stop" : "warn", `Amtliche Warnung ${w.src}: ${w.title}`));
   if(h.chill!=null && h.chill <= CHILL_WARN) add("warn", `Gefühlt ${fmt(h.chill,0)} °C in ${workH()} m: Erfrierungsgefahr`);
   else if(h.chill!=null && h.chill <= CHILL_INFO) add("info", `Gefühlt ${fmt(h.chill,0)} °C in ${workH()} m: Kälteschutz`);
@@ -1054,7 +1054,7 @@ function renderHero(){
   const wsrc = [extras.dwd?.ok===false ? "DWD nicht abrufbar" : null, extras.geo?.ok===false ? "GeoSphere nicht abrufbar" : null].filter(Boolean);
   $("status").textContent = `Abgerufen ${state.fetchedAt.toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"})} · ${u.length} Modelle aktiv, davon ${u.filter(r=>r.m.hi).length} hochauflösend`
     + ` · Warnungen: ${wsrc.length ? wsrc.join(", ") : ws.length ? ws.length+" am gewählten Tag" : "keine"}`
-    + ` · Ensemble: ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(" + ") || "nicht verfügbar"}`;
+    + ` · Szenarien: ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(" + ") || "nicht verfügbar"}`;
 }
 
 function renderNow(){
@@ -1067,7 +1067,7 @@ function renderNow(){
     ["Böe "+zoneTxt(), fmt(h.gMed), "m/s geschätzt", h.gMed>site.gust],
     ["Richtung", dirName(h.dir.mean), h.dir.mean==null ? "" : Math.round(h.dir.mean)+"° · "+workH()+" m", false],
     ["Modelle", h.n ? `${h.over}/${h.n}` : "–", "über Grenze", h.over>0 && h.over>=h.n/2],
-    ['Risiko Grenzwert <button type="button" class="info-btn" id="ensInfoBtn" aria-expanded="false" aria-controls="ensInfo" title="Was bedeutet das?">ⓘ</button>', h.pEns==null ? "–" : Math.round(h.pEns*100)+" %", h.pEns==null ? "Ensemble nicht verfügbar" : `der ${h.nEns} Ensemble-Läufe`, h.pEns!=null && h.pEns>=ENS_WARN],
+    ['Risiko Grenzwert <button type="button" class="info-btn" id="ensInfoBtn" aria-expanded="false" aria-controls="ensInfo" title="Was bedeutet das?">ⓘ</button>', h.pEns==null ? "–" : Math.round(h.pEns*100)+" %", h.pEns==null ? "Szenarien nicht verfügbar" : `von ${h.nEns} Szenarien`, h.pEns!=null && h.pEns>=ENS_WARN],
     ["Temperatur "+workH()+" m", h.tW==null ? "–" : fmt(h.tW,0)+" °C", h.chill==null ? "" : "gefühlt "+fmt(h.chill,0)+" °C", h.chill!=null && h.chill<=CHILL_WARN]
   ];
   const infoOpen = $("ensInfo") && !$("ensInfo").hidden;
@@ -1254,7 +1254,7 @@ function renderMatrix(){
   highlightSel();
 }
 
-const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Richtung</th><th>Über Grenze</th><th>Ensemble</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th>Gründe</th></tr></thead>`;
+const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Richtung</th><th>Über Grenze</th><th>Szenarien</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th>Gründe</th></tr></thead>`;
 function hourRows(hs, dots){
   return hs.map(h => `<tr>
     <td class="num">${dots?`<span class="dot d-${h.lamp}"></span> `:LAMP_TXT[h.lamp]+" "}${hh(h.t)}:00</td>
@@ -1669,7 +1669,7 @@ const shortWhy = t => t
   .replace(" (außerhalb der bürgerlichen Dämmerung)", "")
   .replace("Einzelne Modelle über Mittelwind-Grenze", "Einzelmodelle Wind über Grenze")
   .replace("Einzelne Modelle mit Böe über Grenze", "Einzelmodelle Böe über Grenze")
-  .replace(/^Ensemble: (\d+) % der Läufe über Grenze$/, "Ensemble $1 %");
+  .replace(/^Szenarien: (\d+) % über Grenze$/, "Szenarien $1 %");
 function reportRows(hs){
   return hs.map(h => `<tr class="${h.dark?"dk":""}">
     <td><span class="rp-pill ${h.lamp}">${LAMP_TXT[h.lamp]}</span>${hh(h.t)}:00</td>
@@ -1726,7 +1726,7 @@ async function buildReport(){
 
     <div class="rp-sec">
       <h3>Prognose je Stunde · Wind und Böe im Bereich ${zoneTxt()} (m/s)</h3>
-      <table class="rp-t"><thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Ri.</th><th>Modelle über</th><th>Ensemble</th><th>Regen</th><th>CAPE</th><th>°C</th><th>Gefühlt</th><th>Gründe</th></tr></thead>
+      <table class="rp-t"><thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Ri.</th><th>Modelle über</th><th>Szenarien</th><th>Regen</th><th>CAPE</th><th>°C</th><th>Gefühlt</th><th>Gründe</th></tr></thead>
       <tbody>${reportRows(hs)}</tbody></table>
       <div class="rp-small" style="margin-top:3px">Gelb: ab 75 % des Grenzwerts bzw. Hinweis · Rot: über Grenzwert · Schraffiert: dunkel</div>
     </div>
@@ -1738,9 +1738,9 @@ async function buildReport(){
       ${age > STALE_MS ? `<span class="rp-alert">Achtung: Die Prognose war bei Berichtserstellung ${fmtAge(age)} alt.</span>` : ""}
       Ausgewertete Modelle (${u.length}): ${u.map(r=>esc(r.m.name+" ("+r.m.org+")")).join(", ")}.
       ${(() => { const x = state.results.filter(r => isExcluded(r) && (r.status==="ok"||r.status==="extrap")); return x.length ? `<b>Von Hand ausgeschlossen:</b> ${x.map(r=>esc(r.m.name+" ("+r.m.org+")")).join(", ")}.` : ""; })()}
-      Ensemble: ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members} Läufe)`).join(", ") || "nicht verfügbar"}.
+      Szenarien: ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(", ") || "nicht verfügbar"}.
       Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle, CAPE ab ${CAPE_STOP} J/kg oder Unwetterwarnung bzw. Warnstufe rot.
-      Prüfen bei einzelnen Modellen über Grenzwert, Schauer, CAPE ab ${CAPE_WARN} J/kg, Dunkelheit, Windchill ab ${CHILL_WARN} °C, mind. ${Math.round(ENS_WARN*100)} % der Ensemble-Läufe über Grenze oder amtlicher Warnung.
+      Prüfen bei einzelnen Modellen über Grenzwert, Schauer, CAPE ab ${CAPE_WARN} J/kg, Dunkelheit, Windchill ab ${CHILL_WARN} °C, mind. ${Math.round(ENS_WARN*100)} % der Szenarien über Grenze oder amtlicher Warnung.
       Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0).
       Entscheidungshilfe; die Freigabe trifft der Aufsichtführende.
     </div>
