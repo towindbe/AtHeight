@@ -346,8 +346,10 @@ body.info-open{overflow:hidden}
 .spreadbox.s-einig b:first-child{color:var(--go)}
 /* Grenzwerte in den Einstellungen */
 /* Zahlenfelder kompakt statt über die ganze Breite */
-#settings .grid{grid-template-columns:repeat(auto-fill,minmax(130px,170px))}
-#settings .grid label:has(#s_name){grid-column:span 2}
-#settings label:has(#s_access){max-width:360px}
+/* Einstellungen: die drei Bereiche nebeneinander, innen je zwei Spalten */
+.set-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px 28px;align-items:start}
+#settings .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+#settings .grid label:has(#s_name), #settings .grid label:has(#s_unit){grid-column:1/-1}
+#settings .grid:has(#s_work){grid-template-columns:repeat(3,minmax(0,1fr))}
 .lim-group{display:flex;flex-direction:column;gap:6px}
 .lim-head{font-size:13px;font-weight:600;color:var(--fg)}
