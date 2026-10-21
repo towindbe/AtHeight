@@ -151,6 +151,7 @@ function renderRain(){
   if(typeof Chart==="undefined") return;
   const idxs = dayIdx(), labels = idxs.map(i => hh(state.times[i])), H = idxs.map(i=>state.hours[i]);
   const opt = chartBase("mm/h"); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
+  opt.scales.x.ticks.autoSkip = true; opt.scales.x.ticks.maxTicksLimit = 12;
   opt.scales.y.suggestedMax = 2;
   opt.scales.y2 = {position:"right", beginAtZero:true, suggestedMax:1000, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"IBM Plex Mono", size:10}}, title:{display:true, text:"CAPE J/kg", color:css("--muted")}};
   opt.plugins.tooltip = {callbacks:{label:c => c.dataset.yAxisID==="y2" ? `CAPE: ${Math.round(c.parsed.y)} J/kg`

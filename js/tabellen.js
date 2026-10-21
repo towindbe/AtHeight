@@ -31,7 +31,7 @@ function hourRows(hs, dots){
     <td class="num">${h.cape==null?"–":Math.round(h.cape)}</td>
     <td class="num ${h.tW!=null && h.tW<minTemp()?"over":""}">${fmt(h.tW,0)}</td>
     <td class="num">${fmt(h.chill,0)}</td>
-    <td class="why-cell">${esc(h.why.filter(w=>w.l!=="go").map(w=>w.t).join(" · ")) || "–"}</td></tr>`).join("");
+    <td class="why-cell">${esc(h.why.filter(w=>w.l!=="go").map(w=>shortWhy(w.t)).join(" · ")) || "–"}</td></tr>`).join("");
 }
 function renderHourTable(){ $("hourTable").innerHTML = HOUR_HEAD + "<tbody>" + hourRows(dayHours(state.day), true) + "</tbody>"; }
 

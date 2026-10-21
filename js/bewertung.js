@@ -64,7 +64,7 @@ function rate(h){
   if(h.cape!=null && h.cape >= CAPE_STOP) add("stop", `Gewitterenergie CAPE ${Math.round(h.cape)} J/kg`);
   else if(h.cape!=null && h.cape >= CAPE_WARN) add("warn", `Gewitterenergie CAPE ${Math.round(h.cape)} J/kg`);
   if(h.rain!=null && h.rain >= RAIN_WARN) add("warn", `Regen ${fmt(h.rain)} mm/h`);
-  if(h.dark) add("info", "Nacht (außerhalb der bürgerlichen Dämmerung)");
+  if(h.dark) add("info", "Nacht");
   if(h.pEns!=null && h.pEns >= ENS_WARN) add("warn", `Zu windig in ${riskTen(h.pEns)} der Szenarien`);
   else if(h.pEns!=null && h.pEns >= ENS_INFO) add("info", `Zu windig in ${riskTen(h.pEns)} der Szenarien`);
   (h.warns||[]).forEach(w => add(!w.relevant ? "info" : w.lvl >= 3 ? "stop" : "warn", `Amtliche Warnung ${w.src}: ${w.title}`));
@@ -104,11 +104,11 @@ function nightRig(day){
 function nightText(n){
   if(!n) return null;
   const span = `${hh(n.from)}–${String((hourOf(n.to)+1)%24).padStart(2,"0")} Uhr`;
-  const lim = `Grenze Wind ${fw(nightWind())} / Böe ${fwu(nightGust())}`;
-  const part = n.complete ? "" : " (nur bis Ende der Prognose)";
-  if(n.lvl==="stop") return {lvl:"stop", head:"Seile und Bühne heute abbauen", text:`Über Nacht (${span}${part}) Böen bis ${fwu(n.g)} gegen ${hh(n.gT)} Uhr, Wind bis ${fwu(n.v)}, über Grenze ab ${hh(n.firstOver)} Uhr. ${lim}, 10 m bis Nabe.`};
-  if(n.lvl==="warn") return {lvl:"warn", head:"Seile und Bühne über Nacht: prüfen", text:`Einzelne Modelle über Grenze (Böe bis ${fw(n.gMax)}, Wind bis ${fwu(n.vMax)}), Median Böe ${fwu(n.g)}, ${span}${part}. ${lim}.`};
-  return {lvl:"go", head:"Seile und Bühne können über Nacht hängen bleiben", text:`${span}${part}: Böen bis ${fwu(n.g)}, Wind bis ${fwu(n.v)}. ${lim}.`};
+  const lim = `Grenze ${fw(nightWind())} / ${fwu(nightGust())} (Wind / Böe, 10 m bis Nabe)`;
+  const part = n.complete ? "" : " (Prognose endet früher)";
+  if(n.lvl==="stop") return {lvl:"stop", head:"Seile und Bühne heute abbauen", text:`${span}${part}: über Grenze ab ${hh(n.firstOver)} Uhr, Böen bis ${fwu(n.g)} gegen ${hh(n.gT)} Uhr, Wind bis ${fwu(n.v)} · ${lim}`};
+  if(n.lvl==="warn") return {lvl:"warn", head:"Seile und Bühne über Nacht: prüfen", text:`${span}${part}: Böen bis ${fwu(n.g)}, einzelne Modelle bis ${fwu(Math.max(n.gMax ?? 0, n.vMax ?? 0))} · ${lim}`};
+  return {lvl:"go", head:"Seile und Bühne können über Nacht hängen bleiben", text:`${span}${part}: Böen bis ${fwu(n.g)}, Wind bis ${fwu(n.v)} · ${lim}`};
 }
 /* Große Streuung: hochauflösende und gröbere Modelle getrennt zeigen (Tageshöchstwert Wind in der Arbeitszeit).
    Nur zur Einordnung; es wird kein Modell aus der Bewertung genommen. */

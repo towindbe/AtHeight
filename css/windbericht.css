@@ -57,9 +57,9 @@ footer.foot{display:flex;align-items:center;gap:14px;border-top:1px solid var(--
 .chev{width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .15s}
 .settings-btn[aria-expanded="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 .settings-btn[aria-expanded="true"] .chev{transform:translateY(1px) rotate(-135deg)}
-.warnbox{display:flex;flex-direction:column;gap:6px;margin-top:6px;padding:10px 12px;border:1px solid var(--stop);background:var(--stop-bg);border-radius:8px;font-size:13px}
-.warnbox.ok{border-color:var(--go);background:var(--go-bg)}
-.warnbox.na{border-color:var(--line);background:var(--raised);color:var(--muted)}
+.warnbox{display:flex;flex-direction:column;gap:6px;padding:8px 12px;border:1px solid var(--line);border-left:4px solid var(--stop);background:var(--stop-bg);border-radius:0 8px 8px 0;font-size:13px}
+.warnbox.ok{border-left-color:var(--go);background:var(--raised)}
+.warnbox.na{border-left-color:var(--none);background:var(--raised);color:var(--muted)}
 .warnbox div{display:flex;flex-direction:column;padding-left:10px;border-left:3px solid var(--warn)}
 .warnbox .wb-stop{border-left-color:var(--stop)} .warnbox .wb-info{border-left-color:var(--none)}
 .warnbox small{color:var(--muted)}
@@ -88,7 +88,7 @@ legend{font:600 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:upper
 .why li.w-stop{border-color:var(--stop);background:var(--stop-bg)} .why li.w-warn{border-color:var(--warn);background:var(--warn-bg)} .why li.w-go{border-color:var(--go);background:var(--go-bg)}
 .sw-dark{background-color:#fff;box-shadow:inset 0 0 0 1px var(--line)}
 .tl-cell.dark,.sw.dark{background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.35) 0 3px,transparent 3px 6px)}
-.now-head{display:flex;justify-content:flex-start;align-items:center;gap:8px 16px;flex-wrap:wrap;font-size:14px}
+.now-head{margin-top:14px;display:flex;justify-content:flex-start;align-items:center;gap:8px 16px;flex-wrap:wrap;font-size:14px}
 .hero p{margin:0}
 .now{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
 @media (min-width:900px){.now{grid-template-columns:repeat(6,1fr)}}
@@ -333,12 +333,12 @@ body.info-open{overflow:hidden}
 .now-sel button:disabled{opacity:.35;cursor:default}
 .now-head .why{flex:1 1 260px;min-width:0}
 /* Seile und Bühne über Nacht */
-.rigbox{display:flex;flex-direction:column;gap:2px;margin-top:6px;padding:8px 12px;border:1px solid var(--line);border-left:4px solid var(--go);border-radius:0 8px 8px 0;background:var(--raised);font-size:13px}
+.rigbox{display:flex;flex-direction:column;gap:2px;padding:8px 12px;border:1px solid var(--line);border-left:4px solid var(--go);border-radius:0 8px 8px 0;background:var(--raised);font-size:13px}
 .rigbox small{color:var(--muted);font-size:12.5px}
-.rigbox.r-warn{border-color:var(--warn);background:var(--warn-bg)} .rigbox.r-stop{border-color:var(--stop);background:var(--stop-bg)}
+.rigbox.r-warn{border-left-color:var(--warn);background:var(--warn-bg)} .rigbox.r-stop{border-left-color:var(--stop);background:var(--stop-bg)}
 .rigbox.r-stop b{color:var(--stop)} .rigbox.r-warn b{color:var(--warn)}
 /* Große Streuung: Modellgruppen */
-.spreadbox{display:flex;flex-direction:column;gap:4px;margin-top:6px;padding:8px 12px;border:1px solid var(--line);border-left:4px solid var(--band-line);border-radius:0 8px 8px 0;background:var(--raised);font-size:13px}
+.spreadbox{display:flex;flex-direction:column;gap:4px;padding:8px 12px;border:1px solid var(--line);border-left:4px solid var(--band-line);border-radius:0 8px 8px 0;background:var(--raised);font-size:13px}
 .spreadbox small{color:var(--muted);font-size:12.5px}
 .spreadbox .sg{display:flex;flex-wrap:wrap;gap:0 8px;align-items:baseline}
 .spreadbox .sg b{font-family:var(--f-mono);font-weight:500;white-space:nowrap} .spreadbox .sg small{white-space:nowrap}
@@ -367,3 +367,29 @@ body.info-open{overflow:hidden}
 .mchip i{width:14px;height:3px;border-radius:2px;background:var(--none)}
 .mchip small{color:var(--muted);font-size:11px}
 .mchip.on{color:var(--fg);border-color:var(--c)} .mchip.on i{background:var(--c)}
+/* Statuszeile unter der Tagesbewertung: Warnungen, Nacht, Einigkeit nebeneinander */
+.status-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:8px;margin-top:12px}
+.status-row:not(:has(> :not([hidden]))){display:none}
+.warnbox.ok > b:first-child{color:var(--go)}
+.warnbox{gap:2px} .warnbox small{font-size:12.5px}
+/* Kurzlegende unter Diagrammen */
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted);margin:6px 0 0}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:22px;height:0;border-top:3px solid var(--fg)}
+.legend i.lg-band{height:9px;border:0;border-radius:2px;background:var(--band);outline:1px solid var(--band-line)}
+.legend i.lg-gust{border-top:2px dotted var(--gust)}
+.legend i.lg-lim{border-top:2px dashed var(--stop)}
+.legend i.lg-glim{border-top:2px dotted var(--stop)}
+.legend i.lg-temp{border-top:3px solid var(--accent)}
+.legend i.lg-feel{border-top:2px dashed var(--band-line)}
+.legend i.lg-rain{width:10px;height:10px;border:0;border-radius:2px;background:var(--band-line)}
+.legend i.lg-cape{border-top:2px solid var(--warn)}
+/* Tabellen: Text links */
+#modelTable th:nth-child(2), #modelTable td:nth-child(2){text-align:left}
+#hourTable th:last-child{text-align:left}
+/* Karte füllt die Kartenhöhe neben der Richtungskarte */
+#mapCard:not(.map-max){display:flex;flex-direction:column}
+#mapCard:not(.map-max) .map-wrap{flex:1 1 auto;display:flex;flex-direction:column}
+#mapCard:not(.map-max) #map{flex:1 1 280px;min-height:280px}
+/* Tagesbericht: Auswahl der Entscheidung breiter */
+.card .grid label:has(#r_decision){grid-column:span 2;min-width:0}

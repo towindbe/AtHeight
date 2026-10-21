@@ -55,8 +55,9 @@ function tempAt(h, i, z){
 function windChill(t, v){
   if(t==null || v==null) return null;
   const k = v*3.6;
-  if(t > 10 || k < 4.8) return t;
-  return 13.12 + 0.6215*t - 11.37*Math.pow(k,0.16) + 0.3965*t*Math.pow(k,0.16);
+  if(k < 4.8) return t;
+  // Formel gilt eigentlich bis 10 °C; darüber weiterrechnen, aber nie wärmer als die Luft (sonst Sprung bei 10 °C)
+  return Math.min(t, 13.12 + 0.6215*t - 11.37*Math.pow(k,0.16) + 0.3965*t*Math.pow(k,0.16));
 }
 function dirAt(lv, z){
   const withDir = lv.filter(l => l[2]!=null);

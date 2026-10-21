@@ -52,7 +52,8 @@ function renderHero(){
   $("warnBox").innerHTML = kind==="list"
     ? `<b>Amtliche Warnungen</b>` + ws.map(w => `<div class="wb-${!w.relevant ? "info" : w.lvl>=3 ? "stop" : "warn"}">
       <span>${esc(w.src)}: ${esc(w.title)}</span><small>${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))}</small></div>`).join("") + (note ? `<small>${esc(note)}</small>` : "")
-    : `<span>${kind==="ok" ? "✓ " : ""}${esc(note)}</span>`;
+    : kind==="ok" ? `<b>✓ Keine amtlichen Warnungen</b><small>${esc(note.replace(/^Keine amtlichen Warnungen für /, "").replace(/\.$/, ""))}</small>`
+    : `<b>Amtliche Warnungen</b><small>${esc(note)}</small>`;
   const sg = spreadGroups(state.day);
   $("spreadBox").hidden = !sg || !sg.all;
   if(sg && sg.all){
