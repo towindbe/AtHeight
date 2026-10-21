@@ -132,6 +132,7 @@ const diffs = [];
 const calc = crypto.createHash("sha256").update(JSON.stringify(result.export), "utf8").digest("hex");
 if(calc !== result.bericht.pruefsumme) diffs.push(`bericht.pruefsumme: passt nicht zu den Berichtsdaten (${result.bericht.pruefsumme} / ${calc})`);
 delete expected.bericht.pruefsumme; delete result.bericht.pruefsumme;
+for(const r of [expected, result]) r.bericht.text = r.bericht.text.replace(/[0-9a-f]{64}/g, "<pruefsumme>");
 // Zahlen dürfen in den letzten Stellen abweichen (Fließkomma unter Windows/Linux), Texte nicht
 const sameNum = (a, b) => a === b || Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
 (function cmp(a, b, p){
