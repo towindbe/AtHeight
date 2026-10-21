@@ -65,8 +65,8 @@ function rate(h){
   else if(h.cape!=null && h.cape >= CAPE_WARN) add("warn", `Gewitterenergie CAPE ${Math.round(h.cape)} J/kg`);
   if(h.rain!=null && h.rain >= RAIN_WARN) add("warn", `Regen ${fmt(h.rain)} mm/h`);
   if(h.dark) add("warn", "Nacht (außerhalb der bürgerlichen Dämmerung)");
-  if(h.pEns!=null && h.pEns >= ENS_WARN) add("warn", `Szenarien: ${Math.round(h.pEns*100)} % über Grenze`);
-  else if(h.pEns!=null && h.pEns >= ENS_INFO) add("info", `Szenarien: ${Math.round(h.pEns*100)} % über Grenze`);
+  if(h.pEns!=null && h.pEns >= ENS_WARN) add("warn", `Zu windig in ${riskTen(h.pEns)} Szenarien`);
+  else if(h.pEns!=null && h.pEns >= ENS_INFO) add("info", `Zu windig in ${riskTen(h.pEns)} Szenarien`);
   (h.warns||[]).forEach(w => add(!w.relevant ? "info" : w.lvl >= 3 ? "stop" : "warn", `Amtliche Warnung ${w.src}: ${w.title}`));
   if(h.chill!=null && h.chill <= CHILL_WARN) add("warn", `Gefühlt ${fmt(h.chill,0)} °C in ${workH()} m: Erfrierungsgefahr`);
   else if(h.chill!=null && h.chill <= CHILL_INFO) add("info", `Gefühlt ${fmt(h.chill,0)} °C in ${workH()} m: Kälteschutz`);

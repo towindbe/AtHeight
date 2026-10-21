@@ -17,7 +17,7 @@ function renderMatrix(){
   highlightSel();
 }
 
-const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Richtung</th><th title="Anzahl der Modelle mit Mittelwind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th>Szenarien</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th>Gründe</th></tr></thead>`;
+const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Richtung</th><th title="Anzahl der Modelle mit Mittelwind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th title="In wie vielen von 10 Szenarien Mittelwind oder Böe über Grenze liegen">Zu windig</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th>Gründe</th></tr></thead>`;
 function hourRows(hs, dots){
   return hs.map(h => `<tr>
     <td class="num">${dots?`<span class="dot d-${h.lamp}"></span> `:LAMP_TXT[h.lamp]+" "}${hh(h.t)}:00</td>
@@ -26,7 +26,7 @@ function hourRows(hs, dots){
     <td class="num ${h.gMed>site.gust?"over":""}">${fmt(h.gMed)}</td>
     <td class="num">${dirName(h.dir.mean)}</td>
     <td class="num">${h.n ? h.over+"/"+h.n : "–"}</td>
-    <td class="num ${h.pEns>=ENS_WARN?"over":""}">${h.pEns==null ? "–" : Math.round(h.pEns*100)+" %"}</td>
+    <td class="num ${h.pEns>=ENS_WARN?"over":""}">${riskTen(h.pEns)}</td>
     <td class="num">${fmt(h.rain)}</td>
     <td class="num">${h.cape==null?"–":Math.round(h.cape)}</td>
     <td class="num">${fmt(h.tW,0)}</td>

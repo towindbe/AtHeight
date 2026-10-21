@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-21p">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-21r">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tw-logo" viewBox="-6 -6 790 512"><g fill="currentColor" stroke="currentColor" stroke-linejoin="miter"><path stroke-width="3" d="M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z"/><path stroke-width="15" d="m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z"/></g></symbol></svg>
@@ -109,7 +109,7 @@
     </div>
     <div class="now-head needs-data"><b id="nowLabel">Gewählte Stunde</b><span class="note">Andere Stunde: Feld im Arbeitsfenster antippen</span></div>
     <ul class="why needs-data" id="nowWhy"></ul>
-    <p class="info-text needs-data" id="ensInfo" hidden><b>Was sind Szenarien?</b> Die Wetterdienste rechnen ihre Vorhersage nicht nur einmal, sondern viele Male: der DWD 20-mal (ICON-D2-EPS), das europäische Zentrum ECMWF 51-mal (ECMWF-ENS). Jedes Szenario startet mit minimal veränderten Ausgangswerten, weil die Messungen, mit denen eine Vorhersage beginnt, nie ganz genau sind. Liegen die Szenarien eng beieinander, ist die Lage sicher; gehen sie auseinander, ist sie unsicher.<br><br><b>Was die App daraus macht:</b> Das Wetter rechnen die Großrechner der Wetterdienste. Die App übernimmt die fertigen Szenarien, rechnet den Wind jedes Szenarios auf euren Arbeitsbereich um und zählt, in wie vielen Mittelwind oder Böe über euren Grenzwerten liegen. Ab 30 % wird die Stunde gelb (Prüfen), ab 10 % erscheint ein Hinweis. Die Zahl ist ein Anteil der Szenarien, keine geprüfte Wahrscheinlichkeit.</p>
+    <p class="info-text needs-data" id="ensInfo" hidden><b>Was sind Szenarien?</b> Die Wetterdienste rechnen ihre Vorhersage nicht nur einmal, sondern viele Male: der DWD 20-mal (ICON-D2-EPS), das europäische Zentrum ECMWF 51-mal (ECMWF-ENS). Jedes Szenario startet mit minimal veränderten Ausgangswerten, weil die Messungen, mit denen eine Vorhersage beginnt, nie ganz genau sind. Liegen die Szenarien eng beieinander, ist die Lage sicher; gehen sie auseinander, ist sie unsicher.<br><br><b>Was die App daraus macht:</b> Das Wetter rechnen die Großrechner der Wetterdienste. Die App übernimmt die fertigen Szenarien, rechnet den Wind jedes Szenarios auf euren Arbeitsbereich um und zählt, in wie vielen Mittelwind oder Böe über euren Grenzwerten liegen. Angezeigt als „Zu windig: 3 von 10“ mit Farbbalken (grün, gelb, rot). Ab 3 von 10 wird die Stunde gelb (Prüfen), ab 1 von 10 erscheint ein Hinweis. Die Zahl ist ein Anteil der Szenarien, keine geprüfte Wahrscheinlichkeit.</p>
     <div class="now needs-data" id="nowBox">
       <div><small>Wind</small><b>–</b><small>m/s Median</small></div>
       <div><small>Böe</small><b>–</b><small>m/s geschätzt</small></div>
@@ -254,7 +254,7 @@
       <b>Wind max:</b> Für jedes Modell wird der stärkste Mittelwind des Tages ermittelt; angezeigt ist der mittlere dieser Werte (Median).<br>
       <b>Spanne:</b> vom vorsichtigsten bis zum stürmischsten Modell. Schmal (2–3 m/s) heißt: die Modelle sind sich einig, die Prognose ist recht verlässlich. Breit (ab etwa 5 m/s) heißt: unsicher, z. B. weil eine Front zeitlich noch nicht klar ist. Liegt das obere Ende über eurer Grenze, den Tag im Blick behalten.<br>
       <b>Böe max:</b> stärkste geschätzte Böe des Tages (Median der Modelle).<br>
-      <b>Szenarien:</b> Anteil der 51 ECMWF-Szenarien, in denen an diesem Tag mindestens eine Arbeitsstunde über eurer Grenze liegt.<br>
+      <b>Zu windig:</b> in wie vielen von 10 möglichen Wetterverläufen (51 ECMWF-Szenarien) an diesem Tag mindestens eine Arbeitsstunde über eurer Grenze liegt. Balken grün = unter 1 von 10, gelb = ab 1 von 10, rot = ab 3 von 10.<br>
       <b>Detail oben / Tendenz:</b> Die ersten 3 Tage stammen aus der Detailprognose mit allen Modellen (antippen wechselt zu diesem Tag). Ab Tag 4 rechnen nur noch 4 Globalmodelle (ECMWF, ICON, GFS, GEM); das ist eine grobe Tendenz für die Planung, nicht für die Freigabe.</p>
     <div id="outlook"></div>
   </section>
@@ -296,22 +296,22 @@
 </div>
 
 <!-- Skripte teilen sich den globalen Gültigkeitsbereich; Reihenfolge beachten. Bei Änderungen ?v= erhöhen. -->
-<script src="js/konfiguration.js?v=2026-10-21p"></script>
-<script src="js/hilfen.js?v=2026-10-21p"></script>
-<script src="js/physik.js?v=2026-10-21p"></script>
-<script src="js/daten.js?v=2026-10-21p"></script>
-<script src="js/tageslicht.js?v=2026-10-21p"></script>
-<script src="js/bewertung.js?v=2026-10-21p"></script>
-<script src="js/anzeige.js?v=2026-10-21p"></script>
-<script src="js/diagramme.js?v=2026-10-21p"></script>
-<script src="js/tabellen.js?v=2026-10-21p"></script>
-<script src="js/modellvergleich.js?v=2026-10-21p"></script>
-<script src="js/ausblick.js?v=2026-10-21p"></script>
-<script src="js/karte.js?v=2026-10-21p"></script>
-<script src="js/radar.js?v=2026-10-21p"></script>
-<script src="js/bericht.js?v=2026-10-21p"></script>
-<script src="js/anlagen.js?v=2026-10-21p"></script>
-<script src="js/bedienung.js?v=2026-10-21p"></script>
-<script src="js/start.js?v=2026-10-21p"></script>
+<script src="js/konfiguration.js?v=2026-10-21r"></script>
+<script src="js/hilfen.js?v=2026-10-21r"></script>
+<script src="js/physik.js?v=2026-10-21r"></script>
+<script src="js/daten.js?v=2026-10-21r"></script>
+<script src="js/tageslicht.js?v=2026-10-21r"></script>
+<script src="js/bewertung.js?v=2026-10-21r"></script>
+<script src="js/anzeige.js?v=2026-10-21r"></script>
+<script src="js/diagramme.js?v=2026-10-21r"></script>
+<script src="js/tabellen.js?v=2026-10-21r"></script>
+<script src="js/modellvergleich.js?v=2026-10-21r"></script>
+<script src="js/ausblick.js?v=2026-10-21r"></script>
+<script src="js/karte.js?v=2026-10-21r"></script>
+<script src="js/radar.js?v=2026-10-21r"></script>
+<script src="js/bericht.js?v=2026-10-21r"></script>
+<script src="js/anlagen.js?v=2026-10-21r"></script>
+<script src="js/bedienung.js?v=2026-10-21r"></script>
+<script src="js/start.js?v=2026-10-21r"></script>
 </body>
 </html>

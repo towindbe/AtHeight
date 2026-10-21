@@ -353,7 +353,7 @@
     "warn:Einzelne Modelle über Mittelwind-Grenze",
     "warn:Einzelne Modelle mit Böe über Grenze",
     "warn:Regen 1,4 mm/h",
-    "info:Szenarien: 20 % über Grenze"
+    "info:Zu windig in 2 von 10 Szenarien"
    ],
    "n": 16,
    "med": 8.720833333333333,
@@ -376,7 +376,7 @@
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
     "warn:Regen 1,1 mm/h",
-    "info:Szenarien: 14 % über Grenze"
+    "info:Zu windig in 1 von 10 Szenarien"
    ],
    "n": 16,
    "med": 7.748898537097774,
@@ -512,7 +512,7 @@
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
     "warn:Nacht (außerhalb der bürgerlichen Dämmerung)",
-    "info:Szenarien: 13 % über Grenze"
+    "info:Zu windig in 1 von 10 Szenarien"
    ],
    "n": 16,
    "med": 9.144393887246212,
@@ -1299,7 +1299,7 @@
    "lamp": "warn",
    "why": [
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "info:Szenarien: 12 % über Grenze"
+    "info:Zu windig in 1 von 10 Szenarien"
    ],
    "n": 12,
    "med": 4.643222436544454,
@@ -1322,7 +1322,7 @@
    "why": [
     "warn:Einzelne Modelle über Mittelwind-Grenze",
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "info:Szenarien: 25 % über Grenze"
+    "info:Zu windig in 2 von 10 Szenarien"
    ],
    "n": 12,
    "med": 6.547297963090303,
@@ -1345,7 +1345,7 @@
    "why": [
     "warn:Einzelne Modelle über Mittelwind-Grenze",
     "stop:Böe 16,3 m/s über 15,0",
-    "warn:Szenarien: 33 % über Grenze"
+    "warn:Zu windig in 3 von 10 Szenarien"
    ],
    "n": 12,
    "med": 9.513551212353828,
@@ -1368,7 +1368,7 @@
    "why": [
     "warn:Einzelne Modelle über Mittelwind-Grenze",
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "warn:Szenarien: 59 % über Grenze"
+    "warn:Zu windig in 5 von 10 Szenarien"
    ],
    "n": 12,
    "med": 8.236857194257144,
@@ -1391,7 +1391,7 @@
    "why": [
     "warn:Einzelne Modelle über Mittelwind-Grenze",
     "warn:Einzelne Modelle mit Böe über Grenze",
-    "warn:Szenarien: 73 % über Grenze"
+    "warn:Zu windig in 7 von 10 Szenarien"
    ],
    "n": 12,
    "med": 8.885660460335227,
@@ -1415,7 +1415,7 @@
     "warn:Einzelne Modelle über Mittelwind-Grenze",
     "warn:Einzelne Modelle mit Böe über Grenze",
     "warn:Nacht (außerhalb der bürgerlichen Dämmerung)",
-    "warn:Szenarien: 75 % über Grenze"
+    "warn:Zu windig in 7 von 10 Szenarien"
    ],
    "n": 11,
    "med": 9.283378046057882,
@@ -1439,7 +1439,7 @@
     "warn:Einzelne Modelle über Mittelwind-Grenze",
     "stop:Böe 16,3 m/s über 15,0",
     "warn:Nacht (außerhalb der bürgerlichen Dämmerung)",
-    "warn:Szenarien: 76 % über Grenze"
+    "warn:Zu windig in 7 von 10 Szenarien"
    ],
    "n": 11,
    "med": 10.60625285548796,
@@ -1463,7 +1463,7 @@
     "stop:Mittelwind 13,2 m/s über 12,0",
     "stop:Böe 20,1 m/s über 15,0",
     "warn:Nacht (außerhalb der bürgerlichen Dämmerung)",
-    "warn:Szenarien: 75 % über Grenze"
+    "warn:Zu windig in 7 von 10 Szenarien"
    ],
    "n": 10,
    "med": 13.220086828138314,
@@ -1487,7 +1487,7 @@
     "stop:Mittelwind 14,0 m/s über 12,0",
     "stop:Böe 23,3 m/s über 15,0",
     "warn:Nacht (außerhalb der bürgerlichen Dämmerung)",
-    "warn:Szenarien: 82 % über Grenze"
+    "warn:Zu windig in 8 von 10 Szenarien"
    ],
    "n": 10,
    "med": 13.967083333333333,
@@ -1511,7 +1511,7 @@
     "stop:Mittelwind 13,4 m/s über 12,0",
     "stop:Böe 23,1 m/s über 15,0",
     "warn:Nacht (außerhalb der bürgerlichen Dämmerung)",
-    "warn:Szenarien: 90 % über Grenze"
+    "warn:Zu windig in 9 von 10 Szenarien"
    ],
    "n": 9,
    "med": 13.370833333333334,
@@ -1535,7 +1535,7 @@
     "stop:Mittelwind 13,5 m/s über 12,0",
     "stop:Böe 21,9 m/s über 15,0",
     "warn:Nacht (außerhalb der bürgerlichen Dämmerung)",
-    "warn:Szenarien: 92 % über Grenze"
+    "warn:Zu windig in 9 von 10 Szenarien"
    ],
    "n": 9,
    "med": 13.456683310400345,
@@ -1559,16 +1559,16 @@
   "zusammenfassung": "Stärkster Wind gegen 16 Uhr: 8,7 m/s (Spanne 6,8–12,0), Böen ca. 14,5 m/s. Modelle streuen mäßig.",
   "tag": "MI., 21.10. · ARBEITSZEIT 6–19 UHR · HELL 07:20–18:55",
   "warnungen": "✓ Keine amtlichen Warnungen für Stadt Aulendorf (DWD) am gewählten Tag.",
-  "kacheln": "Wind 80–125 m\n1,9\nm/s Median\nBöe 80–125 m\n3,0\nm/s geschätzt\nRichtung\nW\n271° · 80 m\nModelle\n0/16\nüber Grenze\nRisiko Grenzwert ⓘ\n0 %\nvon 71 Szenarien\nTemperatur 80 m\n9 °C\ngefühlt 8 °C",
+  "kacheln": "Wind 80–125 m\n1,9\nm/s Median\nBöe 80–125 m\n3,0\nm/s geschätzt\nRichtung\nW\n271° · 80 m\nModelle\n0/16\nüber Grenze\nZu windig ⓘ\n0 von 10\naus 71 Szenarien\nTemperatur 80 m\n9 °C\ngefühlt 8 °C",
   "gruende": "Alle Werte unter euren Grenzwerten",
   "zeitleiste": 72,
   "matrix": "06 07 08 09 10 11 12 13 14 15 16 17 18 19\nICON-D2 DWD · 2 km 3,0 1,9 2,0 1,5 0,9 0,7 1,1 2,7 5,3 7,1 11,3 5,1 7,9 8,5\nICON-CH1 MeteoSwiss · 1 km 2,5 2,2 1,8 1,1 1,7 1,5 2,2 2,9 3,1 7,3 8,2 6,9 4,2 5,8\nICON-CH2 MeteoSwiss · 2 km 1,5 2,0 2,0 0,7 1,5 1,7 1,9 3,0 3,2 7,4 8,2 7,0 6,5 5,9\nAROME AT GeoSphere · 2,5 km 0,8 2,8 2,0 1,7 2,7 2,0 2,5 2,2 3,3 3,5 7,0 6,3 6,1 5,6\nAROME HD Météo-France · 1,5 km 3,3 3,2 4,0 2,3 1,5 1,3 0,6 2,1 3,2 3,7 7,2 9,3 8,4 7,8\nHARMONIE KNMI · 5,5 km 3,7 3,2 3,3 3,5 1,2 1,5 4,0 4,5 6,0 5,6 8,5 7,6 7,1 5,7\nHARMONIE DMI · 2 km 3,5 1,6 3,1 3,6 2,4 1,9 1,4 3,5 4,6 4,8 7,8 6,4 6,4 6,0\nUKV Met Office · 2 km 4,0 4,0 3,3 1,6 1,7 2,4 3,7 3,5 4,6 4,4 9,0 9,6 7,4 9,1\nICON-EU DWD · 7 km 2,3 1,7 1,1 1,4 1,2 1,5 1,8 1,7 4,5 7,4 10,0 7,3 8,8 8,2\nARPEGE Météo-France · 11 km 5,2 3,9 3,7 3,1 3,4 4,6 4,0 4,4 5,4 11,0 10,7 8,0 8,7 9,5\nIFS HRES ECMWF · 9 km 3,8 3,9 3,3 2,7 2,2 1,5 2,1 4,0 5,0 8,1 9,6 6,9 6,9 7,2\nAIFS (KI) ECMWF · 25 km 2,3 2,1 2,4 2,8 3,4 4,2 5,0 5,8 6,4 7,0 7,5 7,9 8,3 8,6\nUKMO Global Met Office · 10 km 3,3 2,5 2,3 2,7 2,2 2,8 3,5 4,1 4,6 5,1 6,8 8,1 6,3 6,8\nICON Global DWD · 13 km 3,9 3,2 2,0 2,0 2,0 2,3 2,7 2,7 4,0 5,9 9,4 8,7 10,2 11,1\nGFS NOAA · 13 km 4,8 3,3 2,8 1,8 1,7 3,4 4,5 5,4 6,4 11,8 12,03 7,9 8,8 10,4\nGEM Kanada · 15 km 4,7 5,0 4,5 3,4 3,0 3,0 3,2 3,8 4,9 6,6 11,2 9,8 8,2 7,9\nMedian alle Modelle 3,4 3,0 2,6 2,1 1,9 1,9 2,6 3,5 4,6 6,8 8,7 7,7 7,6 7,8",
-  "stundentabelle": "UHR WIND SPANNE BÖE RICHTUNG MODELLE ÜBER GRENZE SZENARIEN REGEN CAPE °C ARBEIT GEFÜHLT GRÜNDE\n 06:00 3,4 0,8–5,2 4,9 SW 0/16 0 % 0,3 0 8 6 Nacht (außerhalb der bürgerlichen Dämmerung)\n 07:00 3,0 1,6–5,0 4,3 SW 0/16 0 % 0,3 0 8 6 Nacht (außerhalb der bürgerlichen Dämmerung)\n 08:00 2,6 1,1–4,5 3,8 SW 0/16 0 % 0,4 0 8 7 –\n 09:00 2,1 0,7–3,6 2,8 WSW 0/16 0 % 0,2 0 8 7 –\n 10:00 1,9 0,9–3,4 2,5 WSW 0/16 0 % 0,0 0 9 8 –\n 11:00 1,9 0,7–4,6 3,0 W 0/16 0 % 0,0 0 9 8 –\n 12:00 2,6 0,6–5,0 3,5 W 0/16 0 % 0,1 0 9 8 –\n 13:00 3,5 1,7–5,8 4,5 W 0/16 0 % 0,5 0 9 8 Regen 0,5 mm/h\n 14:00 4,6 3,1–6,4 7,2 WSW 0/16 0 % 0,8 5 10 7 Regen 0,8 mm/h\n 15:00 6,8 3,5–11,8 10,4 WSW 2/16 0 % 1,6 10 9 6 Einzelne Modelle mit Böe über Grenze · Regen 1,6 mm/h\n 16:00 8,7 6,8–12,0 14,5 WSW 7/16 20 % 1,4 20 9 5 Einzelne Modelle über Mittelwind-Grenze · Einzelne Modelle mit Böe über Grenze · Regen 1,4 mm/h · Szenarien: 20 % über Grenze\n 17:00 7,7 5,1–9,8 13,2 WSW 2/16 14 % 1,1 0 8 4 Einzelne Modelle mit Böe über Grenze · Regen 1,1 mm/h · Szenarien: 14 % über Grenze\n 18:00 7,6 4,2–10,2 11,2 SW 3/16 9 % 0,6 0 7 3 Einzelne Modelle mit Böe über Grenze · Regen 0,6 mm/h · Nacht (außerhalb der bürgerlichen Dämmerung)\n 19:00 7,8 5,6–11,1 10,8 SW 2/16 3 % 0,8 10 7 3 Einzelne Modelle mit Böe über Grenze · Regen 0,8 mm/h · Nacht (außerhalb der bürgerlichen Dämmerung)",
+  "stundentabelle": "UHR WIND SPANNE BÖE RICHTUNG MODELLE ÜBER GRENZE ZU WINDIG REGEN CAPE °C ARBEIT GEFÜHLT GRÜNDE\n 06:00 3,4 0,8–5,2 4,9 SW 0/16 0 von 10 0,3 0 8 6 Nacht (außerhalb der bürgerlichen Dämmerung)\n 07:00 3,0 1,6–5,0 4,3 SW 0/16 0 von 10 0,3 0 8 6 Nacht (außerhalb der bürgerlichen Dämmerung)\n 08:00 2,6 1,1–4,5 3,8 SW 0/16 0 von 10 0,4 0 8 7 –\n 09:00 2,1 0,7–3,6 2,8 WSW 0/16 0 von 10 0,2 0 8 7 –\n 10:00 1,9 0,9–3,4 2,5 WSW 0/16 0 von 10 0,0 0 9 8 –\n 11:00 1,9 0,7–4,6 3,0 W 0/16 0 von 10 0,0 0 9 8 –\n 12:00 2,6 0,6–5,0 3,5 W 0/16 0 von 10 0,1 0 9 8 –\n 13:00 3,5 1,7–5,8 4,5 W 0/16 0 von 10 0,5 0 9 8 Regen 0,5 mm/h\n 14:00 4,6 3,1–6,4 7,2 WSW 0/16 0 von 10 0,8 5 10 7 Regen 0,8 mm/h\n 15:00 6,8 3,5–11,8 10,4 WSW 2/16 0 von 10 1,6 10 9 6 Einzelne Modelle mit Böe über Grenze · Regen 1,6 mm/h\n 16:00 8,7 6,8–12,0 14,5 WSW 7/16 2 von 10 1,4 20 9 5 Einzelne Modelle über Mittelwind-Grenze · Einzelne Modelle mit Böe über Grenze · Regen 1,4 mm/h · Zu windig in 2 von 10 Szenarien\n 17:00 7,7 5,1–9,8 13,2 WSW 2/16 1 von 10 1,1 0 8 4 Einzelne Modelle mit Böe über Grenze · Regen 1,1 mm/h · Zu windig in 1 von 10 Szenarien\n 18:00 7,6 4,2–10,2 11,2 SW 3/16 unter 1 von 10 0,6 0 7 3 Einzelne Modelle mit Böe über Grenze · Regen 0,6 mm/h · Nacht (außerhalb der bürgerlichen Dämmerung)\n 19:00 7,8 5,6–11,1 10,8 SW 2/16 unter 1 von 10 0,8 10 7 3 Einzelne Modelle mit Böe über Grenze · Regen 0,8 mm/h · Nacht (außerhalb der bürgerlichen Dämmerung)",
   "modelltabelle": "NUTZEN MODELL AUFLÖSUNG STATUS MAX. WIND ÜBER GRENZE AB ROHDATEN\n ICON-D2 · DWD 2 km Aktiv 11,3 16 Uhr JSON · CSV\n HARMONIE · KNMI 5,5 km Aktiv 8,5 16 Uhr JSON · CSV\n UKV · Met Office 2 km Aktiv 9,6 nie JSON · CSV\n ICON-EU · DWD 7 km Aktiv 10,0 16 Uhr JSON · CSV\n ARPEGE · Météo-France 11 km Aktiv 11,0 15 Uhr JSON · CSV\n IFS HRES · ECMWF 9 km Aktiv 9,6 nie JSON · CSV\n AIFS (KI) · ECMWF 25 km Aktiv 8,6 nie JSON · CSV\n ICON Global · DWD 13 km Aktiv 11,1 16 Uhr JSON · CSV\n GFS · NOAA 13 km Aktiv 12,0 15 Uhr JSON · CSV\n GEM · Kanada 15 km Aktiv 11,2 16 Uhr JSON · CSV\n ICON-CH1 · MeteoSwiss 1 km Hochgerechnet 8,2 nie JSON · CSV\n ICON-CH2 · MeteoSwiss 2 km Hochgerechnet 8,2 nie JSON · CSV\n AROME AT · GeoSphere 2,5 km Hochgerechnet 7,0 nie JSON · CSV\n AROME HD · Météo-France 1,5 km Hochgerechnet 9,3 17 Uhr JSON · CSV\n HARMONIE · DMI 2 km Hochgerechnet 7,8 nie JSON · CSV\n UKMO Global · Met Office 10 km Hochgerechnet 8,1 nie JSON · CSV"
  },
  "andereStunde": {
   "label": "Heute, 15 Uhr",
-  "kacheln": "Wind 80–125 m\n6,8\nm/s Median\nBöe 80–125 m\n10,4\nm/s geschätzt\nRichtung\nWSW\n248° · 80 m\nModelle\n2/16\nüber Grenze\nRisiko Grenzwert ⓘ\n0 %\nvon 71 Szenarien\nTemperatur 80 m\n9 °C\ngefühlt 6 °C",
+  "kacheln": "Wind 80–125 m\n6,8\nm/s Median\nBöe 80–125 m\n10,4\nm/s geschätzt\nRichtung\nWSW\n248° · 80 m\nModelle\n2/16\nüber Grenze\nZu windig ⓘ\n0 von 10\naus 71 Szenarien\nTemperatur 80 m\n9 °C\ngefühlt 6 °C",
   "gruende": "Einzelne Modelle mit Böe über Grenze\nRegen 1,6 mm/h",
   "profil": "HEUTE · 15 UHR",
   "richtung": "Wind aus\nWSW · 248°\nWeht nach\nONO\nStreuung\n±19° (einig)\nStärke\n6,8 m/s, Böe ca. 10,4\nModelle\n16"
@@ -1580,8 +1580,8 @@
  },
  "modellvergleich": "Alle Modelle treffen hier etwa gleich gut (Fehler im Verlauf 0,66–0,83 m/s). Für oder gegen einzelne Modelle lässt sich daraus keine Empfehlung ableiten.\n\nEINSTUFUNG MODELL FEHLER VERLAUF TREFFER WINDIG FEHLER GESAMT TENDENZ FEHLER BÖE STUNDEN\ngleichwertig AIFS (KI) (ECMWF) 0,67 m/s 63 % 0,69 m/s −0,3 – 420\ngleichwertig AROME AT (GeoSphere) 0,66 m/s 52 % 0,79 m/s −0,6 zu wenig 1,1 m/s 420\ngleichwertig AROME HD (Météo-France) 0,77 m/s 51 % 0,78 m/s −0,0 1,3 m/s 420\ngleichwertig ARPEGE (Météo-France) 0,75 m/s 52 % 0,75 m/s −0,1 1,1 m/s 420\ngleichwertig GEM (Kanada) 0,74 m/s 56 % 0,75 m/s +0,2 1,4 m/s 420\ngleichwertig GFS (NOAA) 0,72 m/s 57 % 0,76 m/s +0,3 1,8 m/s 420\ngleichwertig HARMONIE (DMI) 0,83 m/s 44 % 0,84 m/s −0,2 1,2 m/s 420\ngleichwertig HARMONIE (KNMI) 0,83 m/s 41 % 0,87 m/s −0,4 zu wenig 1,2 m/s 420\ngleichwertig ICON Global (DWD) 0,74 m/s 52 % 0,75 m/s −0,2 1,3 m/s 420\ngleichwertig ICON-CH2 (MeteoSwiss) 0,66 m/s 50 % 0,68 m/s −0,3 1,2 m/s 420\ngleichwertig ICON-D2 (DWD) 0,70 m/s 48 % 0,74 m/s −0,4 zu wenig 1,2 m/s 420\ngleichwertig ICON-EU (DWD) 0,72 m/s 51 % 0,76 m/s −0,3 zu wenig 1,3 m/s 420\ngleichwertig IFS HRES (ECMWF) 0,74 m/s 52 % 0,74 m/s +0,0 – 420\ngleichwertig UKMO Global (Met Office) 0,70 m/s 55 % 0,70 m/s −0,0 1,1 m/s 420\ngleichwertig UKV (Met Office) 0,76 m/s 50 % 0,77 m/s +0,1 1,3 m/s 420\n\nOhne Vergleichsdaten (keine archivierten Vortagesprognosen): ICON-CH1 (MeteoSwiss).\n\nSo wird gerechnet: Vortagesprognose für 10 m gegen Station Aulendorf-Blönried (DWD, 4,8 km entfernt, 567 m ü. NN), 21.9.2026–20.10.2026, nur Arbeitsstunden. Fehler Verlauf: mittlerer Fehler, nachdem die Grundtendenz des Modells abgezogen ist; so werden glatte, grobe Modelle nicht bevorzugt. Treffer windig: Anteil der windigsten 25 % der Stunden, die das Modell richtig erkannt hat. gut: höchstens 15 % mehr Fehler im Verlauf als das beste Modell und mind. 85 % von dessen Trefferquote; deutlich schlechter: mind. 40 % und 0,5 m/s mehr Fehler oder höchstens 60 % der besten Trefferquote. Unterscheiden sich alle um weniger als 30 %, gelten sie als gleichwertig. Gilt für Bodenwind in der Region, nicht für die Nabenhöhe. 10.26, 11:47.",
  "bericht": {
-  "text": "Tagesbericht WetterTestanlage Mittwoch, 21. Oktober 2026 · Arbeitszeit 6–19 Uhr · hell 07:20–18:55 PRÜFENGrün nur 08–13 Uhr (5 h), übrige Stunden prüfen. Stärkster Wind gegen 16 Uhr: 8,7 m/s (Spanne 6,8–12,0), Böen ca. 14,5 m/s. Modelle streuen mäßig. Entscheidung AufsichtführenderEingeschränkt freigegeben Arbeitsfenster 0607080910111213141516171819 GOPrüfenStopNacht EinsatzProjektTestprojektAnlage / TypTesttyp, WEA 1TätigkeitTurmreparaturTeamA. TestAufsichtB. Test Standort & GrenzwerteKoordinaten47,9550° N, 9,6400° ENabe / Rotor125 m / 149 mArbeitsbereich80–125 m (Seilweg bis Nabe)Max. Mittelwind12,0 m/sMax. Böe15,0 m/s Amtliche Warnungen (DWD, GeoSphere Austria) ✓ Keine amtlichen Warnungen für Stadt Aulendorf (DWD) am gewählten Tag. Prognose je Stunde · Wind und Böe im Bereich 80–125 m (m/s) UhrWindSpanneBöeRi.Modelle über GrenzeSzenarienRegenCAPE°C 80 mGefühltGründe PRÜFEN06:00 3,4 0,8–5,2 4,9 SW 0/16 0 % 0,3 0 8 6 Nacht PRÜFEN07:00 3,0 1,6–5,0 4,3 SW 0/16 0 % 0,3 0 8 6 Nacht GO08:00 2,6 1,1–4,5 3,8 SW 0/16 0 % 0,4 0 8 7 – GO09:00 2,1 0,7–3,6 2,8 WSW 0/16 0 % 0,2 0 8 7 – GO10:00 1,9 0,9–3,4 2,5 WSW 0/16 0 % 0,0 0 9 8 – GO11:00 1,9 0,7–4,6 3,0 W 0/16 0 % 0,0 0 9 8 – GO12:00 2,6 0,6–5,0 3,5 W 0/16 0 % 0,1 0 9 8 – PRÜFEN13:00 3,5 1,7–5,8 4,5 W 0/16 0 % 0,5 0 9 8 Regen 0,5 mm/h PRÜFEN14:00 4,6 3,1–6,4 7,2 WSW 0/16 0 % 0,8 5 10 7 Regen 0,8 mm/h PRÜFEN15:00 6,8 3,5–11,8 10,4 WSW 2/16 0 % 1,6 10 9 6 Einzelmodelle Böe über Grenze · Regen 1,6 mm/h PRÜFEN16:00 8,7 6,8–12,0 14,5 WSW 7/16 20 % 1,4 20 9 5 Einzelmodelle Wind über Grenze · Einzelmodelle Böe über Grenze · Regen 1,4 mm/h · Szenarien 20 % PRÜFEN17:00 7,7 5,1–9,8 13,2 WSW 2/16 14 % 1,1 0 8 4 Einzelmodelle Böe über Grenze · Regen 1,1 mm/h · Szenarien 14 % PRÜFEN18:00 7,6 4,2–10,2 11,2 SW 3/16 9 % 0,6 0 7 3 Einzelmodelle Böe über Grenze · Regen 0,6 mm/h · Nacht PRÜFEN19:00 7,8 5,6–11,1 10,8 SW 2/16 3 % 0,8 10 7 3 Einzelmodelle Böe über Grenze · Regen 0,8 mm/h · Nacht Gelb: ab 75 % des Grenzwerts bzw. Hinweis · Rot: über Grenzwert · Schraffiert: Nacht Bemerkungen / TagesverlaufBemerkungzweite Zeile Grundlagen. Abgerufen 21.10.2026, 11:47:44, Bericht erstellt 21.10.2026, 11:47:44. Ausgewertete Modelle (16): ICON-D2 (DWD), ICON-CH1 (MeteoSwiss), ICON-CH2 (MeteoSwiss), AROME AT (GeoSphere), AROME HD (Météo-France), HARMONIE (KNMI), HARMONIE (DMI), UKV (Met Office), ICON-EU (DWD), ARPEGE (Météo-France), IFS HRES (ECMWF), AIFS (KI) (ECMWF), UKMO Global (Met Office), ICON Global (DWD), GFS (NOAA), GEM (Kanada). Szenarien: ICON-D2-EPS (20), ECMWF-ENS (51). Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle, CAPE ab 800 J/kg oder Unwetterwarnung bzw. Warnstufe rot. Prüfen bei einzelnen Modellen über Grenzwert, Schauer, CAPE ab 300 J/kg, Nacht, Windchill ab -27 °C, mind. 30 % der Szenarien über Grenze oder amtlicher Warnung. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0). Entscheidungshilfe; die Freigabe trifft der Aufsichtführende. Datum, Unterschrift AufsichtführenderDatum, Unterschrift Auftraggeber (optional) Prüfsumme (SHA-256) der Berichtsdaten: d0aa32dd3a516b9f889fd35d5d27210f56257f4be1722e4254abd90e8b2970c9 · dieselbe Zahl steht in der zugehörigen JSON-Datei (prüfbar mit tools/pruefen.py).",
-  "pruefsumme": "d0aa32dd3a516b9f889fd35d5d27210f56257f4be1722e4254abd90e8b2970c9"
+  "text": "Tagesbericht WetterTestanlage Mittwoch, 21. Oktober 2026 · Arbeitszeit 6–19 Uhr · hell 07:20–18:55 PRÜFENGrün nur 08–13 Uhr (5 h), übrige Stunden prüfen. Stärkster Wind gegen 16 Uhr: 8,7 m/s (Spanne 6,8–12,0), Böen ca. 14,5 m/s. Modelle streuen mäßig. Entscheidung AufsichtführenderEingeschränkt freigegeben Arbeitsfenster 0607080910111213141516171819 GOPrüfenStopNacht EinsatzProjektTestprojektAnlage / TypTesttyp, WEA 1TätigkeitTurmreparaturTeamA. TestAufsichtB. Test Standort & GrenzwerteKoordinaten47,9550° N, 9,6400° ENabe / Rotor125 m / 149 mArbeitsbereich80–125 m (Seilweg bis Nabe)Max. Mittelwind12,0 m/sMax. Böe15,0 m/s Amtliche Warnungen (DWD, GeoSphere Austria) ✓ Keine amtlichen Warnungen für Stadt Aulendorf (DWD) am gewählten Tag. Prognose je Stunde · Wind und Böe im Bereich 80–125 m (m/s) UhrWindSpanneBöeRi.Modelle über GrenzeZu windigRegenCAPE°C 80 mGefühltGründe PRÜFEN06:00 3,4 0,8–5,2 4,9 SW 0/16 0/10 0,3 0 8 6 Nacht PRÜFEN07:00 3,0 1,6–5,0 4,3 SW 0/16 0/10 0,3 0 8 6 Nacht GO08:00 2,6 1,1–4,5 3,8 SW 0/16 0/10 0,4 0 8 7 – GO09:00 2,1 0,7–3,6 2,8 WSW 0/16 0/10 0,2 0 8 7 – GO10:00 1,9 0,9–3,4 2,5 WSW 0/16 0/10 0,0 0 9 8 – GO11:00 1,9 0,7–4,6 3,0 W 0/16 0/10 0,0 0 9 8 – GO12:00 2,6 0,6–5,0 3,5 W 0/16 0/10 0,1 0 9 8 – PRÜFEN13:00 3,5 1,7–5,8 4,5 W 0/16 0/10 0,5 0 9 8 Regen 0,5 mm/h PRÜFEN14:00 4,6 3,1–6,4 7,2 WSW 0/16 0/10 0,8 5 10 7 Regen 0,8 mm/h PRÜFEN15:00 6,8 3,5–11,8 10,4 WSW 2/16 0/10 1,6 10 9 6 Einzelmodelle Böe über Grenze · Regen 1,6 mm/h PRÜFEN16:00 8,7 6,8–12,0 14,5 WSW 7/16 2/10 1,4 20 9 5 Einzelmodelle Wind über Grenze · Einzelmodelle Böe über Grenze · Regen 1,4 mm/h · Zu windig 2 von 10 PRÜFEN17:00 7,7 5,1–9,8 13,2 WSW 2/16 1/10 1,1 0 8 4 Einzelmodelle Böe über Grenze · Regen 1,1 mm/h · Zu windig 1 von 10 PRÜFEN18:00 7,6 4,2–10,2 11,2 SW 3/16 unter 1/10 0,6 0 7 3 Einzelmodelle Böe über Grenze · Regen 0,6 mm/h · Nacht PRÜFEN19:00 7,8 5,6–11,1 10,8 SW 2/16 unter 1/10 0,8 10 7 3 Einzelmodelle Böe über Grenze · Regen 0,8 mm/h · Nacht Gelb: ab 75 % des Grenzwerts bzw. Hinweis · Rot: über Grenzwert · Schraffiert: Nacht Bemerkungen / TagesverlaufBemerkungzweite Zeile Grundlagen. Abgerufen 21.10.2026, 11:47:44, Bericht erstellt 21.10.2026, 11:47:44. Ausgewertete Modelle (16): ICON-D2 (DWD), ICON-CH1 (MeteoSwiss), ICON-CH2 (MeteoSwiss), AROME AT (GeoSphere), AROME HD (Météo-France), HARMONIE (KNMI), HARMONIE (DMI), UKV (Met Office), ICON-EU (DWD), ARPEGE (Météo-France), IFS HRES (ECMWF), AIFS (KI) (ECMWF), UKMO Global (Met Office), ICON Global (DWD), GFS (NOAA), GEM (Kanada). Szenarien: ICON-D2-EPS (20), ECMWF-ENS (51). Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle, CAPE ab 800 J/kg oder Unwetterwarnung bzw. Warnstufe rot. Prüfen bei einzelnen Modellen über Grenzwert, Schauer, CAPE ab 300 J/kg, Nacht, Windchill ab -27 °C, mind. 30 % der Szenarien über Grenze oder amtlicher Warnung. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0). Entscheidungshilfe; die Freigabe trifft der Aufsichtführende. Datum, Unterschrift AufsichtführenderDatum, Unterschrift Auftraggeber (optional) Prüfsumme (SHA-256) der Berichtsdaten: b516dea091b6784525d73e594e18e0814fa2255238f5ed9a0c78906ee54ee234 · dieselbe Zahl steht in der zugehörigen JSON-Datei (prüfbar mit tools/pruefen.py).",
+  "pruefsumme": "b516dea091b6784525d73e594e18e0814fa2255238f5ed9a0c78906ee54ee234"
  },
  "export": {
   "erstellt": "2026-10-21T09:47:44.066Z",
@@ -3793,7 +3793,7 @@
      "Einzelne Modelle über Mittelwind-Grenze",
      "Einzelne Modelle mit Böe über Grenze",
      "Regen 1,4 mm/h",
-     "Szenarien: 20 % über Grenze"
+     "Zu windig in 2 von 10 Szenarien"
     ]
    },
    {
@@ -3817,7 +3817,7 @@
     "gruende": [
      "Einzelne Modelle mit Böe über Grenze",
      "Regen 1,1 mm/h",
-     "Szenarien: 14 % über Grenze"
+     "Zu windig in 1 von 10 Szenarien"
     ]
    },
    {
@@ -3870,7 +3870,7 @@
    }
   ]
  },
- "ausblick": "Heute 21.10.\nPRÜFEN\nDETAIL OBEN\nWind max\n9 m/s\nSpanne\n7–12\nBöe max\n15 m/s\nSzenarien\n24 %\nRegen\n8,0 mm\n°C\n7 … 10\nMorgen 22.10.\nPRÜFEN\nDETAIL OBEN\nWind max\n9 m/s\nSpanne\n8–11\nBöe max\n13 m/s\nSzenarien\n14 %\nRegen\n0,0 mm\n°C\n4 … 10\nÜbermorgen 23.10.\nPRÜFEN\nDETAIL OBEN\nWind max\n12 m/s\nSpanne\n10–16\nBöe max\n16 m/s\nSzenarien\n82 %\nRegen\n0,1 mm\n°C\n6 … 12\nSa 24.10.\nSTOP\nTENDENZ\nWind max\n14 m/s\nSpanne\n12–14\nBöe max\n21 m/s\nSzenarien\n96 %\nRegen\n0,2 mm\n°C\n4 … 8\nSo 25.10.\nSTOP\nTENDENZ\nWind max\n16 m/s\nSpanne\n13–16\nBöe max\n25 m/s\nSzenarien\n100 %\nRegen\n13,8 mm\n°C\n4 … 10\nMo 26.10.\nGO\nTENDENZ\nWind max\n5 m/s\nSpanne\n5–9\nBöe max\n10 m/s\nSzenarien\n27 %\nRegen\n0,0 mm\n°C\n4 … 10\nDi 27.10.\nPRÜFEN\nTENDENZ\nWind max\n6 m/s\nSpanne\n4–6\nBöe max\n8 m/s\nSzenarien\n35 %\nRegen\n0,0 mm\n°C\n5 … 13\n\nGrobe Tendenz für eure Arbeitszeit und den Arbeitsbereich 80–125 m: höchster Mittelwind und höchste Böe des Tages (Median von ECMWF IFS, ICON Global, GFS, GEM), Regensumme, Temperatur von–bis. Szenarien: Anteil der 51 ECMWF-Szenarien mit mindestens einer Arbeitsstunde über Grenze. Ab Tag 4 nur zur Planung; für die Freigabe gilt die Detailprognose.",
+ "ausblick": "Heute 21.10.\nPRÜFEN\nDETAIL OBEN\nWind max\n9 m/s\nSpanne\n7–12\nBöe max\n15 m/s\nZu windig\n2 von 10\nRegen\n8,0 mm\n°C\n7 … 10\nMorgen 22.10.\nPRÜFEN\nDETAIL OBEN\nWind max\n9 m/s\nSpanne\n8–11\nBöe max\n13 m/s\nZu windig\n1 von 10\nRegen\n0,0 mm\n°C\n4 … 10\nÜbermorgen 23.10.\nPRÜFEN\nDETAIL OBEN\nWind max\n12 m/s\nSpanne\n10–16\nBöe max\n16 m/s\nZu windig\n8 von 10\nRegen\n0,1 mm\n°C\n6 … 12\nSa 24.10.\nSTOP\nTENDENZ\nWind max\n14 m/s\nSpanne\n12–14\nBöe max\n21 m/s\nZu windig\n9 von 10\nRegen\n0,2 mm\n°C\n4 … 8\nSo 25.10.\nSTOP\nTENDENZ\nWind max\n16 m/s\nSpanne\n13–16\nBöe max\n25 m/s\nZu windig\n10 von 10\nRegen\n13,8 mm\n°C\n4 … 10\nMo 26.10.\nGO\nTENDENZ\nWind max\n5 m/s\nSpanne\n5–9\nBöe max\n10 m/s\nZu windig\n2 von 10\nRegen\n0,0 mm\n°C\n4 … 10\nDi 27.10.\nPRÜFEN\nTENDENZ\nWind max\n6 m/s\nSpanne\n4–6\nBöe max\n8 m/s\nZu windig\n3 von 10\nRegen\n0,0 mm\n°C\n5 … 13\n\nGrobe Tendenz für eure Arbeitszeit und den Arbeitsbereich 80–125 m: höchster Mittelwind und höchste Böe des Tages (Median von ECMWF IFS, ICON Global, GFS, GEM), Regensumme, Temperatur von–bis. Zu windig: in wie vielen von 10 möglichen Wetterverläufen (51 ECMWF-Szenarien) an diesem Tag mindestens eine Arbeitsstunde über eurer Grenze liegt. Ab Tag 4 nur zur Planung; für die Freigabe gilt die Detailprognose.",
  "ohneGFS": [
   "warn 2.370",
   "warn 1.265",

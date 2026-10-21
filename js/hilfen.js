@@ -31,6 +31,19 @@ function localParts(ms, tz){
   }catch(e){ return null; }
 }
 const pad2 = x => String(x).padStart(2,"0");
+/* „Zu windig“: Anteil der Szenarien über Grenze als „x von 10“ mit kleinem Farbbalken.
+   Grün unter 10 %, gelb ab 10 %, rot ab 30 % (wie die Schwellen der Ampel). */
+function riskTen(p){
+  if(p==null) return "–";
+  const k = Math.floor(p*10 + 1e-9);   // abgerundet: „3 von 10“ heißt mindestens 30 %, passend zur Ampelschwelle
+  return k === 0 && p > 0 ? "unter 1 von 10" : `${k} von 10`;
+}
+function riskHtml(p, n){
+  if(p==null) return "–";
+  const lvl = p >= 0.3 ? "stop" : p >= 0.1 ? "warn" : "go";
+  const tip = `${n ? Math.round(p*n)+" von "+n+" Szenarien, " : ""}${Math.round(p*100)} %`;
+  return `<span class="risk" title="${tip}"><span class="risk-bar"><span class="risk-fill r-${lvl}" style="width:${Math.max(4, Math.round(p*100))}%"></span></span>${riskTen(p)}</span>`;
+}
 function toLocalStr(ms, tz){
   const p = localParts(ms, tz); if(!p) return null;
   return `${p[0]}-${pad2(p[1]+1)}-${pad2(p[2])}T${pad2(p[3])}:${pad2(p[4])}`;

@@ -298,3 +298,8 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
 .ol-row b{font-size:14px}
 /* schmale Handys: Kopfzeilen-Knöpfe in einer Reihe halten */
 @media (max-width:430px){ .settings-btn .lbl{display:none} header.top .row{gap:6px;flex-wrap:nowrap} }
+/* „Zu windig“: Balken + „x von 10“ */
+.risk{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.risk-bar{display:inline-block;width:38px;height:7px;border-radius:4px;background:var(--line);overflow:hidden}
+.risk-fill{display:block;height:100%;border-radius:4px}
+.r-go{background:var(--go)} .r-warn{background:var(--warn)} .r-stop{background:var(--stop)}

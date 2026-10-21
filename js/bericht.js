@@ -35,7 +35,7 @@ const shortWhy = t => t
   .replace(" (außerhalb der bürgerlichen Dämmerung)", "")
   .replace("Einzelne Modelle über Mittelwind-Grenze", "Einzelmodelle Wind über Grenze")
   .replace("Einzelne Modelle mit Böe über Grenze", "Einzelmodelle Böe über Grenze")
-  .replace(/^Szenarien: (\d+) % über Grenze$/, "Szenarien $1 %");
+  .replace(/^Zu windig in (.+) Szenarien$/, "Zu windig $1");
 function reportRows(hs){
   return hs.map(h => `<tr class="${h.dark?"dk":""}">
     <td><span class="rp-pill ${h.lamp}">${LAMP_TXT[h.lamp]}</span>${hh(h.t)}:00</td>
@@ -44,7 +44,7 @@ function reportRows(hs){
     <td class="${level(h.gMed, site.gust)}">${fmt(h.gMed)}</td>
     <td>${dirName(h.dir.mean)}</td>
     <td class="${h.n && h.over>=h.n/2 ? "over" : h.over>0 ? "near" : ""}">${h.n ? h.over+"/"+h.n : "–"}</td>
-    <td class="${h.pEns==null ? "" : h.pEns>=ENS_WARN ? "over" : h.pEns>=ENS_INFO ? "near" : ""}">${h.pEns==null ? "–" : Math.round(h.pEns*100)+" %"}</td>
+    <td class="${h.pEns==null ? "" : h.pEns>=ENS_WARN ? "over" : h.pEns>=ENS_INFO ? "near" : ""}">${h.pEns==null ? "–" : riskTen(h.pEns).replace(" von ", "/")}</td>
     <td class="${h.rain>=RAIN_WARN ? "near" : ""}">${fmt(h.rain)}</td>
     <td class="${h.cape>=CAPE_STOP ? "over" : h.cape>=CAPE_WARN ? "near" : ""}">${h.cape==null?"–":Math.round(h.cape)}</td>
     <td>${fmt(h.tW,0)}</td>
@@ -92,7 +92,7 @@ async function buildReport(){
 
     <div class="rp-sec">
       <h3>Prognose je Stunde · Wind und Böe im Bereich ${zoneTxt()} (m/s)</h3>
-      <table class="rp-t"><thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Ri.</th><th title="Anzahl der Modelle mit Mittelwind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th>Szenarien</th><th>Regen</th><th>CAPE</th><th>°C ${workH()} m</th><th>Gefühlt</th><th>Gründe</th></tr></thead>
+      <table class="rp-t"><thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Ri.</th><th title="Anzahl der Modelle mit Mittelwind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th title="In wie vielen von 10 Szenarien über Grenze">Zu windig</th><th>Regen</th><th>CAPE</th><th>°C ${workH()} m</th><th>Gefühlt</th><th>Gründe</th></tr></thead>
       <tbody>${reportRows(hs)}</tbody></table>
       <div class="rp-small" style="margin-top:3px">Gelb: ab 75 % des Grenzwerts bzw. Hinweis · Rot: über Grenzwert · Schraffiert: Nacht</div>
     </div>
