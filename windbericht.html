@@ -422,7 +422,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
       </div>
     </div>
     <div class="chart-box"><canvas id="chart" aria-label="Windverlauf im Arbeitsbereich"></canvas></div>
-    <p class="note">Linie: Median aller Modelle, Band: ihre Spanne (schmal = einig). Gepunktet: Böe. Rot: eure Grenzwerte.</p>
+    <p class="note">Linie: Median aller Modelle, Band: ihre Spanne (schmal = einig). Gepunktet: Böe. Rot: eure Grenzwerte (gestrichelt Mittelwind, gepunktet Böe).</p>
   </section>
 
   <!-- Karte + Richtung -->
@@ -1172,6 +1172,21 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
   ctx.fillStyle = css("--accent-ink"); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(label, bx + w/2, a.top + h/2 + 0.5);
   ctx.restore();
 }};
+/* Beschriftung der Grenzlinien rechts am Rand */
+const limitLabels = {id:"limitLabels", afterDatasetsDraw(c){
+  const {ctx, chartArea:a, scales:{y}} = c;
+  const items = [[site.wind, `Grenze Mittelwind ${fmt(site.wind)}`], [site.gust, `Grenze Böe ${fmt(site.gust)}`]]
+    .map(([v, t]) => ({t, py:y.getPixelForValue(v)})).filter(o => o.py >= a.top && o.py <= a.bottom).sort((p,q) => p.py-q.py);
+  // liegen die Linien dicht beieinander, Beschriftungen auseinanderziehen
+  for(let k = 1; k < items.length; k++) if(items[k].py - items[k-1].py < 13) items[k].py = items[k-1].py + 13;
+  ctx.save(); ctx.font = "600 10.5px " + css("--f-body"); ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+  items.forEach(o => {
+    const w = ctx.measureText(o.t).width;
+    ctx.fillStyle = css("--surface"); ctx.globalAlpha = .75; ctx.fillRect(a.right - w - 8, o.py - 14, w + 6, 13); ctx.globalAlpha = 1;
+    ctx.fillStyle = css("--stop"); ctx.fillText(o.t, a.right - 5, o.py - 2);
+  });
+  ctx.restore();
+}};
 /* Zeitmarker mit Maus oder Finger ziehen (waagrecht); senkrechtes Wischen scrollt weiter die Seite */
 function attachScrub(canvasId, chartKey){
   const cv = $(canvasId); if(!cv) return;
@@ -1208,7 +1223,7 @@ function renderChart(){
   const opt = chartBase("m/s in "+zoneTxt());
   opt.plugins.tooltip = {filter: it => !["Minimum","Grenzwert","Grenze Böe"].includes(it.dataset.label), callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y)} m/s`}};
   if(charts.main) charts.main.destroy();
-  charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin]});
+  charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, limitLabels]});
   charts.main.$idxs = idxs; charts.main.update("none");
   $("chartTitle").textContent = "Windverlauf · " + zoneTxt();
 }
