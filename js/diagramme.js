@@ -59,7 +59,7 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
 /* Beschriftung der Grenzlinien rechts am Rand */
 const limitLabels = {id:"limitLabels", afterDatasetsDraw(c){
   const {ctx, chartArea:a, scales:{y}} = c;
-  const items = [[site.wind, `Grenze Mittelwind ${fmt(site.wind)} m/s`], [site.gust, `Grenze Böe ${fmt(site.gust)} m/s`]]
+  const items = [[site.wind, `Grenze Wind ${fmt(site.wind)} m/s`], [site.gust, `Grenze Böe ${fmt(site.gust)} m/s`]]
     .map(([v, t]) => ({t, py:y.getPixelForValue(v)})).filter(o => o.py >= a.top && o.py <= a.bottom).sort((p,q) => p.py-q.py);
   // liegen die Linien dicht beieinander, Beschriftungen auseinanderziehen
   for(let k = 1; k < items.length; k++) if(items[k].py - items[k-1].py < 13) items[k].py = items[k-1].py + 13;

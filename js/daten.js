@@ -47,7 +47,7 @@ async function loadExtras(){
   return ex;
 }
 /* Ensemble: jeder Lauf wird wie ein eigenes Modell auf den Arbeitsbereich gerechnet.
-   Ergebnis je Stunde: Anteil der Läufe mit Mittelwind oder Böe über euren Grenzwerten. */
+   Ergebnis je Stunde: Anteil der Läufe mit Wind oder Böe über euren Grenzwerten. */
 async function loadEnsemble(e){
   try{
     const q = new URLSearchParams({latitude:site.lat, longitude:site.lon, models:e.id, timezone:"auto", forecast_days:"3", wind_speed_unit:"ms",

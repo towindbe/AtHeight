@@ -75,3 +75,14 @@ function applyTheme(light){
 }
 $("themeBtn").onclick = () => applyTheme(document.documentElement.dataset.theme !== "light");
 if(document.documentElement.dataset.theme === "light") applyTheme(true);   // Knopf und Browserleiste passend zur gespeicherten Wahl
+
+/* Infoseite einblenden (? in der Kopfzeile oder Link in der Fußzeile) */
+function infoShow(on){
+  if(on && $("infoFrame").src.endsWith("about:blank")) $("infoFrame").src = "info.html?v=2026-10-21w";
+  $("infoOverlay").hidden = !on; document.body.classList.toggle("info-open", on);
+  if(on) $("infoClose").focus(); else $("infoBtn").focus();
+}
+$("infoBtn").onclick = () => infoShow(true);
+$("infoLink").onclick = e => { e.preventDefault(); infoShow(true); };
+$("infoClose").onclick = () => infoShow(false);
+document.addEventListener("keydown", e => { if(e.key==="Escape" && !$("infoOverlay").hidden) infoShow(false); });

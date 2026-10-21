@@ -33,9 +33,9 @@ const DECISION = {"Freigegeben zum Arbeiten":"go", "Freigegeben":"go", "Eingesch
 const shortWhy = t => t
   .replace(/^Amtliche Warnung (\S+): .*/, "Warnung $1")
   .replace(" (außerhalb der bürgerlichen Dämmerung)", "")
-  .replace("Einzelne Modelle über Mittelwind-Grenze", "Einzelmodelle Wind über Grenze")
+  .replace("Einzelne Modelle über Wind-Grenze", "Einzelmodelle Wind über Grenze")
   .replace("Einzelne Modelle mit Böe über Grenze", "Einzelmodelle Böe über Grenze")
-  .replace(/^Zu windig in (.+) Szenarien$/, "Zu windig $1");
+  .replace(/^Zu windig in (.+) der Szenarien$/, "Zu windig $1");
 function reportRows(hs){
   return hs.map(h => `<tr class="${h.dark?"dk":""}">
     <td><span class="rp-pill ${h.lamp}">${LAMP_TXT[h.lamp]}</span>${hh(h.t)}:00</td>
@@ -44,7 +44,7 @@ function reportRows(hs){
     <td class="${level(h.gMed, site.gust)}">${fmt(h.gMed)}</td>
     <td>${dirName(h.dir.mean)}</td>
     <td class="${h.n && h.over>=h.n/2 ? "over" : h.over>0 ? "near" : ""}">${h.n ? h.over+"/"+h.n : "–"}</td>
-    <td class="${h.pEns==null ? "" : h.pEns>=ENS_WARN ? "over" : h.pEns>=ENS_INFO ? "near" : ""}">${h.pEns==null ? "–" : riskTen(h.pEns).replace(" von ", "/")}</td>
+    <td class="${h.pEns==null ? "" : h.pEns>=ENS_WARN ? "over" : h.pEns>=ENS_INFO ? "near" : ""}">${h.pEns==null ? "–" : riskTen(h.pEns)}</td>
     <td class="${h.rain>=RAIN_WARN ? "near" : ""}">${fmt(h.rain)}</td>
     <td class="${h.cape>=CAPE_STOP ? "over" : h.cape>=CAPE_WARN ? "near" : ""}">${h.cape==null?"–":Math.round(h.cape)}</td>
     <td>${fmt(h.tW,0)}</td>
@@ -81,7 +81,7 @@ async function buildReport(){
     <div class="rp-sec rp-cols">
       <div class="rp-box"><h3>Einsatz</h3>${kv([["Projekt", esc(b.projekt)], ["Anlage / Typ", esc(b.anlage)], ["Tätigkeit", esc(b.taetigkeit)], ["Team", esc(b.team)], ["Aufsicht", esc(b.aufsicht)]])}</div>
       <div class="rp-box"><h3>Standort &amp; Grenzwerte</h3>${kv([["Koordinaten", `${fmt(site.lat,4)}° N, ${fmt(site.lon,4)}° E`], ["Nabe / Rotor", `${site.hub} m / ${site.rotor} m`],
-        ["Arbeitsbereich", zoneTxt() + (zoneTop()!==workH() ? " (Seilweg bis Nabe)" : "")], ["Max. Mittelwind", fmt(site.wind)+" m/s"], ["Max. Böe", fmt(site.gust)+" m/s"]])}</div>
+        ["Arbeitsbereich", zoneTxt() + (zoneTop()!==workH() ? " (Seilweg bis Nabe)" : "")], ["Max. Windstärke", fmt(site.wind)+" m/s"], ["Max. Böe", fmt(site.gust)+" m/s"]])}</div>
     </div>
 
     <div class="rp-sec rp-box rp-warn ${kind==="list" ? (ws.some(w=>w.relevant && w.lvl>=3) ? "stop" : "warn") : kind==="ok" ? "go" : "na"}">
@@ -92,7 +92,7 @@ async function buildReport(){
 
     <div class="rp-sec">
       <h3>Prognose je Stunde · Wind und Böe im Bereich ${zoneTxt()} (m/s)</h3>
-      <table class="rp-t"><thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Ri.</th><th title="Anzahl der Modelle mit Mittelwind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th title="In wie vielen von 10 Szenarien über Grenze">Zu windig</th><th>Regen</th><th>CAPE</th><th>°C ${workH()} m</th><th>Gefühlt</th><th>Gründe</th></tr></thead>
+      <table class="rp-t"><thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Ri.</th><th title="Anzahl der Modelle mit Wind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th title="Anteil der Szenarien über Grenze">Zu windig</th><th>Regen</th><th>CAPE</th><th>°C ${workH()} m</th><th>Gefühlt</th><th>Gründe</th></tr></thead>
       <tbody>${reportRows(hs)}</tbody></table>
       <div class="rp-small" style="margin-top:3px">Gelb: ab 75 % des Grenzwerts bzw. Hinweis · Rot: über Grenzwert · Schraffiert: Nacht</div>
     </div>
@@ -107,7 +107,7 @@ async function buildReport(){
       Szenarien: ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(", ") || "nicht verfügbar"}.
       Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle, CAPE ab ${CAPE_STOP} J/kg oder Unwetterwarnung bzw. Warnstufe rot.
       Prüfen bei einzelnen Modellen über Grenzwert, Schauer, CAPE ab ${CAPE_WARN} J/kg, Nacht, Windchill ab ${CHILL_WARN} °C, mind. ${Math.round(ENS_WARN*100)} % der Szenarien über Grenze oder amtlicher Warnung.
-      Mittelwind als Stundenwert der Modelle; kurzzeitig (z. B. im 10-Minuten-Mittel der Anlage) kann der Wind darüber liegen. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0).
+      Wind als Stundenwert der Modelle; kurzzeitig (z. B. im 10-Minuten-Mittel der Anlage) kann der Wind darüber liegen. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0).
       Entscheidungshilfe; die Freigabe trifft der Aufsichtführende.
     </div>
 

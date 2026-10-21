@@ -117,7 +117,7 @@ function renderOutlook(){
       <span class="rp-pill ${lamp}">${LAMP_TXT[lamp]}</span>
       <span class="ol-kind">${isDetail ? "Detail oben" : "Tendenz"}</span>
       <span class="ol-row"><small>Wind max</small><b>${vTxt}</b></span>
-      <span class="ol-row" title="Höchster Mittelwind des Tages: vom vorsichtigsten bis zum stürmischsten Modell. Schmal = einig, breit = unsicher."><small>Spanne</small>${vSpan}</span>
+      <span class="ol-row" title="Höchster Wind des Tages: vom vorsichtigsten bis zum stürmischsten Modell. Schmal = einig, breit = unsicher."><small>Spanne</small>${vSpan}</span>
       <span class="ol-row"><small>Böe max</small>${gTxt} m/s</span>
       <span class="ol-row"><small>Zu windig</small>${riskHtml(o.pEns, outlook.ens?.members)}</span>
       <span class="ol-row"><small>Regen</small>${rain==null ? "–" : fmt(rain,1)+" mm"}${storm > 0 ? ` <span title="Gewittersignal">⚡</span>` : ""}</span>
@@ -125,8 +125,8 @@ function renderOutlook(){
     </button>`;
   }).join("");
   $("outlook").innerHTML = `<div class="ol-scroll"><div class="ol-days">${cards}</div></div>
-    <p class="note">Grobe Tendenz für eure Arbeitszeit und den Arbeitsbereich ${esc(zoneTxt())}: höchster Mittelwind und höchste Böe des Tages (Median von ${esc(outlook.models.join(", "))}), Regensumme, Temperatur von–bis.
-      <i>Zu windig</i>: in wie vielen von 10 möglichen Wetterverläufen (${outlook.ens ? outlook.ens.members : "–"} ECMWF-Szenarien) an diesem Tag mindestens eine Arbeitsstunde über eurer Grenze liegt. Ab Tag 4 nur zur Planung; für die Freigabe gilt die Detailprognose.</p>`;
+    <p class="note">Grobe Tendenz für eure Arbeitszeit und den Arbeitsbereich ${esc(zoneTxt())}: höchster Wind und höchste Böe des Tages (Median von ${esc(outlook.models.join(", "))}), Regensumme, Temperatur von–bis.
+      <i>Zu windig</i>: Anteil der ${outlook.ens ? outlook.ens.members : "–"} ECMWF-Szenarien, in denen an diesem Tag mindestens eine Arbeitsstunde über eurer Grenze liegt. Ab Tag 4 nur zur Planung; für die Freigabe gilt die Detailprognose.</p>`;
   $("outlook").querySelectorAll(".ol-day.detail").forEach(b => b.onclick = () => {
     state.day = b.dataset.day; state.sel = defaultSel(state.day); render();
     document.querySelector(".hero").scrollIntoView({behavior:"smooth", block:"start"});

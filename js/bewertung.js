@@ -55,8 +55,8 @@ function defaultSel(day){
 function rate(h){
   if(!h.n) return {lamp:"none", why:[]};
   const why = [], add = (l, t) => why.push({l, t});
-  if(h.med!=null && h.med > site.wind) add("stop", `Mittelwind ${fmt(h.med)} m/s über ${fmt(site.wind)}`);
-  else if(h.max!=null && h.max > site.wind) add("warn", "Einzelne Modelle über Mittelwind-Grenze");
+  if(h.med!=null && h.med > site.wind) add("stop", `Wind ${fmt(h.med)} m/s über ${fmt(site.wind)}`);
+  else if(h.max!=null && h.max > site.wind) add("warn", "Einzelne Modelle über Wind-Grenze");
   if(h.gMed!=null && h.gMed > site.gust) add("stop", `Böe ${fmt(h.gMed)} m/s über ${fmt(site.gust)}`);
   else if(h.gMax!=null && h.gMax > site.gust) add("warn", "Einzelne Modelle mit Böe über Grenze");
   if(h.storms >= Math.max(2, Math.ceil(h.n/3))) add("stop", `Gewitter in ${h.storms} von ${h.n} Modellen`);
@@ -65,8 +65,8 @@ function rate(h){
   else if(h.cape!=null && h.cape >= CAPE_WARN) add("warn", `Gewitterenergie CAPE ${Math.round(h.cape)} J/kg`);
   if(h.rain!=null && h.rain >= RAIN_WARN) add("warn", `Regen ${fmt(h.rain)} mm/h`);
   if(h.dark) add("warn", "Nacht (außerhalb der bürgerlichen Dämmerung)");
-  if(h.pEns!=null && h.pEns >= ENS_WARN) add("warn", `Zu windig in ${riskTen(h.pEns)} Szenarien`);
-  else if(h.pEns!=null && h.pEns >= ENS_INFO) add("info", `Zu windig in ${riskTen(h.pEns)} Szenarien`);
+  if(h.pEns!=null && h.pEns >= ENS_WARN) add("warn", `Zu windig in ${riskTen(h.pEns)} der Szenarien`);
+  else if(h.pEns!=null && h.pEns >= ENS_INFO) add("info", `Zu windig in ${riskTen(h.pEns)} der Szenarien`);
   (h.warns||[]).forEach(w => add(!w.relevant ? "info" : w.lvl >= 3 ? "stop" : "warn", `Amtliche Warnung ${w.src}: ${w.title}`));
   if(h.chill!=null && h.chill <= CHILL_WARN) add("warn", `Gefühlt ${fmt(h.chill,0)} °C in ${workH()} m: Erfrierungsgefahr`);
   else if(h.chill!=null && h.chill <= CHILL_INFO) add("info", `Gefühlt ${fmt(h.chill,0)} °C in ${workH()} m: Kälteschutz`);

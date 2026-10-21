@@ -67,7 +67,7 @@ function renderNow(){
     ["Böe "+zoneTxt(), fmt(h.gMed), "m/s geschätzt", h.gMed>site.gust],
     ["Richtung", dirName(h.dir.mean), h.dir.mean==null ? "" : Math.round(h.dir.mean)+"° · "+workH()+" m", false],
     ["Modelle", h.n ? `${h.over}/${h.n}` : "–", "über Grenze", h.over>0 && h.over>=h.n/2],
-    ['Zu windig <button type="button" class="info-btn" id="ensInfoBtn" aria-expanded="false" aria-controls="ensInfo" title="Was bedeutet das?">ⓘ</button>', h.pEns==null ? "–" : riskTen(h.pEns), h.pEns==null ? "Szenarien nicht verfügbar" : riskHtml(h.pEns, h.nEns).replace(/>[^<]*<\/span>$/, `>aus ${h.nEns} Szenarien</span>`), h.pEns!=null && h.pEns>=ENS_WARN],
+    ['Zu windig <button type="button" class="info-btn" id="ensInfoBtn" aria-expanded="false" aria-controls="ensInfo" title="Was bedeutet das?">?</button>', h.pEns==null ? "–" : riskTen(h.pEns), h.pEns==null ? "Szenarien nicht verfügbar" : riskHtml(h.pEns, h.nEns).replace(/>[^<]*<\/span>$/, `>der ${h.nEns} Szenarien</span>`), h.pEns!=null && h.pEns>=ENS_WARN],
     ["Temperatur "+workH()+" m", h.tW==null ? "–" : fmt(h.tW,0)+" °C", h.chill==null ? "" : "gefühlt "+fmt(h.chill,0)+" °C", h.chill!=null && h.chill<=CHILL_WARN]
   ];
   const infoOpen = $("ensInfo") && !$("ensInfo").hidden;

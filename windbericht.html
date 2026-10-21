@@ -12,10 +12,14 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-21u">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-21y">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tw-logo" viewBox="-6 -6 790 512"><g fill="currentColor" stroke="currentColor" stroke-linejoin="miter"><path stroke-width="3" d="M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z"/><path stroke-width="15" d="m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z"/></g></symbol></svg>
+<div class="info-overlay" id="infoOverlay" role="dialog" aria-modal="true" aria-label="So funktioniert der Windbericht" hidden>
+  <div class="io-bar"><b>So funktioniert der Windbericht</b><button type="button" id="infoClose">✕ Schließen</button></div>
+  <iframe id="infoFrame" title="Infoseite" src="about:blank"></iframe>
+</div>
 <div class="wrap">
 
   <header class="top">
@@ -27,6 +31,7 @@
     <div class="row">
       <button id="favBtn" type="button" aria-expanded="false" aria-controls="favPanel"><span class="star">★</span> Anlagen</button>
       <button id="settingsBtn" class="settings-btn" type="button" aria-expanded="false" aria-controls="settings" aria-label="Einstellungen"><span aria-hidden="true">⚙</span><span class="lbl"> Einstellungen</span> <span class="chev" aria-hidden="true"></span></button>
+      <button id="infoBtn" class="icon-btn" type="button" title="So funktioniert der Windbericht" aria-label="Infoseite öffnen" aria-haspopup="dialog">?</button>
       <button id="themeBtn" class="icon-btn" type="button" title="Helle Ansicht" aria-label="Helle Ansicht" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg></button>
       <button id="reloadBtn" class="icon-btn" type="button" title="Wetterdaten neu laden" aria-label="Wetterdaten neu laden">↻</button>
     </div>
@@ -70,10 +75,10 @@
     <fieldset>
       <legend>Grenzwerte im Arbeitsbereich</legend>
       <div class="grid">
-        <label>Max. Mittelwind (m/s)<input id="s_wind" type="number" step="0.5" inputmode="decimal"></label>
+        <label>Max. Windstärke (m/s)<input id="s_wind" type="number" step="0.5" inputmode="decimal"></label>
         <label>Max. Böe (m/s)<input id="s_gust" type="number" step="0.5" inputmode="decimal"></label>
       </div>
-      <p class="note">Die Prognose gibt den mittleren Wind je Stunde an. Kurzzeitig, z. B. im 10-Minuten-Mittel der Anlage, kann der Wind darüber liegen. Wer mehr Puffer will, trägt eine etwas niedrigere Grenze ein. Beispielwerte. Tragt die Vorgaben von Hersteller und Auftraggeber für eure Tätigkeit ein.</p>
+      <p class="note">Beispielwerte. Tragt die Vorgaben von Hersteller und Auftraggeber für eure Tätigkeit ein. Was „Wind“ und „Böe“ genau bedeuten: <a href="info.html" target="_blank" rel="noopener">Infoseite</a>.</p>
     </fieldset>
     <div class="row">
       <button class="primary" id="saveBtn" type="button">Übernehmen</button>
@@ -109,7 +114,7 @@
     </div>
     <div class="now-head needs-data"><b id="nowLabel">Gewählte Stunde</b><span class="note">Andere Stunde: Feld im Arbeitsfenster antippen</span></div>
     <ul class="why needs-data" id="nowWhy"></ul>
-    <p class="info-text needs-data" id="ensInfo" hidden><b>Was sind Szenarien?</b> Die Wetterdienste rechnen ihre Vorhersage nicht nur einmal, sondern viele Male: der DWD 20-mal (ICON-D2-EPS), das europäische Zentrum ECMWF 51-mal (ECMWF-ENS). Jedes Szenario startet mit minimal veränderten Ausgangswerten, weil die Messungen, mit denen eine Vorhersage beginnt, nie ganz genau sind. Liegen die Szenarien eng beieinander, ist die Lage sicher; gehen sie auseinander, ist sie unsicher.<br><br><b>Was die App daraus macht:</b> Das Wetter rechnen die Großrechner der Wetterdienste. Die App übernimmt die fertigen Szenarien, rechnet den Wind jedes Szenarios auf euren Arbeitsbereich um und zählt, in wie vielen Mittelwind oder Böe über euren Grenzwerten liegen. Angezeigt als „Zu windig: 3 von 10“ mit Farbbalken (grün, gelb, rot). Ab 3 von 10 wird die Stunde gelb (Prüfen), ab 1 von 10 erscheint ein Hinweis. Die Zahl ist ein Anteil der Szenarien, keine geprüfte Wahrscheinlichkeit.</p>
+    <p class="info-text needs-data" id="ensInfo" hidden><b>Was sind Szenarien?</b> Die Wetterdienste rechnen ihre Vorhersage nicht nur einmal, sondern viele Male: der DWD 20-mal (ICON-D2-EPS), das europäische Zentrum ECMWF 51-mal (ECMWF-ENS). Jedes Szenario startet mit minimal veränderten Ausgangswerten, weil die Messungen, mit denen eine Vorhersage beginnt, nie ganz genau sind. Liegen die Szenarien eng beieinander, ist die Lage sicher; gehen sie auseinander, ist sie unsicher.<br><br><b>Was die App daraus macht:</b> Das Wetter rechnen die Großrechner der Wetterdienste. Die App übernimmt die fertigen Szenarien, rechnet den Wind jedes Szenarios auf euren Arbeitsbereich um und zählt, in wie vielen Wind oder Böe über euren Grenzwerten liegen. Angezeigt als „Zu windig 30 %“ mit Farbbalken (grün, gelb, rot). Ab 30 % wird die Stunde gelb (Prüfen), ab 10 % erscheint ein Hinweis. Die Zahl ist ein Anteil der Szenarien, keine geprüfte Wahrscheinlichkeit.</p>
     <div class="now needs-data" id="nowBox">
       <div><small>Wind</small><b>–</b><small>m/s Median</small></div>
       <div><small>Böe</small><b>–</b><small>m/s geschätzt</small></div>
@@ -146,7 +151,7 @@
       </div>
     </div>
     <div class="chart-box"><canvas id="chart" aria-label="Windverlauf im Arbeitsbereich"></canvas></div>
-    <p class="note">Linie: Median aller Modelle, Band: ihre Spanne (schmal = einig). Gepunktet: Böe. Rot: eure Grenzwerte (gestrichelt Mittelwind, gepunktet Böe).</p>
+    <p class="note">Linie: Median aller Modelle, Band: ihre Spanne (schmal = einig). Gepunktet: Böe. Rot: eure Grenzwerte (gestrichelt Wind, gepunktet Böe).</p>
   </section>
 
   <!-- Karte + Richtung -->
@@ -228,7 +233,7 @@
   <section class="card needs-data">
     <div class="card-head"><h2>Modell-Matrix</h2><span class="eyebrow" id="mxDay"></span></div>
     <div class="mx" id="matrix"></div>
-    <p class="note">Mittelwind je Modell und Stunde in m/s. Gelb ab 75 % des Grenzwerts, rot über dem Grenzwert. Mit der Maus über ein Feld fahren zeigt auch die Böe. Zeigt, ob nur ein Ausreißer warnt oder fast alle.</p>
+    <p class="note">Wind je Modell und Stunde in m/s. Gelb ab 75 % des Grenzwerts, rot über dem Grenzwert. Mit der Maus über ein Feld fahren zeigt auch die Böe. Zeigt, ob nur ein Ausreißer warnt oder fast alle.</p>
   </section>
 
   <section class="card needs-data">
@@ -249,12 +254,12 @@
 
   <!-- 7-Tage-Ausblick -->
   <section class="card needs-data">
-    <div class="card-head"><h2>Ausblick 7 Tage <button type="button" class="info-btn" id="olInfoBtn" aria-expanded="false" aria-controls="olInfo" title="Was bedeuten die Werte?">ⓘ</button></h2><span class="eyebrow">grobe Tendenz</span></div>
+    <div class="card-head"><h2>Ausblick 7 Tage <button type="button" class="info-btn" id="olInfoBtn" aria-expanded="false" aria-controls="olInfo" title="Was bedeuten die Werte?">?</button></h2><span class="eyebrow">grobe Tendenz</span></div>
     <p class="info-text" id="olInfo" hidden><b>So liest du den Ausblick:</b> Alle Werte gelten für eure Arbeitszeit und den Arbeitsbereich.<br>
-      <b>Wind max:</b> Für jedes Modell wird der stärkste Mittelwind des Tages ermittelt; angezeigt ist der mittlere dieser Werte (Median).<br>
+      <b>Wind max:</b> Für jedes Modell wird der stärkste Wind des Tages ermittelt; angezeigt ist der mittlere dieser Werte (Median).<br>
       <b>Spanne:</b> vom vorsichtigsten bis zum stürmischsten Modell. Schmal (2–3 m/s) heißt: die Modelle sind sich einig, die Prognose ist recht verlässlich. Breit (ab etwa 5 m/s) heißt: unsicher, z. B. weil eine Front zeitlich noch nicht klar ist. Liegt das obere Ende über eurer Grenze, den Tag im Blick behalten.<br>
       <b>Böe max:</b> stärkste geschätzte Böe des Tages (Median der Modelle).<br>
-      <b>Zu windig:</b> in wie vielen von 10 möglichen Wetterverläufen (51 ECMWF-Szenarien) an diesem Tag mindestens eine Arbeitsstunde über eurer Grenze liegt. Balken grün = unter 1 von 10, gelb = ab 1 von 10, rot = ab 3 von 10.<br>
+      <b>Zu windig:</b> Anteil der 51 ECMWF-Szenarien (mögliche Wetterverläufe), in denen an diesem Tag mindestens eine Arbeitsstunde über eurer Grenze liegt. Balken grün = unter 10 %, gelb = ab 10 %, rot = ab 30 %.<br>
       <b>Detail oben / Tendenz:</b> Die ersten 3 Tage stammen aus der Detailprognose mit allen Modellen (antippen wechselt zu diesem Tag). Ab Tag 4 rechnen nur noch 4 Globalmodelle (ECMWF, ICON, GFS, GEM); das ist eine grobe Tendenz für die Planung, nicht für die Freigabe.</p>
     <div id="outlook"></div>
   </section>
@@ -287,7 +292,7 @@
   <footer class="foot">
     <svg class="logo" role="img" aria-label="Logo Tobias Windberg"><use href="#tw-logo"/></svg>
     <div class="foot-text">
-      <p class="foot-by">© 2026 Tobias Windberg · <a href="https://www.windberg.solutions" target="_blank" rel="noopener">www.windberg.solutions</a></p>
+      <p class="foot-by">© 2026 Tobias Windberg · <a href="https://www.windberg.solutions" target="_blank" rel="noopener">www.windberg.solutions</a> · <a href="info.html" id="infoLink">So funktioniert der Windbericht</a></p>
       <p class="note">Wetterdaten: Open-Meteo.com (CC BY 4.0) mit Modellen von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA u. a. Radar: DWD. Satellitenbild: Esri. Ortssuche: OpenStreetMap (Nominatim). Open-Meteo ist kostenlos nur für nicht-kommerzielle Nutzung. Entscheidungshilfe, ersetzt nicht die Beurteilung vor Ort durch den Aufsichtführenden.</p>
     </div>
   </footer>
@@ -296,22 +301,22 @@
 </div>
 
 <!-- Skripte teilen sich den globalen Gültigkeitsbereich; Reihenfolge beachten. Bei Änderungen ?v= erhöhen. -->
-<script src="js/konfiguration.js?v=2026-10-21u"></script>
-<script src="js/hilfen.js?v=2026-10-21u"></script>
-<script src="js/physik.js?v=2026-10-21u"></script>
-<script src="js/daten.js?v=2026-10-21u"></script>
-<script src="js/tageslicht.js?v=2026-10-21u"></script>
-<script src="js/bewertung.js?v=2026-10-21u"></script>
-<script src="js/anzeige.js?v=2026-10-21u"></script>
-<script src="js/diagramme.js?v=2026-10-21u"></script>
-<script src="js/tabellen.js?v=2026-10-21u"></script>
-<script src="js/modellvergleich.js?v=2026-10-21u"></script>
-<script src="js/ausblick.js?v=2026-10-21u"></script>
-<script src="js/karte.js?v=2026-10-21u"></script>
-<script src="js/radar.js?v=2026-10-21u"></script>
-<script src="js/bericht.js?v=2026-10-21u"></script>
-<script src="js/anlagen.js?v=2026-10-21u"></script>
-<script src="js/bedienung.js?v=2026-10-21u"></script>
-<script src="js/start.js?v=2026-10-21u"></script>
+<script src="js/konfiguration.js?v=2026-10-21y"></script>
+<script src="js/hilfen.js?v=2026-10-21y"></script>
+<script src="js/physik.js?v=2026-10-21y"></script>
+<script src="js/daten.js?v=2026-10-21y"></script>
+<script src="js/tageslicht.js?v=2026-10-21y"></script>
+<script src="js/bewertung.js?v=2026-10-21y"></script>
+<script src="js/anzeige.js?v=2026-10-21y"></script>
+<script src="js/diagramme.js?v=2026-10-21y"></script>
+<script src="js/tabellen.js?v=2026-10-21y"></script>
+<script src="js/modellvergleich.js?v=2026-10-21y"></script>
+<script src="js/ausblick.js?v=2026-10-21y"></script>
+<script src="js/karte.js?v=2026-10-21y"></script>
+<script src="js/radar.js?v=2026-10-21y"></script>
+<script src="js/bericht.js?v=2026-10-21y"></script>
+<script src="js/anlagen.js?v=2026-10-21y"></script>
+<script src="js/bedienung.js?v=2026-10-21y"></script>
+<script src="js/start.js?v=2026-10-21y"></script>
 </body>
 </html>

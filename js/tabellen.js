@@ -17,7 +17,7 @@ function renderMatrix(){
   highlightSel();
 }
 
-const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Richtung</th><th title="Anzahl der Modelle mit Mittelwind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th title="In wie vielen von 10 Szenarien Mittelwind oder Böe über Grenze liegen">Zu windig</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th>Gründe</th></tr></thead>`;
+const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind</th><th>Spanne</th><th>Böe</th><th>Richtung</th><th title="Anzahl der Modelle mit Wind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th title="Anteil der Szenarien, in denen Wind oder Böe über Grenze liegen">Zu windig</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th>Gründe</th></tr></thead>`;
 function hourRows(hs, dots){
   return hs.map(h => `<tr>
     <td class="num">${dots?`<span class="dot d-${h.lamp}"></span> `:LAMP_TXT[h.lamp]+" "}${hh(h.t)}:00</td>

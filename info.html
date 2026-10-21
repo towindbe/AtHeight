@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1217">
+<script>try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
+<title>So funktioniert der Windbericht</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-21x">
+<style>
+  .info h2{margin-bottom:2px}
+  .info p,.info li{margin:0;font-size:15px;line-height:1.55}
+  .info ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+  .info table{border-collapse:collapse;width:100%;font-size:14px}
+  .info th,.info td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  .info th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+  .info a{color:var(--accent)}
+  .toc{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px}
+  .tag{display:inline-block;color:#fff;border-radius:4px;padding:0 6px;font:700 12px var(--f-body)}
+  .tag.go{background:var(--go)} .tag.warn{background:var(--warn)} .tag.stop{background:var(--stop)}
+</style>
+</head>
+<body>
+<div class="wrap info">
+  <header class="top">
+    <div style="min-width:0">
+      <div class="eyebrow">Windberg · Windbericht</div>
+      <h1>So funktioniert der Windbericht</h1>
+    </div>
+    <div class="row"><a href="windbericht.html"><button type="button">← Zurück zur App</button></a></div>
+  </header>
+
+  <section class="card">
+    <p>Der Windbericht bewertet für eine bestimmte Anlage, ob der Wind in eurer <b>Arbeitshöhe</b> unter euren <b>Grenzwerten</b> bleibt, und dokumentiert die Prognose im Tagesbericht. Er ist eine <b>Entscheidungshilfe</b>: Die Freigabe trifft der Aufsichtführende, vor Ort und mit eigenem Urteil.</p>
+    <nav class="toc" aria-label="Inhalt">
+      <a href="#wind">Wind und Böe</a><a href="#stunde">Stundenwerte</a><a href="#hoehe">Arbeitsbereich</a><a href="#ampel">Ampel</a>
+      <a href="#szenarien">Zu windig (Szenarien)</a><a href="#modelle">Modelle und Spanne</a><a href="#warnungen">Warnungen</a>
+      <a href="#bericht">Tagesbericht</a><a href="#quellen">Datenquellen und Grenzen</a>
+    </nav>
+  </section>
+
+  <section class="card" id="wind">
+    <h2>Wind und Böe</h2>
+    <table>
+      <tr><th>Begriff</th><th>Bedeutung</th><th>Grenze (Beispiel)</th></tr>
+      <tr><td><b>Wind</b></td><td>der gleichmäßige, mittlere Wind über eine Zeitspanne. Fachlich „Mittelwind“: bei der Anlage über 10 Minuten gemittelt, bei den Wettermodellen über etwa eine Stunde.</td><td>12 m/s</td></tr>
+      <tr><td><b>Böe</b></td><td>kurze Windspitzen von wenigen Sekunden.</td><td>15 m/s</td></tr>
+    </table>
+    <p>Beide Grenzen tragt ihr in den Einstellungen ein, nach den Vorgaben von Betreiber, Hersteller und Auftraggeber. Rot wird es erst <b>über</b> der Grenze; genau 12,0 m/s gilt noch als zulässig.</p>
+    <p>Die Wettermodelle liefern Böen nur in 10 m Höhe. Die Böe in Arbeitshöhe schätzt der Windbericht aus dem Böenfaktor in 10 m (Verhältnis von Böe zu Wind) und rechnet ihn auf die Höhe um.</p>
+  </section>
+
+  <section class="card" id="stunde">
+    <h2>Stundenwerte und 10-Minuten-Mittel</h2>
+    <p>Die Prognose gibt den <b>mittleren Wind je Stunde</b> an. Betreiber nennen ihre Grenze meist im <b>10-Minuten-Mittel</b>, gemessen an der Anlage. Innerhalb einer Stunde schwankt der Wind; das stärkste 10-Minuten-Mittel einer Stunde liegt deshalb oft etwas über dem Stundenwert, bei böigem Wind deutlicher.</p>
+    <p>Kein Wettermodell kann 10-Minuten-Mittel an einer einzelnen Anlage berechnen: Die Modelle rechnen den Durchschnittswind über ein Gitterkästchen von 1 bis 25 km, die schnellen Schwankungen an der Anlage nicht im Einzelnen. Wer mehr Puffer will, trägt eine etwas niedrigere Grenze ein. Später lässt sich der Unterschied mit Messwerten der Anlage (NC2) je Anlage bestimmen.</p>
+  </section>
+
+  <section class="card" id="hoehe">
+    <h2>Arbeitsbereich und Höhe</h2>
+    <ul>
+      <li><b>Arbeitshöhe:</b> die Höhe, in der ihr arbeitet (z. B. 80 m am Turm). Leer = Nabenhöhe.</li>
+      <li><b>Seilweg bis Nabe mitbewerten:</b> ist das Häkchen gesetzt, zählt der stärkste Wind zwischen Arbeitshöhe und Nabe, weil ihr beim Ab- und Aufstieg auch oben im Wind hängt. Angezeigt z. B. als „80–125 m“.</li>
+      <li>Die Modelle liefern Wind in 10, 80, 120 und 180 m. Dazwischen rechnet der Windbericht geradlinig um, darüber mit einem Höhen-Exponenten aus den beiden obersten Höhen. Modelle, die nur 10-m-Wind liefern, werden mit einer Faustformel hochgerechnet und als „hochgerechnet“ gekennzeichnet.</li>
+      <li>Die Temperatur in Arbeitshöhe kommt aus den Höhenwerten der Modelle, sonst 0,65 °C kälter je 100 m. Die gefühlte Temperatur berücksichtigt den Wind (Windchill).</li>
+    </ul>
+  </section>
+
+  <section class="card" id="ampel">
+    <h2>Die Ampel</h2>
+    <p>Jede Stunde wird nach festen Regeln bewertet. Jede Regel hinterlegt ihren Grund; die Gründe stehen unter der gewählten Stunde, in der Stundentabelle und im Tagesbericht.</p>
+    <table>
+      <tr><th>Stufe</th><th>Wann</th></tr>
+      <tr><td><span class="tag stop">STOP</span></td><td>Median aller Modelle über der Wind- oder Böengrenze · Gewitter in mind. einem Drittel der Modelle · Gewitterenergie CAPE ab 800 J/kg · amtliche Unwetterwarnung bzw. Warnstufe rot</td></tr>
+      <tr><td><span class="tag warn">PRÜFEN</span></td><td>einzelne Modelle über einer Grenze · Gewittersignal in einem Modell · CAPE ab 300 J/kg · Regen ab 0,5 mm/h · Nacht (außerhalb der bürgerlichen Dämmerung) · gefühlt −27 °C oder kälter · „Zu windig“ in mind. 30 % der Szenarien · amtliche Warnung zu Wind, Gewitter, Glatteis, Schnee oder Regen</td></tr>
+      <tr><td><span class="tag go">GO</span></td><td>keine der Regeln greift</td></tr>
+    </table>
+    <p><b>Hinweise</b> ohne Einfluss auf die Ampel: Kälteschutz ab gefühlt −10 °C, Hitze ab gefühlt 32 °C, UV-Index ab 6, „Zu windig“ in 10–29 % der Szenarien, Warnungen zu Frost, Nebel, Hitze oder UV.</p>
+    <p>Die Tagesbewertung oben fasst die Stunden eurer Arbeitszeit zusammen, z. B. „Grün nur 10–16 Uhr“.</p>
+  </section>
+
+  <section class="card" id="szenarien">
+    <h2>„Zu windig“ und Szenarien</h2>
+    <p>Die Wetterdienste rechnen ihre Vorhersage nicht nur einmal, sondern viele Male mit minimal veränderten Ausgangswerten, weil die Messungen am Start nie ganz genau sind: der DWD 20-mal (ICON-D2-EPS), das europäische Zentrum ECMWF 51-mal (ECMWF-ENS). Jede dieser Rechnungen ist ein <b>Szenario</b>.</p>
+    <p>Der Windbericht rechnet jedes Szenario auf euren Arbeitsbereich um und zählt, in wie vielen Wind oder Böe über euren Grenzen liegen. <b>„Zu windig 30 %“</b> heißt: in 30 % der möglichen Wetterverläufe wird es zu windig, bei 71 Szenarien also in 21. Der Balken zeigt dasselbe farbig: grün unter 10 %, gelb ab 10 %, rot ab 30 %. Es ist ein Anteil der Szenarien, keine geprüfte Wahrscheinlichkeit.</p>
+  </section>
+
+  <section class="card" id="modelle">
+    <h2>Modelle, Spanne und Modellvergleich</h2>
+    <ul>
+      <li>Der Windbericht nutzt bis zu 16 Wettermodelle von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA, KNMI, DMI und Kanada. Modelle, die den Standort nicht abdecken, fallen automatisch weg. Einzelne Modelle lassen sich in der Modelltabelle per Häkchen ausschließen.</li>
+      <li><b>Median:</b> der mittlere Wert aller Modelle; er ist robust gegen einzelne Ausreißer.</li>
+      <li><b>Spanne:</b> vom vorsichtigsten bis zum stürmischsten Modell. Schmal heißt: die Modelle sind sich einig. Breit heißt: unsicher.</li>
+      <li><b>Modellvergleich:</b> vergleicht für die letzten 30 Tage die Vortagesprognose jedes Modells mit der nächsten Messstation (DWD oder GeoSphere, 10 m) und teilt die Modelle in „gut“, „Mittelfeld“ und „deutlich schlechter“ ein. Liegen alle eng beieinander, gelten sie als gleichwertig.</li>
+      <li><b>Ausblick 7 Tage:</b> Tage 1–3 aus der Detailprognose, ab Tag 4 grobe Tendenz aus vier Globalmodellen und den ECMWF-Szenarien. Nur zur Planung.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="warnungen">
+    <h2>Amtliche Warnungen, Tageslicht, Radar</h2>
+    <ul>
+      <li><b>Warnungen:</b> DWD (Deutschland) und GeoSphere Austria (Österreich) für die Gemeinde des Standorts. Ohne Warnung steht dort „Keine amtlichen Warnungen für …“. Für Standorte außerhalb von Deutschland und Österreich bitte beim zuständigen Wetterdienst selbst prüfen.</li>
+      <li><b>Tageslicht:</b> bürgerliche Dämmerung (Sonne bis 6° unter dem Horizont), aus dem Sonnenstand berechnet. Stunden außerhalb sind schraffiert und gelten als „Prüfen“.</li>
+      <li><b>Regenradar:</b> DWD, letzte 90 Minuten gemessen und bis 2 Stunden Vorhersage; deckt Deutschland und Grenzgebiete ab.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="bericht">
+    <h2>Tagesbericht und Prüfsumme</h2>
+    <p>Der Tagesbericht hält fest, welche Prognose zum Zeitpunkt der Freigabe vorlag: Bewertung, Stundenwerte, Gründe, Warnlage, Regeln und Entscheidung. „Drucken / PDF“ und „Rohdaten speichern (JSON)“ verwenden dieselben Daten. Die <b>Prüfsumme</b> (SHA-256) steht im PDF und in der JSON-Datei; stimmen beide überein, gehören Bericht und Datei zusammen und sind unverändert. Fälschungssicher wird sie erst, wenn sie zusätzlich unveränderlich abgelegt wird, z. B. per E-Mail an den Auftraggeber.</p>
+    <p>Sind die Wetterdaten älter als 3 Stunden, weist die App darauf hin und vermerkt es im Bericht.</p>
+  </section>
+
+  <section class="card" id="quellen">
+    <h2>Datenquellen und Grenzen</h2>
+    <ul>
+      <li>Wetterdaten: <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0) mit Modellen der genannten Wetterdienste. Kostenlos nur für nicht-kommerzielle Nutzung.</li>
+      <li>Messstationen: DWD über Bright Sky, GeoSphere Austria Data Hub. Warnungen: DWD, GeoSphere Austria. Radar: DWD. Satellitenbild: Esri. Ortssuche: OpenStreetMap (Nominatim).</li>
+      <li>Wettermodelle können irren, besonders bei Gewittern, im Gebirge und bei Fronten. Lokale Effekte an der Anlage (Turbulenz, Abschattung, Gelände) erfasst kein Modell vollständig.</li>
+      <li>Der Windbericht ersetzt nicht die Beurteilung vor Ort. Jeder im Team darf die Arbeit jederzeit abbrechen, wenn es unsicher wird.</li>
+    </ul>
+  </section>
+
+  <footer class="foot"><p class="note">© 2026 Tobias Windberg · <a href="https://www.windberg.solutions" target="_blank" rel="noopener">www.windberg.solutions</a> · <a href="windbericht.html">Zurück zur App</a></p></footer>
+</div>
+<script>
+  // eingeblendet in der App: eigene Zurück-Knöpfe ausblenden (die App hat „Schließen“); Esc schließt
+  if(window.self !== window.top){
+    document.querySelectorAll('a[href="windbericht.html"]').forEach(a => { (a.closest(".row") || a).hidden = true; });
+    document.addEventListener("keydown", e => { if(e.key==="Escape") try{ parent.infoShow(false); }catch(err){} });
+  }
+</script>
+</body>
+</html>
