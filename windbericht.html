@@ -96,6 +96,8 @@ legend{font:600 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:upper
 .headline{font:600 23px/1.12 var(--f-display);margin:0}
 .hero-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .seg-day button{padding:8px 14px;font-size:14px}
+.info-btn{border:0;background:none;padding:0 2px;font-size:13px;line-height:1;color:var(--band-line);cursor:pointer;vertical-align:0}
+.info-text{margin:0;font-size:13px;padding:10px 12px;border-radius:8px;background:var(--raised);border:1px solid var(--band-line)}
 .why{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
 .why li{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:3px 9px;border-radius:99px;background:var(--raised);border:1px solid var(--line)}
 .why li.w-stop{border-color:var(--stop);background:var(--stop-bg)} .why li.w-warn{border-color:var(--warn);background:var(--warn-bg)} .why li.w-go{border-color:var(--go);background:var(--go-bg)}
@@ -372,6 +374,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
     </div>
     <div class="now-head needs-data"><b id="nowLabel">Gewählte Stunde</b><span class="note">Andere Stunde: Feld im Arbeitsfenster antippen</span></div>
     <ul class="why needs-data" id="nowWhy"></ul>
+    <p class="info-text needs-data" id="ensInfo" hidden><b>Ensemble:</b> Dasselbe Wettermodell wird viele Male mit leicht veränderten Startwerten gerechnet, weil die Messwerte am Start nie ganz genau sind (ICON-D2-EPS: 20 Läufe, ECMWF-ENS: 51 Läufe). Liegen die Läufe eng beieinander, ist die Lage sicher; laufen sie auseinander, ist sie unsicher. „Risiko Grenzwert“ zeigt, in wie vielen Läufen Mittelwind oder Böe im Arbeitsbereich über euren Grenzwerten liegen. Ab 30 % wird die Stunde gelb (Prüfen), ab 10 % erscheint ein Hinweis. Es ist ein Anteil der Läufe, keine geprüfte Wahrscheinlichkeit.</p>
     <div class="now needs-data" id="nowBox">
       <div><small>Wind</small><b>–</b><small>m/s Median</small></div>
       <div><small>Böe</small><b>–</b><small>m/s geschätzt</small></div>
@@ -1048,10 +1051,12 @@ function renderNow(){
     ["Böe "+zoneTxt(), fmt(h.gMed), "m/s geschätzt", h.gMed>site.gust],
     ["Richtung", dirName(h.dir.mean), h.dir.mean==null ? "" : Math.round(h.dir.mean)+"° · "+workH()+" m", false],
     ["Modelle", h.n ? `${h.over}/${h.n}` : "–", "über Grenze", h.over>0 && h.over>=h.n/2],
-    ["Risiko Grenzwert", h.pEns==null ? "–" : Math.round(h.pEns*100)+" %", h.pEns==null ? "Ensemble nicht verfügbar" : `der ${h.nEns} Ensemble-Läufe`, h.pEns!=null && h.pEns>=ENS_WARN],
+    ['Risiko Grenzwert <button type="button" class="info-btn" id="ensInfoBtn" aria-expanded="false" aria-controls="ensInfo" title="Was bedeutet das?">ⓘ</button>', h.pEns==null ? "–" : Math.round(h.pEns*100)+" %", h.pEns==null ? "Ensemble nicht verfügbar" : `der ${h.nEns} Ensemble-Läufe`, h.pEns!=null && h.pEns>=ENS_WARN],
     ["Temperatur "+workH()+" m", h.tW==null ? "–" : fmt(h.tW,0)+" °C", h.chill==null ? "" : "gefühlt "+fmt(h.chill,0)+" °C", h.chill!=null && h.chill<=CHILL_WARN]
   ];
+  const infoOpen = $("ensInfo") && !$("ensInfo").hidden;
   $("nowBox").innerHTML = cells.map(([a,b,c,o]) => `<div class="${o?"over":""}"><small>${a}</small><b>${b}</b><small>${c}</small></div>`).join("");
+  $("ensInfoBtn")?.setAttribute("aria-expanded", String(infoOpen));
 }
 
 function renderTimeline(){
@@ -1623,6 +1628,11 @@ function toggleSettings(open){
   if(open){ toggleFavs(false); $("settings").scrollIntoView({behavior:"smooth", block:"start"}); }
 }
 $("siteMeta").onclick = () => toggleSettings(true);
+$("nowBox").addEventListener("click", e => {
+  if(!e.target.closest("#ensInfoBtn")) return;
+  const open = $("ensInfo").hidden; $("ensInfo").hidden = !open;
+  $("ensInfoBtn").setAttribute("aria-expanded", String(open));
+});
 $("setupBtn").onclick = () => toggleSettings(true);
 $("settingsBtn").onclick = () => toggleSettings($("settings").hidden);
 $("cancelBtn").onclick = () => { fillSettings(); toggleSettings(false); };
