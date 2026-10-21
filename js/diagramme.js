@@ -1,0 +1,179 @@
+/* Windbericht · Windverlauf, Regen & Gewitter, Höhenprofil, Windrichtung, Zeitmarker */
+"use strict";
+
+/* Plugin: Arbeitszeit hinterlegen + gewählte Stunde markieren */
+const markPlugin = {id:"marks", beforeDatasetsDraw(c){
+  if(!c.$idxs) return;
+  const {ctx, chartArea:a, scales:{x}} = c; ctx.save();
+  ctx.beginPath(); ctx.rect(a.left, a.top, a.right-a.left, a.bottom-a.top); ctx.clip();   // nicht über die Achsenbeschriftung malen
+  const step = x.getPixelForValue(1)-x.getPixelForValue(0);
+  c.$idxs.forEach((gi,k) => {
+    if(!isWork(state.times[gi])){ ctx.fillStyle = css("--raised"); ctx.fillRect(x.getPixelForValue(k)-step/2, a.top, step, a.bottom-a.top); }
+  });
+  ctx.restore();
+}, afterDraw(c){
+  // Tageslicht: gelblicher Balken von Dämmerungsbeginn bis -ende mit Sonnensymbol
+  if(!c.$idxs?.length) return;
+  const dl = daylight(state.times[c.$idxs[0]].slice(0,10)); if(!dl.start || !dl.end) return;
+  const {ctx, chartArea:a, scales:{x}} = c, step = x.getPixelForValue(1) - x.getPixelForValue(0);
+  const h0 = hourOf(state.times[c.$idxs[0]]), toH = t => +t.slice(0,2) + +t.slice(3,5)/60;
+  const xs = Math.max(a.left, x.getPixelForValue(0) + (toH(dl.start) - h0)*step), xe = Math.min(a.right, x.getPixelForValue(0) + (toH(dl.end) - h0)*step);
+  if(xe <= xs) return;
+  const y = a.bottom - 3, sun = "#f2b632";
+  ctx.save();
+  ctx.strokeStyle = sun; ctx.globalAlpha = .9; ctx.lineWidth = 4; ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(xs, y); ctx.lineTo(xe, y); ctx.stroke();
+  // Sonne in der Mitte
+  const cx = (xs + xe)/2, cy = y - 11; ctx.globalAlpha = 1; ctx.fillStyle = sun; ctx.lineWidth = 1.6;
+  ctx.beginPath(); ctx.arc(cx, cy, 3.6, 0, 2*Math.PI); ctx.fill();
+  for(let k = 0; k < 8; k++){ const w = k*Math.PI/4; ctx.beginPath(); ctx.moveTo(cx + Math.cos(w)*5.6, cy + Math.sin(w)*5.6); ctx.lineTo(cx + Math.cos(w)*8, cy + Math.sin(w)*8); ctx.stroke(); }
+  // Uhrzeiten an den Enden
+  ctx.fillStyle = sun; ctx.font = "600 10px " + css("--f-mono"); ctx.textBaseline = "bottom";
+  ctx.textAlign = "left"; ctx.fillText(dl.start, xs + 2, y - 4);
+  ctx.textAlign = "right"; ctx.fillText(dl.end, xe - 2, y - 4);
+  ctx.restore();
+}, afterDatasetsDraw(c){
+  // Verschiebbarer Zeitmarker: Linie mit Griff und Uhrzeit
+  if(!c.$idxs) return;
+  const sk = c.$idxs.indexOf(state.sel); if(sk < 0) return;
+  const {ctx, chartArea:a, scales:{x}} = c, px = x.getPixelForValue(sk), acc = css("--accent");
+  ctx.save();
+  ctx.strokeStyle = acc; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(px, a.top); ctx.lineTo(px, a.bottom); ctx.stroke();
+  const label = hh(state.times[state.sel]) + " Uhr";
+  ctx.font = "600 11px " + css("--f-body"); const w = ctx.measureText(label).width + 14, h = 18;
+  const bx = Math.min(Math.max(px - w/2, a.left), a.right - w);
+  ctx.fillStyle = acc; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, a.top, w, h, 9) : ctx.rect(bx, a.top, w, h); ctx.fill();
+  ctx.fillStyle = css("--accent-ink"); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(label, bx + w/2, a.top + h/2 + 0.5);
+  ctx.restore();
+}};
+/* Beschriftung der Grenzlinien rechts am Rand */
+const limitLabels = {id:"limitLabels", afterDatasetsDraw(c){
+  const {ctx, chartArea:a, scales:{y}} = c;
+  const items = [[site.wind, `Grenze Mittelwind ${fmt(site.wind)}`], [site.gust, `Grenze Böe ${fmt(site.gust)}`]]
+    .map(([v, t]) => ({t, py:y.getPixelForValue(v)})).filter(o => o.py >= a.top && o.py <= a.bottom).sort((p,q) => p.py-q.py);
+  // liegen die Linien dicht beieinander, Beschriftungen auseinanderziehen
+  for(let k = 1; k < items.length; k++) if(items[k].py - items[k-1].py < 13) items[k].py = items[k-1].py + 13;
+  ctx.save(); ctx.font = "600 10.5px " + css("--f-body"); ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+  items.forEach(o => {
+    const w = ctx.measureText(o.t).width;
+    ctx.fillStyle = css("--surface"); ctx.globalAlpha = .75; ctx.fillRect(a.right - w - 8, o.py - 14, w + 6, 13); ctx.globalAlpha = 1;
+    ctx.fillStyle = css("--stop"); ctx.fillText(o.t, a.right - 5, o.py - 2);
+  });
+  ctx.restore();
+}};
+/* Zeitmarker mit Maus oder Finger ziehen (waagrecht); senkrechtes Wischen scrollt weiter die Seite */
+function attachScrub(canvasId, chartKey){
+  const cv = $(canvasId); if(!cv) return;
+  let drag = false;
+  cv.style.touchAction = "pan-y"; cv.style.cursor = "ew-resize";
+  const pick = e => {
+    const c = charts[chartKey]; if(!c || !c.$idxs) return;
+    const r = cv.getBoundingClientRect(), v = c.scales.x.getValueForPixel(e.clientX - r.left);
+    const k = Math.max(0, Math.min(c.$idxs.length - 1, Math.round(v))), gi = c.$idxs[k];
+    if(gi!=null && gi!==state.sel) selectHour(gi);
+  };
+  cv.addEventListener("pointerdown", e => { drag = true; try{ cv.setPointerCapture(e.pointerId); }catch(err){} pick(e); });
+  cv.addEventListener("pointermove", e => { if(drag) pick(e); });
+  ["pointerup", "pointercancel", "lostpointercapture"].forEach(t => cv.addEventListener(t, () => { drag = false; }));
+}
+
+function renderChart(){
+  if(typeof Chart==="undefined"){ $("chartTitle").textContent = "Wind (Diagramm nicht geladen)"; return; }
+  const idxs = dayIdx(), labels = idxs.map(i => hh(state.times[i]));
+  const H = idxs.map(i=>state.hours[i]), r2 = v => v==null?null:+v.toFixed(2);
+  const fg = css("--fg"), stop = css("--stop");
+  let ds = [];
+  if(state.view==="band"){
+    ds.push({label:"Minimum", data:H.map(h=>r2(h.min)), borderColor:"transparent", pointRadius:0, fill:false, tension:.3});
+    ds.push({label:"Maximum", data:H.map(h=>r2(h.max)), borderColor:css("--band-line"), borderWidth:.8, backgroundColor:css("--band"), pointRadius:0, fill:"-1", tension:.3});
+  } else {
+    usableModels().forEach(r => ds.push({label:r.m.name+" · "+r.m.org, data:idxs.map(i => r.series[i] ? r2(r.series[i].v) : null),
+      borderColor:COLORS[MODELS.indexOf(r.m)%COLORS.length], borderWidth:1.3, borderDash:r.m.hi?[]:[4,3], pointRadius:0, tension:.3, spanGaps:true}));
+  }
+  ds.push({label:"Median", data:H.map(h=>r2(h.med)), borderColor:fg, borderWidth:3, pointRadius:0, tension:.3});
+  ds.push({label:"Böe (gesch.)", data:H.map(h=>r2(h.gMed)), borderColor:fg, borderWidth:1.3, borderDash:[2,3], pointRadius:0, tension:.3});
+  ds.push({label:"Grenzwert", data:idxs.map(()=>site.wind), borderColor:stop, borderWidth:1.6, borderDash:[7,4], pointRadius:0});
+  ds.push({label:"Grenze Böe", data:idxs.map(()=>site.gust), borderColor:stop, borderWidth:1, borderDash:[2,4], pointRadius:0});
+  const opt = chartBase("m/s in "+zoneTxt());
+  opt.plugins.tooltip = {filter: it => !["Minimum","Grenzwert","Grenze Böe"].includes(it.dataset.label), callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y)} m/s`}};
+  if(charts.main) charts.main.destroy();
+  charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, limitLabels]});
+  charts.main.$idxs = idxs; charts.main.update("none");
+  $("chartTitle").textContent = "Windverlauf · " + zoneTxt();
+}
+
+function renderRain(){
+  if(typeof Chart==="undefined") return;
+  const idxs = dayIdx(), labels = idxs.map(i => hh(state.times[i])), H = idxs.map(i=>state.hours[i]);
+  const opt = chartBase("mm/h");
+  opt.scales.y.suggestedMax = 2;
+  opt.scales.y2 = {position:"right", beginAtZero:true, suggestedMax:1000, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"IBM Plex Mono", size:10}}, title:{display:true, text:"CAPE J/kg", color:css("--muted")}};
+  opt.plugins.tooltip = {callbacks:{label:c => c.dataset.yAxisID==="y2" ? `CAPE: ${Math.round(c.parsed.y)} J/kg` : `Regen: ${fmt(c.parsed.y)} mm`}};
+  if(charts.rain) charts.rain.destroy();
+  charts.rain = new Chart($("rain"), {data:{labels, datasets:[
+    {type:"bar", label:"Regen", data:H.map(h=>h.rain==null?null:+h.rain.toFixed(2)), backgroundColor:css("--band-line"), borderRadius:2},
+    {type:"line", label:"CAPE", yAxisID:"y2", data:H.map(h=>h.cape==null?null:Math.round(h.cape)), borderColor:css("--warn"), borderWidth:2, pointRadius:0, tension:.3},
+  ]}, options:opt, plugins:[markPlugin]});
+  charts.rain.$idxs = idxs; charts.rain.update("none");
+  $("rainDay").textContent = dayLabel(state.day);
+}
+
+function renderProfile(){
+  if(typeof Chart==="undefined") return;
+  const i = state.sel, h = state.hours[i]; if(!h) return;
+  const tip = site.hub + site.rotor/2, zs = [];
+  for(let z=10; z<=Math.max(200, tip+10); z+=10) zs.push(z);
+  const per = usableModels().map(r => r.series[i]).filter(Boolean);
+  const prof = zs.map(z => { const v = per.map(s => windAt(s.lv, z).v).filter(x=>x!=null); return {z, med:median(v), min:v.length?Math.min(...v):null, max:v.length?Math.max(...v):null}; });
+  const P = (k) => prof.map(p => p[k]==null?null:{x:+p[k].toFixed(2), y:p.z});
+  const opt = chartBase("");
+  opt.scales.x = {type:"linear", beginAtZero:true, ticks:{color:css("--muted"), font:{family:"IBM Plex Mono", size:10}}, grid:{color:css("--line")}, title:{display:true, text:"m/s", color:css("--muted")}};
+  opt.scales.y = {type:"linear", min:0, max:zs[zs.length-1], ticks:{color:css("--muted"), font:{family:"IBM Plex Mono", size:10}, stepSize:40}, grid:{color:css("--line")}, title:{display:true, text:"Höhe über Grund (m)", color:css("--muted")}};
+  opt.interaction = {mode:"nearest", intersect:false, axis:"y"};
+  opt.plugins.tooltip = {callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.x)} m/s in ${c.parsed.y} m`}};
+  const lowTip = Math.max(0, site.hub - site.rotor/2);
+  const refPlugin = {id:"ref", afterDatasetsDraw(c){
+    const {ctx, chartArea:a, scales:{x,y}} = c; ctx.save();
+    ctx.fillStyle = css("--raised"); ctx.globalAlpha=.6; ctx.fillRect(a.left, y.getPixelForValue(tip), a.right-a.left, y.getPixelForValue(lowTip)-y.getPixelForValue(tip)); ctx.globalAlpha=1;
+    ctx.strokeStyle = css("--accent"); ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(a.left, y.getPixelForValue(site.hub)); ctx.lineTo(a.right, y.getPixelForValue(site.hub)); ctx.stroke();
+    ctx.strokeStyle = css("--stop"); ctx.beginPath(); ctx.moveTo(x.getPixelForValue(site.wind), a.top); ctx.lineTo(x.getPixelForValue(site.wind), a.bottom); ctx.stroke();
+    ctx.setLineDash([]); ctx.fillStyle = css("--muted"); ctx.font = "10px IBM Plex Mono";
+    ctx.fillText("Nabe "+site.hub+" m", a.left+4, y.getPixelForValue(site.hub)-4);
+    if(workH() !== site.hub){
+      ctx.strokeStyle = css("--go"); ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(a.left, y.getPixelForValue(workH())); ctx.lineTo(a.right, y.getPixelForValue(workH())); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = css("--go"); ctx.fillText("Arbeit "+workH()+" m", a.left+4, y.getPixelForValue(workH())-4);
+    }
+    ctx.fillText("Blattspitze "+Math.round(tip)+" m", a.left+4, y.getPixelForValue(tip)+12);
+    ctx.restore();
+  }};
+  if(charts.profile) charts.profile.destroy();
+  charts.profile = new Chart($("profile"), {type:"line", data:{datasets:[
+    {label:"Minimum", data:P("min"), borderColor:"transparent", pointRadius:0, fill:false},
+    {label:"Maximum", data:P("max"), borderColor:css("--band-line"), borderWidth:.8, backgroundColor:css("--band"), pointRadius:0, fill:"-1"},
+    {label:"Median", data:P("med"), borderColor:css("--fg"), borderWidth:3, pointRadius:0}
+  ]}, options:opt, plugins:[refPlugin]});
+  $("profileHour").textContent = `${dayLabel(state.times[i].slice(0,10),true)} · ${hh(state.times[i])} Uhr`;
+}
+
+function renderCompass(){
+  const i = state.sel, h = state.hours[i]; if(!h) return;
+  const dirs = usableModels().map(r => r.series[i]).filter(s => s && s.dir!=null);
+  const fg = "var(--fg)", muted = "var(--muted)";
+  const ticks = Array.from({length:36},(_,k)=>{ const a=k*10*Math.PI/180, r1=k%9===0?78:84; return `<line x1="${100+r1*Math.sin(a)}" y1="${100-r1*Math.cos(a)}" x2="${100+90*Math.sin(a)}" y2="${100-90*Math.cos(a)}" stroke="${muted}" stroke-width="${k%9===0?1.5:.6}"/>`; }).join("");
+  const lab = [["N",0],["O",90],["S",180],["W",270]].map(([t,d]) => { const a=d*Math.PI/180; return `<text x="${100+66*Math.sin(a)}" y="${104-66*Math.cos(a)}" text-anchor="middle" font-size="13" font-weight="600" font-family="Barlow Condensed, sans-serif" fill="${fg}">${t}</text>`; }).join("");
+  // Striche: Wind kommt aus Richtung d -> Strich vom Rand zur Mitte
+  const lines = dirs.map(s => { const a=s.dir*Math.PI/180; return `<line x1="${100+88*Math.sin(a)}" y1="${100-88*Math.cos(a)}" x2="${100+48*Math.sin(a)}" y2="${100-48*Math.cos(a)}" stroke="var(--band-line)" stroke-width="2" stroke-linecap="round" opacity=".75"/>`; }).join("");
+  let arrow = "";
+  if(h.dir.mean!=null){
+    arrow = `<g transform="rotate(${h.dir.mean} 100 100)"><line x1="100" y1="14" x2="100" y2="150" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/><polygon points="100,170 88,146 112,146" fill="var(--accent)"/></g>`;
+  }
+  $("compass").innerHTML = `<svg viewBox="0 0 200 200" role="img" aria-label="Windrichtung ${dirName(h.dir.mean)}"><circle cx="100" cy="100" r="90" fill="var(--raised)" stroke="var(--line)"/>${ticks}${lines}${lab}${arrow}<circle cx="100" cy="100" r="5" fill="${fg}"/></svg>`;
+  const sp = h.dir.spread;
+  $("compassFacts").innerHTML = `
+    <dt>Wind aus</dt><dd>${h.dir.mean==null?"–":dirName(h.dir.mean)+" · "+Math.round(h.dir.mean)+"°"}</dd>
+    <dt>Weht nach</dt><dd>${h.dir.mean==null?"–":dirName((h.dir.mean+180)%360)}</dd>
+    <dt>Streuung</dt><dd>${sp==null?"–":"±"+Math.round(sp)+"° "+(sp<20?"(einig)":sp<45?"(mäßig)":"(unsicher)")}</dd>
+    <dt>Stärke</dt><dd>${fmt(h.med)} m/s, Böe ca. ${fmt(h.gMed)}</dd>
+    <dt>Modelle</dt><dd>${dirs.length}</dd>`;
+  $("compassHour").textContent = `${dayLabel(state.times[i].slice(0,10),true)} · ${hh(state.times[i])} Uhr`;
+}
