@@ -1,0 +1,142 @@
+// Automatischer Test des Windberichts.
+//
+// Öffnet die App in einem Browser ohne Fenster, spielt aufgezeichnete Antworten der
+// Wetterdienste ab (tests/fixtures/api.json) und friert die Uhrzeit ein. So ist das
+// Ergebnis bei jedem Lauf identisch. Dann wird ein fester Ablauf durchgespielt und das
+// Ergebnis mit tests/expected.json verglichen.
+//
+//   node tests/run.mjs            Test (vergleicht mit expected.json)
+//   node tests/run.mjs --record   neue Aufzeichnung + neue Referenz (nur bewusst ausführen!)
+//
+// Lokal wird Microsoft Edge verwendet, auf GitHub Actions Chromium.
+import {chromium} from "playwright";
+import http from "node:http";
+import fs from "node:fs";
+import path from "node:path";
+import {fileURLToPath} from "node:url";
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const FIX = path.join(ROOT, "tests", "fixtures", "api.json");
+const EXP = path.join(ROOT, "tests", "expected.json");
+const RECORD = process.argv.includes("--record");
+const OUT = process.argv.find(a => a.startsWith("--out="))?.slice(6);
+
+// Wetter- und Warndienste: werden aufgezeichnet bzw. abgespielt
+const API = /open-meteo\.com|api\.brightsky\.dev|hub\.geosphere\.at|warnungen\.zamg\.at|maps\.dwd\.de/;
+// Kartenkacheln und Radarbilder sind für den Test unwichtig
+const TILES = /arcgisonline\.com|tile\.openstreetmap\.org/;
+
+// kleiner Webserver für den Projektordner
+const TYPES = {".html":"text/html; charset=utf-8", ".js":"text/javascript; charset=utf-8", ".css":"text/css; charset=utf-8", ".svg":"image/svg+xml", ".json":"application/json"};
+const server = http.createServer((req, res) => {
+  const p = path.join(ROOT, decodeURIComponent(new URL(req.url, "http://x").pathname));
+  if(!p.startsWith(ROOT) || !fs.existsSync(p) || fs.statSync(p).isDirectory()){ res.writeHead(404); return res.end(); }
+  res.writeHead(200, {"Content-Type": TYPES[path.extname(p)] || "application/octet-stream"});
+  fs.createReadStream(p).pipe(res);
+});
+await new Promise(r => server.listen(0, "127.0.0.1", r));
+const base = `http://127.0.0.1:${server.address().port}`;
+
+const fixture = RECORD ? {fixed: Date.now(), responses: {}} : JSON.parse(fs.readFileSync(FIX, "utf8"));
+const missing = [];
+
+const browser = await chromium.launch(process.env.CI ? {} : {channel: "msedge"});
+const page = await browser.newPage({viewport: {width: 1100, height: 900}, locale: "de-DE", timezoneId: "Europe/Berlin"});
+const errors = [];
+page.on("pageerror", e => errors.push("Seitenfehler: " + e.message));
+page.on("console", m => { if(m.type()==="error" && !/Failed to load resource/.test(m.text())) errors.push("Konsole: " + m.text()); });
+
+// Uhrzeit einfrieren (vor allen Skripten der Seite)
+await page.addInitScript(fixed => {
+  const RD = Date;
+  class FD extends RD { constructor(...a){ a.length ? super(...a) : super(fixed); } static now(){ return fixed; } }
+  window.Date = FD;
+}, fixture.fixed);
+
+await page.route(TILES, r => r.fulfill({status: 204, body: ""}));
+await page.route(API, async route => {
+  const url = route.request().url();
+  if(RECORD){
+    const resp = await route.fetch();
+    const body = await resp.text();
+    fixture.responses[url] = {status: resp.status(), body};
+    return route.fulfill({status: resp.status(), body, headers: {"content-type": "application/json", "access-control-allow-origin": "*"}});
+  }
+  const hit = fixture.responses[url];
+  if(!hit){ missing.push(url); return route.fulfill({status: 599, body: '{"error":true,"reason":"nicht aufgezeichnet"}', headers: {"access-control-allow-origin": "*"}}); }
+  return route.fulfill({status: hit.status, body: hit.body, headers: {"content-type": "application/json", "access-control-allow-origin": "*"}});
+});
+
+await page.goto(base + "/windbericht.html");
+await page.waitForFunction(() => typeof load === "function" && document.body.classList.contains("no-site"));
+
+// Fester Ablauf. Ergebnis: Werte und sichtbare Texte, die sich nicht ändern dürfen.
+const result = await page.evaluate(async () => {
+  const out = {};
+  const text = sel => (document.querySelector(sel)?.innerText || "").replace(/[ \t]+/g, " ").trim();
+  const hours = () => state.hours.map(h => ({t:h.t, lamp:h.lamp, why:h.why.map(w => w.l+":"+w.t), n:h.n, med:h.med, min:h.min, max:h.max, gMed:h.gMed,
+    over:h.over, pEns:h.pEns, tW:h.tW, chill:h.chill, dark:h.dark, rain:h.rain, cape:h.cape, dir:h.dir.mean, warns:(h.warns||[]).length}));
+
+  out.erststart = text("#headline");
+  siteChosen = true; document.body.classList.remove("no-site");
+  site = {...DEFAULT_SITE, name:"Testanlage", lat:47.955, lon:9.64, hub:125, rotor:149, work:80, path:true, wind:12, gust:15, from:6, to:19, checked:true};
+  await load();
+
+  out.modelle = state.results.map(r => r.m.id + ":" + r.status);
+  out.stunden = hours();
+  out.ansicht = {kopf:text("header.top"), entscheidung:text("#headline"), zusammenfassung:text("#summary"), tag:text("#heroDay"),
+    warnungen:text("#warnBox"), kacheln:text("#nowBox"), gruende:text("#nowWhy"), zeitleiste:document.querySelectorAll("#timeline .tl-cell").length,
+    matrix:text("#matrix"), stundentabelle:text("#hourTable"), modelltabelle:text("#modelTable")};
+
+  selectHour(state.sel + 4);
+  out.andereStunde = {label:text("#nowLabel"), kacheln:text("#nowBox"), gruende:text("#nowWhy"), profil:text("#profileHour"), richtung:text("#compassFacts")};
+
+  document.querySelectorAll("#dayTabs button")[1].click();
+  out.morgen = {entscheidung:text("#headline"), zusammenfassung:text("#summary"), tage:text("#dayTabs")};
+  document.querySelectorAll("#dayTabs button")[0].click();
+
+  await computeRanking();
+  out.modellvergleich = text("#rankOut").replace(/Berechnet [^.]*\./, "");
+
+  r_project.value = "Testprojekt"; r_turbine.value = "Testtyp, WEA 1"; r_team.value = "A. Test"; r_lead.value = "B. Test";
+  r_task.value = "Turmreparatur"; r_decision.value = "Eingeschränkt freigegeben"; r_notes.value = "Bemerkung\nzweite Zeile";
+  const rep = await buildReport();
+  out.bericht = {text: report.innerText.replace(/\s+/g, " ").trim(), pruefsumme: rep.hash};
+  out.export = rep.snap;
+
+  setModelUsed("gfs_global", false);
+  out.ohneGFS = hours().map(h => h.lamp + " " + (h.med==null ? "-" : h.med.toFixed(3)));
+  setModelUsed("gfs_global", true);
+  return out;
+});
+
+await browser.close();
+server.close();
+
+if(RECORD){
+  fs.mkdirSync(path.dirname(FIX), {recursive: true});
+  fs.writeFileSync(FIX, JSON.stringify(fixture));
+  fs.writeFileSync(EXP, JSON.stringify(result, null, 1));
+  console.log(`Aufgezeichnet: ${Object.keys(fixture.responses).length} Antworten, Referenz gespeichert.`);
+  if(errors.length){ console.log("Fehler beim Aufzeichnen:\n  " + errors.join("\n  ")); process.exit(1); }
+  process.exit(0);
+}
+if(OUT) fs.writeFileSync(OUT, JSON.stringify(result, null, 1));
+
+// Vergleich mit der Referenz
+const expected = JSON.parse(fs.readFileSync(EXP, "utf8"));
+const diffs = [];
+(function cmp(a, b, p){
+  if(typeof a !== typeof b || Array.isArray(a) !== Array.isArray(b) || (a===null) !== (b===null)) return diffs.push(`${p}: erwartet ${JSON.stringify(a)?.slice(0,120)}, erhalten ${JSON.stringify(b)?.slice(0,120)}`);
+  if(a && typeof a === "object"){
+    for(const k of new Set([...Object.keys(a), ...Object.keys(b)])) cmp(a[k], b[k], p ? `${p}.${k}` : k);
+  } else if(a !== b) diffs.push(`${p}: erwartet ${JSON.stringify(a)?.slice(0,160)}, erhalten ${JSON.stringify(b)?.slice(0,160)}`);
+})(expected, result, "");
+
+if(missing.length) errors.push(`${missing.length} Abfragen nicht in der Aufzeichnung, z. B. ${missing[0].slice(0,140)}`);
+if(diffs.length || errors.length){
+  console.log(`TEST FEHLGESCHLAGEN: ${diffs.length} Abweichung(en), ${errors.length} Fehler`);
+  [...errors, ...diffs.slice(0, 40)].forEach(d => console.log("  " + d));
+  process.exit(1);
+}
+console.log("TEST OK: App verhält sich wie die Referenz, keine Fehler.");
