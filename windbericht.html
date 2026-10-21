@@ -65,6 +65,10 @@ header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:1
 header.top{position:relative}
 footer.foot{display:flex;align-items:center;gap:14px;border-top:1px solid var(--line);padding-top:14px;margin-top:4px}
 .foot .logo{width:56px;height:36px;flex:none;color:var(--muted)}
+.foot-text{display:flex;flex-direction:column;gap:6px;min-width:0}
+.foot-by{margin:0;font-size:13px;font-weight:600;color:var(--fg)}
+.foot-by a{color:var(--accent);text-decoration:none}
+.foot-by a:hover{text-decoration:underline}
 .site-meta{display:flex;gap:4px 12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);background:none;border:0;padding:2px 0;text-align:left;font-weight:400;cursor:pointer}
 .site-meta:hover{color:var(--fg)}
 .site-meta:empty{display:none}
@@ -543,7 +547,10 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
 
   <footer class="foot">
     <svg class="logo" role="img" aria-label="Logo Tobias Windberg"><use href="#tw-logo"/></svg>
-    <p class="note">Wetterdaten: Open-Meteo.com (CC BY 4.0) mit Modellen von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA u. a. Radar: DWD. Satellitenbild: Esri. Ortssuche: OpenStreetMap (Nominatim). Open-Meteo ist kostenlos nur für nicht-kommerzielle Nutzung. Entscheidungshilfe, ersetzt nicht die Beurteilung vor Ort durch den Aufsichtführenden.</p>
+    <div class="foot-text">
+      <p class="foot-by">© 2026 Tobias Windberg · <a href="https://www.windberg.solutions" target="_blank" rel="noopener">www.windberg.solutions</a></p>
+      <p class="note">Wetterdaten: Open-Meteo.com (CC BY 4.0) mit Modellen von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA u. a. Radar: DWD. Satellitenbild: Esri. Ortssuche: OpenStreetMap (Nominatim). Open-Meteo ist kostenlos nur für nicht-kommerzielle Nutzung. Entscheidungshilfe, ersetzt nicht die Beurteilung vor Ort durch den Aufsichtführenden.</p>
+    </div>
   </footer>
 
   <section id="report"></section>
