@@ -25,18 +25,21 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
   const h0 = hourOf(state.times[c.$idxs[0]]), toH = t => +t.slice(0,2) + +t.slice(3,5)/60;
   const xs = Math.max(a.left, x.getPixelForValue(0) + (toH(dl.start) - h0)*step), xe = Math.min(a.right, x.getPixelForValue(0) + (toH(dl.end) - h0)*step);
   if(xe <= xs) return;
-  const y = a.bottom - 3, sun = "#f2b632";
+  // eigener Streifen unterhalb der Zeichenfläche (Platz über ticks.padding), überdeckt keine Daten
+  const y = a.bottom + 8, sun = "#f2b632";
   ctx.save();
-  ctx.strokeStyle = sun; ctx.globalAlpha = .9; ctx.lineWidth = 4; ctx.lineCap = "round";
+  ctx.strokeStyle = sun; ctx.lineWidth = 3; ctx.lineCap = "round";
   ctx.beginPath(); ctx.moveTo(xs, y); ctx.lineTo(xe, y); ctx.stroke();
-  // Sonne in der Mitte
-  const cx = (xs + xe)/2, cy = y - 11; ctx.globalAlpha = 1; ctx.fillStyle = sun; ctx.lineWidth = 1.6;
-  ctx.beginPath(); ctx.arc(cx, cy, 3.6, 0, 2*Math.PI); ctx.fill();
-  for(let k = 0; k < 8; k++){ const w = k*Math.PI/4; ctx.beginPath(); ctx.moveTo(cx + Math.cos(w)*5.6, cy + Math.sin(w)*5.6); ctx.lineTo(cx + Math.cos(w)*8, cy + Math.sin(w)*8); ctx.stroke(); }
-  // Uhrzeiten an den Enden
-  ctx.fillStyle = sun; ctx.font = "600 10px " + css("--f-mono"); ctx.textBaseline = "bottom";
-  ctx.textAlign = "left"; ctx.fillText(dl.start, xs + 2, y - 4);
-  ctx.textAlign = "right"; ctx.fillText(dl.end, xe - 2, y - 4);
+  // kleine Sonne in der Mitte, mit Hintergrund freigestellt
+  const cx = (xs + xe)/2;
+  ctx.fillStyle = css("--surface"); ctx.beginPath(); ctx.arc(cx, y, 7.5, 0, 2*Math.PI); ctx.fill();
+  ctx.fillStyle = sun; ctx.lineWidth = 1.4;
+  ctx.beginPath(); ctx.arc(cx, y, 2.8, 0, 2*Math.PI); ctx.fill();
+  for(let k = 0; k < 8; k++){ const w = k*Math.PI/4; ctx.beginPath(); ctx.moveTo(cx + Math.cos(w)*4.4, y + Math.sin(w)*4.4); ctx.lineTo(cx + Math.cos(w)*6.4, y + Math.sin(w)*6.4); ctx.stroke(); }
+  // Uhrzeiten links und rechts neben dem Balken
+  ctx.font = "600 9.5px " + css("--f-mono"); ctx.textBaseline = "middle";
+  ctx.textAlign = "right"; ctx.fillText(dl.start, xs - 5, y + 0.5);
+  ctx.textAlign = "left"; ctx.fillText(dl.end, xe + 5, y + 0.5);
   ctx.restore();
 }, afterDatasetsDraw(c){
   markPlugin.daylightDraw(c);   // vor dem Infofenster zeichnen, damit es obenauf liegt
@@ -101,7 +104,7 @@ function renderChart(){
   ds.push({label:"Böe (gesch.)", data:H.map(h=>r2(h.gMed)), borderColor:fg, borderWidth:1.3, borderDash:[2,3], pointRadius:0, tension:.3});
   ds.push({label:"Grenzwert", data:idxs.map(()=>site.wind), borderColor:stop, borderWidth:1.6, borderDash:[7,4], pointRadius:0});
   ds.push({label:"Grenze Böe", data:idxs.map(()=>site.gust), borderColor:stop, borderWidth:1, borderDash:[2,4], pointRadius:0});
-  const opt = chartBase("m/s in "+zoneTxt());
+  const opt = chartBase("m/s in "+zoneTxt()); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
   opt.plugins.tooltip = {filter: it => !["Minimum","Grenzwert","Grenze Böe"].includes(it.dataset.label), callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y)} m/s`}};
   if(charts.main) charts.main.destroy();
   charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, limitLabels]});
@@ -112,7 +115,7 @@ function renderChart(){
 function renderRain(){
   if(typeof Chart==="undefined") return;
   const idxs = dayIdx(), labels = idxs.map(i => hh(state.times[i])), H = idxs.map(i=>state.hours[i]);
-  const opt = chartBase("mm/h");
+  const opt = chartBase("mm/h"); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
   opt.scales.y.suggestedMax = 2;
   opt.scales.y2 = {position:"right", beginAtZero:true, suggestedMax:1000, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"IBM Plex Mono", size:10}}, title:{display:true, text:"CAPE J/kg", color:css("--muted")}};
   opt.plugins.tooltip = {callbacks:{label:c => c.dataset.yAxisID==="y2" ? `CAPE: ${Math.round(c.parsed.y)} J/kg` : `Regen: ${fmt(c.parsed.y)} mm`}};
@@ -130,7 +133,7 @@ function renderTemp(){
   const idxs = dayIdx(), labels = idxs.map(i => hh(state.times[i])), H = idxs.map(i=>state.hours[i]);
   const r1 = v => v==null ? null : +v.toFixed(1);
   const vals = H.flatMap(h => [h.tW, h.chill]).filter(v => v!=null), lo = vals.length ? Math.min(...vals) : 0;
-  const opt = chartBase("°C");
+  const opt = chartBase("°C"); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
   opt.scales.y.beginAtZero = false;
   opt.plugins.tooltip = {filter: it => !it.dataset.ref, callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y)} °C`}};
   const ds = [
