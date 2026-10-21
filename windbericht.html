@@ -212,6 +212,9 @@ table.t th,table.t td{padding:6px 8px;border-bottom:1px solid var(--line);text-a
 table.t th:first-child,table.t td:first-child{text-align:left}
 table.t th{font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
 td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+table.t td.use{width:1%;text-align:center}
+table.t td.use input{width:18px;height:18px;margin:0;accent-color:var(--accent);cursor:pointer}
+table.t tr.excl td:not(.use){opacity:.45}
 table.t td.why-cell{text-align:left;white-space:normal;min-width:220px;font-size:12px;color:var(--muted)}
 .over{color:var(--stop);font-weight:600}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle}
@@ -491,7 +494,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
   <section class="card needs-data">
     <h2>Modelle am Standort</h2>
     <div class="scroll"><table class="t" id="modelTable"></table></div>
-    <p class="note">Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung.</p>
+    <p class="note">Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung. Mit dem Häkchen lassen sich einzelne Modelle für diese Anlage ausschließen, z. B. grobe Globalmodelle im Gebirge. Die Auswahl wird mit der Anlage gespeichert.</p>
   </section>
 
   <!-- Tagesbericht -->
@@ -826,9 +829,21 @@ async function load(){
     if(n===0) return {...r, status:"outside", series};
     return {...r, status: series.some(s => s && s.ext) ? "extrap" : "ok", series, n};
   });
-  const usable = results.filter(r => r.status==="ok" || r.status==="extrap");
   state.off = okAny.off; state.tz = okAny.tz;
-  const hours = times.map((t,i) => {
+  const hours = computeHours(results, times);
+  const nk = nowKey(), today = nk.slice(0,10);
+  const startDay = new Date().getHours() > site.to ? times.find(t => t.slice(0,10) > today)?.slice(0,10) : today;
+  const keepDay = state.day && times.some(t=>t.startsWith(state.day)) ? state.day : (startDay && times.some(t=>t.startsWith(startDay)) ? startDay : times[0].slice(0,10));
+  state = {...state, results, times, hours, fetchedAt:new Date(), day:keepDay, tz:okAny.tz};
+  state.sel = defaultSel(state.day);
+  render();
+}
+/* Modelle, die in die Bewertung eingehen: aktiv und nicht von Hand ausgeschlossen */
+const isExcluded = r => (site.excluded||[]).includes(r.m.id);
+const isUsed = r => (r.status==="ok" || r.status==="extrap") && !isExcluded(r);
+function computeHours(results, times){
+  const usable = results.filter(isUsed);
+  return times.map((t,i) => {
     const pts = usable.map(r => ({r, s:r.series[i]})).filter(x => x.s);
     const vs = pts.map(x=>x.s.v), gs = pts.map(x=>x.s.g).filter(v=>v!=null);
     const h = {t, i, n:pts.length, med:median(vs), min:vs.length?Math.min(...vs):null, max:vs.length?Math.max(...vs):null,
@@ -850,11 +865,18 @@ async function load(){
     Object.assign(h, rate(h));
     return h;
   });
-  const nk = nowKey(), today = nk.slice(0,10);
-  const startDay = new Date().getHours() > site.to ? times.find(t => t.slice(0,10) > today)?.slice(0,10) : today;
-  const keepDay = state.day && times.some(t=>t.startsWith(state.day)) ? state.day : (startDay && times.some(t=>t.startsWith(startDay)) ? startDay : times[0].slice(0,10));
-  state = {...state, results, times, hours, fetchedAt:new Date(), day:keepDay, tz:okAny.tz};
-  state.sel = defaultSel(state.day);
+}
+// Häkchen in der Modelltabelle: neu bewerten ohne neuen Abruf
+function setModelUsed(id, used){
+  const ex = new Set(site.excluded||[]);
+  used ? ex.delete(id) : ex.add(id);
+  if(!state.results.some(r => (r.status==="ok"||r.status==="extrap") && !ex.has(r.m.id))){ alert("Mindestens ein Modell muss in die Bewertung eingehen."); renderModelTable(); return; }
+  const prev = site;
+  site = {...site, excluded:[...ex]};
+  const favs = loadFavs(), k = favs.findIndex(f => sameSpot(f.site, prev));
+  if(k >= 0){ favs[k] = {name:site.name, site:{...site}}; saveFavs(favs); }
+  saveSite();
+  state.hours = computeHours(state.results, state.times);
   render();
 }
 function defaultSel(day){
@@ -925,7 +947,7 @@ function daylight(day){
 }
 const isWork = t => hourOf(t)>=site.from && hourOf(t)<=site.to;
 const dayHours = day => state.hours.filter(h => h.t.startsWith(day) && isWork(h.t));
-const usableModels = () => state.results.filter(r => r.status==="ok"||r.status==="extrap");
+const usableModels = () => state.results.filter(isUsed);
 
 function dayLabel(d, short){
   const today = state.times[0].slice(0,10);
@@ -1234,17 +1256,20 @@ function renderModelTable(){
   const label = {ok:["Aktiv","b-ok"], extrap:["Hochgerechnet","b-ext"], outside:["Deckt Standort nicht ab","b-out"], error:["Nicht abrufbar","b-err"]};
   const order = {ok:0, extrap:1, outside:2, error:3};
   const rows = [...state.results].sort((a,b)=> order[a.status]-order[b.status] || (b.m.hi-a.m.hi)).map(r => {
-    const [txt, cls] = label[r.status];
+    const can = r.status==="ok" || r.status==="extrap", off = can && isExcluded(r);
+    const [txt, cls] = off ? ["Ausgeschlossen","b-out"] : label[r.status];
     let mx="–", first="–";
     if(r.series){
       const pts = idxs.map(i=>r.series[i] ? {t:state.times[i], ...r.series[i]} : null).filter(Boolean);
       if(pts.length){ mx = fmt(Math.max(...pts.map(p=>p.v))); const f = pts.find(p=>p.v>site.wind || (p.g!=null && p.g>site.gust)); first = f ? hh(f.t)+" Uhr" : "nie"; }
     }
-    return `<tr><td>${esc(r.m.name)} <span class="muted">· ${esc(r.m.org)}</span></td><td>${esc(r.m.res)}</td>
+    return `<tr class="${off ? "excl" : ""}"><td class="use">${can ? `<input type="checkbox" data-model="${esc(r.m.id)}" ${off ? "" : "checked"} aria-label="${esc(r.m.name)} (${esc(r.m.org)}) verwenden">` : ""}</td>
+      <td>${esc(r.m.name)} <span class="muted">· ${esc(r.m.org)}</span></td><td>${esc(r.m.res)}</td>
       <td><span class="badge ${cls}" title="${esc(r.reason||"")}">${txt}</span></td><td class="num">${mx}</td><td class="num">${first}</td>
       <td class="num raw"><a href="${esc(apiUrl(r.m))}" target="_blank" rel="noopener" title="Rohdaten dieses Modells direkt von Open-Meteo">JSON</a> · <a href="${esc(apiUrl(r.m,"csv"))}" target="_blank" rel="noopener" title="Als CSV, z. B. für Excel">CSV</a></td></tr>`;
   });
-  $("modelTable").innerHTML = `<thead><tr><th>Modell</th><th>Auflösung</th><th>Status</th><th>Max. Wind</th><th>Über Grenze ab</th><th class="raw">Rohdaten</th></tr></thead><tbody>${rows.join("")}</tbody>`;
+  $("modelTable").innerHTML = `<thead><tr><th title="Häkchen: Modell geht in die Bewertung ein">Nutzen</th><th>Modell</th><th>Auflösung</th><th>Status</th><th>Max. Wind</th><th>Über Grenze ab</th><th class="raw">Rohdaten</th></tr></thead><tbody>${rows.join("")}</tbody>`;
+  $("modelTable").querySelectorAll("input[data-model]").forEach(c => c.onchange = () => setModelUsed(c.dataset.model, c.checked));
 }
 
 /* ---------- Karte ---------- */
@@ -1352,7 +1377,7 @@ function applyPending(){
   if(!pending) return;
   const lat = +pending.lat.toFixed(5), lon = +pending.lng.toFixed(5);
   const name = $("pickName").value.trim() || pendingName || `Standort ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
-  site = {...site, lat, lon, name, checked: pendingDrag ? site.checked : false};
+  site = {...site, lat, lon, name, checked: pendingDrag ? site.checked : false, excluded: pendingDrag ? site.excluded : []};
   if($("pickFav").checked) upsertFav();
   pending = null; pendingName = null;
   $("pickBar").hidden = true; map.getContainer().classList.remove("picking");
@@ -1443,7 +1468,7 @@ function snapshot(){
     warnungen: allWarnings().map(w => ({quelle:w.src, stufe:w.lvl, titel:w.title, ampelrelevant:w.relevant, beginn:isFinite(w.start)?new Date(w.start).toISOString():null, ende:isFinite(w.end)?new Date(w.end).toISOString():null})),
     fazit:{ampel:state.summary?.lamp, text:(state.summary?.head||"")+" "+(state.summary?.text||"")},
     bereich:{arbeitshoehe:workH(), bis:zoneTop(), text:zoneTxt()},
-    modelle: state.results.map(r=>({id:r.m.id, name:r.m.name, anbieter:r.m.org, status:r.status, abfrage:apiUrl(r.m),
+    modelle: state.results.map(r=>({id:r.m.id, name:r.m.name, anbieter:r.m.org, status:isExcluded(r) && (r.status==="ok"||r.status==="extrap") ? "ausgeschlossen" : r.status, abfrage:apiUrl(r.m),
       werte: r.series ? dayHours(state.day).map(h => { const s = r.series[h.i]; return s ? {zeit:h.t, utc:utcStr(h.t), wind:s.v, boe:s.g, richtung:s.dir, hochgerechnet:s.ext} : null; }) : null})),
     stunden: dayHours(state.day).map(h=>({zeit:h.t, utc:utcStr(h.t), ampel:h.lamp, median:h.med, min:h.min, max:h.max, boe:h.gMed, richtung:h.dir.mean, modelle:h.n, ueberGrenze:h.over, regen:h.rain, cape:h.cape, tempArbeit:h.tW, gefuehlt:h.chill, uv:h.uv, ensembleUeberGrenze:h.pEns, ensembleLaeufe:h.nEns, gruende:h.why.map(w=>w.t)}))};
 }
@@ -1525,6 +1550,7 @@ async function buildReport(){
       <b>Grundlagen.</b> Abgerufen ${state.fetchedAt.toLocaleString("de-DE")}, Bericht erstellt ${new Date().toLocaleString("de-DE")}.
       ${age > STALE_MS ? `<span class="rp-alert">Achtung: Die Prognose war bei Berichtserstellung ${fmtAge(age)} alt.</span>` : ""}
       Ausgewertete Modelle (${u.length}): ${u.map(r=>esc(r.m.name+" ("+r.m.org+")")).join(", ")}.
+      ${(() => { const x = state.results.filter(r => isExcluded(r) && (r.status==="ok"||r.status==="extrap")); return x.length ? `<b>Von Hand ausgeschlossen:</b> ${x.map(r=>esc(r.m.name+" ("+r.m.org+")")).join(", ")}.` : ""; })()}
       Ensemble: ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members} Läufe)`).join(", ") || "nicht verfügbar"}.
       Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle, CAPE ab ${CAPE_STOP} J/kg oder Unwetterwarnung bzw. Warnstufe rot.
       Prüfen bei einzelnen Modellen über Grenzwert, Schauer, CAPE ab ${CAPE_WARN} J/kg, Dunkelheit, Windchill ab ${CHILL_WARN} °C, mind. ${Math.round(ENS_WARN*100)} % der Ensemble-Läufe über Grenze oder amtlicher Warnung.
