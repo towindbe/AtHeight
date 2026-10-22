@@ -59,7 +59,8 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
 /* Beschriftung der Grenzlinien rechts am Rand */
 const limitLabels = {id:"limitLabels", afterDatasetsDraw(c){
   const {ctx, chartArea:a, scales:{y}} = c;
-  const items = [[site.wind, `Grenze Wind ${fwu(site.wind)}`], [site.gust, `Grenze Böe ${fwu(site.gust)}`]]
+  const items = [["lim", site.wind, `Grenze Wind ${fwu(site.wind)}`], ["glim", site.gust, `Grenze Böe ${fwu(site.gust)}`]]
+    .filter(([k]) => !state.hide.has(k)).map(([, v, t]) => [v, t])
     .map(([v, t]) => ({t, py:y.getPixelForValue(cw(v))})).filter(o => o.py >= a.top && o.py <= a.bottom).sort((p,q) => p.py-q.py);
   // liegen die Linien dicht beieinander, Beschriftungen auseinanderziehen
   for(let k = 1; k < items.length; k++) if(items[k].py - items[k-1].py < 13) items[k].py = items[k-1].py + 13;
@@ -95,21 +96,33 @@ function renderChart(){
   const H = idxs.map(i=>state.hours[i]), r2 = v => v==null?null:+cw(v).toFixed(2);
   const fg = css("--fg"), stop = css("--stop");
   let ds = [];
-  ds.push({label:"Minimum", data:H.map(h=>r2(h.min)), borderColor:"transparent", pointRadius:0, fill:false, tension:.3});
-  ds.push({label:"Maximum", data:H.map(h=>r2(h.max)), borderColor:css("--band-line"), borderWidth:.8, backgroundColor:css("--band"), pointRadius:0, fill:"-1", tension:.3});
+  const hid = k => state.hide.has(k);
+  if(!hid("band")){
+    ds.push({label:"Minimum", data:H.map(h=>r2(h.min)), borderColor:"transparent", pointRadius:0, fill:false, tension:.3});
+    ds.push({label:"Maximum", data:H.map(h=>r2(h.max)), borderColor:css("--band-line"), borderWidth:.8, backgroundColor:css("--band"), pointRadius:0, fill:"-1", tension:.3});
+  }
   usableModels().filter(r => state.show.has(r.m.id)).forEach(r => ds.push({label:r.m.name+" · "+r.m.org, data:idxs.map(i => r.series[i] ? r2(r.series[i].v) : null),
     borderColor:modelColor(r.m), borderWidth:1.8, borderDash:r.m.hi?[]:[5,3], pointRadius:0, tension:.3, spanGaps:true}));
-  ds.push({label:"Median", data:H.map(h=>r2(h.med)), borderColor:fg, borderWidth:3, pointRadius:0, tension:.3});
-  ds.push({label:"Böe (gesch.)", data:H.map(h=>r2(h.gMed)), borderColor:css("--gust"), backgroundColor:css("--gust"), borderWidth:1.8, borderDash:[2,3], pointRadius:0, tension:.3});
-  ds.push({label:"Grenzwert", data:idxs.map(()=>cw(site.wind)), borderColor:stop, borderWidth:1.6, borderDash:[7,4], pointRadius:0});
-  ds.push({label:"Grenze Böe", data:idxs.map(()=>cw(site.gust)), borderColor:stop, borderWidth:1, borderDash:[2,4], pointRadius:0});
+  if(!hid("median")) ds.push({label:"Median", data:H.map(h=>r2(h.med)), borderColor:fg, borderWidth:3, pointRadius:0, tension:.3});
+  if(!hid("gust")) ds.push({label:"Böe (gesch.)", data:H.map(h=>r2(h.gMed)), borderColor:css("--gust"), backgroundColor:css("--gust"), borderWidth:1.8, borderDash:[2,3], pointRadius:0, tension:.3});
+  if(!hid("lim")) ds.push({label:"Grenzwert", data:idxs.map(()=>cw(site.wind)), borderColor:stop, borderWidth:1.6, borderDash:[7,4], pointRadius:0});
+  if(!hid("glim")) ds.push({label:"Grenze Böe", data:idxs.map(()=>cw(site.gust)), borderColor:stop, borderWidth:1, borderDash:[2,4], pointRadius:0});
   const opt = chartBase(WU()+" · "+zoneTxt()); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
   opt.plugins.tooltip = {filter: it => !["Minimum","Grenzwert","Grenze Böe"].includes(it.dataset.label), callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y, U().d)} ${WU()}`}};
   if(charts.main) charts.main.destroy();
   charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, limitLabels]});
   charts.main.$idxs = idxs; charts.main.update("none");
   $("chartTitle").textContent = "Windverlauf · " + zoneTxt();
-  renderChips();
+  renderChips(); renderLegend();
+}
+/* Legende unter dem Windverlauf: Antippen blendet Median, Spanne, Böe und Grenzlinien ein/aus (nur Anzeige) */
+function renderLegend(){
+  document.querySelectorAll("#chartLegend button").forEach(b => b.setAttribute("aria-pressed", String(!state.hide.has(b.dataset.s))));
+}
+function toggleLine(s){
+  state.hide.has(s) ? state.hide.delete(s) : state.hide.add(s);
+  try{ localStorage.setItem("wb_hide", JSON.stringify([...state.hide])); }catch(e){}
+  renderChart();
 }
 const modelColor = m => COLORS[MODELS.indexOf(m) % COLORS.length];
 /* Modell-Chips unter dem Windverlauf: einzelne Modelle ein- und ausblenden (ändert die Bewertung nicht) */
