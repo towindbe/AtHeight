@@ -1,9 +1,9 @@
-/* Windbericht · mitlaufende Kurzleiste (Ampel, gewählte Stunde, Sprungmarken), sobald die große Ampel aus dem Bild ist */
+/* Windbericht · mitlaufende Kurzleiste (Ampel, gewählte Stunde, Sprungmarken), sobald das Arbeitsfenster nach oben aus dem Bild ist */
 "use strict";
 
 const NAV_SECTIONS = [["chartCard","Wind"], ["sec-richtung","Richtung"], ["sec-regen","Regen"], ["sec-temp","Temperatur"],
   ["sec-modelle","Modelle"], ["sec-ausblick","Ausblick"], ["sec-bericht","Bericht"]];
-let stickyPast = false;   // große Ampel ist nach oben aus dem Bild gescrollt
+let stickyPast = false;   // Arbeitsfenster ist nach oben aus dem Bild gescrollt
 
 function renderSticky(){
   const bar = $("stickyBar"); if(!bar) return;
@@ -50,7 +50,7 @@ function initSticky(){
   $("sbPrev").onclick = () => selectHour(state.sel - 1);
   $("sbNext").onclick = () => selectHour(state.sel + 1);
   if("IntersectionObserver" in window){
-    new IntersectionObserver(([en]) => { stickyPast = !en.isIntersecting && en.boundingClientRect.top < 0; renderSticky(); }).observe($("lamp"));
+    new IntersectionObserver(([en]) => { stickyPast = !en.isIntersecting && en.boundingClientRect.top < 0; renderSticky(); }).observe($("sec-zeit"));
   }
 }
 initSticky();
