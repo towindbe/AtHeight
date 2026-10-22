@@ -449,3 +449,14 @@ body.info-open{overflow:hidden}
 .install-box>div:first-child:not(.ib-btns),.install-box>div:nth-child(2){flex:1;min-width:180px;display:flex;flex-direction:column;gap:2px;font-size:13px;color:var(--muted)} .install-box b{color:var(--fg);font-size:15px}
 .ib-btns{display:flex;gap:8px;margin-left:auto}
 @media print{.install-box,.update-box{display:none!important}}
+
+/* Wetter-Ausfallprotokoll */
+.af-sum{margin:0;padding:10px 12px;border-radius:8px;background:var(--raised)}
+.af-scroll{overflow-x:auto}
+.af-t{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}
+.af-t th{font:600 11px var(--f-body);color:var(--muted);text-align:right;padding:4px 8px;border-bottom:1px solid var(--line)}
+.af-t td{text-align:right;padding:4px 8px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.af-t th.l,.af-t td.l{text-align:left} .af-t td.over{color:var(--stop);font-weight:600}
+.af-t .rp-pill{display:inline-block;min-width:64px;text-align:center;color:#fff;border-radius:3px;font:700 10px var(--f-body);letter-spacing:.05em;padding:1px 6px}
+.note.err{color:var(--stop)}
+#report .rp-t.af-rp th.l,#report .rp-t.af-rp td.l{text-align:left} #report .rp-t td.over{color:var(--stop);font-weight:700}

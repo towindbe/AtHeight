@@ -45,6 +45,7 @@ Kein Build-Schritt, läuft direkt auf GitHub Pages.
 | `js/physik.js` | Höhenrechnung, Böe, Temperatur, Windchill |
 | `js/daten.js` | Abruf: Modelle, Szenarien, UV, Warnungen |
 | `js/offline.js` | Letzter Stand ohne Netz (IndexedDB), Änderung seit dem letzten Abruf |
+| `js/ausfall.js` | Wetter-Ausfallprotokoll: Messwerte der Station, auf den Arbeitsbereich hochgerechnet |
 | `js/tageslicht.js` | Sonnenstand, Dämmerung |
 | `js/bewertung.js` | Ampelregeln mit Gründen, Tageszusammenfassung |
 | `js/anzeige.js` | Entscheidung, Kacheln, Zeitleiste |
