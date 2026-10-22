@@ -391,6 +391,7 @@ body.info-open{overflow:hidden}
 .legend i.lg-feel{border-top:2px dashed var(--band-line)}
 .legend i.lg-rain{width:10px;height:10px;border:0;border-radius:2px;background:var(--band-line)}
 .legend i.lg-cape{border-top:2px solid var(--warn)}
+.legend i.sw{width:12px;height:12px;border:0;border-radius:3px}
 /* Tabellen: Text links */
 #modelTable th:nth-child(2), #modelTable td:nth-child(2){text-align:left}
 #hourTable th:last-child{text-align:left}
