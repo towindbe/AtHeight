@@ -78,3 +78,33 @@ function renderChange(){
   box.hidden = !t;
   if(t){ box.className = "change-note ch-" + t.lvl; box.innerHTML = t.html; }
 }
+
+/* ---------- App installieren: kleines Fenster mit Installieren-Knopf ---------- */
+const INSTALL_SNOOZE = 14*864e5;   // nach "Später" so lange nicht wieder fragen
+let installEvt = null;
+const isStandalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const installSnoozed = () => { try{ return Date.now() < +localStorage.getItem("wb_install_snooze"); }catch(e){ return false; } };
+function installClose(snooze){
+  $("installBox")?.remove();
+  if(snooze) try{ localStorage.setItem("wb_install_snooze", String(Date.now() + INSTALL_SNOOZE)); }catch(e){}
+}
+function installShow(ios){
+  if($("installBox") || isStandalone() || installSnoozed()) return;
+  const box = document.createElement("div");
+  box.id = "installBox"; box.className = "install-box"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", "App installieren");
+  box.innerHTML = `<img src="icons/icon-192.png" alt="" width="44" height="44">
+    <div><b>Windbericht als App installieren</b><span>${ios ? "Teilen-Symbol antippen, dann „Zum Home-Bildschirm“. Danach ohne Browserleiste und mit gespeichertem Stand ohne Netz." : "Startet ohne Browserleiste, mit Symbol auf dem Startbildschirm und gespeichertem Stand ohne Netz."}</span></div>
+    <div class="ib-btns">${ios ? "" : `<button type="button" class="primary" id="installGo">Installieren</button>`}<button type="button" class="ghost" id="installLater">Später</button></div>`;
+  document.body.appendChild(box);
+  $("installLater").onclick = () => installClose(true);
+  if($("installGo")) $("installGo").onclick = async () => {
+    if(!installEvt) return installClose(false);
+    installEvt.prompt();
+    try{ await installEvt.userChoice; }catch(e){}
+    installEvt = null; installClose(false);
+  };
+}
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; setTimeout(() => installShow(false), 4000); });
+window.addEventListener("appinstalled", () => { installEvt = null; installClose(false); });
+// iPhone/iPad (Safari) kennt das Ereignis nicht: einmalig Anleitung zeigen
+if(/iphone|ipad|ipod/i.test(navigator.userAgent) && !isStandalone() && !navigator.webdriver) setTimeout(() => installShow(true), 6000);

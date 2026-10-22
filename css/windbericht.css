@@ -442,3 +442,10 @@ body.info-open{overflow:hidden}
 .sb-strip .tl-cell{flex:none;width:20px;height:28px;padding:0 0 2px;font-size:9.5px;border-radius:4px}
 .sb-strip .tl-cell.dstart{margin-left:8px;width:auto;min-width:36px;padding:0 5px 2px} .sb-strip .tl-cell.dstart:first-child{margin-left:0}
 .sb-strip .tl-cell.nowc::after{top:-4px}
+/* Hinweis "App installieren" */
+.install-box{position:fixed;left:50%;transform:translateX(-50%);bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:1300;width:min(560px,calc(100% - 24px));display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  background:var(--surface);border:1px solid var(--band-line);border-radius:14px;padding:12px;box-shadow:0 8px 28px rgba(0,0,0,.55)}
+.install-box img{border-radius:10px;flex:none}
+.install-box>div:nth-child(2){flex:1;min-width:180px;display:flex;flex-direction:column;gap:2px;font-size:13px;color:var(--muted)} .install-box b{color:var(--fg);font-size:15px}
+.ib-btns{display:flex;gap:8px;margin-left:auto}
+@media print{.install-box{display:none!important}}
