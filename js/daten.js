@@ -132,6 +132,7 @@ function warnState(day){
 const allWarnings = () => [...(extras.dwd?.list||[]), ...(extras.geo?.list||[])];
 const fmtWhen = ms => !isFinite(ms) ? "offen" : new Date(ms).toLocaleString("de-DE", {timeZone:state.tz, weekday:"short", day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"});
 async function load(){
+  if(typeof afCheck==="function") afCheck();   // Ausfallprotokoll gilt nur für die Anlage, für die es berechnet wurde
   $("errorBox").hidden = true;
   $("headline").textContent = "Lade Wettermodelle…"; $("summary").textContent = ""; $("lamp").className="lamp"; $("lamp").textContent="…";
   $("reloadBtn").disabled = true;

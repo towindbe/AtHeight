@@ -7,6 +7,12 @@ const AF_MAX_DAYS = 92, AF_CHUNK = 31;
 const addDays = (d, n) => isoDay(Date.parse(d+"T12:00:00Z") + n*864e5);
 const AF_TXT = {moeglich:"MÖGLICH", eingeschraenkt:"BEGRENZT", ausfall:"AUSFALL"}, AF_CLS = {moeglich:"go", eingeschraenkt:"warn", ausfall:"stop"};
 let afData = null;
+/* Das Protokoll gilt nur für Standort, Arbeitsbereich, Arbeitszeit und Grenzwerte, mit denen es berechnet wurde */
+const afKey = () => JSON.stringify([site.lat, site.lon, site.work || site.hub, site.hub, accessMode(), site.wind, site.gust, site.from, site.to]);
+function afCheck(){
+  if(!afData || afData.key === afKey()) return;
+  afData = null; $("afOut").innerHTML = ""; $("afPrint").hidden = $("afJson").hidden = true; $("af_project").value = "";
+}
 
 /* Station über den ganzen Zeitraum: in Blöcken abrufen und zusammenführen; verwendet wird die nächste Station des ersten Blocks */
 async function afStation(start, end){
@@ -91,8 +97,8 @@ async function afShow(){
   if((Date.parse(bis) - Date.parse(von))/864e5 + 1 > AF_MAX_DAYS) return err(`Der Zeitraum darf höchstens ${AF_MAX_DAYS} Tage umfassen.`);
   $("afBtn").disabled = true; out.innerHTML = `<p class="note">Lade Messwerte und Modelldaten für ${esc(afDay(von))} bis ${esc(afDay(bis))} …</p>`;
   try{
-    const data = await afRechnen(von, bis);
-    afData = {data, hash: await sha256(JSON.stringify(data))};
+    const key = afKey(), data = await afRechnen(von, bis);
+    afData = {data, hash: await sha256(JSON.stringify(data)), key};
     out.innerHTML = `<p class="af-sum">${afSummary(data)}</p><div class="af-scroll"><table class="af-t">${afHead()}<tbody>${afRows(data)}</tbody></table></div>
       <p class="note">${afMethod(data)}</p><p class="note mono">Prüfsumme (SHA-256): ${afData.hash}</p>`;
     $("afPrint").hidden = $("afJson").hidden = false;
