@@ -140,11 +140,17 @@ async function load(){
   const tick = () => { done++; $("loadFill").style.width = Math.round(100*done/total) + "%";
     $("loadText").textContent = done <= MODELS.length ? `${Math.min(done, MODELS.length)} von ${MODELS.length} Modellen` : "Szenarien und Warnungen"; };
   $("loadFill").style.width = "0%"; $("loadText").textContent = `0 von ${MODELS.length} Modellen`; $("loadBar").hidden = false;
-  const [raw, ex] = await Promise.all([Promise.all(MODELS.map(m => fetchModel(m).then(r => (tick(), r)))), loadExtras().then(r => (tick(), r))]);
+  let [raw, ex] = await Promise.all([Promise.all(MODELS.map(m => fetchModel(m).then(r => (tick(), r)))), loadExtras().then(r => (tick(), r))]);
   $("loadBar").hidden = true;
-  extras = ex;
   $("reloadBtn").disabled = false;
-  const okAny = raw.find(r => r.status==="ok");
+  let okAny = raw.find(r => r.status==="ok"), offlineAt = null;
+  if(okAny){ if(raw.filter(r => r.status==="ok").length >= MODELS.length/2) cacheSave(raw, ex); }
+  else{
+    // keine Verbindung: zuletzt gespeicherten Stand dieses Standorts verwenden, deutlich als alt gekennzeichnet
+    const old = await cacheLoad();
+    if(old){ raw = old.raw; ex = old.ex; offlineAt = old.at; okAny = raw.find(r => r.status==="ok"); }
+  }
+  extras = ex;
   if(!okAny){
     // Grund benennen: Limit bei Open-Meteo, keine Verbindung oder sonstiger Fehler
     const reasons = raw.map(r => r.reason || "");
@@ -184,8 +190,9 @@ async function load(){
   const nk = nowKey(), today = nk.slice(0,10);
   const startDay = new Date().getHours() > site.to ? times.find(t => t.slice(0,10) > today)?.slice(0,10) : today;
   const keepDay = state.day && times.some(t=>t.startsWith(state.day)) ? state.day : (startDay && times.some(t=>t.startsWith(startDay)) ? startDay : times[0].slice(0,10));
-  state = {...state, results, times, hours, fetchedAt:new Date(), day:keepDay, tz:okAny.tz};
+  state = {...state, results, times, hours, fetchedAt:offlineAt || new Date(), offlineAt, day:keepDay, tz:okAny.tz};
   state.sel = defaultSel(state.day);
+  if(!offlineAt) snapUpdate();
   render();
   outlookPromise = loadOutlook().finally(() => { outlookPromise = null; autoRank(); });   // Ausblick, danach Modellvergleich im Hintergrund
 }

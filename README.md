@@ -44,9 +44,11 @@ Kein Build-Schritt, läuft direkt auf GitHub Pages.
 | `js/hilfen.js` | Formatierung, Zeitzonen |
 | `js/physik.js` | Höhenrechnung, Böe, Temperatur, Windchill |
 | `js/daten.js` | Abruf: Modelle, Szenarien, UV, Warnungen |
+| `js/offline.js` | Letzter Stand ohne Netz (IndexedDB), Änderung seit dem letzten Abruf |
 | `js/tageslicht.js` | Sonnenstand, Dämmerung |
 | `js/bewertung.js` | Ampelregeln mit Gründen, Tageszusammenfassung |
 | `js/anzeige.js` | Entscheidung, Kacheln, Zeitleiste |
+| `js/leiste.js` | Mitlaufende Kurzleiste mit Sprungmarken |
 | `js/diagramme.js` | Windverlauf, Regen, Höhenprofil, Windrichtung, Zeitmarker |
 | `js/tabellen.js` | Matrix, Stunden- und Modelltabelle |
 | `js/modellvergleich.js` | Vergleich mit Messstationen |
@@ -54,6 +56,7 @@ Kein Build-Schritt, läuft direkt auf GitHub Pages.
 | `js/bericht.js` | Tagesbericht, Prüfsumme, Export |
 | `js/anlagen.js`, `js/bedienung.js` | Gespeicherte Anlagen, Knöpfe, Einstellungen |
 | `js/start.js` | Start der App (zuletzt geladen) |
+| `sw.js`, `manifest.webmanifest`, `icons/` | Installierbare App: App-Dateien offline, Symbole |
 
 Die Skripte sind klassische Skripte (kein `type="module"`) und teilen sich den globalen Gültigkeitsbereich; die Reihenfolge in `windbericht.html` ist wichtig.
 **Bei jeder Veröffentlichung** den Parameter `?v=` aller Dateien in `windbericht.html` erhöhen, sonst mischen Browser alte und neue Dateien.

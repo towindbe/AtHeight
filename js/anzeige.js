@@ -9,7 +9,7 @@ function render(){
   renderHourTable(); renderModelTable(); renderOutlook();
   if(typeof applyUnitLabels==="function") applyUnitLabels();
 }
-function renderSelected(){ renderNow(); renderCompass(); renderProfile(); updateMap(); highlightSel(); }
+function renderSelected(){ renderNow(); renderCompass(); renderProfile(); updateMap(); highlightSel(); if(typeof renderSticky==="function") renderSticky(); }
 
 function fillSettings(){
   $("s_name").value = site.name; $("s_lat").value = site.lat; $("s_lon").value = site.lon;
@@ -30,9 +30,10 @@ const STALE_MS = 3*36e5;
 function fmtAge(ms){ const m = Math.round(ms/6e4), h = Math.floor(m/60); return h ? `${h} h ${m%60} min` : `${m} min`; }
 function checkStale(){
   if(!state.fetchedAt) return;
-  const age = Date.now() - state.fetchedAt, stale = age > STALE_MS;
+  const age = Date.now() - state.fetchedAt, off = !!state.offlineAt, stale = off || age > STALE_MS;
   $("staleBox").hidden = !stale;
-  if(stale) $("staleText").textContent = `Wetterdaten sind ${fmtAge(age)} alt (Abruf ${state.fetchedAt.toLocaleString("de-DE",{weekday:"short", hour:"2-digit", minute:"2-digit"})}). Vor der Freigabe neu laden.`;
+  if(off) $("staleText").textContent = `Keine Verbindung: gespeicherter Stand von ${state.fetchedAt.toLocaleString("de-DE",{weekday:"short", hour:"2-digit", minute:"2-digit"})} (${fmtAge(age)} alt). Nicht für die Freigabe verwenden, sobald wieder Netz da ist neu laden.`;
+  else if(stale) $("staleText").textContent = `Wetterdaten sind ${fmtAge(age)} alt (Abruf ${state.fetchedAt.toLocaleString("de-DE",{weekday:"short", hour:"2-digit", minute:"2-digit"})}). Vor der Freigabe neu laden.`;
 }
 setInterval(checkStale, 6e4);
 document.addEventListener("visibilitychange", () => { if(!document.hidden) checkStale(); });
@@ -43,6 +44,7 @@ function renderHero(){
   const dl = daylight(state.day);
   $("heroDay").textContent = `${new Date(state.day+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"})} · Arbeitszeit ${site.from}–${site.to} Uhr` + (dl.start && dl.end ? ` · hell ${dl.start}–${dl.end}` : "");
   $("headline").textContent = sum.head; $("summary").textContent = sum.text;
+  renderChange();
   checkStale();
   const u = usableModels();
   // Warnungen, die den gewählten Tag berühren

@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0d1217">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Windbericht">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%23151d25%22/%3E%3Crect x=%2211%22 y=%229%22 width=%225%22 height=%2247%22 rx=%222.5%22 fill=%22%23f4f6f8%22/%3E%3Cpath d=%22M17 12 L26.5 13.6 L26.5 31.2 L17 33z%22 fill=%22%23ff7a33%22/%3E%3Cpath d=%22M26.5 13.6 L36 15.6 L36.5 29.8 L26.5 31.2z%22 fill=%22%23f4f6f8%22/%3E%3Cpath d=%22M36 15.6 L45.5 18 L46.5 28.6 L36.5 29.8z%22 fill=%22%23ff7a33%22/%3E%3Cpath d=%22M45.5 18 L54 20.6 L55.5 27.6 L46.5 28.6z%22 fill=%22%23f4f6f8%22/%3E%3Cpath d=%22M24 42h24M30 50h20%22 stroke=%22%238a96a3%22 stroke-width=%223.5%22 stroke-linecap=%22round%22/%3E%3C/svg%3E">
 <title>Windbericht für Höhenarbeit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,13 +16,24 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-23u">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-23x">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tw-logo" viewBox="-6 -6 790 512"><g fill="currentColor" stroke="currentColor" stroke-linejoin="miter"><path stroke-width="3" d="M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z"/><path stroke-width="15" d="m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z"/></g></symbol></svg>
 <div class="info-overlay" id="infoOverlay" role="dialog" aria-modal="true" aria-label="So funktioniert der Windbericht" hidden>
   <div class="io-bar"><b>So funktioniert der Windbericht</b><button type="button" id="infoClose">✕ Schließen</button></div>
   <iframe id="infoFrame" title="Infoseite" src="about:blank"></iframe>
+</div>
+<div class="sticky-bar" id="stickyBar" hidden>
+  <div class="sb-in">
+    <div class="sb-row">
+      <span class="sb-lamp" id="sbLamp"></span>
+      <span class="sb-hour" id="sbHour"></span>
+      <button type="button" id="sbPrev" aria-label="Eine Stunde früher" title="Eine Stunde früher">‹</button>
+      <button type="button" id="sbNext" aria-label="Eine Stunde später" title="Eine Stunde später">›</button>
+    </div>
+    <nav class="sb-nav" id="sbNav" aria-label="Zu Abschnitt springen"></nav>
+  </div>
 </div>
 <div class="wrap">
 
@@ -126,6 +142,7 @@
       <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
         <p class="headline" id="headline">Lade Wettermodelle…</p>
         <p class="muted" id="summary"></p>
+        <p class="change-note" id="changeNote" hidden></p>
         <div class="loadbar" id="loadBar" hidden aria-live="polite"><div class="lb-track"><div class="lb-fill" id="loadFill"></div></div><span class="note" id="loadText"></span></div>
         <div class="setup-hint needs-data" id="setupHint" hidden>
           <div><b>Neue Anlage: Höhen und Grenzwerte prüfen</b><span>Nabenhöhe, Arbeitshöhe und Grenzwerte sind noch Beispielwerte.</span></div>
@@ -158,7 +175,7 @@
   </section>
 
   <!-- Zeitleiste -->
-  <section class="card needs-data">
+  <section class="card needs-data" id="sec-zeit">
     <div class="card-head">
       <h2>Arbeitsfenster</h2>
       <div class="legend">
@@ -240,7 +257,7 @@
       <p class="note" id="mapNote">Ort suchen oder direkt auf die Anlage tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Regenradar: DWD, nur Deutschland und Grenzgebiete.</p>
     </section>
 
-    <section class="card needs-data">
+    <section class="card needs-data" id="sec-richtung">
       <div class="card-head"><h2 id="compassTitle">Windrichtung</h2><span class="eyebrow" id="compassHour"></span></div>
       <div class="compass-wrap">
         <div class="compass" id="compass"></div>
@@ -262,7 +279,7 @@
       <div class="chart-sm"><canvas id="profile" aria-label="Windgeschwindigkeit nach Höhe"></canvas></div>
       <p class="note">Wind vom Boden bis über die Blattspitze zur gewählten Stunde.</p>
     </section>
-    <section class="card">
+    <section class="card" id="sec-regen">
       <div class="card-head"><h2>Regen &amp; Gewitter</h2><span class="eyebrow" id="rainDay"></span></div>
       <div class="chart-sm"><canvas id="rain" aria-label="Niederschlag und Gewitterneigung"></canvas></div>
       <p class="legend"><span><i class="lg-rain"></i>Regen mm/h (kräftiger = mehr Modelle einig)</span><span><i class="lg-cape"></i>Gewitterenergie CAPE</span></p>
@@ -270,7 +287,7 @@
   </div>
 
   <!-- Temperatur -->
-  <section class="card needs-data">
+  <section class="card needs-data" id="sec-temp">
     <div class="card-head"><h2 id="tempTitle">Temperatur</h2><span class="eyebrow" id="tempDay"></span></div>
     <div class="chart-sm"><canvas id="temp" aria-label="Temperatur und gefühlte Temperatur in Arbeitshöhe"></canvas></div>
     <p class="legend"><span><i class="lg-temp"></i>Temperatur in Arbeitshöhe</span><span><i class="lg-feel"></i>Gefühlt mit Wind</span></p>
@@ -289,7 +306,7 @@
     <p class="note">Wind aus den Modellwerten in 10, 80, 120 und 180 m auf die Arbeitshöhe interpoliert. Böen liefern die Modelle nur in 10 m; die Böe in der Höhe ist daraus geschätzt und sollte mit NC2-Messwerten geprüft werden.</p>
   </section>
 
-  <section class="card needs-data">
+  <section class="card needs-data" id="sec-modelle">
     <h2>Modelle am Standort</h2>
     <div class="scroll"><table class="t" id="modelTable"></table></div>
     <div class="rank">
@@ -300,7 +317,7 @@
   </section>
 
   <!-- 7-Tage-Ausblick -->
-  <section class="card needs-data">
+  <section class="card needs-data" id="sec-ausblick">
     <div class="card-head"><h2>Ausblick 7 Tage <button type="button" class="info-btn" id="olInfoBtn" aria-expanded="false" aria-controls="olInfo" title="Was bedeuten die Werte?">?</button></h2><span class="eyebrow">grobe Tendenz</span></div>
     <p class="info-text" id="olInfo" hidden><b>So liest du den Ausblick:</b> Alle Werte gelten für eure Arbeitszeit und den Arbeitsbereich.<br>
       <b>Wind max:</b> Für jedes Modell wird der stärkste Wind des Tages ermittelt; angezeigt ist der mittlere dieser Werte (Median).<br>
@@ -312,7 +329,7 @@
   </section>
 
   <!-- Tagesbericht -->
-  <section class="card needs-data">
+  <section class="card needs-data" id="sec-bericht">
     <h2>Tagesbericht</h2>
     <p class="note">Dokumentiert die Prognose zum Zeitpunkt der Freigabe. Als PDF drucken und zur Projektdokumentation legen.</p>
     <div class="grid">
@@ -349,22 +366,24 @@
 </div>
 
 <!-- Skripte teilen sich den globalen Gültigkeitsbereich; Reihenfolge beachten. Bei Änderungen ?v= erhöhen. -->
-<script src="js/konfiguration.js?v=2026-10-23u"></script>
-<script src="js/hilfen.js?v=2026-10-23u"></script>
-<script src="js/physik.js?v=2026-10-23u"></script>
-<script src="js/daten.js?v=2026-10-23u"></script>
-<script src="js/tageslicht.js?v=2026-10-23u"></script>
-<script src="js/bewertung.js?v=2026-10-23u"></script>
-<script src="js/anzeige.js?v=2026-10-23u"></script>
-<script src="js/diagramme.js?v=2026-10-23u"></script>
-<script src="js/tabellen.js?v=2026-10-23u"></script>
-<script src="js/modellvergleich.js?v=2026-10-23u"></script>
-<script src="js/ausblick.js?v=2026-10-23u"></script>
-<script src="js/karte.js?v=2026-10-23u"></script>
-<script src="js/radar.js?v=2026-10-23u"></script>
-<script src="js/bericht.js?v=2026-10-23u"></script>
-<script src="js/anlagen.js?v=2026-10-23u"></script>
-<script src="js/bedienung.js?v=2026-10-23u"></script>
-<script src="js/start.js?v=2026-10-23u"></script>
+<script src="js/konfiguration.js?v=2026-10-23x"></script>
+<script src="js/hilfen.js?v=2026-10-23x"></script>
+<script src="js/physik.js?v=2026-10-23x"></script>
+<script src="js/daten.js?v=2026-10-23x"></script>
+<script src="js/offline.js?v=2026-10-23x"></script>
+<script src="js/tageslicht.js?v=2026-10-23x"></script>
+<script src="js/bewertung.js?v=2026-10-23x"></script>
+<script src="js/anzeige.js?v=2026-10-23x"></script>
+<script src="js/leiste.js?v=2026-10-23x"></script>
+<script src="js/diagramme.js?v=2026-10-23x"></script>
+<script src="js/tabellen.js?v=2026-10-23x"></script>
+<script src="js/modellvergleich.js?v=2026-10-23x"></script>
+<script src="js/ausblick.js?v=2026-10-23x"></script>
+<script src="js/karte.js?v=2026-10-23x"></script>
+<script src="js/radar.js?v=2026-10-23x"></script>
+<script src="js/bericht.js?v=2026-10-23x"></script>
+<script src="js/anlagen.js?v=2026-10-23x"></script>
+<script src="js/bedienung.js?v=2026-10-23x"></script>
+<script src="js/start.js?v=2026-10-23x"></script>
 </body>
 </html>

@@ -1,0 +1,17 @@
+{
+  "name": "Windbericht für Höhenarbeit",
+  "short_name": "Windbericht",
+  "description": "Wind- und Wetterbericht in Nabenhöhe für Seilarbeiten an Windenergieanlagen. Entscheidungshilfe, keine Freigabe.",
+  "lang": "de",
+  "start_url": "windbericht.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0d1217",
+  "theme_color": "#0d1217",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
