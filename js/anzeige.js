@@ -149,7 +149,7 @@ function chartBase(yTitle){
   const muted = css("--muted"), line = css("--line");
   return {responsive:true, maintainAspectRatio:false, animation:false, interaction:{mode:"index", intersect:false},
     plugins:{legend:{display:false}},
-    scales:{x:{ticks:{color:muted, font:{family:"IBM Plex Mono", size:10}, maxRotation:0, autoSkip:true}, grid:{color:line}},
-      y:{beginAtZero:true, ticks:{color:muted, font:{family:"IBM Plex Mono", size:10}}, grid:{color:line}, title:{display:!!yTitle, text:yTitle, color:muted}}}};
+    scales:{x:{ticks:{color:muted, font:{family:"Barlow", size:10}, maxRotation:0, autoSkip:true}, grid:{color:line}},
+      y:{beginAtZero:true, ticks:{color:muted, font:{family:"Barlow", size:10}}, grid:{color:line}, title:{display:!!yTitle, text:yTitle, color:muted}}}};
 }
 const dayIdx = () => state.times.map((t,i)=>[t,i]).filter(([t])=>t.startsWith(state.day)).map(([,i])=>i);

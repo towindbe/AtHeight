@@ -153,7 +153,7 @@ function renderRain(){
   const opt = chartBase("mm/h"); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
   opt.scales.x.ticks.autoSkip = true; opt.scales.x.ticks.maxTicksLimit = 12;
   opt.scales.y.suggestedMax = 2;
-  opt.scales.y2 = {position:"right", beginAtZero:true, suggestedMax:1000, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"IBM Plex Mono", size:10}}, title:{display:true, text:"CAPE J/kg", color:css("--muted")}};
+  opt.scales.y2 = {position:"right", beginAtZero:true, suggestedMax:1000, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"Barlow", size:10}}, title:{display:true, text:"CAPE J/kg", color:css("--muted")}};
   opt.plugins.tooltip = {callbacks:{label:c => c.dataset.yAxisID==="y2" ? `CAPE: ${Math.round(c.parsed.y)} J/kg`
     : `Regen: ${fmt(c.parsed.y)} mm` + (H[c.dataIndex]?.rainN ? ` · ${H[c.dataIndex].rainYes} von ${H[c.dataIndex].rainN} Modellen` : "")}};
   if(charts.rain) charts.rain.destroy();
@@ -196,8 +196,8 @@ function renderProfile(){
   const prof = zs.map(z => { const v = per.map(s => windAt(s.lv, z).v).filter(x=>x!=null); return {z, med:median(v), min:v.length?Math.min(...v):null, max:v.length?Math.max(...v):null}; });
   const P = (k) => prof.map(p => p[k]==null?null:{x:+cw(p[k]).toFixed(2), y:p.z});
   const opt = chartBase("");
-  opt.scales.x = {type:"linear", beginAtZero:true, ticks:{color:css("--muted"), font:{family:"IBM Plex Mono", size:10}}, grid:{color:css("--line")}, title:{display:true, text:WU(), color:css("--muted")}};
-  opt.scales.y = {type:"linear", min:0, max:zs[zs.length-1], ticks:{color:css("--muted"), font:{family:"IBM Plex Mono", size:10}, stepSize:40}, grid:{color:css("--line")}, title:{display:true, text:"Höhe über Grund (m)", color:css("--muted")}};
+  opt.scales.x = {type:"linear", beginAtZero:true, ticks:{color:css("--muted"), font:{family:"Barlow", size:10}}, grid:{color:css("--line")}, title:{display:true, text:WU(), color:css("--muted")}};
+  opt.scales.y = {type:"linear", min:0, max:zs[zs.length-1], ticks:{color:css("--muted"), font:{family:"Barlow", size:10}, stepSize:40}, grid:{color:css("--line")}, title:{display:true, text:"Höhe über Grund (m)", color:css("--muted")}};
   opt.interaction = {mode:"nearest", intersect:false, axis:"y"};
   opt.plugins.tooltip = {callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.x, U().d)} ${WU()} in ${c.parsed.y} m`}};
   const lowTip = Math.max(0, site.hub - site.rotor/2);
@@ -218,7 +218,7 @@ function renderProfile(){
     const {ctx, chartArea:a, scales:{x,y}} = c; ctx.save();
     ctx.strokeStyle = css("--accent"); ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(a.left, y.getPixelForValue(site.hub)); ctx.lineTo(a.right, y.getPixelForValue(site.hub)); ctx.stroke();
     ctx.strokeStyle = css("--stop"); ctx.beginPath(); ctx.moveTo(x.getPixelForValue(cw(site.wind)), a.top); ctx.lineTo(x.getPixelForValue(cw(site.wind)), a.bottom); ctx.stroke();
-    ctx.setLineDash([]); ctx.fillStyle = css("--muted"); ctx.font = "10px IBM Plex Mono";
+    ctx.setLineDash([]); ctx.fillStyle = css("--muted"); ctx.font = "10px Barlow";
     ctx.fillText("Nabe "+site.hub+" m", a.left+4, y.getPixelForValue(site.hub)-4);
     if(workH() !== site.hub){
       ctx.strokeStyle = css("--go"); ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(a.left, y.getPixelForValue(workH())); ctx.lineTo(a.right, y.getPixelForValue(workH())); ctx.stroke(); ctx.setLineDash([]);
