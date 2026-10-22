@@ -108,3 +108,33 @@ window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); instal
 window.addEventListener("appinstalled", () => { installEvt = null; installClose(false); });
 // iPhone/iPad (Safari) kennt das Ereignis nicht: einmalig Anleitung zeigen
 if(/iphone|ipad|ipod/i.test(navigator.userAgent) && !isStandalone() && !navigator.webdriver) setTimeout(() => installShow(true), 6000);
+
+/* ---------- Neue Version: Hinweis, wenn auf dem Server eine neuere App liegt ---------- */
+/* Die Version steht als ?v= an den Dateien. Wir laden die Startseite am Cache vorbei und vergleichen. Nie automatisch neu laden:
+   Eingaben im Tagesbericht gehen dabei verloren. */
+const appVersion = html => (html.match(/css\/windbericht\.css\?v=([^"']+)/) || [])[1];
+const ownVersion = () => appVersion(document.querySelector('link[href^="css/windbericht.css"]')?.outerHTML || "");
+let updateShown = false;
+async function checkUpdate(){
+  if(updateShown || !navigator.onLine) return;
+  try{
+    const r = await fetch("windbericht.html", {cache:"no-store"}); if(!r.ok) return;
+    const v = appVersion(await r.text()), me = ownVersion();
+    if(v && me && v !== me) updateShow();
+  }catch(e){}
+}
+function updateShow(){
+  if(updateShown) return; updateShown = true;
+  const box = document.createElement("div");
+  box.id = "updateBox"; box.className = "install-box update-box"; box.setAttribute("role", "alert");
+  box.innerHTML = `<div><b>Neue Version verfügbar</b><span>Vorher den Tagesbericht speichern oder drucken: Eingaben im Bericht gehen beim Neuladen verloren.</span></div>
+    <div class="ib-btns"><button type="button" class="primary" id="updateGo">Jetzt neu laden</button><button type="button" class="ghost" id="updateLater">Später</button></div>`;
+  document.body.appendChild(box);
+  $("updateGo").onclick = () => location.reload();
+  $("updateLater").onclick = () => { box.remove(); setTimeout(() => { updateShown = false; }, 30*6e4); };
+}
+if(!navigator.webdriver){
+  setTimeout(checkUpdate, 15000);
+  setInterval(checkUpdate, 30*6e4);
+  document.addEventListener("visibilitychange", () => { if(!document.hidden) checkUpdate(); });
+}
