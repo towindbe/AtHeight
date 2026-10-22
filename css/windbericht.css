@@ -235,7 +235,7 @@ details>summary{cursor:pointer;font:600 16px var(--f-display);letter-spacing:.02
   :root{--bg:#fff;--surface:#fff;--raised:#f4f6f8;--fg:#111;--muted:#555;--line:#c9d0d8;color-scheme:light;
     --go:#1d8a4b;--go-bg:#e2f3e9;--warn:#b47716;--warn-bg:#fbf0d9;--stop:#c42b2b;--stop-bg:#fbe3e3;--none:#a4aeb9}
   body{padding:0;font-size:10.5px;background:#fff}
-  .wrap>*:not(#report){display:none!important}
+  .wrap>*:not(#report),.sticky-bar{display:none!important}
   #report{display:block}
 }
 /* Tagesbericht (nur im Druck sichtbar). Farben werden mitgedruckt. */
