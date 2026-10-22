@@ -130,9 +130,17 @@ function selectHour(i, fromTimeline){
   const d = state.times[i].slice(0,10);
   if(d!==state.day){ state.day = d; renderHero(); renderDayTabs(); renderTimeline(); renderChart(); renderRain(); renderTemp(); renderMatrix(); renderHourTable(); renderModelTable(); }
   renderSelected();
-  if(charts.main) charts.main.update("none");
-  if(charts.rain) charts.rain.update("none");
-  if(charts.temp) charts.temp.update("none");
+  ["main","rain","temp"].forEach(k => { if(charts[k]) syncTooltip(charts[k]); });
+}
+/* Wertekasten (Tooltip) jedes Diagramms folgt der gewählten Stunde, auch wenn in einem anderen Diagramm gezogen wird */
+function syncTooltip(c){
+  const k = c.$idxs ? c.$idxs.indexOf(state.sel) : -1;
+  const act = [];
+  if(k >= 0) c.data.datasets.forEach((d,di) => { if(c.isDatasetVisible(di) && d.data[k] != null && !d.ref) act.push({datasetIndex:di, index:k}); });
+  c.setActiveElements(act);
+  try{ const el = act.length ? c.getDatasetMeta(act[0].datasetIndex).data[k] : null;
+    c.tooltip.setActiveElements(act, el ? {x:el.x, y:el.y} : {x:0, y:0}); }catch(err){}
+  c.update("none");
 }
 
 function renderDayTabs(){
