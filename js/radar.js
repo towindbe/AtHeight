@@ -6,12 +6,6 @@
 const RADAR_URL = "https://maps.dwd.de/geoserver/dwd/wms";
 const RADAR_PAST = 90, RADAR_AHEAD = 120, RADAR_STEP = 10;   // Minuten
 const radar = {on:false, playing:true, frames:[], idx:0, overlay:null, timer:null, rebuild:null};
-/* Sobald ein Standort gewählt und die Einstellungen bestätigt sind (Übernehmen), zeigt die Karte gleich das Regenradar. Wer es ausschaltet, behält die Karte (wird gemerkt). Nicht im automatischen Test. */
-function radarAuto(){
-  if(navigator.webdriver || !map || radar.on || !siteChosen || !site.checked) return;
-  let pref = null; try{ pref = localStorage.getItem("wb_radar"); }catch(e){}
-  if(pref !== "0") radarToggle(true);
-}
 function radarToggle(on){
   radar.on = on;
   $("radarBtn").setAttribute("aria-pressed", String(on));
