@@ -461,3 +461,9 @@ body.info-open{overflow:hidden}
 .note.err{color:var(--stop)}
 #report .rp-t.af-rp th.l,#report .rp-t.af-rp td.l{text-align:left} #report .rp-t td.over{color:var(--stop);font-weight:700}
 .sb-strip::before,.sb-strip::after{content:"";flex:none;width:calc(50% - 10px)}   /* Platz, damit auch die ersten und letzten Stunden in die Mitte kommen */
+/* Wertezeile über den Diagrammen auf schmalen Bildschirmen (ersetzt den verdeckenden Wertekasten) */
+.readout{display:flex;flex-wrap:wrap;gap:2px 12px;align-items:center;min-height:42px;max-height:112px;overflow-y:auto;font-size:13px;color:var(--fg);padding:6px 8px;border-radius:8px;background:var(--raised);align-content:center}
+.readout b{font:600 14px var(--f-display);letter-spacing:.02em}
+.readout span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.readout i{width:10px;height:10px;border-radius:2px;flex:none}
+.readout[hidden]{display:none}

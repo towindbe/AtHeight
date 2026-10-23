@@ -78,7 +78,7 @@ function renderHero(){
   const wsrc = [extras.dwd?.ok===false ? "DWD nicht abrufbar" : null, extras.geo?.ok===false ? "GeoSphere nicht abrufbar" : null].filter(Boolean);
   $("status").textContent = `Abgerufen ${state.fetchedAt.toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"})} · ${u.length} Modelle aktiv, davon ${u.filter(r=>r.m.hi).length} hochauflösend`
     + ` · Warnungen: ${wsrc.length ? wsrc.join(", ") : ws.length ? ws.length+" am gewählten Tag" : "keine"}`
-    + ` · Szenarien: ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(" + ") || "nicht verfügbar"}`;
+    + ` · Ensemble (Szenarien): ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(" + ") || "nicht verfügbar"}`;
 }
 
 function renderNow(){

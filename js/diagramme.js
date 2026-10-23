@@ -7,6 +7,20 @@ if(typeof Chart !== "undefined") Chart.defaults.plugins.tooltip.callbacks.labelC
   return {borderColor:c, backgroundColor:c};
 };
 
+/* Schmale Bildschirme: Der Wertekasten (Tooltip) verdeckt dort die Linien. Stattdessen stehen die Werte der gewählten Stunde als Zeile über dem Diagramm. */
+const isNarrow = () => matchMedia("(max-width: 700px)").matches;
+function narrowReadout(opt, id){
+  const el = $(id); if(!el) return;
+  const on = isNarrow(); el.hidden = !on;
+  if(!on) return;
+  opt.plugins.tooltip.enabled = false;
+  opt.plugins.tooltip.external = ({tooltip:t}) => {
+    if(!t.dataPoints?.length){ el.innerHTML = ""; return; }
+    el.innerHTML = `<b>${esc((t.title||[]).join(" "))} Uhr</b>` + t.body.map((b, i) => `<span><i style="background:${t.labelColors[i]?.backgroundColor}"></i>${esc(b.lines.join(" "))}</span>`).join("");
+  };
+}
+matchMedia("(max-width: 700px)").addEventListener?.("change", () => { if(state.hours.length){ renderChart(); renderRain(); renderTemp(); } });
+
 /* Plugin: Arbeitszeit hinterlegen + gewählte Stunde markieren */
 const markPlugin = {id:"marks", beforeDatasetsDraw(c){
   if(!c.$idxs) return;
@@ -108,7 +122,7 @@ function renderChart(){
   if(!hid("lim")) ds.push({label:"Grenzwert", data:idxs.map(()=>cw(site.wind)), borderColor:stop, borderWidth:1.6, borderDash:[7,4], pointRadius:0});
   if(!hid("glim")) ds.push({label:"Grenze Böe", data:idxs.map(()=>cw(site.gust)), borderColor:stop, borderWidth:1, borderDash:[2,4], pointRadius:0});
   const opt = chartBase(WU()+" · "+zoneTxt()); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
-  opt.plugins.tooltip = {filter: it => !["Minimum","Grenzwert","Grenze Böe"].includes(it.dataset.label), callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y, U().d)} ${WU()}`}};
+  opt.plugins.tooltip = {filter: it => !["Minimum","Grenzwert","Grenze Böe"].includes(it.dataset.label), callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y, U().d)} ${WU()}`}}; narrowReadout(opt, "roMain");
   if(charts.main) charts.main.destroy();
   charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, limitLabels]});
   charts.main.$idxs = idxs; charts.main.update("none");
@@ -168,7 +182,7 @@ function renderRain(){
   opt.scales.y.suggestedMax = 2;
   opt.scales.y2 = {position:"right", beginAtZero:true, suggestedMax:1000, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"Barlow", size:10}}, title:{display:true, text:"CAPE J/kg", color:css("--muted")}};
   opt.plugins.tooltip = {callbacks:{label:c => c.dataset.yAxisID==="y2" ? `CAPE: ${Math.round(c.parsed.y)} J/kg`
-    : `Regen: ${fmt(c.parsed.y)} mm` + (H[c.dataIndex]?.rainN ? ` · ${H[c.dataIndex].rainYes} von ${H[c.dataIndex].rainN} Modellen` : "")}};
+    : `Regen: ${fmt(c.parsed.y)} mm` + (H[c.dataIndex]?.rainN ? ` · ${H[c.dataIndex].rainYes} von ${H[c.dataIndex].rainN} Modellen` : "")}}; narrowReadout(opt, "roRain");
   if(charts.rain) charts.rain.destroy();
   charts.rain = new Chart($("rain"), {data:{labels, datasets:[
     {type:"bar", label:"Regen", data:H.map(h=>h.rain==null?null:+h.rain.toFixed(2)), backgroundColor:H.map(h => rainColor(h)), borderColor:css("--band-line"), borderRadius:2},
@@ -185,7 +199,7 @@ function renderTemp(){
   const vals = H.flatMap(h => [h.tW, h.chill]).filter(v => v!=null), lo = vals.length ? Math.min(...vals) : 0;
   const opt = chartBase("°C"); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
   opt.scales.y.beginAtZero = false;
-  opt.plugins.tooltip = {filter: it => !it.dataset.ref, callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y)} °C`}};
+  opt.plugins.tooltip = {filter: it => !it.dataset.ref, callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y)} °C`}}; narrowReadout(opt, "roTemp");
   const ds = [
     {label:"Temperatur "+workH()+" m", data:H.map(h => r1(h.tW)), borderColor:css("--accent"), borderWidth:2.5, pointRadius:0, tension:.3},
     {label:"Gefühlt", data:H.map(h => r1(h.chill)), borderColor:css("--band-line"), borderWidth:2, borderDash:[5,4], pointRadius:0, tension:.3}

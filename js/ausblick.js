@@ -126,7 +126,7 @@ function renderOutlook(){
   }).join("");
   $("outlook").innerHTML = `<div class="ol-scroll"><div class="ol-days">${cards}</div></div>
     <p class="note">Grobe Tendenz für eure Arbeitszeit und den Arbeitsbereich ${esc(zoneTxt())}: höchster Wind und höchste Böe des Tages (Median von ${esc(outlook.models.join(", "))}), Regensumme, Temperatur von–bis.
-      <i>Zu windig</i>: ${outlook.ens ? `Anteil der ${outlook.ens.members} ECMWF-Szenarien, in denen an diesem Tag mindestens eine Arbeitsstunde über eurer Grenze liegt.` : "Szenarien gerade nicht abrufbar."} Ab Tag 4 nur zur Planung; für die Freigabe gilt die Detailprognose.</p>`;
+      <i>Zu windig</i>: ${outlook.ens ? `Anteil der ${outlook.ens.members} Szenarien des ECMWF-Ensembles, in denen an diesem Tag mindestens eine Arbeitsstunde über eurer Grenze liegt.` : "Szenarien gerade nicht abrufbar."} Ab Tag 4 nur zur Planung; für die Freigabe gilt die Detailprognose.</p>`;
   $("outlook").querySelectorAll(".ol-day.detail").forEach(b => b.onclick = () => {
     state.day = b.dataset.day; state.sel = defaultSel(state.day); render();
     document.querySelector(".hero").scrollIntoView({behavior:"smooth", block:"start"});

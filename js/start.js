@@ -6,4 +6,4 @@ if("serviceWorker" in navigator && !navigator.webdriver && /^https:|^http:\/\/lo
 attachScrub("chart", "main"); attachScrub("rain", "rain"); attachScrub("temp", "temp");
 fillSettings();
 initMap();
-if(siteChosen) load(); else startFirstRun();
+if(siteChosen){ load(); radarAuto(); } else startFirstRun();

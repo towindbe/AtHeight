@@ -13,7 +13,7 @@ function initMap(){
   map.on("click", e => setPos(e.latlng));
   $("mapMaxBtn").onclick = () => mapMax(!$("mapCard").classList.contains("map-max"));
   document.addEventListener("keydown", e => { if(e.key==="Escape" && $("mapCard").classList.contains("map-max")) mapMax(false); });
-  $("radarBtn").onclick = () => radarToggle($("radarBtn").getAttribute("aria-pressed")!=="true");
+  $("radarBtn").onclick = () => { const on = $("radarBtn").getAttribute("aria-pressed")!=="true"; radarToggle(on); try{ localStorage.setItem("wb_radar", on ? "1" : "0"); }catch(e){} };
   $("radarPlay").onclick = () => radarPlay(!radar.playing);
   $("radarSlider").oninput = e => { radarPlay(false); radarShow(+e.target.value); };
   map.on("moveend", () => { if(radar.on){ clearTimeout(radar.rebuild); radar.rebuild = setTimeout(radarFrames, 300); } });

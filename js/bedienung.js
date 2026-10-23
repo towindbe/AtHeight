@@ -31,7 +31,7 @@ $("saveBtn").onclick = () => {
   siteReady(); saveSite(); toggleSettings(false);
   if(map) map.setView([site.lat, site.lon], Math.max(map.getZoom(), 13));
   $("mapNote").textContent = "Ort suchen oder direkt auf die Anlage tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Regenradar: DWD, nur Deutschland und Grenzgebiete.";
-  load();
+  load(); radarAuto();   // Einstellungen bestätigt: Karte zeigt das Regenradar
 };
 $("gpsBtn").onclick = () => {
   if(!navigator.geolocation){ $("gpsBtn").textContent = "GPS nicht verfügbar"; return; }
