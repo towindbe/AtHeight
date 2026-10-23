@@ -14,9 +14,12 @@ function narrowReadout(opt, id){
   const on = isNarrow(); el.hidden = !on;
   if(!on) return;
   opt.plugins.tooltip.enabled = false;
+  el.style.minHeight = ""; el.dataset.mh = "0";
   opt.plugins.tooltip.external = ({tooltip:t}) => {
-    if(!t.dataPoints?.length){ el.innerHTML = ""; return; }
-    el.innerHTML = `<b>${esc((t.title||[]).join(" "))} Uhr</b>` + t.body.map((b, i) => `<span><i style="background:${t.labelColors[i]?.backgroundColor}"></i>${esc(b.lines.join(" "))}</span>`).join("");
+    if(!t.dataPoints?.length) return;   // alten Inhalt stehen lassen, sonst springt das Diagramm
+    el.innerHTML = `<b>${esc((t.title||[]).join(" "))} Uhr</b>` + t.body.map((b, i) => `<span title="${esc(b.lines.join(" "))}"><i style="background:${t.labelColors[i]?.backgroundColor}"></i>${esc(b.lines.join(" "))}</span>`).join("");
+    // Höhe nur wachsen lassen: so springt die Zeile beim Wischen nicht, wenn sich Zahlen oder Anzahl der Einträge ändern
+    const mh = Math.max(+el.dataset.mh || 0, el.offsetHeight); el.dataset.mh = mh; el.style.minHeight = mh + "px";
   };
 }
 matchMedia("(max-width: 700px)").addEventListener?.("change", () => { if(state.hours.length){ renderChart(); renderRain(); renderTemp(); } });
