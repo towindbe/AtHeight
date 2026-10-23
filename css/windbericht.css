@@ -437,10 +437,10 @@ body.info-open{overflow:hidden}
 .sb-nav::-webkit-scrollbar{display:none}
 .sb-nav button{flex:none;padding:5px 12px;font:500 13px var(--f-body);border-radius:99px;background:var(--raised);color:var(--band-line)}
 .card[id]{scroll-margin-top:128px}
-.sb-strip{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;position:relative;padding:5px 0 3px}
+.sb-strip{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;position:relative;padding:5px 0 2px}
 .sb-strip::-webkit-scrollbar{display:none}
-.sb-strip .tl-cell{flex:none;width:20px;height:28px;padding:0 0 2px;font-size:9.5px;border-radius:4px}
-.sb-strip .tl-cell.dstart{margin-left:8px;width:auto;min-width:36px;padding:0 5px 2px} .sb-strip .tl-cell.dstart:first-child{margin-left:0}
+.sb-strip .tl-cell{flex:none;width:20px;height:15px;padding:0;justify-content:center;line-height:1;font-size:9px;border-radius:3px}
+.sb-strip .tl-cell.dstart{margin-left:8px;width:auto;min-width:36px;padding:0 5px} .sb-strip .tl-cell.dstart:first-child{margin-left:0}
 .sb-strip .tl-cell.nowc::after{top:-4px}
 /* Hinweis "App installieren" */
 .install-box{position:fixed;left:50%;transform:translateX(-50%);bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:1300;width:min(560px,calc(100% - 24px));display:flex;align-items:center;gap:12px;flex-wrap:wrap;
