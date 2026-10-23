@@ -9,7 +9,7 @@
 //   node tests/run.mjs --accept   gewollte Änderung: aktuelles Ergebnis als Referenz übernehmen
 //   node tests/run.mjs --record   neue Aufzeichnung + neue Referenz (nur bewusst ausführen!)
 //
-// Lokal wird Microsoft Edge verwendet, auf GitHub Actions Chromium.
+// Lokal wird Microsoft Edge verwendet (anderer Browser: WB_BROWSER=chrome node tests/run.mjs), auf GitHub Actions Chromium.
 import {chromium} from "playwright";
 import http from "node:http";
 import fs from "node:fs";
@@ -44,7 +44,7 @@ const base = `http://127.0.0.1:${server.address().port}`;
 const fixture = RECORD ? {fixed: Date.now(), responses: {}} : JSON.parse(fs.readFileSync(FIX, "utf8"));
 const missing = []; let added = 0;
 
-const browser = await chromium.launch(process.env.CI ? {} : {channel: "msedge"});
+const browser = await chromium.launch(process.env.CI ? {} : {channel: process.env.WB_BROWSER || "msedge"});
 const page = await browser.newPage({viewport: {width: 1100, height: 900}, locale: "de-DE", timezoneId: "Europe/Berlin"});
 const errors = [];
 page.on("pageerror", e => errors.push("Seitenfehler: " + e.message));
