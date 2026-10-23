@@ -31,13 +31,21 @@ function renderStrip(){
   }
   let selBtn = null;
   box.querySelectorAll(".tl-cell").forEach(b => { const on = +b.dataset.i === state.sel; b.classList.toggle("sel", on); if(on) selBtn = b; });
-  // gewählte Stunde im Sichtbereich halten (erst nach dem Einblenden der Leiste messbar)
+  // gewählte Stunde in die Mitte der Leiste holen (erst nach dem Einblenden messbar; nicht, solange gerade gewischt wird)
   requestAnimationFrame(() => {
-    if(!selBtn || !box.clientWidth) return;
-    const l = selBtn.offsetLeft, r = l + selBtn.offsetWidth;
-    if(l < box.scrollLeft + 20) box.scrollLeft = Math.max(0, l - 20);
-    else if(r > box.scrollLeft + box.clientWidth - 20) box.scrollLeft = r - box.clientWidth + 20;
+    if(!selBtn || !box.clientWidth || Date.now() < stripBusyUntil) return;
+    const want = selBtn.offsetLeft + selBtn.offsetWidth/2 - box.clientWidth/2;
+    if(Math.abs(want - box.scrollLeft) > 1){ stripIgnoreUntil = Date.now() + 150; box.scrollLeft = want; }
   });
+}
+/* Wischen durch die Leiste wählt immer die Stunde in der Mitte: Wert oben, Diagramme, Tabellen und Karte laufen mit */
+let stripBusyUntil = 0, stripIgnoreUntil = 0, stripRaf = 0;
+function stripScrubbed(){
+  stripRaf = 0;
+  const box = $("sbStrip"), mid = box.scrollLeft + box.clientWidth/2;
+  let best = null, bd = Infinity;
+  box.querySelectorAll(".tl-cell").forEach(b => { const d = Math.abs(b.offsetLeft + b.offsetWidth/2 - mid); if(d < bd){ bd = d; best = b; } });
+  if(best && +best.dataset.i !== state.sel) selectHour(+best.dataset.i);
 }
 
 function initSticky(){
@@ -46,6 +54,11 @@ function initSticky(){
     const b = e.target.closest("button[data-go]"), el = b && $(b.dataset.go);
     if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
   });
+  $("sbStrip").addEventListener("scroll", () => {
+    if(Date.now() < stripIgnoreUntil) return;
+    stripBusyUntil = Date.now() + 500;
+    if(!stripRaf) stripRaf = requestAnimationFrame(stripScrubbed);
+  }, {passive:true});
   $("sbStrip").addEventListener("click", e => { const b = e.target.closest(".tl-cell"); if(b) selectHour(+b.dataset.i); });
   $("sbPrev").onclick = () => selectHour(state.sel - 1);
   $("sbNext").onclick = () => selectHour(state.sel + 1);
