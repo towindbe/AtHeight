@@ -104,7 +104,7 @@ function nightRig(day){
 function nightText(n){
   if(!n) return null;
   const span = `${hh(n.from)}–${String((hourOf(n.to)+1)%24).padStart(2,"0")} Uhr`;
-  const lim = `Grenze ${fw(nightWind())} / ${fwu(nightGust())} (Wind / Böe, 10 m bis Nabe)`;
+  const lim = `Grenze ${fw(nightWind())} / ${fwu(nightGust())} (Wind / Böe, 10 m bis ${topWord()})`;
   const part = n.complete ? "" : " (Prognose endet früher)";
   if(n.lvl==="stop") return {lvl:"stop", head:"Seile und Bühne über Nacht: Beschädigungsrisiko hoch, abbauen", text:`${span}${part}: über Grenze ab ${hh(n.firstOver)} Uhr, Böen bis ${fwu(n.g)} gegen ${hh(n.gT)} Uhr, Wind bis ${fwu(n.v)} · ${lim}`};
   if(n.lvl==="warn") return {lvl:"warn", head:"Seile und Bühne über Nacht: Beschädigungsrisiko erhöht, prüfen", text:`${span}${part}: Böen bis ${fwu(n.g)}, einzelne Modelle bis ${fwu(Math.max(n.gMax ?? 0, n.vMax ?? 0))} · ${lim}`};

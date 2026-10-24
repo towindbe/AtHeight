@@ -23,6 +23,11 @@ $("saveBtn").onclick = () => {
     hub:clamp(num("s_hub",site.hub),20,250), rotor:clamp(num("s_rotor",site.rotor),0,250),
     work: $("s_work").value.trim()==="" ? null : clamp(Math.round(num("s_work",0)),10,300), access:$("s_access").value,
     wind:windField("s_wind",site.wind), gust:windField("s_gust",site.gust), nightWind:windField("s_nwind",nightWind()), nightGust:windField("s_ngust",nightGust()), minTemp:clamp(Math.round(num("s_mintemp",minTemp())),-50,20), from:clamp(Math.round(num("s_from",site.from)),0,23), to:clamp(Math.round(num("s_to",site.to)),0,23)};
+  site.windkraft = $("s_windkraft").checked;
+  if(!site.windkraft){   // ohne Windenergieanlage: Arbeitshöhe ist die Bezugshöhe, kein Rotor, kein Zugang von der Gondel
+    const w = clamp(site.work ?? prev.work ?? prev.hub, 10, 300);
+    site.work = w; site.hub = w; site.rotor = 0; if(site.access === "nacelle") site.access = "ground";
+  }
   if(site.to < site.from) [site.from, site.to] = [site.to, site.from];
   site.checked = true;
   // ist die Anlage gespeichert, wird der Eintrag mit aktualisiert
@@ -33,6 +38,7 @@ $("saveBtn").onclick = () => {
   $("mapNote").textContent = "Ort suchen oder direkt auf die Anlage tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Regenradar: DWD, nur Deutschland und Grenzgebiete.";
   load();
 };
+$("s_windkraft").onchange = applyEinsatzUI;
 $("gpsBtn").onclick = () => {
   if(!navigator.geolocation){ $("gpsBtn").textContent = "GPS nicht verfügbar"; return; }
   navigator.geolocation.getCurrentPosition(p => { if(marker){ toggleSettings(false); pointToMap(); setPos(L.latLng(p.coords.latitude, p.coords.longitude)); } else { $("s_lat").value=p.coords.latitude.toFixed(4); $("s_lon").value=p.coords.longitude.toFixed(4);} if(map) map.setView([p.coords.latitude,p.coords.longitude],15); },

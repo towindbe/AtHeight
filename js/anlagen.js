@@ -18,7 +18,7 @@ function renderFavs(){
   $("favList").innerHTML = !favs.length
     ? `<div class="fav-empty">Noch keine Anlagen gespeichert.</div>`
     : favs.map((f,k) => `<div class="fav-item ${isCurrent(f)?"cur":""}">
-    <button type="button" class="fav-go" data-k="${k}"><span>${isCurrent(f)?"● ":""}${esc(f.name)}</span><small>Arbeit ${f.site.work || f.site.hub} m · Nabe ${f.site.hub} m · ${fw(f.site.wind)}/${fwu(f.site.gust)}</small></button>
+    <button type="button" class="fav-go" data-k="${k}"><span>${isCurrent(f)?"● ":""}${esc(f.name)}</span><small>Arbeit ${f.site.work || f.site.hub} m${f.site.windkraft !== false ? ` · Nabe ${f.site.hub} m` : ""} · ${fw(f.site.wind)}/${fwu(f.site.gust)}</small></button>
     <button type="button" class="fav-del" data-k="${k}" title="Anlage löschen" aria-label="${esc(f.name)} löschen">×</button></div>`).join("");
   $("favSaved").hidden = !cur;
   if(cur) $("favSaved").textContent = `„${cur.name}“ ist gespeichert. Änderungen unter „Einstellungen“ werden automatisch übernommen.`;

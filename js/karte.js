@@ -9,6 +9,7 @@ function initMap(){
   satLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {maxZoom:19, attribution:"Map data © Esri, Maxar, Earthstar Geographics"}).addTo(map);
   marker = L.marker([site.lat, site.lon], {draggable:true, title:"Anlage"}).addTo(map);
   rotorCircle = L.circle([site.lat, site.lon], {radius:site.rotor/2, color:"#ff7a33", weight:2, fillOpacity:.08}).addTo(map);
+  rotorCircle.setStyle({opacity: site.rotor ? 1 : 0, fillOpacity: site.rotor ? .08 : 0});
   marker.on("dragend", () => setPos(marker.getLatLng(), true));
   map.on("click", e => setPos(e.latlng));
   $("mapMaxBtn").onclick = () => mapMax(!$("mapCard").classList.contains("map-max"));
@@ -123,7 +124,7 @@ async function search(q){
 function updateMap(){
   if(!map) return;
   const ll = [site.lat, site.lon];
-  marker.setLatLng(ll); rotorCircle.setLatLng(ll).setRadius(site.rotor/2);
+  marker.setLatLng(ll); rotorCircle.setLatLng(ll).setRadius(site.rotor/2); rotorCircle.setStyle({opacity: site.rotor ? 1 : 0, fillOpacity: site.rotor ? .08 : 0});
   const h = state.hours[state.sel];
   if(arrowMarker){ map.removeLayer(arrowMarker); arrowMarker=null; }
   if(h && h.dir.mean!=null){

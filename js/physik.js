@@ -28,7 +28,11 @@ function windAt(lv, z){
    none    = nur die Arbeitshöhe
    Bewertet wird der stärkste Wind im Bereich. */
 const workH = () => site.work || site.hub;
-const accessMode = () => site.access || "ground";
+/* Einsatz an einer Windenergieanlage (Standard) oder allgemein (Fassade, Brücke, Turm …): ohne Windkraft gibt es keine Nabe, Rotor und Gondel.
+   Beim Speichern wird dann hub = Arbeitshöhe und rotor = 0 gesetzt, damit alle Berechnungen unverändert laufen. */
+const isWind = () => site.windkraft !== false;
+const topWord = () => isWind() ? "Nabe" : "Arbeitshöhe";
+const accessMode = () => !isWind() && site.access === "nacelle" ? "ground" : (site.access || "ground");
 const zoneBottom = () => accessMode()==="ground" ? Math.min(10, workH()) : workH();
 const zoneTop = () => accessMode()==="nacelle" && workH() < site.hub ? site.hub : workH();
 const zoneTxt = () => zoneBottom() < workH() ? `bis ${workH()} m` : zoneTop() !== workH() ? `${workH()}–${zoneTop()} m` : `${workH()} m`;

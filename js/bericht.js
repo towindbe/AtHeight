@@ -84,7 +84,7 @@ async function buildReport(){
 
     <div class="rp-sec rp-cols">
       <div class="rp-box"><h3>Einsatz</h3>${kv([["Projekt", esc(b.projekt)], ["Anlage / Typ", esc(b.anlage)], ["Tätigkeit", esc(b.taetigkeit)], ["Team", esc(b.team)], ["Aufsicht", esc(b.aufsicht)]])}</div>
-      <div class="rp-box"><h3>Standort &amp; Grenzwerte</h3>${kv([["Koordinaten", `${fmt(site.lat,4)}° N, ${fmt(site.lon,4)}° E`], ["Nabe / Rotor", `${site.hub} m / ${site.rotor} m`],
+      <div class="rp-box"><h3>Standort &amp; Grenzwerte</h3>${kv([["Koordinaten", `${fmt(site.lat,4)}° N, ${fmt(site.lon,4)}° E`], ...(isWind() ? [["Nabe / Rotor", `${site.hub} m / ${site.rotor} m`]] : []),
         ["Arbeitsbereich", `${zoneTxt()} (${ACCESS_TXT[accessMode()]})`], ["Max. Windstärke", fwu(site.wind)], ["Max. Böe", fwu(site.gust)]])}</div>
     </div>
 

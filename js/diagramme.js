@@ -220,6 +220,7 @@ function renderTemp(){
 function renderProfile(){
   if(typeof Chart==="undefined") return;
   const i = state.sel, h = state.hours[i]; if(!h) return;
+  $("profileNote").textContent = isWind() ? "Wind vom Boden bis über die Blattspitze zur gewählten Stunde." : "Wind vom Boden bis über die Arbeitshöhe zur gewählten Stunde.";
   const tip = site.hub + site.rotor/2, zs = [];
   for(let z=10; z<=Math.max(200, tip+10); z+=10) zs.push(z);
   const per = usableModels().map(r => r.series[i]).filter(Boolean);
@@ -249,12 +250,12 @@ function renderProfile(){
     ctx.strokeStyle = css("--accent"); ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(a.left, y.getPixelForValue(site.hub)); ctx.lineTo(a.right, y.getPixelForValue(site.hub)); ctx.stroke();
     ctx.strokeStyle = css("--stop"); ctx.beginPath(); ctx.moveTo(x.getPixelForValue(cw(site.wind)), a.top); ctx.lineTo(x.getPixelForValue(cw(site.wind)), a.bottom); ctx.stroke();
     ctx.setLineDash([]); ctx.fillStyle = css("--muted"); ctx.font = "10px Barlow";
-    ctx.fillText("Nabe "+site.hub+" m", a.left+4, y.getPixelForValue(site.hub)-4);
+    ctx.fillText((isWind() ? "Nabe " : "Arbeitshöhe ")+site.hub+" m", a.left+4, y.getPixelForValue(site.hub)-4);
     if(workH() !== site.hub){
       ctx.strokeStyle = css("--go"); ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(a.left, y.getPixelForValue(workH())); ctx.lineTo(a.right, y.getPixelForValue(workH())); ctx.stroke(); ctx.setLineDash([]);
       ctx.fillStyle = css("--go"); ctx.fillText("Arbeit "+workH()+" m", a.left+4, y.getPixelForValue(workH())-4);
     }
-    ctx.fillStyle = css("--muted"); ctx.fillText("Blattspitze "+Math.round(tip)+" m", a.left+4, y.getPixelForValue(tip)+12);
+    if(isWind()){ ctx.fillStyle = css("--muted"); ctx.fillText("Blattspitze "+Math.round(tip)+" m", a.left+4, y.getPixelForValue(tip)+12); }
     ctx.restore();
   }};
   if(charts.profile) charts.profile.destroy();

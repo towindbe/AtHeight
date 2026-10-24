@@ -11,10 +11,19 @@ function render(){
 }
 function renderSelected(){ renderNow(); renderCompass(); renderProfile(); updateMap(); highlightSel(); if(typeof renderSticky==="function") renderSticky(); }
 
+/* Felder je nach Einsatzart: Nabe, Rotor und Gondel-Zugang nur an Windenergieanlagen */
+function applyEinsatzUI(){
+  const on = $("s_windkraft").checked;
+  $("lbl_hub").hidden = $("lbl_rotor").hidden = !on;
+  $("opt_nacelle").hidden = $("opt_nacelle").disabled = !on;
+  if(!on && $("s_access").value === "nacelle") $("s_access").value = "ground";
+  $("s_work").placeholder = on ? "= Nabe" : "z. B. 40";
+}
 function fillSettings(){
   $("s_name").value = site.name; $("s_lat").value = site.lat; $("s_lon").value = site.lon;
   $("s_work").value = site.work ?? ""; $("s_access").value = accessMode();
   $("s_hub").value = site.hub; $("s_rotor").value = site.rotor; $("s_unit").value = windUnit;
+  $("s_windkraft").checked = isWind(); applyEinsatzUI();
   setWindField("s_wind", site.wind); setWindField("s_gust", site.gust); setWindField("s_nwind", nightWind()); setWindField("s_ngust", nightGust());
   $("s_from").value = site.from; $("s_to").value = site.to; $("s_mintemp").value = minTemp();
   $("siteTitle").textContent = site.name;

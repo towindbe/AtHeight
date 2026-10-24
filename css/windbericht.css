@@ -471,7 +471,7 @@ body.info-open{overflow:hidden}
 .rain-note{margin:2px 0 0;font-size:14px;color:var(--fg)} .rain-note:empty{display:none}
 
 /* Haftung: Bestätigung im Bericht, Hinweis an der Entscheidung, Ampel ohne bestätigte Grenzwerte */
-.chk{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.4;color:var(--fg)}
+label.chk{flex-direction:row;gap:10px;align-items:flex-start;font-size:13px;line-height:1.4;color:var(--fg);font-weight:500}
 .chk input{width:auto;flex:none;margin-top:3px}
 .decision-note{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
 body.unconfirmed #timeline,body.unconfirmed #sbStrip{filter:grayscale(1);opacity:.55}
