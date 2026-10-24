@@ -31,7 +31,7 @@ const ENSEMBLES = [{id:"icon_d2_eps", name:"ICON-D2-EPS"}, {id:"ecmwf_ifs025_ens
 const DEFAULT_SITE = {name:"Hildesheim", lat:52.1508, lon:9.9511, hub:125, rotor:149, work:null, path:true, access:"ground", wind:12, gust:15, nightWind:15, nightGust:20, minTemp:0, from:6, to:19};
 const CAPE_WARN = 300, CAPE_STOP = 800, RAIN_WARN = 0.5;
 const COLORS = ["#3b82f6","#14b8a6","#a855f7","#f59e0b","#ec4899","#22c55e","#06b6d4","#67e8f9","#64748b","#8b5cf6","#84cc16","#f97316","#0ea5e9","#d946ef","#10b981","#eab308"];
-const LAMP_TXT = {go:"GO", warn:"PRÜFEN", stop:"STOP", none:"–"};
+const LAMP_TXT = {go:"KLAR", warn:"PRÜFEN", stop:"STOP", none:"–"};
 /* Symbole der Ampelkachel: Haken, Warndreieck, Achteck mit Balken */
 const LAMP_ICON = {
   go:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 7"/></svg>`,

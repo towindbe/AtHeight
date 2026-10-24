@@ -79,7 +79,7 @@ async function buildReport(){
     <div class="rp-sec">
       <h3>Arbeitsfenster</h3>
       <div class="rp-strip">${hs.map(h => `<div class="${h.lamp} ${h.dark?"dark":""}">${hh(h.t)}</div>`).join("")}</div>
-      <div class="rp-legend"><span><i style="background:var(--go)"></i>GO</span><span><i style="background:var(--warn)"></i>Prüfen</span><span><i style="background:var(--stop)"></i>Stop</span><span><i style="background:#fff;border:1px solid var(--line);background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.35) 0 2px,transparent 2px 4px)"></i>Nacht</span></div>
+      <div class="rp-legend"><span><i style="background:var(--go)"></i>Klar</span><span><i style="background:var(--warn)"></i>Prüfen</span><span><i style="background:var(--stop)"></i>Stop</span><span><i style="background:#fff;border:1px solid var(--line);background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.35) 0 2px,transparent 2px 4px)"></i>Nacht</span></div>
     </div>
 
     <div class="rp-sec rp-cols">

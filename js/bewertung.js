@@ -167,11 +167,11 @@ function buildSummary(hs){
   let best=null, cur=null;
   hs.forEach(h => { if(h.lamp==="go"){ cur = cur ? {...cur, end:h.t, len:cur.len+1} : {start:h.t, end:h.t, len:1}; if(!best||cur.len>best.len) best=cur; } else cur=null; });
   let lamp, head;
-  if(c.go===hs.length){ lamp="go"; head=`Ganzer Arbeitstag im grünen Bereich (${site.from}–${site.to} Uhr).`; }
-  else if(best && best.len>=2){ lamp = best.len>=4 ? "warn" : "warn"; const win = `${hh(best.start)}–${String(hourOf(best.end)+1).padStart(2,"0")} Uhr`; head=`Grün nur ${win} (${best.len} h), übrige Stunden prüfen.`; if(c.stop===0 && best.len>=hs.length-2){ lamp="go"; head=`Grün ${win}, Randstunden prüfen.`; } }
+  if(c.go===hs.length){ lamp="go"; head=`Ganzer Arbeitstag klar (${site.from}–${site.to} Uhr).`; }
+  else if(best && best.len>=2){ lamp = best.len>=4 ? "warn" : "warn"; const win = `${hh(best.start)}–${String(hourOf(best.end)+1).padStart(2,"0")} Uhr`; head=`Klar nur ${win} (${best.len} h), übrige Stunden prüfen.`; if(c.stop===0 && best.len>=hs.length-2){ lamp="go"; head=`Grün ${win}, Randstunden prüfen.`; } }
   else if(c.stop===hs.length){ lamp="stop"; head="Kein Arbeitsfenster: Grenzwerte ganztägig überschritten."; }
   else if(c.stop > hs.length/2){ lamp="stop"; head=`Überwiegend Stop: in ${c.stop} von ${hs.length} Stunden über Grenzwert.`; }
-  else { lamp="warn"; head="Kein sicheres grünes Fenster, nur Stunden mit Prüfbedarf."; }
+  else { lamp="warn"; head="Kein klares Fenster, nur Stunden mit Prüfbedarf."; }
   const parts = [];
   const firstStop = hs.find(h => h.lamp==="stop");
   if(firstStop && c.stop!==hs.length) parts.push(`Ab ${hh(firstStop.t)} Uhr liegen ${firstStop.over} von ${firstStop.n} Modellen über euren Grenzwerten.`);
