@@ -38,7 +38,11 @@ function checkStale(){
 setInterval(checkStale, 6e4);
 document.addEventListener("visibilitychange", () => { if(!document.hidden) checkStale(); });
 function renderHero(){
-  const sum = buildSummary(dayHours(state.day));
+  let sum = buildSummary(dayHours(state.day));
+  // Solange Höhen und Grenzwerte der Anlage nicht bestätigt sind, gibt es keine Bewertung (die Werte sind nur Beispiele)
+  const unconfirmed = siteChosen && !site.checked;
+  document.body.classList.toggle("unconfirmed", unconfirmed);
+  if(unconfirmed) sum = {...sum, lamp:"none", head:"Erst Höhen und Grenzwerte bestätigen", text:"Die Werte dieser Anlage sind noch Beispielwerte. Bitte unter Einstellungen prüfen und „Übernehmen“ antippen, erst dann gilt die Bewertung."};
   state.summary = sum;
   $("lamp").className = "lamp " + sum.lamp; $("lamp").innerHTML = (LAMP_ICON[sum.lamp] || "") + `<span>${LAMP_TXT[sum.lamp]}</span>`;
   const dl = daylight(state.day);

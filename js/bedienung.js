@@ -77,12 +77,13 @@ $("s_unit").onchange = () => {
   renderRanking();
 };
 applyUnitLabels();
-$("printBtn").onclick = async () => { if(!state.fetchedAt) return; await buildReport(); window.print(); };
+const needConfirm = () => { if(site.checked) return false; alert("Bitte zuerst unter Einstellungen die Höhen und Grenzwerte dieser Anlage prüfen und „Übernehmen“ antippen."); return true; };
+$("printBtn").onclick = async () => { if(!state.fetchedAt || needConfirm()) return; await buildReport(); window.print(); };
 const appTitle = document.title;
 window.addEventListener("beforeprint", () => { if(state.fetchedAt) document.title = `Tagesbericht ${site.name} ${state.day}`; });
 window.addEventListener("afterprint", () => { document.title = appTitle; });
 $("jsonBtn").onclick = async () => {
-  if(!state.fetchedAt) return;
+  if(!state.fetchedAt || needConfirm()) return;
   const {snap, hash} = await buildReport();
   const blob = new Blob([JSON.stringify({...snap, pruefsumme:hash}, null, 2)], {type:"application/json"});
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);

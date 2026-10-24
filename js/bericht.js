@@ -17,7 +17,8 @@ async function freezeReport(){
 }
 function snapshot(){
   return {erstellt:new Date().toISOString(), abgerufen:state.fetchedAt?.toISOString(), standort:site, tag:state.day,
-    bericht:{projekt:$("r_project").value, anlage:$("r_turbine").value, team:$("r_team").value, aufsicht:$("r_lead").value, taetigkeit:$("r_task").value, entscheidung:$("r_decision").value, bemerkungen:$("r_notes").value},
+    bericht:{projekt:$("r_project").value, anlage:$("r_turbine").value, team:$("r_team").value, aufsicht:$("r_lead").value, taetigkeit:$("r_task").value, entscheidung:$("r_decision").value, bemerkungen:$("r_notes").value, vorOrtGeprueft:$("r_confirm").checked},
+    version: ownVersion() || "unbekannt",
     warnlage: warnState(state.day).note || null,
     warnungen: allWarnings().map(w => ({quelle:w.src, stufe:w.lvl, titel:w.title, ampelrelevant:w.relevant, beginn:isFinite(w.start)?new Date(w.start).toISOString():null, ende:isFinite(w.end)?new Date(w.end).toISOString():null})),
     fazit:{ampel:state.summary?.lamp, text:(state.summary?.head||"")+" "+(state.summary?.text||""), regen:rainSummary(dayHours(state.day))},
@@ -72,7 +73,7 @@ async function buildReport(){
         <div style="margin-top:4px">${esc(sum.text||"")}</div>
         <div style="margin-top:3px">${esc(rainSummary(hs))}</div>
       </div>
-      <div class="rp-box rp-dec ${dec}"><small>Entscheidung Aufsichtführender</small><b>${esc(b.entscheidung)}</b></div>
+      <div class="rp-box rp-dec ${dec}"><small>Entscheidung Aufsichtführender</small><b>${esc(b.entscheidung)}</b><small class="${b.vorOrtGeprueft ? "" : "rp-alert"}">${b.vorOrtGeprueft ? "✓ Prognose, Grenzwerte und Lage vor Ort geprüft" : "Prüfung vor Ort nicht bestätigt"}</small></div>
     </div>
 
     <div class="rp-sec">
@@ -112,7 +113,8 @@ async function buildReport(){
       Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle (mind. 2), CAPE ab ${CAPE_STOP} J/kg, Temperatur in Arbeitshöhe unter ${fmt(minTemp(),0)} °C oder Unwetterwarnung bzw. Warnstufe rot.
       Prüfen bei einzelnen Modellen über Grenzwert, Gewittersignal, CAPE ab ${CAPE_WARN} J/kg, Regen ab ${fmt(RAIN_WARN)} mm/h, mind. ${Math.round(ENS_WARN*100)} % der Szenarien über Grenze oder amtlicher Warnung. Nacht nur als Hinweis.
       Wind als Stundenwert der Modelle; kurzzeitig (z. B. im 10-Minuten-Mittel der Anlage) kann der Wind darüber liegen. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0).
-      Entscheidungshilfe; die Freigabe trifft der Aufsichtführende.
+      <b>Grenzen:</b> Die Prognosewerte sind Stundenmittel und können kurzzeitig überschritten werden. Lokale Effekte (Kuppen und Gelände, Nachlauf anderer Anlagen, Böenfronten, einzelne Gewitterzellen) bilden die Modelle nicht ab, Wind und Böen in der Höhe sind berechnet bzw. geschätzt, und die Prognose kann sich ändern. Wind vor Ort messen, bei Unsicherheit abbrechen.
+      Entscheidungshilfe; die Freigabe trifft der Aufsichtführende. Windbericht-Version ${esc(snap.version)}.
     </div>
 
     <div class="sig"><div>Datum, Unterschrift Aufsichtführender</div><div>Datum, Unterschrift Auftraggeber (optional)</div></div>

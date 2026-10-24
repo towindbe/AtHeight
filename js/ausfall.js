@@ -64,7 +64,7 @@ async function afRechnen(von, bis){
   const ok = tage.filter(t => t.n);
   const summen = {tage:tage.length, mitDaten:ok.length, ausfalltage:ok.filter(t => t.status==="ausfall").length, begrenzt:ok.filter(t => t.status==="eingeschraenkt").length,
     moeglich:ok.filter(t => t.status==="moeglich").length, arbeitsstunden:ok.reduce((s, t) => s+t.n, 0), ausfallstunden:ok.reduce((s, t) => s+t.ueber, 0), luecken:ok.reduce((s, t) => s+t.luecken, 0)};
-  return {erstellt:new Date().toISOString(), zeitraum:{von, bis}, standort:{name:site.name, lat:site.lat, lon:site.lon}, arbeitszeit:{von:site.from, bis:site.to}, bereich:zoneTxt(),
+  return {erstellt:new Date().toISOString(), version:ownVersion() || "unbekannt", zeitraum:{von, bis}, standort:{name:site.name, lat:site.lat, lon:site.lon}, arbeitszeit:{von:site.from, bis:site.to}, bereich:zoneTxt(),
     grenzwerte:{wind:site.wind, boe:site.gust, einheit:"m/s"}, station:st ? {name:st.name, quelle:st.src, entfernungKm:+st.dist.toFixed(1), hoehe:st.alt ?? null} : null,
     modell:"Open-Meteo Historical Forecast (best match), 10-m-Wind der Station auf den Arbeitsbereich hochgerechnet", projekt:$("af_project").value, tage, summen};
 }
@@ -92,6 +92,7 @@ async function afShow(){
   const out = $("afOut"), von = $("af_von").value, bis = $("af_bis").value, yesterday = addDays(isoDay(Date.now()), -1);
   const err = m => { out.innerHTML = `<p class="note err">${esc(m)}</p>`; $("afPrint").hidden = $("afJson").hidden = true; };
   if(!state.fetchedAt) return err("Bitte zuerst die Wetterdaten laden.");
+  if(!site.checked) return err("Bitte zuerst unter Einstellungen die Höhen und Grenzwerte dieser Anlage prüfen und „Übernehmen“ antippen.");
   if(!von || !bis || von > bis) return err("Bitte einen gültigen Zeitraum wählen (von ≤ bis).");
   if(bis > yesterday) return err("Der Zeitraum darf höchstens bis gestern reichen, für heute liegen noch keine vollständigen Messwerte vor.");
   if((Date.parse(bis) - Date.parse(von))/864e5 + 1 > AF_MAX_DAYS) return err(`Der Zeitraum darf höchstens ${AF_MAX_DAYS} Tage umfassen.`);
@@ -114,7 +115,7 @@ function afPrint(){
     <div class="rp-sec rp-box"><h3>Grenzwerte</h3>Arbeitsbereich ${esc(data.bereich)} · max. Windstärke ${fwu(data.grenzwerte.wind)} · max. Böe ${fwu(data.grenzwerte.boe)}</div>
     <div class="rp-sec"><h3>Tage im Zeitraum</h3><table class="rp-t af-rp">${afHead()}<tbody>${afRows(data)}</tbody></table>
       <div class="rp-small" style="margin-top:3px">Rot: über Grenzwert · Einstufung AUSFALL: mehr als die Hälfte der Arbeitsstunden über Grenzwert · BEGRENZT: mindestens eine Stunde darüber</div></div>
-    <div class="rp-sec rp-small"><b>Grundlagen.</b> ${afMethod(data)} Erstellt ${new Date(data.erstellt).toLocaleString("de-DE")}. Datenquellen: ${data.station ? esc(data.station.quelle) + ", " : ""}Open-Meteo.com (CC BY 4.0). Der Bericht ist eine Auswertung von Wetterdaten und ersetzt keine Messung an der Anlage.</div>
+    <div class="rp-sec rp-small"><b>Grundlagen.</b> ${afMethod(data)} Erstellt ${new Date(data.erstellt).toLocaleString("de-DE")} mit Windbericht-Version ${esc(data.version)}. Datenquellen: ${data.station ? esc(data.station.quelle) + ", " : ""}Open-Meteo.com (CC BY 4.0). Der Bericht ist eine Auswertung von Wetterdaten und ersetzt keine Messung an der Anlage.</div>
     <div class="sig"><div>Datum, Unterschrift Aufsichtführender</div><div>Datum, Unterschrift Auftraggeber (optional)</div></div>
     <div class="rp-small" style="margin-top:8px">Prüfsumme (SHA-256) der Auswertungsdaten: <span class="mono">${hash}</span> · dieselbe Zahl steht in der zugehörigen JSON-Datei.</div>`;
   r.style.zoom = "";
