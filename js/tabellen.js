@@ -1,23 +1,43 @@
 /* Windbericht · Modell-Matrix, Stundentabelle, Modelltabelle */
 "use strict";
 
+/* Modell-Matrix mit Umschalter: Wind, Böe oder Regen je Modell und Stunde. Nur Anzeige, die Ampel bleibt unverändert.
+   Regen: Klassen nach üblicher Einteilung (leicht bis 2,5 mm/h, mäßig bis 7,5, darüber stark); gelber Rand ab der Prüfschwelle der Ampel. */
+let mxMode = (() => { try{ return localStorage.getItem("wb_mx") || "wind"; }catch(e){ return "wind"; } })();
+const RAIN_LIGHT = 2.5, RAIN_MOD = 7.5;
 function renderMatrix(){
   const idxs = dayIdx().filter(i => isWork(state.times[i]));
+  const rain = mxMode === "regen", lim = mxMode === "boe" ? site.gust : site.wind;
   // gleiche Regel wie überall: rot erst ÜBER der Grenze, gelb ab 75 %; angezeigt mit einer Nachkommastelle
-  const cls = v => v==null ? "m-none" : v > site.wind ? "m-stop" : v >= site.wind*.75 ? "m-warn" : "m-go";
+  const cls = v => v==null ? "m-none" : v > lim ? "m-stop" : v >= lim*.75 ? "m-warn" : "m-go";
   // knapp über der Grenze (gerundet gleich dem Grenzwert): zwei Nachkommastellen, damit Rot nachvollziehbar ist
-  const num = v => { const d = U().d, r = x => Math.round(cw(x)*10**d)/10**d; return v > site.wind && r(v) <= r(site.wind) ? fw(v, d+1) : fw(v); };
+  const num = v => { const d = U().d, r = x => Math.round(cw(x)*10**d)/10**d; return v > lim && r(v) <= r(lim) ? fw(v, d+1) : fw(v); };
+  const rcls = v => v==null ? "m-none" : v >= RAIN_MOD ? "r-3" : v >= RAIN_LIGHT ? "r-2" : v >= 0.1 ? "r-1" : "r-0";
+  const rtxt = (v, storm) => v==null ? "·" : (v < 0.05 ? "0" : fmt(v,1)) + (storm ? "⚡" : "");
   const u = usableModels().sort((a,b)=> (b.m.hi-a.m.hi));
   const head = `<tr><th></th>${idxs.map(i=>`<th>${hh(state.times[i])}</th>`).join("")}</tr>`;
-  const rows = u.map(r => `<tr><th class="mname">${esc(r.m.name)} <small>${esc(r.m.org)} · ${esc(r.m.res)}</small></th>${idxs.map(i => { const s=r.series[i]; return `<td class="${cls(s?.v)}" data-i="${i}" title="${esc(r.m.name)} ${hh(state.times[i])} Uhr: Wind ${fwu(s?.v)}, Böe ${fwu(s?.g)}">${s?num(s.v):"·"}</td>`; }).join("")}</tr>`).join("");
-  const med = `<tr class="medrow"><th class="mname">Median <small>alle Modelle</small></th>${idxs.map(i => { const v=state.hours[i].med; return `<td class="${cls(v)}" data-i="${i}" style="font-weight:700">${v==null?"·":num(v)}</td>`; }).join("")}</tr>`;
+  const cellOf = (s, i, r) => {
+    if(rain) return `<td class="${rcls(s?.rain)}${s?.rain!=null && s.rain >= RAIN_WARN ? " r-w" : ""}" data-i="${i}" title="${esc(r.m.name)} ${hh(state.times[i])} Uhr: Regen ${s?.rain==null ? "–" : fmt(s.rain,1)} mm/h${s?.wc>=95 ? ", Gewittersignal" : ""}">${rtxt(s?.rain, s?.wc>=95)}</td>`;
+    const v = mxMode === "boe" ? s?.g : s?.v;
+    return `<td class="${cls(v)}" data-i="${i}" title="${esc(r.m.name)} ${hh(state.times[i])} Uhr: Wind ${fwu(s?.v)}, Böe ${fwu(s?.g)}">${v!=null ? num(v) : "·"}</td>`;
+  };
+  const rows = u.map(r => `<tr><th class="mname">${esc(r.m.name)} <small>${esc(r.m.org)} · ${esc(r.m.res)}</small></th>${idxs.map(i => cellOf(r.series[i], i, r)).join("")}</tr>`).join("");
+  const med = `<tr class="medrow"><th class="mname">Median <small>alle Modelle</small></th>${idxs.map(i => { const h = state.hours[i];
+    if(rain) return `<td class="${rcls(h.rain)}${h.rain!=null && h.rain >= RAIN_WARN ? " r-w" : ""}" data-i="${i}" style="font-weight:700">${rtxt(h.rain, h.storms > 0)}</td>`;
+    const v = mxMode === "boe" ? h.gMed : h.med; return `<td class="${cls(v)}" data-i="${i}" style="font-weight:700">${v==null?"·":num(v)}</td>`; }).join("")}</tr>`;
   $("matrix").innerHTML = `<table>${head}${rows}${med}</table>`;
   $("matrix").querySelectorAll("td[data-i]").forEach(td => td.onclick = () => selectHour(+td.dataset.i));
   $("mxDay").textContent = dayLabel(state.day);
+  $("mxNote").hidden = rain;
+  $("mxNote").innerHTML = mxMode === "boe" ? `Böe je Modell und Stunde in <span class="wu">${WU()}</span>. Gelb ab 75 % des Grenzwerts für die Böe, rot darüber. Zeigt, ob nur ein Ausreißer warnt oder fast alle.`
+    : `Wind je Modell und Stunde in <span class="wu">${WU()}</span>. Gelb ab 75 % des Grenzwerts, rot über dem Grenzwert. Mit der Maus über ein Feld fahren zeigt auch die Böe. Zeigt, ob nur ein Ausreißer warnt oder fast alle.`;
+  $("mxLegend").hidden = !rain;
+  $("mxLegend").textContent = rain ? `Regen in mm/h. Hellblau: leicht (bis ${fmt(RAIN_LIGHT,1)}), mittelblau: mäßig (bis ${fmt(RAIN_MOD,1)}), dunkelblau: stark. Gelber Rand: ab ${fmt(RAIN_WARN,1)} mm/h (Prüfen in der Ampel). ⚡ Gewittersignal. Nur Anzeige, die Ampel ändert sich dadurch nicht.` : "";
+  document.querySelectorAll("#mxSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === mxMode)));
   highlightSel();
 }
+document.querySelectorAll("#mxSeg button").forEach(b => b.onclick = () => { mxMode = b.dataset.m; try{ localStorage.setItem("wb_mx", mxMode); }catch(e){} renderMatrix(); });
 
-const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind <span class="wu">m/s</span></th><th>Spanne</th><th>Böe</th><th>Richtung</th><th title="Anzahl der Modelle mit Wind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th title="Anteil der Szenarien, in denen Wind oder Böe über Grenze liegen">Zu windig</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th>Gründe</th></tr></thead>`;
 function hourRows(hs, dots){
   return hs.map(h => `<tr>
     <td class="num">${dots?`<span class="dot d-${h.lamp}"></span> `:LAMP_TXT[h.lamp]+" "}${hh(h.t)}:00</td>
@@ -33,6 +53,8 @@ function hourRows(hs, dots){
     <td class="num">${fmt(h.chill,0)}</td>
     <td class="why-cell">${esc(h.why.filter(w=>w.l!=="go").map(w=>shortWhy(w.t)).join(" · ")) || "–"}</td></tr>`).join("");
 }
+
+const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind <span class="wu">m/s</span></th><th>Spanne</th><th>Böe</th><th>Richtung</th><th title="Anzahl der Modelle mit Wind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th title="Anteil der Szenarien, in denen Wind oder Böe über Grenze liegen">Zu windig</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th>Gründe</th></tr></thead>`;
 function renderHourTable(){ $("hourTable").innerHTML = HOUR_HEAD + "<tbody>" + hourRows(dayHours(state.day), true) + "</tbody>"; }
 
 function renderModelTable(){
