@@ -16,6 +16,7 @@ function radarToggle(on){
   } else {
     radarPlay(false);
     if(radar.overlay){ map.removeLayer(radar.overlay); radar.overlay = null; }
+    radar.arrowI = null; if(typeof updateMap === "function") updateMap();   // Pfeil wieder für die gewählte Stunde
   }
 }
 function radarFrames(){
@@ -47,6 +48,9 @@ function radarShow(i){
   else { radar.overlay.setBounds(radar.bounds); radar.overlay.setUrl(f.url); }
   const time = new Date(f.t).toLocaleTimeString("de-DE", {timeZone:state.tz || undefined, hour:"2-digit", minute:"2-digit"});
   $("radarTime").innerHTML = `${time} Uhr <span class="${f.ahead ? "rt-fc" : "rt-obs"}">${f.ahead ? "Vorhersage" : "gemessen"}</span>`;
+  // Windpfeil folgt der Radar-Uhrzeit (nächstliegende Prognosestunde), neu zeichnen nur beim Stundenwechsel
+  const ah = typeof arrowHour === "function" ? arrowHour() : null;
+  if(ah && ah.i !== radar.arrowI){ radar.arrowI = ah.i; if(typeof updateMap === "function") updateMap(); }
 }
 function radarPlay(on){
   radar.playing = on;
