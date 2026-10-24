@@ -128,7 +128,7 @@ function renderChart(){
   opt.plugins.tooltip = {filter: it => !["Minimum","Grenzwert","Grenze Böe"].includes(it.dataset.label), callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y, U().d)} ${WU()}`}}; narrowReadout(opt, "roMain");
   if(charts.main) charts.main.destroy();
   charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, limitLabels]});
-  charts.main.$idxs = idxs; charts.main.update("none");
+  charts.main.$idxs = idxs; charts.main.update("none"); if(isNarrow()) syncTooltip(charts.main);
   $("chartTitle").textContent = "Windverlauf · " + zoneTxt();
   renderChips(); renderLegend();
 }
@@ -191,7 +191,7 @@ function renderRain(){
     {type:"bar", label:"Regen", data:H.map(h=>h.rain==null?null:+h.rain.toFixed(2)), backgroundColor:H.map(h => rainColor(h)), borderColor:css("--band-line"), borderRadius:2},
     {type:"line", label:"CAPE", yAxisID:"y2", data:H.map(h=>h.cape==null?null:Math.round(h.cape)), borderColor:css("--warn"), borderWidth:2, pointRadius:0, tension:.3},
   ]}, options:opt, plugins:[markPlugin]});
-  charts.rain.$idxs = idxs; charts.rain.update("none");
+  charts.rain.$idxs = idxs; charts.rain.update("none"); if(isNarrow()) syncTooltip(charts.rain);
   $("rainDay").textContent = dayLabel(state.day);
 }
 
@@ -212,7 +212,7 @@ function renderTemp(){
   if(lo < -5) ds.push({label:"−10 °C", ref:true, data:idxs.map(() => CHILL_INFO), borderColor:css("--band-line"), borderWidth:1, borderDash:[2,3], pointRadius:0});
   if(charts.temp) charts.temp.destroy();
   charts.temp = new Chart($("temp"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin]});
-  charts.temp.$idxs = idxs; charts.temp.update("none");
+  charts.temp.$idxs = idxs; charts.temp.update("none"); if(isNarrow()) syncTooltip(charts.temp);
   $("tempTitle").textContent = "Temperatur · " + workH() + " m";
   $("tempDay").textContent = dayLabel(state.day);
 }
