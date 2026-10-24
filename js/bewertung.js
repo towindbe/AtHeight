@@ -138,6 +138,28 @@ function dayLabel(d, short){
   return rel + " · " + dt.toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"});
 }
 
+/* Regen-Tendenz in Worten für die Arbeitszeit: Regen (Median der Modelle ab 0,1 mm/h) und Schauer möglich (mind. ein Viertel der Modelle sieht Regen) */
+function rainSummary(hs){
+  hs = hs.filter(h => h.n);
+  if(!hs.length) return "";
+  const cls = h => h.rain!=null && h.rain >= 0.1 ? "wet" : h.rainN && h.rainYes/h.rainN >= 0.25 ? "maybe" : "";
+  const win = (a, b) => `${hh(a.t)}–${String(hourOf(b.t)+1).padStart(2,"0")} Uhr`;
+  const spans = []; let cur = null;
+  hs.forEach(h => { const c = cls(h);
+    if(c && cur && cur.c===c) cur.end = h; else { cur = c ? {c, start:h, end:h, mm:0} : null; if(cur) spans.push(cur); }
+    if(cur) cur.mm += h.rain || 0; });
+  if(!spans.length) return "Regen-Tendenz: trocken in der Arbeitszeit.";
+  const mm = hs.reduce((s,h) => s + (cls(h) ? (h.rain || 0) : 0), 0);
+  const peak = hs.reduce((a,h) => h.rain!=null && (!a || h.rain > a.rain) ? h : a, null);
+  const parts = [];
+  if(hourOf(spans[0].start.t) > hourOf(hs[0].t)) parts.push(`trocken bis ${hh(spans[0].start.t)} Uhr`);
+  spans.forEach(s => parts.push(`${s.c==="wet" ? "Regen" : "Schauer möglich"} ${win(s.start, s.end)}`));
+  if(hourOf(spans[spans.length-1].end.t) < hourOf(hs[hs.length-1].t)) parts.push("danach trocken");
+  let t = `Regen-Tendenz: ${parts.join(", ")}.`;
+  if(mm >= 0.1) t += ` Zusammen etwa ${fmt(mm,1)} mm in der Arbeitszeit`;
+  if(peak && peak.rain >= 0.1) t += `${mm >= 0.1 ? ", " : " "}am stärksten gegen ${hh(peak.t)} Uhr (${fmt(peak.rain,1)} mm/h, ${peak.rainYes} von ${peak.rainN} Modellen)`;
+  return t + (mm >= 0.1 || (peak && peak.rain >= 0.1) ? "." : "");
+}
 function buildSummary(hs){
   if(!hs.length || !hs.some(h=>h.n)) return {lamp:"none", head:"Für diesen Tag liegen keine Modelldaten vor.", text:""};
   const c = {go:0,warn:0,stop:0};

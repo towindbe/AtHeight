@@ -468,3 +468,4 @@ body.info-open{overflow:hidden}
 .readout span{display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .readout i{width:10px;height:10px;border-radius:2px;flex:none}
 .readout[hidden]{display:none}
+.rain-note{margin:2px 0 0;font-size:14px;color:var(--fg)} .rain-note:empty{display:none}

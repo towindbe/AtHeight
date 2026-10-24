@@ -44,6 +44,7 @@ function renderHero(){
   const dl = daylight(state.day);
   $("heroDay").textContent = `${new Date(state.day+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"})} · Arbeitszeit ${site.from}–${site.to} Uhr` + (dl.start && dl.end ? ` · hell ${dl.start}–${dl.end}` : "");
   $("headline").textContent = sum.head; $("summary").textContent = sum.text;
+  $("rainNote").textContent = rainSummary(dayHours(state.day));
   renderChange();
   checkStale();
   const u = usableModels();

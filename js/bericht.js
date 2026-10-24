@@ -20,7 +20,7 @@ function snapshot(){
     bericht:{projekt:$("r_project").value, anlage:$("r_turbine").value, team:$("r_team").value, aufsicht:$("r_lead").value, taetigkeit:$("r_task").value, entscheidung:$("r_decision").value, bemerkungen:$("r_notes").value},
     warnlage: warnState(state.day).note || null,
     warnungen: allWarnings().map(w => ({quelle:w.src, stufe:w.lvl, titel:w.title, ampelrelevant:w.relevant, beginn:isFinite(w.start)?new Date(w.start).toISOString():null, ende:isFinite(w.end)?new Date(w.end).toISOString():null})),
-    fazit:{ampel:state.summary?.lamp, text:(state.summary?.head||"")+" "+(state.summary?.text||"")},
+    fazit:{ampel:state.summary?.lamp, text:(state.summary?.head||"")+" "+(state.summary?.text||""), regen:rainSummary(dayHours(state.day))},
     nacht:(() => { const n = nightRig(state.day); return n && {status:n.lvl, von:n.from, bis:n.to, vollstaendig:n.complete, grenzeWind:nightWind(), grenzeBoe:nightGust(), maxWind:n.v, maxBoe:n.g, maxBoeEinzelmodell:n.gMax}; })(),
     einheit:{daten:"m/s", anzeige:WU()},
     bereich:{arbeitshoehe:workH(), von:zoneBottom(), bis:zoneTop(), zugang:accessMode(), text:zoneTxt()},
@@ -70,6 +70,7 @@ async function buildReport(){
       <div class="rp-box ${sum.lamp==="none" ? "na" : sum.lamp}">
         <div class="rp-big"><span class="rp-lamp ${sum.lamp}">${esc(LAMP_TXT[sum.lamp]||"")}</span>${esc(sum.head||"")}</div>
         <div style="margin-top:4px">${esc(sum.text||"")}</div>
+        <div style="margin-top:3px">${esc(rainSummary(hs))}</div>
       </div>
       <div class="rp-box rp-dec ${dec}"><small>Entscheidung Aufsichtführender</small><b>${esc(b.entscheidung)}</b></div>
     </div>
