@@ -86,6 +86,12 @@ function renderHero(){
       ${row("Höchster Wind in der Arbeitszeit, alle Modelle", sg.all)}
       ${sg.lvl==="maessig" ? `<small>Am stürmischsten: ${esc(sg.top.r.m.name)} (${esc(sg.top.r.m.org)}) mit ${fwu(sg.top.v)}.</small>` : ""}`;
   }
+  // Randlage in der Modellzelle: nur Hinweis, wenn bei mehreren hochauflösenden Modellen die Nachbarzelle nahe liegt
+  const hiRes = usableModels().filter(r => r.m.hi), edgy = hiRes.map(r => ({r, c:cellPos(r)})).filter(x => x.c && (x.c.edge || x.c.far));
+  const showCell = hiRes.length >= 2 && edgy.length >= 2 && edgy.length >= 0.3*hiRes.length;
+  $("cellBox").hidden = !showCell;
+  if(showCell) $("cellBox").innerHTML = `<b>Standort liegt am Rand der Modellzelle</b>
+    <small>Bei ${edgy.length} von ${hiRes.length} hochauflösenden Modellen (${edgy.slice(0,4).map(x => `${esc(x.r.m.name)} ${x.c.dir}`).join(", ")}${edgy.length > 4 ? " …" : ""}). Die Nachbarzelle kann anderen Wind rechnen, besonders am Ufer, an Kuppen und im Tal. Vor Ort messen.</small>`;
   const nt = nightText(nightRig(state.day));
   $("rigBox").hidden = !nt;
   if(nt){ $("rigBox").className = "rigbox needs-data r-" + nt.lvl; $("rigBox").innerHTML = `<b>${nt.lvl==="go" ? "✓ " : "⚠ "}${esc(nt.head)}</b><small>${esc(nt.text)}</small>`; }

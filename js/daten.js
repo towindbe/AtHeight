@@ -30,7 +30,7 @@ async function fetchModelOnce(m){
     if(/no data is available for this location/i.test(j.reason||"")) return {m, status:"outside", reason:j.reason};
     if(!r.ok || j.error) return {m, status:"error", reason: j.reason || (r.status===429 ? "HTTP 429 Too Many Requests" : "HTTP "+r.status)};
     fixTimes(j.hourly, j.timezone, j.utc_offset_seconds||0);
-    return {m, status:"ok", hourly:j.hourly, tz:j.timezone, off:j.utc_offset_seconds||0, elev:j.elevation};
+    return {m, status:"ok", hourly:j.hourly, tz:j.timezone, off:j.utc_offset_seconds||0, elev:j.elevation, glat:j.latitude, glon:j.longitude};
   }catch(e){ return {m, status:"error", reason: e.name==="AbortError" ? "Zeitüberschreitung" : "Keine Verbindung"}; }
 }
 

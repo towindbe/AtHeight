@@ -484,3 +484,9 @@ body.unconfirmed #timeline,body.unconfirmed #sbStrip{filter:grayscale(1);opacity
 .mx td.r-0{background:var(--raised);color:var(--muted)}
 .mx td.r-1{background:rgba(127,176,230,.28)} .mx td.r-2{background:rgba(127,176,230,.55)} .mx td.r-3{background:#4a86c8;color:#fff}
 .mx td.r-w{border:1.5px solid var(--warn)}
+
+/* Hinweis: Standort am Rand der Modellzelle */
+.cellbox{display:flex;flex-direction:column;gap:2px;padding:8px 12px;border:1px solid var(--line);border-left:4px solid var(--band-line);border-radius:0 8px 8px 0;background:var(--raised);font-size:13px}
+.cellbox small{color:var(--muted);font-size:12.5px}
+@media (min-width:760px){ .status-row > .cellbox{grid-column:1 / -1} }
+td.cell-edge{color:var(--warn)}

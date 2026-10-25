@@ -37,6 +37,17 @@ const zoneBottom = () => accessMode()==="ground" ? Math.min(10, workH()) : workH
 const zoneTop = () => accessMode()==="nacelle" && workH() < site.hub ? site.hub : workH();
 const zoneTxt = () => zoneBottom() < workH() ? `bis ${workH()} m` : zoneTop() !== workH() ? `${workH()}–${zoneTop()} m` : `${workH()} m`;
 const ACCESS_TXT = {ground:"Aufstieg vom Boden", nacelle:"Abstieg von der Gondel", none:"nur Arbeitshöhe"};
+/* Lage des Standorts in der Gitterzelle eines Modells (ohne zusätzliche Abrufe: Open-Meteo nennt die Zellmitte).
+   Rand: Standort liegt nahe an der Zellgrenze, die Nachbarzelle kann anders rechnen. Abweichend: gewählte Zelle liegt weiter weg als eine Halbzelle
+   (z. B. Landzelle statt Wasserzelle am Ufer). */
+const CELL_EDGE = 0.4;   // Anteil der Zellbreite: ab 40 % Abstand zur Mitte (Zellgrenze bei 50 %) gilt der Standort als Randlage
+function cellPos(r){
+  if(r.glat==null || r.glon==null) return null;
+  const res = parseFloat(String(r.m.res).replace(",", ".")); if(!(res > 0)) return null;
+  const dy = (site.lat - r.glat)*111.2, dx = (site.lon - r.glon)*111.2*Math.cos(site.lat*RAD), dist = Math.hypot(dx, dy);
+  const dir = dirName((Math.atan2(dx, dy)/RAD + 360) % 360);
+  return {res, dist, dir, edge: Math.max(Math.abs(dx), Math.abs(dy)) >= CELL_EDGE*res, far: dist > 0.75*res};
+}
 /* Hängende Seile und Bühne über Nacht: stärkster Wind von 10 m bis zur Nabe */
 function rigWind(lv){
   const hi = site.hub, zs = [...new Set([Math.min(10, hi), ...LEVELS.filter(z => z>10 && z<hi), hi])];
