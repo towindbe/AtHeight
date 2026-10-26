@@ -490,3 +490,10 @@ body.unconfirmed #timeline,body.unconfirmed #sbStrip{filter:grayscale(1);opacity
 .cellbox small{color:var(--muted);font-size:12.5px}
 @media (min-width:760px){ .status-row > .cellbox{grid-column:1 / -1} }
 td.cell-edge{color:var(--warn)}
+
+/* Logo im Kopf und in der Fußzeile */
+.brand-wrap{display:flex;align-items:center;gap:12px}
+.brand-logo{width:40px;height:40px;flex:none;border-radius:9px}
+.logo-app{width:36px;height:36px;flex:none;border-radius:8px}
+@media (max-width:430px){ .brand-logo{width:34px;height:34px} }
+@media print{ .brand-logo{display:none} }
