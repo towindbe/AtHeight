@@ -20,10 +20,12 @@ const hourOf = t => parseInt(t.slice(11,13),10);
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const DIRS = ["N","NNO","NO","ONO","O","OSO","SO","SSO","S","SSW","SW","WSW","W","WNW","NW","NNW"];
 const dirName = d => d==null ? "–" : DIRS[Math.round(((d%360)+360)%360/22.5)%16];
-function circMean(ds){
+/* Mittlere Richtung auf dem Kreis; ws (optional) gewichtet, z. B. nach Windstärke */
+function circMean(ds, ws){
   if(!ds.length) return {mean:null, spread:null};
-  let x=0,y=0; ds.forEach(d=>{x+=Math.cos(d*Math.PI/180); y+=Math.sin(d*Math.PI/180);});
-  x/=ds.length; y/=ds.length;
+  let x=0,y=0,sw=0; ds.forEach((d,k)=>{const w=ws?ws[k]:1; x+=w*Math.cos(d*Math.PI/180); y+=w*Math.sin(d*Math.PI/180); sw+=w;});
+  if(!(sw>0)) return {mean:null, spread:null};
+  x/=sw; y/=sw;
   const R = Math.hypot(x,y);
   return {mean:(Math.atan2(y,x)*180/Math.PI+360)%360, spread: R>0 ? Math.sqrt(-2*Math.log(R))*180/Math.PI : 180};
 }

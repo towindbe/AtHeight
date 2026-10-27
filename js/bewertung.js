@@ -19,7 +19,7 @@ function computeHours(results, times){
       uv:extras.uv?.get(t) ?? null,
       storms:pts.filter(x => x.s.wc!=null && x.s.wc>=95).length,
       over:pts.filter(x => x.s.v > site.wind || (x.s.g!=null && x.s.g > site.gust)).length,
-      dir:circMean(pts.map(x=>x.s.dir).filter(v=>v!=null))};
+      dir:dirMean(pts)};
     h.dark = isDark(t);
     h.chill = windChill(h.tW, h.med);
     const a = localMs(t);
@@ -110,6 +110,12 @@ function nightText(n){
   if(n.lvl==="warn") return {lvl:"warn", head:"Seile und Bühne über Nacht: Beschädigungsrisiko erhöht, prüfen", text:`${span}${part}: Böen bis ${fwu(n.g)}, einzelne Modelle bis ${fwu(Math.max(n.gMax ?? 0, n.vMax ?? 0))} · ${lim}`};
   return {lvl:"go", head:"Seile und Bühne über Nacht: Beschädigungsrisiko gering", text:`${span}${part}: Böen bis ${fwu(n.g)}, Wind bis ${fwu(n.v)} · ${lim}`};
 }
+/* Windrichtung der Modelle, nach Windstärke gewichtet: Modelle mit fast keinem Wind würfeln die Richtung und zählen weniger */
+function dirMean(pts){
+  const d = pts.filter(x => x.s.dir!=null);
+  return circMean(d.map(x => x.s.dir), d.map(x => Math.max(x.s.v ?? 0, 0.2)));
+}
+
 /* Große Streuung: hochauflösende und gröbere Modelle getrennt zeigen (Tageshöchstwert Wind in der Arbeitszeit).
    Nur zur Einordnung; es wird kein Modell aus der Bewertung genommen. */
 const SPREAD_HINT = 5;   // ab dieser mittleren Spanne (m/s) gilt die Lage als unsicher, wie in der Tageszusammenfassung

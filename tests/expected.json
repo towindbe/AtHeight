@@ -37,7 +37,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 351.1874161537522,
+   "dir": 354.00929116536736,
    "warns": 0
   },
   {
@@ -58,7 +58,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 312.1887281943325,
+   "dir": 316.8485157860864,
    "warns": 0
   },
   {
@@ -79,7 +79,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 265.38043260543617,
+   "dir": 262.63790615353287,
    "warns": 0
   },
   {
@@ -100,7 +100,7 @@
    "dark": true,
    "rain": 0.05,
    "cape": 0,
-   "dir": 235.56455207444375,
+   "dir": 236.73535189678321,
    "warns": 0
   },
   {
@@ -121,7 +121,7 @@
    "dark": true,
    "rain": 0.1,
    "cape": 0,
-   "dir": 225.89252579614012,
+   "dir": 228.54014274330282,
    "warns": 0
   },
   {
@@ -142,7 +142,7 @@
    "dark": true,
    "rain": 0.15000000000000002,
    "cape": 0,
-   "dir": 225.30170366418716,
+   "dir": 226.44225923656833,
    "warns": 0
   },
   {
@@ -163,7 +163,7 @@
    "dark": true,
    "rain": 0.25,
    "cape": 0,
-   "dir": 222.29766315348246,
+   "dir": 220.7179869283951,
    "warns": 0
   },
   {
@@ -184,7 +184,7 @@
    "dark": true,
    "rain": 0.25,
    "cape": 0,
-   "dir": 217.67523409173205,
+   "dir": 220.15694491679295,
    "warns": 0
   },
   {
@@ -203,7 +203,7 @@
    "dark": false,
    "rain": 0.4,
    "cape": 0,
-   "dir": 233.92422785155097,
+   "dir": 235.46923585857854,
    "warns": 0
   },
   {
@@ -222,7 +222,7 @@
    "dark": false,
    "rain": 0.2,
    "cape": 0,
-   "dir": 251.63077005197312,
+   "dir": 254.1697543237787,
    "warns": 0
   },
   {
@@ -241,7 +241,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 257.412861905325,
+   "dir": 258.69733476370084,
    "warns": 0
   },
   {
@@ -260,7 +260,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 271.3859397876209,
+   "dir": 269.2865258834917,
    "warns": 0
   },
   {
@@ -279,7 +279,7 @@
    "dark": false,
    "rain": 0.1,
    "cape": 0,
-   "dir": 267.2707213469879,
+   "dir": 269.53428376253237,
    "warns": 0
   },
   {
@@ -300,7 +300,7 @@
    "dark": false,
    "rain": 0.5,
    "cape": 0,
-   "dir": 266.41096520666474,
+   "dir": 266.63509991731223,
    "warns": 0
   },
   {
@@ -321,7 +321,7 @@
    "dark": false,
    "rain": 0.8,
    "cape": 5,
-   "dir": 256.6649427679791,
+   "dir": 256.8603868397626,
    "warns": 0
   },
   {
@@ -343,7 +343,7 @@
    "dark": false,
    "rain": 1.6,
    "cape": 10,
-   "dir": 247.74020857037385,
+   "dir": 246.95164089725563,
    "warns": 0
   },
   {
@@ -367,7 +367,7 @@
    "dark": false,
    "rain": 1.45,
    "cape": 20,
-   "dir": 251.53512644288156,
+   "dir": 251.25289001358954,
    "warns": 0
   },
   {
@@ -390,7 +390,7 @@
    "dark": false,
    "rain": 1.05,
    "cape": 0,
-   "dir": 241.33910214437944,
+   "dir": 242.04764199418338,
    "warns": 0
   },
   {
@@ -413,7 +413,7 @@
    "dark": true,
    "rain": 0.6499999999999999,
    "cape": 0,
-   "dir": 221.51767190582478,
+   "dir": 222.6733076958837,
    "warns": 0
   },
   {
@@ -436,7 +436,7 @@
    "dark": true,
    "rain": 0.75,
    "cape": 10,
-   "dir": 220.794499148287,
+   "dir": 222.73622313644958,
    "warns": 0
   },
   {
@@ -459,7 +459,7 @@
    "dark": true,
    "rain": 0.7,
    "cape": 10,
-   "dir": 222.74639423750608,
+   "dir": 225.52032418184976,
    "warns": 0
   },
   {
@@ -481,7 +481,7 @@
    "dark": true,
    "rain": 0.2,
    "cape": 10,
-   "dir": 226.15756742184962,
+   "dir": 227.7870544585117,
    "warns": 0
   },
   {
@@ -503,7 +503,7 @@
    "dark": true,
    "rain": 0.1,
    "cape": 10,
-   "dir": 229.76270520712544,
+   "dir": 230.81375058524668,
    "warns": 0
   },
   {
@@ -526,7 +526,7 @@
    "dark": true,
    "rain": 0.1,
    "cape": 20,
-   "dir": 237.77525196500355,
+   "dir": 238.38593823707248,
    "warns": 0
   },
   {
@@ -548,7 +548,7 @@
    "dark": true,
    "rain": 0.05,
    "cape": 20,
-   "dir": 245.2372977174452,
+   "dir": 245.79675380884717,
    "warns": 0
   },
   {
@@ -570,7 +570,7 @@
    "dark": true,
    "rain": 0,
    "cape": 20,
-   "dir": 239.77509700469597,
+   "dir": 240.4326651211613,
    "warns": 0
   },
   {
@@ -592,7 +592,7 @@
    "dark": true,
    "rain": 0,
    "cape": 10,
-   "dir": 237.0070772319547,
+   "dir": 237.74064787195817,
    "warns": 0
   },
   {
@@ -614,7 +614,7 @@
    "dark": true,
    "rain": 0,
    "cape": 10,
-   "dir": 235.982638609272,
+   "dir": 235.89860052500006,
    "warns": 0
   },
   {
@@ -636,7 +636,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 235.60256655545436,
+   "dir": 235.25347789810326,
    "warns": 0
   },
   {
@@ -658,7 +658,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 231.9444904331781,
+   "dir": 232.19237247212172,
    "warns": 0
   },
   {
@@ -680,7 +680,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 225.33002455747635,
+   "dir": 226.25211461732846,
    "warns": 0
   },
   {
@@ -702,7 +702,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 220.50800081277546,
+   "dir": 221.99769989988886,
    "warns": 0
   },
   {
@@ -723,7 +723,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 217.22955648197194,
+   "dir": 218.12641537659673,
    "warns": 0
   },
   {
@@ -744,7 +744,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 215.491982262172,
+   "dir": 216.49036129838143,
    "warns": 0
   },
   {
@@ -763,7 +763,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 216.88483253522523,
+   "dir": 217.33000437624912,
    "warns": 0
   },
   {
@@ -784,7 +784,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 222.7027573068184,
+   "dir": 223.14763770875686,
    "warns": 0
   },
   {
@@ -805,7 +805,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 228.8197798599662,
+   "dir": 229.04777095393266,
    "warns": 0
   },
   {
@@ -826,7 +826,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 233.45035326775235,
+   "dir": 233.70334421548574,
    "warns": 0
   },
   {
@@ -845,7 +845,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 233.88932625395313,
+   "dir": 233.979687002102,
    "warns": 0
   },
   {
@@ -864,7 +864,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 232.44556702274133,
+   "dir": 232.51023625149696,
    "warns": 0
   },
   {
@@ -883,7 +883,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 229.50172583061774,
+   "dir": 229.74031878504817,
    "warns": 0
   },
   {
@@ -902,7 +902,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 224.37623793871546,
+   "dir": 224.66649788787979,
    "warns": 0
   },
   {
@@ -923,7 +923,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 217.0692087061784,
+   "dir": 218.03244481184203,
    "warns": 0
   },
   {
@@ -944,7 +944,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 213.5999238533563,
+   "dir": 213.6936250104142,
    "warns": 0
   },
   {
@@ -965,7 +965,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 211.12716589776602,
+   "dir": 210.59276027525627,
    "warns": 0
   },
   {
@@ -986,7 +986,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 211.47012907750528,
+   "dir": 209.78373421327592,
    "warns": 0
   },
   {
@@ -1007,7 +1007,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 208.1818225785096,
+   "dir": 205.9954323686794,
    "warns": 0
   },
   {
@@ -1028,7 +1028,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 203.96315514851568,
+   "dir": 202.30655472090064,
    "warns": 0
   },
   {
@@ -1049,7 +1049,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 194.57130644903341,
+   "dir": 197.9954922494487,
    "warns": 0
   },
   {
@@ -1070,7 +1070,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 194.2396487654937,
+   "dir": 193.79757798822519,
    "warns": 0
   },
   {
@@ -1091,7 +1091,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 179.34811247361517,
+   "dir": 181.6543550163195,
    "warns": 0
   },
   {
@@ -1112,7 +1112,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 162.36482810810674,
+   "dir": 167.81495304846567,
    "warns": 0
   },
   {
@@ -1133,7 +1133,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 149.5094238136087,
+   "dir": 156.44033518856406,
    "warns": 0
   },
   {
@@ -1154,7 +1154,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 137.07715872202868,
+   "dir": 145.38369957112485,
    "warns": 0
   },
   {
@@ -1175,7 +1175,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 134.9108445390608,
+   "dir": 144.32291339243113,
    "warns": 0
   },
   {
@@ -1196,7 +1196,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 139.49000099116688,
+   "dir": 139.73835187456348,
    "warns": 0
   },
   {
@@ -1215,7 +1215,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 124.07579422596791,
+   "dir": 130.12388723260824,
    "warns": 0
   },
   {
@@ -1234,7 +1234,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 135.18097782983978,
+   "dir": 147.45013161594602,
    "warns": 0
   },
   {
@@ -1253,7 +1253,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 179.683939022578,
+   "dir": 176.86137923415822,
    "warns": 0
   },
   {
@@ -1272,7 +1272,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 205.18402119960825,
+   "dir": 199.37852516644557,
    "warns": 0
   },
   {
@@ -1291,7 +1291,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 206.36124691592025,
+   "dir": 198.93025521429917,
    "warns": 0
   },
   {
@@ -1313,7 +1313,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 223.94214877653474,
+   "dir": 224.3165217926224,
    "warns": 0
   },
   {
@@ -1336,7 +1336,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 226.62483010475592,
+   "dir": 230.4249619201607,
    "warns": 0
   },
   {
@@ -1359,7 +1359,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 239.58392530876768,
+   "dir": 241.158400141016,
    "warns": 0
   },
   {
@@ -1382,7 +1382,7 @@
    "dark": false,
    "rain": 0.05,
    "cape": 0,
-   "dir": 222.04390589355475,
+   "dir": 226.0805472233487,
    "warns": 0
   },
   {
@@ -1405,7 +1405,7 @@
    "dark": false,
    "rain": 0,
    "cape": 0,
-   "dir": 212.68791403923515,
+   "dir": 215.6026005511171,
    "warns": 0
   },
   {
@@ -1429,7 +1429,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 216.14413259006184,
+   "dir": 217.26875725054276,
    "warns": 0
   },
   {
@@ -1453,7 +1453,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 222.4572787792789,
+   "dir": 223.80836162754608,
    "warns": 0
   },
   {
@@ -1477,7 +1477,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 227.99086481154126,
+   "dir": 228.14252661211933,
    "warns": 0
   },
   {
@@ -1501,7 +1501,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 227.0052155925675,
+   "dir": 227.7816603532344,
    "warns": 0
   },
   {
@@ -1525,7 +1525,7 @@
    "dark": true,
    "rain": 0,
    "cape": 5,
-   "dir": 231.6690255335019,
+   "dir": 231.98543044463412,
    "warns": 0
   },
   {
@@ -1549,7 +1549,7 @@
    "dark": true,
    "rain": 0,
    "cape": 0,
-   "dir": 232.226308190223,
+   "dir": 232.75515236565218,
    "warns": 0
   }
  ],
@@ -1559,7 +1559,7 @@
   "zusammenfassung": "Stärkster Wind gegen 16 Uhr: 8,7 m/s (Spanne 6,8–12,0), Böen ca. 14,5 m/s. Modelle streuen mäßig.",
   "tag": "MI., 21.10. · ARBEITSZEIT 6–19 UHR · HELL 07:20–18:55",
   "warnungen": "✓ Keine amtlichen Warnungen\nStadt Aulendorf (DWD) am gewählten Tag",
-  "kacheln": "Wind 80–125 m\n1,9\nm/s Median\nBöe 80–125 m\n3,0\nm/s geschätzt\nRichtung\nW\n271° · 80 m\nModelle\n0/16\nüber Grenze\nZu windig ?\n0 %\nder 71 Szenarien\nTemperatur 80 m\n9 °C\ngefühlt 8 °C",
+  "kacheln": "Wind 80–125 m\n1,9\nm/s Median\nBöe 80–125 m\n3,0\nm/s geschätzt\nRichtung\nW\n269° · 80 m\nModelle\n0/16\nüber Grenze\nZu windig ?\n0 %\nder 71 Szenarien\nTemperatur 80 m\n9 °C\ngefühlt 8 °C",
   "gruende": "Alle Werte unter euren Grenzwerten",
   "zeitleiste": 72,
   "matrix": "06 07 08 09 10 11 12 13 14 15 16 17 18 19\nICON-D2 DWD · 2 km 3,0 1,9 2,0 1,5 0,9 0,7 1,1 2,7 5,3 7,1 11,3 5,1 7,9 8,5\nICON-CH1 MeteoSwiss · 1 km 2,5 2,2 1,8 1,1 1,7 1,5 2,2 2,9 3,1 7,3 8,2 6,9 4,2 5,8\nICON-CH2 MeteoSwiss · 2 km 1,5 2,0 2,0 0,7 1,5 1,7 1,9 3,0 3,2 7,4 8,2 7,0 6,5 5,9\nAROME AT GeoSphere · 2,5 km 0,8 2,8 2,0 1,7 2,7 2,0 2,5 2,2 3,3 3,5 7,0 6,3 6,1 5,6\nAROME HD Météo-France · 1,5 km 3,3 3,2 4,0 2,3 1,5 1,3 0,6 2,1 3,2 3,7 7,2 9,3 8,4 7,8\nHARMONIE KNMI · 5,5 km 3,7 3,2 3,3 3,5 1,2 1,5 4,0 4,5 6,0 5,6 8,5 7,6 7,1 5,7\nHARMONIE DMI · 2 km 3,5 1,6 3,1 3,6 2,4 1,9 1,4 3,5 4,6 4,8 7,8 6,4 6,4 6,0\nUKV Met Office · 2 km 4,0 4,0 3,3 1,6 1,7 2,4 3,7 3,5 4,6 4,4 9,0 9,6 7,4 9,1\nICON-EU DWD · 7 km 2,3 1,7 1,1 1,4 1,2 1,5 1,8 1,7 4,5 7,4 10,0 7,3 8,8 8,2\nARPEGE Météo-France · 11 km 5,2 3,9 3,7 3,1 3,4 4,6 4,0 4,4 5,4 11,0 10,7 8,0 8,7 9,5\nIFS HRES ECMWF · 9 km 3,8 3,9 3,3 2,7 2,2 1,5 2,1 4,0 5,0 8,1 9,6 6,9 6,9 7,2\nAIFS (KI) ECMWF · 25 km 2,3 2,1 2,4 2,8 3,4 4,2 5,0 5,8 6,4 7,0 7,5 7,9 8,3 8,6\nUKMO Global Met Office · 10 km 3,3 2,5 2,3 2,7 2,2 2,8 3,5 4,1 4,6 5,1 6,8 8,1 6,3 6,8\nICON Global DWD · 13 km 3,9 3,2 2,0 2,0 2,0 2,3 2,7 2,7 4,0 5,9 9,4 8,7 10,2 11,1\nGFS NOAA · 13 km 4,8 3,3 2,8 1,8 1,7 3,4 4,5 5,4 6,4 11,8 12,03 7,9 8,8 10,4\nGEM Kanada · 15 km 4,7 5,0 4,5 3,4 3,0 3,0 3,2 3,8 4,9 6,6 11,2 9,8 8,2 7,9\nMedian alle Modelle 3,4 3,0 2,6 2,1 1,9 1,9 2,6 3,5 4,6 6,8 8,7 7,7 7,6 7,8",
@@ -1568,10 +1568,10 @@
  },
  "andereStunde": {
   "label": "Heute, 15 Uhr",
-  "kacheln": "Wind 80–125 m\n6,8\nm/s Median\nBöe 80–125 m\n10,4\nm/s geschätzt\nRichtung\nWSW\n248° · 80 m\nModelle\n2/16\nüber Grenze\nZu windig ?\n0 %\nder 71 Szenarien\nTemperatur 80 m\n9 °C\ngefühlt 6 °C",
+  "kacheln": "Wind 80–125 m\n6,8\nm/s Median\nBöe 80–125 m\n10,4\nm/s geschätzt\nRichtung\nWSW\n247° · 80 m\nModelle\n2/16\nüber Grenze\nZu windig ?\n0 %\nder 71 Szenarien\nTemperatur 80 m\n9 °C\ngefühlt 6 °C",
   "gruende": "Einzelne Modelle mit Böe über Grenze\nRegen 1,6 mm/h",
   "profil": "HEUTE · 15 UHR",
-  "richtung": "Wind aus\nWSW · 248°\nWeht nach\nONO\nStreuung\n±19° (einig)\nStärke\n6,8 m/s · Böe 10,4\nModelle\n16"
+  "richtung": "Wind aus\nWSW · 247°\nWeht nach\nONO\nStreuung\n±17° (einig)\nStärke\n6,8 m/s · Böe 10,4\nModelle\n16"
  },
  "morgen": {
   "entscheidung": "Klar nur 14–20 Uhr (6 h), übrige Stunden prüfen.",
@@ -1580,8 +1580,8 @@
  },
  "modellvergleich": "Alle Modelle treffen hier etwa gleich gut (Fehler im Verlauf 0,66–0,83 m/s). Für oder gegen einzelne Modelle lässt sich daraus keine Empfehlung ableiten.\n\nEINSTUFUNG MODELL FEHLER VERLAUF TREFFER WINDIG FEHLER GESAMT TENDENZ FEHLER BÖE STUNDEN\ngleichwertig AIFS (KI) (ECMWF) 0,67 m/s 63 % 0,69 m/s −0,3 – 420\ngleichwertig AROME AT (GeoSphere) 0,66 m/s 52 % 0,79 m/s −0,6 zu wenig 1,1 m/s 420\ngleichwertig AROME HD (Météo-France) 0,77 m/s 51 % 0,78 m/s −0,0 1,3 m/s 420\ngleichwertig ARPEGE (Météo-France) 0,75 m/s 52 % 0,75 m/s −0,1 1,1 m/s 420\ngleichwertig GEM (Kanada) 0,74 m/s 56 % 0,75 m/s +0,2 1,4 m/s 420\ngleichwertig GFS (NOAA) 0,72 m/s 57 % 0,76 m/s +0,3 1,8 m/s 420\ngleichwertig HARMONIE (DMI) 0,83 m/s 44 % 0,84 m/s −0,2 1,2 m/s 420\ngleichwertig HARMONIE (KNMI) 0,83 m/s 41 % 0,87 m/s −0,4 zu wenig 1,2 m/s 420\ngleichwertig ICON Global (DWD) 0,74 m/s 52 % 0,75 m/s −0,2 1,3 m/s 420\ngleichwertig ICON-CH2 (MeteoSwiss) 0,66 m/s 50 % 0,68 m/s −0,3 1,2 m/s 420\ngleichwertig ICON-D2 (DWD) 0,70 m/s 48 % 0,74 m/s −0,4 zu wenig 1,2 m/s 420\ngleichwertig ICON-EU (DWD) 0,72 m/s 51 % 0,76 m/s −0,3 zu wenig 1,3 m/s 420\ngleichwertig IFS HRES (ECMWF) 0,74 m/s 52 % 0,74 m/s +0,0 – 420\ngleichwertig UKMO Global (Met Office) 0,70 m/s 55 % 0,70 m/s −0,0 1,1 m/s 420\ngleichwertig UKV (Met Office) 0,76 m/s 50 % 0,77 m/s +0,1 1,3 m/s 420\n\nOhne Vergleichsdaten (keine archivierten Vortagesprognosen): ICON-CH1 (MeteoSwiss).\n\nSo wird gerechnet: für die letzten 30 Tage (21.9.2026–20.10.2026, nur Arbeitsstunden, bis zu 420 Stunden je Modell) die Vortagesprognose jedes Modells für 10 m Höhe gegen die Messwerte der Station Aulendorf-Blönried (DWD, 4,8 km entfernt, 567 m ü. NN). Fehler Verlauf: mittlerer Fehler, nachdem die Grundtendenz des Modells abgezogen ist; so werden glatte, grobe Modelle nicht bevorzugt. Treffer windig: Anteil der windigsten 25 % der Stunden, die das Modell richtig erkannt hat. gut: höchstens 15 % mehr Fehler im Verlauf als das beste Modell und mind. 85 % von dessen Trefferquote; deutlich schlechter: mind. 40 % und 0,5 m/s mehr Fehler oder höchstens 60 % der besten Trefferquote. Unterscheiden sich alle um weniger als 30 %, gelten sie als gleichwertig. Gilt für Bodenwind in der Region, nicht für die Nabenhöhe. 10.26, 11:47.",
  "bericht": {
-  "text": "Tagesbericht WetterTestanlage Mittwoch, 21. Oktober 2026 · Arbeitszeit 6–19 Uhr · hell 07:20–18:55 PRÜFENKlar nur 06–13 Uhr (7 h), übrige Stunden prüfen. Stärkster Wind gegen 16 Uhr: 8,7 m/s (Spanne 6,8–12,0), Böen ca. 14,5 m/s. Modelle streuen mäßig. Regen-Tendenz: Regen 06–10 Uhr, Schauer möglich 10–12 Uhr, Regen 12–20 Uhr. Zusammen etwa 8,0 mm in der Arbeitszeit, am stärksten gegen 15 Uhr (1,6 mm/h, 16 von 16 Modellen). Entscheidung AufsichtführenderEingeschränkt freigegebenPrüfung vor Ort nicht bestätigt Arbeitsfenster 0607080910111213141516171819 KlarPrüfenStopNacht EinsatzProjektTestprojektAnlage / TypTesttyp, WEA 1TätigkeitTurmreparaturTeamA. TestAufsichtB. Test Standort & GrenzwerteKoordinaten47,9550° N, 9,6400° ENabe / Rotor125 m / 149 mArbeitsbereich80–125 m (Abstieg von der Gondel)Max. Windstärke12,0 m/sMax. Böe15,0 m/s Amtliche Warnungen (DWD, GeoSphere Austria) ✓ Keine amtlichen Warnungen für Stadt Aulendorf (DWD) am gewählten Tag. Seile und Bühne über Nacht✓ Seile und Bühne über Nacht: Beschädigungsrisiko gering. 20–06 Uhr: Böen bis 14,4 m/s, Wind bis 9,2 m/s · Grenze 15,0 / 20,0 m/s (Wind / Böe, 10 m bis Nabe) Prognose je Stunde · Wind und Böe im Bereich 80–125 m (m/s) UhrWindSpanneBöeRi.Modelle über GrenzeZu windigRegenCAPE°C 80 mGefühltGründe KLAR06:00 3,4 0,8–5,2 4,9 SW 0/16 0 % 0,3 0 8 6 Nacht KLAR07:00 3,0 1,6–5,0 4,3 SW 0/16 0 % 0,3 0 8 6 Nacht KLAR08:00 2,6 1,1–4,5 3,8 SW 0/16 0 % 0,4 0 8 7 – KLAR09:00 2,1 0,7–3,6 2,8 WSW 0/16 0 % 0,2 0 8 7 – KLAR10:00 1,9 0,9–3,4 2,5 WSW 0/16 0 % 0,0 0 9 8 – KLAR11:00 1,9 0,7–4,6 3,0 W 0/16 0 % 0,0 0 9 8 – KLAR12:00 2,6 0,6–5,0 3,5 W 0/16 0 % 0,1 0 9 8 – PRÜFEN13:00 3,5 1,7–5,8 4,5 W 0/16 0 % 0,5 0 9 8 Regen 0,5 mm/h PRÜFEN14:00 4,6 3,1–6,4 7,2 WSW 0/16 0 % 0,8 5 10 7 Regen 0,8 mm/h PRÜFEN15:00 6,8 3,5–11,8 10,4 WSW 2/16 0 % 1,6 10 9 6 Einzelmodelle Böe über Grenze · Regen 1,6 mm/h PRÜFEN16:00 8,7 6,8–12,0 14,5 WSW 7/16 20 % 1,4 20 9 5 Einzelmodelle Wind über Grenze · Einzelmodelle Böe über Grenze · Regen 1,4 mm/h · Zu windig 20 % PRÜFEN17:00 7,7 5,1–9,8 13,2 WSW 2/16 14 % 1,1 0 8 4 Einzelmodelle Böe über Grenze · Regen 1,1 mm/h · Zu windig 14 % PRÜFEN18:00 7,6 4,2–10,2 11,2 SW 3/16 8 % 0,6 0 7 3 Einzelmodelle Böe über Grenze · Regen 0,6 mm/h · Nacht PRÜFEN19:00 7,8 5,6–11,1 10,8 SW 2/16 2 % 0,8 10 7 3 Einzelmodelle Böe über Grenze · Regen 0,8 mm/h · Nacht Gelb: ab 75 % des Grenzwerts bzw. Hinweis · Rot: über Grenzwert · Schraffiert: Nacht Bemerkungen / TagesverlaufBemerkungzweite Zeile Grundlagen. Abgerufen 21.10.2026, 11:47:44, Bericht erstellt 21.10.2026, 11:47:44. Ausgewertete Modelle (16): ICON-D2 (DWD), ICON-CH1 (MeteoSwiss), ICON-CH2 (MeteoSwiss), AROME AT (GeoSphere), AROME HD (Météo-France), HARMONIE (KNMI), HARMONIE (DMI), UKV (Met Office), ICON-EU (DWD), ARPEGE (Météo-France), IFS HRES (ECMWF), AIFS (KI) (ECMWF), UKMO Global (Met Office), ICON Global (DWD), GFS (NOAA), GEM (Kanada). Ensemble-Vorhersage (Szenarien): ICON-D2-EPS (20), ECMWF-ENS (51). Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle (mind. 2), CAPE ab 800 J/kg, Temperatur in Arbeitshöhe unter 0 °C oder Unwetterwarnung bzw. Warnstufe rot. Prüfen bei einzelnen Modellen über Grenzwert, Gewittersignal, CAPE ab 300 J/kg, Regen ab 0,5 mm/h, mind. 30 % der Szenarien über Grenze oder amtlicher Warnung. Nacht nur als Hinweis. Wind als Stundenwert der Modelle; kurzzeitig (z. B. im 10-Minuten-Mittel der Anlage) kann der Wind darüber liegen. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0). Grenzen: Die Prognosewerte sind Stundenmittel und können kurzzeitig überschritten werden. Lokale Effekte (Kuppen und Gelände, Nachlauf anderer Anlagen, Böenfronten, einzelne Gewitterzellen) bilden die Modelle nicht ab, Wind und Böen in der Höhe sind berechnet bzw. geschätzt, und die Prognose kann sich ändern. Wind vor Ort messen, bei Unsicherheit abbrechen. Entscheidungshilfe; die Freigabe trifft der Aufsichtführende. Windbericht-Version 2026-10-25g. Datum, Unterschrift AufsichtführenderDatum, Unterschrift Auftraggeber (optional) Prüfsumme (SHA-256) der Berichtsdaten: be776188a71eaddd8f4332c5702e908abea4c253bd46885d6496927d0f1fe580 · dieselbe Zahl steht in der zugehörigen JSON-Datei (prüfbar mit tools/pruefen.py).",
-  "pruefsumme": "be776188a71eaddd8f4332c5702e908abea4c253bd46885d6496927d0f1fe580"
+  "text": "Tagesbericht WetterTestanlage Mittwoch, 21. Oktober 2026 · Arbeitszeit 6–19 Uhr · hell 07:20–18:55 PRÜFENKlar nur 06–13 Uhr (7 h), übrige Stunden prüfen. Stärkster Wind gegen 16 Uhr: 8,7 m/s (Spanne 6,8–12,0), Böen ca. 14,5 m/s. Modelle streuen mäßig. Regen-Tendenz: Regen 06–10 Uhr, Schauer möglich 10–12 Uhr, Regen 12–20 Uhr. Zusammen etwa 8,0 mm in der Arbeitszeit, am stärksten gegen 15 Uhr (1,6 mm/h, 16 von 16 Modellen). Entscheidung AufsichtführenderEingeschränkt freigegebenPrüfung vor Ort nicht bestätigt Arbeitsfenster 0607080910111213141516171819 KlarPrüfenStopNacht EinsatzProjektTestprojektAnlage / TypTesttyp, WEA 1TätigkeitTurmreparaturTeamA. TestAufsichtB. Test Standort & GrenzwerteKoordinaten47,9550° N, 9,6400° ENabe / Rotor125 m / 149 mArbeitsbereich80–125 m (Abstieg von der Gondel)Max. Windstärke12,0 m/sMax. Böe15,0 m/s Amtliche Warnungen (DWD, GeoSphere Austria) ✓ Keine amtlichen Warnungen für Stadt Aulendorf (DWD) am gewählten Tag. Seile und Bühne über Nacht✓ Seile und Bühne über Nacht: Beschädigungsrisiko gering. 20–06 Uhr: Böen bis 14,4 m/s, Wind bis 9,2 m/s · Grenze 15,0 / 20,0 m/s (Wind / Böe, 10 m bis Nabe) Prognose je Stunde · Wind und Böe im Bereich 80–125 m (m/s) UhrWindSpanneBöeRi.Modelle über GrenzeZu windigRegenCAPE°C 80 mGefühltGründe KLAR06:00 3,4 0,8–5,2 4,9 SW 0/16 0 % 0,3 0 8 6 Nacht KLAR07:00 3,0 1,6–5,0 4,3 SW 0/16 0 % 0,3 0 8 6 Nacht KLAR08:00 2,6 1,1–4,5 3,8 SW 0/16 0 % 0,4 0 8 7 – KLAR09:00 2,1 0,7–3,6 2,8 WSW 0/16 0 % 0,2 0 8 7 – KLAR10:00 1,9 0,9–3,4 2,5 WSW 0/16 0 % 0,0 0 9 8 – KLAR11:00 1,9 0,7–4,6 3,0 W 0/16 0 % 0,0 0 9 8 – KLAR12:00 2,6 0,6–5,0 3,5 W 0/16 0 % 0,1 0 9 8 – PRÜFEN13:00 3,5 1,7–5,8 4,5 W 0/16 0 % 0,5 0 9 8 Regen 0,5 mm/h PRÜFEN14:00 4,6 3,1–6,4 7,2 WSW 0/16 0 % 0,8 5 10 7 Regen 0,8 mm/h PRÜFEN15:00 6,8 3,5–11,8 10,4 WSW 2/16 0 % 1,6 10 9 6 Einzelmodelle Böe über Grenze · Regen 1,6 mm/h PRÜFEN16:00 8,7 6,8–12,0 14,5 WSW 7/16 20 % 1,4 20 9 5 Einzelmodelle Wind über Grenze · Einzelmodelle Böe über Grenze · Regen 1,4 mm/h · Zu windig 20 % PRÜFEN17:00 7,7 5,1–9,8 13,2 WSW 2/16 14 % 1,1 0 8 4 Einzelmodelle Böe über Grenze · Regen 1,1 mm/h · Zu windig 14 % PRÜFEN18:00 7,6 4,2–10,2 11,2 SW 3/16 8 % 0,6 0 7 3 Einzelmodelle Böe über Grenze · Regen 0,6 mm/h · Nacht PRÜFEN19:00 7,8 5,6–11,1 10,8 SW 2/16 2 % 0,8 10 7 3 Einzelmodelle Böe über Grenze · Regen 0,8 mm/h · Nacht Gelb: ab 75 % des Grenzwerts bzw. Hinweis · Rot: über Grenzwert · Schraffiert: Nacht Bemerkungen / TagesverlaufBemerkungzweite Zeile Grundlagen. Abgerufen 21.10.2026, 11:47:44, Bericht erstellt 21.10.2026, 11:47:44. Ausgewertete Modelle (16): ICON-D2 (DWD), ICON-CH1 (MeteoSwiss), ICON-CH2 (MeteoSwiss), AROME AT (GeoSphere), AROME HD (Météo-France), HARMONIE (KNMI), HARMONIE (DMI), UKV (Met Office), ICON-EU (DWD), ARPEGE (Météo-France), IFS HRES (ECMWF), AIFS (KI) (ECMWF), UKMO Global (Met Office), ICON Global (DWD), GFS (NOAA), GEM (Kanada). Ensemble-Vorhersage (Szenarien): ICON-D2-EPS (20), ECMWF-ENS (51). Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle (mind. 2), CAPE ab 800 J/kg, Temperatur in Arbeitshöhe unter 0 °C oder Unwetterwarnung bzw. Warnstufe rot. Prüfen bei einzelnen Modellen über Grenzwert, Gewittersignal, CAPE ab 300 J/kg, Regen ab 0,5 mm/h, mind. 30 % der Szenarien über Grenze oder amtlicher Warnung. Nacht nur als Hinweis. Wind als Stundenwert der Modelle; kurzzeitig (z. B. im 10-Minuten-Mittel der Anlage) kann der Wind darüber liegen. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0). Grenzen: Die Prognosewerte sind Stundenmittel und können kurzzeitig überschritten werden. Lokale Effekte (Kuppen und Gelände, Nachlauf anderer Anlagen, Böenfronten, einzelne Gewitterzellen) bilden die Modelle nicht ab, Wind und Böen in der Höhe sind berechnet bzw. geschätzt, und die Prognose kann sich ändern. Wind vor Ort messen, bei Unsicherheit abbrechen. Entscheidungshilfe; die Freigabe trifft der Aufsichtführende. Windbericht-Version 2026-10-26f. Datum, Unterschrift AufsichtführenderDatum, Unterschrift Auftraggeber (optional) Prüfsumme (SHA-256) der Berichtsdaten: 1158f9dd565875260a3b5596fafe9ff3b76dc0a6d5ec6b8c45249b3e0a6ebcb5 · dieselbe Zahl steht in der zugehörigen JSON-Datei (prüfbar mit tools/pruefen.py).",
+  "pruefsumme": "1158f9dd565875260a3b5596fafe9ff3b76dc0a6d5ec6b8c45249b3e0a6ebcb5"
  },
  "export": {
   "erstellt": "2026-10-21T09:47:44.066Z",
@@ -1616,7 +1616,7 @@
    "bemerkungen": "Bemerkung\nzweite Zeile",
    "vorOrtGeprueft": false
   },
-  "version": "2026-10-25g",
+  "version": "2026-10-26f",
   "warnlage": "Keine amtlichen Warnungen für Stadt Aulendorf (DWD) am gewählten Tag.",
   "warnungen": [],
   "fazit": {
@@ -3593,7 +3593,7 @@
     "min": 0.8286135043349967,
     "max": 5.235833333333334,
     "boe": 4.9053919456631805,
-    "richtung": 222.29766315348246,
+    "richtung": 220.7179869283951,
     "modelle": 16,
     "ueberGrenze": 0,
     "regen": 0.25,
@@ -3615,7 +3615,7 @@
     "min": 1.63,
     "max": 4.980667921989984,
     "boe": 4.308790222541983,
-    "richtung": 217.67523409173205,
+    "richtung": 220.15694491679295,
     "modelle": 16,
     "ueberGrenze": 0,
     "regen": 0.25,
@@ -3637,7 +3637,7 @@
     "min": 1.0808333333333333,
     "max": 4.472436501378762,
     "boe": 3.7784775797675842,
-    "richtung": 233.92422785155097,
+    "richtung": 235.46923585857854,
     "modelle": 16,
     "ueberGrenze": 0,
     "regen": 0.4,
@@ -3657,7 +3657,7 @@
     "min": 0.6960353436413972,
     "max": 3.57,
     "boe": 2.756033333333333,
-    "richtung": 251.63077005197312,
+    "richtung": 254.1697543237787,
     "modelle": 16,
     "ueberGrenze": 0,
     "regen": 0.2,
@@ -3677,7 +3677,7 @@
     "min": 0.9475,
     "max": 3.435478029573474,
     "boe": 2.48,
-    "richtung": 257.412861905325,
+    "richtung": 258.69733476370084,
     "modelle": 16,
     "ueberGrenze": 0,
     "regen": 0,
@@ -3697,7 +3697,7 @@
     "min": 0.6975,
     "max": 4.629166666666666,
     "boe": 2.964,
-    "richtung": 271.3859397876209,
+    "richtung": 269.2865258834917,
     "modelle": 16,
     "ueberGrenze": 0,
     "regen": 0,
@@ -3717,7 +3717,7 @@
     "min": 0.5535261555933704,
     "max": 5.003764580323105,
     "boe": 3.5117546012269942,
-    "richtung": 267.2707213469879,
+    "richtung": 269.53428376253237,
     "modelle": 16,
     "ueberGrenze": 0,
     "regen": 0.1,
@@ -3737,7 +3737,7 @@
     "min": 1.6841666666666666,
     "max": 5.8068458244193915,
     "boe": 4.499984477564005,
-    "richtung": 266.41096520666474,
+    "richtung": 266.63509991731223,
     "modelle": 16,
     "ueberGrenze": 0,
     "regen": 0.5,
@@ -3759,7 +3759,7 @@
     "min": 3.099014506212888,
     "max": 6.426342550946838,
     "boe": 7.174740000000001,
-    "richtung": 256.6649427679791,
+    "richtung": 256.8603868397626,
     "modelle": 16,
     "ueberGrenze": 0,
     "regen": 0.8,
@@ -3781,7 +3781,7 @@
     "min": 3.4801767182069865,
     "max": 11.761823159674005,
     "boe": 10.367612166239478,
-    "richtung": 247.74020857037385,
+    "richtung": 246.95164089725563,
     "modelle": 16,
     "ueberGrenze": 2,
     "regen": 1.6,
@@ -3804,7 +3804,7 @@
     "min": 6.794630735546972,
     "max": 12.028238180589659,
     "boe": 14.517451865222624,
-    "richtung": 251.53512644288156,
+    "richtung": 251.25289001358954,
     "modelle": 16,
     "ueberGrenze": 7,
     "regen": 1.45,
@@ -3829,7 +3829,7 @@
     "min": 5.1049999999999995,
     "max": 9.784424922138376,
     "boe": 13.185999999999998,
-    "richtung": 241.33910214437944,
+    "richtung": 242.04764199418338,
     "modelle": 16,
     "ueberGrenze": 2,
     "regen": 1.05,
@@ -3853,7 +3853,7 @@
     "min": 4.2425011421951835,
     "max": 10.245833333333334,
     "boe": 11.19890946973516,
-    "richtung": 221.51767190582478,
+    "richtung": 222.6733076958837,
     "modelle": 16,
     "ueberGrenze": 3,
     "regen": 0.6499999999999999,
@@ -3877,7 +3877,7 @@
     "min": 5.634571829477977,
     "max": 11.108333333333334,
     "boe": 10.78725,
-    "richtung": 220.794499148287,
+    "richtung": 222.73622313644958,
     "modelle": 16,
     "ueberGrenze": 2,
     "regen": 0.75,

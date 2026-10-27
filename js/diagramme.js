@@ -275,16 +275,17 @@ function renderCompass(){
   const lab = [["N",0],["O",90],["S",180],["W",270]].map(([t,d]) => { const a=d*Math.PI/180; return `<text x="${100+66*Math.sin(a)}" y="${104-66*Math.cos(a)}" text-anchor="middle" font-size="13" font-weight="600" font-family="Barlow Condensed, sans-serif" fill="${fg}">${t}</text>`; }).join("");
   // Striche: Wind kommt aus Richtung d -> Strich vom Rand zur Mitte
   const lines = dirs.map(s => { const a=s.dir*Math.PI/180; return `<line x1="${100+88*Math.sin(a)}" y1="${100-88*Math.cos(a)}" x2="${100+48*Math.sin(a)}" y2="${100-48*Math.cos(a)}" stroke="var(--band-line)" stroke-width="2" stroke-linecap="round" opacity=".75"/>`; }).join("");
+  const calm = h.med!=null && h.med < DIR_CALM;   // Schwachwind: Richtung wechselt, Pfeil nur blass
   let arrow = "";
   if(h.dir.mean!=null){
-    arrow = `<g transform="rotate(${h.dir.mean} 100 100)"><line x1="100" y1="14" x2="100" y2="150" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/><polygon points="100,170 88,146 112,146" fill="var(--accent)"/></g>`;
+    arrow = `<g transform="rotate(${h.dir.mean} 100 100)"${calm?' opacity=".4"':""}><line x1="100" y1="14" x2="100" y2="150" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/><polygon points="100,170 88,146 112,146" fill="var(--accent)"/></g>`;
   }
   $("compass").innerHTML = `<svg viewBox="0 0 200 200" role="img" aria-label="Windrichtung ${dirName(h.dir.mean)}"><circle cx="100" cy="100" r="90" fill="var(--raised)" stroke="var(--line)"/>${ticks}${lines}${lab}${arrow}<circle cx="100" cy="100" r="5" fill="${fg}"/></svg>`;
   const sp = h.dir.spread;
   $("compassFacts").innerHTML = `
     <dt>Wind aus</dt><dd>${h.dir.mean==null?"–":dirName(h.dir.mean)+" · "+Math.round(h.dir.mean)+"°"}</dd>
     <dt>Weht nach</dt><dd>${h.dir.mean==null?"–":dirName((h.dir.mean+180)%360)}</dd>
-    <dt>Streuung</dt><dd>${sp==null?"–":"±"+Math.round(sp)+"° "+(sp<20?"(einig)":sp<45?"(mäßig)":"(unsicher)")}</dd>
+    <dt>Streuung</dt><dd>${calm ? `<span class="dir-calm">schwacher Wind, Richtung wechselnd</span>` : sp==null?"–":"±"+Math.round(sp)+"° "+(sp<20?"(einig)":sp<45?"(mäßig)":"(unsicher)")}</dd>
     <dt>Stärke</dt><dd>${fwu(h.med)} · Böe ${fw(h.gMed)}</dd>
     <dt>Modelle</dt><dd>${dirs.length}</dd>`;
   $("compassHour").textContent = `${dayLabel(state.times[i].slice(0,10),true)} · ${hh(state.times[i])} Uhr`;
@@ -293,7 +294,7 @@ function renderCompass(){
 
 /* Richtung je Arbeitsstunde als Pfeilreihe, dazu Lee-Seite und Winddrehung */
 const DIR_TURN = 45;      // ab dieser Drehung (Grad) Hinweis
-const DIR_CALM = 2;       // darunter zählt die Richtung für die Drehung nicht
+const DIR_CALM = 2;       // darunter (m/s) zählt die Richtung für die Drehung nicht und wird blass gezeigt
 const angDiff = (a, b) => { const d = Math.abs(a - b) % 360; return d > 180 ? 360 - d : d; };
 function renderDirStrip(){
   const hs = dayHours(state.day);
@@ -302,7 +303,7 @@ function renderDirStrip(){
     const d = h.dir.mean;
     const arrow = d==null ? `<span class="dir-na">–</span>`
       : `<svg viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(${(d+180)%360} 12 12)"><line x1="12" y1="20" x2="12" y2="7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><polygon points="12,2 6.5,10 17.5,10" fill="currentColor"/></g></svg>`;
-    return `<button type="button" class="dir-cell d-${h.lamp} ${h.i===state.sel?"sel":""}" data-i="${h.i}" title="${hh(h.t)} Uhr: aus ${dirName(d)}${d==null?"":" ("+Math.round(d)+"°)"}, ${fwu(h.med)}">${arrow}<span>${hh(h.t)}</span></button>`;
+    return `<button type="button" class="dir-cell d-${h.lamp} ${h.i===state.sel?"sel":""} ${h.med!=null && h.med < DIR_CALM ? "calm" : ""}" data-i="${h.i}" title="${hh(h.t)} Uhr: aus ${dirName(d)}${d==null?"":" ("+Math.round(d)+"°)"}, ${fwu(h.med)}">${arrow}<span>${hh(h.t)}</span></button>`;
   }).join("");
   $("dirStrip").querySelectorAll(".dir-cell").forEach(b => b.onclick = () => selectHour(+b.dataset.i));
   // Lee-Seite zur gewählten Stunde

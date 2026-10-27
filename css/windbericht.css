@@ -329,7 +329,8 @@ body.info-open{overflow:hidden}
 .dir-na{font-size:16px;line-height:22px}
 .dir-turn{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;margin-top:8px}
 .dir-turn b{color:var(--muted);font-weight:500}
-.dir-ok{color:var(--go)} .dir-warn{color:var(--warn)}
+.dir-ok{color:var(--go)} .dir-warn{color:var(--warn)} .dir-calm{color:var(--muted)}
+.dir-cell.calm svg{opacity:.4}
 /* Gewählte Stunde: deutlich als Bezug der Werte darunter */
 .now-sel{display:flex;align-items:center;gap:10px;padding:6px 8px;border:1px solid var(--line);border-left:5px solid var(--none);border-radius:10px;background:var(--raised)}
 .now-sel.s-go{border-left-color:var(--go)} .now-sel.s-warn{border-left-color:var(--warn)} .now-sel.s-stop{border-left-color:var(--stop)}
