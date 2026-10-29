@@ -60,22 +60,39 @@ function renderMatrix(){
 }
 document.querySelectorAll("#mxSeg button").forEach(b => b.onclick = () => { mxMode = b.dataset.m; try{ localStorage.setItem("wb_mx", mxMode); }catch(e){} renderMatrix(); });
 
+/* Stundentabelle: eingefärbt wird nur, was eine Regel auslöst, mit denselben Schwellen wie Ampel, Matrix und Bericht.
+   Gelb (c-warn): Prüfschwelle bzw. ab 75 % des Grenzwerts. Rot (c-stop): über Grenze. Kräftig gelb (c-wet): Taupunkt erreicht. */
+function hourCells(h){
+  const coat = coatOn(h.t.slice(0,10)), stopC = coat && site.coatStop;
+  const lim = (v, l) => v==null ? "" : v > l ? "c-stop" : v >= l*.75 ? "c-warn" : "";
+  const dew = h.dew==null ? "" : stopC && h.dew < coatDew() ? "c-stop" : h.dew <= 0 ? "c-wet" : h.dew <= DEW_INFO || (coat && h.dew < coatDew()) ? "c-warn" : "";
+  return {
+    wind:lim(h.med, site.wind), gust:lim(h.gMed, site.gust),
+    span:h.max!=null && h.max > site.wind ? "c-warn" : "",
+    over:!h.n || !h.over ? "" : h.over > h.n/2 ? "c-stop" : "c-warn",
+    ens:h.pEns==null ? "" : h.pEns >= ENS_WARN ? "c-stop" : h.pEns >= ENS_INFO ? "c-warn" : "",
+    rain:h.rain!=null && h.rain >= RAIN_WARN ? "c-warn" : "",
+    cape:h.cape==null ? "" : h.cape >= CAPE_STOP ? "c-stop" : h.cape >= CAPE_WARN ? "c-warn" : "",
+    temp:h.tW!=null && h.tW < minTemp() ? "c-stop" : "",
+    rh:coat && h.rh!=null && h.rh > coatRh() ? (stopC ? "c-stop" : "c-warn") : "",
+    dew};
+}
 function hourRows(hs, dots){
-  return hs.map(h => `<tr>
+  return hs.map(h => { const c = hourCells(h); return `<tr>
     <td class="num">${dots?`<span class="dot d-${h.lamp}"></span> `:LAMP_TXT[h.lamp]+" "}${hh(h.t)}:00</td>
-    <td class="num ${h.med>site.wind?"over":""}">${fw(h.med)}</td>
-    <td class="num">${fw(h.min)}–${fw(h.max)}</td>
-    <td class="num ${h.gMed>site.gust?"over":""}">${fw(h.gMed)}</td>
+    <td class="num ${c.wind}">${fw(h.med)}</td>
+    <td class="num ${c.span}">${fw(h.min)}–${fw(h.max)}</td>
+    <td class="num ${c.gust}">${fw(h.gMed)}</td>
     <td class="num">${dirName(h.dir.mean)}</td>
-    <td class="num">${h.n ? h.over+"/"+h.n : "–"}</td>
-    <td class="num ${h.pEns>=ENS_WARN?"over":""}">${riskTen(h.pEns)}</td>
-    <td class="num">${fmt(h.rain)}</td>
-    <td class="num">${h.cape==null?"–":Math.round(h.cape)}</td>
-    <td class="num ${h.tW!=null && h.tW<minTemp()?"over":""}">${fmt(h.tW,0)}</td>
+    <td class="num ${c.over}">${h.n ? h.over+"/"+h.n : "–"}</td>
+    <td class="num ${c.ens}">${riskTen(h.pEns)}</td>
+    <td class="num ${c.rain}">${fmt(h.rain)}</td>
+    <td class="num ${c.cape}">${h.cape==null?"–":Math.round(h.cape)}</td>
+    <td class="num ${c.temp}">${fmt(h.tW,0)}</td>
     <td class="num">${fmt(h.chill,0)}</td>
-    <td class="num">${h.rh==null ? "–" : Math.round(h.rh)}</td>
-    <td class="num" title="${h.dew==null ? "" : h.dew <= 0 ? "Taupunkt erreicht: Nebel oder Wolke in Arbeitshöhe, alles nass" : h.dew <= DEW_INFO ? "Kondenswasser möglich" : ""}">${h.dew==null ? "–" : h.dew <= 0 ? "<b>Tau</b>" : fmt(h.dew,1)}</td>
-    <td class="why-cell">${esc(h.why.filter(w=>w.l!=="go").map(w=>shortWhy(w.t)).join(" · ")) || "–"}</td></tr>`).join("");
+    <td class="num ${c.rh}">${h.rh==null ? "–" : Math.round(h.rh)}</td>
+    <td class="num ${c.dew}" title="${h.dew==null ? "" : h.dew <= 0 ? "Taupunkt erreicht: Nebel oder Wolke in Arbeitshöhe, alles nass" : h.dew <= DEW_INFO ? "Kondenswasser möglich" : ""}">${h.dew==null ? "–" : h.dew <= 0 ? "Tau" : fmt(h.dew,1)}</td>
+    <td class="why-cell">${esc(h.why.filter(w=>w.l!=="go").map(w=>shortWhy(w.t)).join(" · ")) || "–"}</td></tr>`; }).join("");
 }
 
 const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind <span class="wu">m/s</span></th><th>Spanne</th><th>Böe</th><th>Richtung</th><th title="Anzahl der Modelle mit Wind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th title="Anteil der Szenarien, in denen Wind oder Böe über Grenze liegen">Zu windig</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th title="Relative Luftfeuchte in 2 m">Feuchte %</th><th title="Abstand der Temperatur in Arbeitshöhe zum Taupunkt (2 m); Tau = Taupunkt erreicht">Taupunkt K</th><th>Gründe</th></tr></thead>`;

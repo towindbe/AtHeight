@@ -224,6 +224,9 @@ table.rank-t tr.top td{background:var(--go-bg)} table.rank-t tr.poor td{backgrou
 table.t td.use{width:1%;text-align:center}
 table.t td.use input{width:18px;height:18px;margin:0;accent-color:var(--accent);cursor:pointer}
 table.t tr.excl td:not(.use){opacity:.45}
+table.t td.c-warn{background:var(--warn-bg)}
+table.t td.c-stop{background:var(--stop-bg);color:var(--stop);font-weight:700}
+table.t td.c-wet{background:var(--warn);color:#1b1405;font-weight:700}
 table.t td.why-cell{text-align:left;white-space:normal;min-width:220px;font-size:12px;color:var(--muted)}
 .over{color:var(--stop);font-weight:600}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle}
