@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0d1217">
+<script>/* Design (hell/dunkel/automatisch) vor dem Zeichnen setzen, damit nichts aufblitzt */
+try{ const t = localStorage.getItem("wb_theme"); if(t==="light" || t==="dark") document.documentElement.dataset.theme = t; }catch(e){}</script>
+
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-29s">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-29t">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tw-logo" viewBox="-6 -6 790 512"><g fill="currentColor" stroke="currentColor" stroke-linejoin="miter"><path stroke-width="3" d="M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z"/><path stroke-width="15" d="m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z"/></g></symbol></svg>
@@ -31,7 +34,7 @@
       <button type="button" id="sbNext" aria-label="Eine Stunde später" title="Eine Stunde später">›</button>
     </div>
     <div class="sb-strip" id="sbStrip" role="group" aria-label="Arbeitsfenster, Stunde wählen"></div>
-    <nav class="sb-nav" id="sbNav" aria-label="Zu Abschnitt springen"></nav>
+    <div class="sb-navrow"><div class="sb-days seg" id="sbDays" role="group" aria-label="Tag wählen"></div><nav class="sb-nav" id="sbNav" aria-label="Zu Abschnitt springen"></nav></div>
   </div>
 </div>
 <div class="wrap">
@@ -48,6 +51,7 @@
     <div class="row">
       <button id="favBtn" type="button" aria-expanded="false" aria-controls="favPanel"><span class="star">★</span> Anlagen</button>
       <button id="settingsBtn" class="settings-btn" type="button" aria-expanded="false" aria-controls="settings" aria-label="Einstellungen"><span aria-hidden="true">⚙</span><span class="lbl"> Einstellungen</span> <span class="chev" aria-hidden="true"></span></button>
+      <button id="themeBtn" class="icon-btn" type="button" title="Design: automatisch" aria-label="Design wechseln: automatisch, hell, dunkel">◐</button>
       <button id="infoBtn" class="icon-btn" type="button" title="So funktioniert der Windbericht" aria-label="Infoseite öffnen" aria-haspopup="dialog">?</button>
       <button id="reloadBtn" class="icon-btn" type="button" title="Wetterdaten neu laden" aria-label="Wetterdaten neu laden">↻</button>
     </div>
@@ -195,7 +199,7 @@
   <section class="card needs-data" id="sec-zeit">
     <div class="card-head">
       <h2>Arbeitsfenster</h2>
-      <span class="day-nav"><button type="button" data-dir="-1" aria-label="Vorheriger Tag" title="Vorheriger Tag">‹</button><span class="eyebrow" id="zeitDay"></span><button type="button" data-dir="1" aria-label="Nächster Tag" title="Nächster Tag">›</button></span>
+      <span class="eyebrow" id="zeitDay"></span>
       <div class="legend">
         <span><i class="sw c-go"></i>KLAR</span>
         <span><i class="sw c-warn"></i>Prüfen: einzelne Modelle drüber, Schauer</span>
@@ -204,7 +208,7 @@
       </div>
     </div>
     <div class="tl" id="tlScroll"><div class="tl-days" id="timeline"></div></div>
-    <p class="note">Ein Feld pro Stunde, seitlich durch alle Tage scrollen. Blass: außerhalb der Arbeitszeit. Antippen zeigt oben die Werte dieser Stunde.</p>
+    <p class="note help">Ein Feld pro Stunde, seitlich durch alle Tage scrollen. Blass: außerhalb der Arbeitszeit. Antippen zeigt oben die Werte dieser Stunde.</p>
   </section>
 
   <!-- Verlauf -->
@@ -212,7 +216,7 @@
     <div class="card-head">
       <h2 id="chartTitle">Wind</h2>
       <div class="row">
-        <span class="day-nav"><button type="button" data-dir="-1" aria-label="Vorheriger Tag" title="Vorheriger Tag">‹</button><span class="eyebrow" id="chartDay"></span><button type="button" data-dir="1" aria-label="Nächster Tag" title="Nächster Tag">›</button></span>
+        <span class="eyebrow" id="chartDay"></span>
         <div class="seg" role="group" aria-label="Darstellung">
           <button type="button" id="chartMaxBtn" aria-pressed="false" title="Windverlauf groß anzeigen">⤢ Vergrößern</button>
         </div>
@@ -278,30 +282,36 @@
       <p class="note" id="mapNote">Ort suchen oder direkt auf die Anlage tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Regenradar: DWD, nur Deutschland und Grenzgebiete.</p>
     </section>
 
-    <section class="card needs-data" id="sec-richtung">
-      <div class="card-head"><h2 id="compassTitle">Windrichtung</h2><span class="day-nav"><button type="button" data-dir="-1" aria-label="Vorheriger Tag" title="Vorheriger Tag">‹</button><span class="eyebrow" id="compassHour"></span><button type="button" data-dir="1" aria-label="Nächster Tag" title="Nächster Tag">›</button></span></div>
+    <section class="card needs-data expert" id="sec-richtung">
+      <div class="card-head"><h2 id="compassTitle">Windrichtung</h2><span class="eyebrow" id="compassHour"></span></div>
       <div class="compass-wrap">
         <div class="compass" id="compass"></div>
         <dl class="dl" id="compassFacts"></dl>
       </div>
-      <p class="note">Pfeil: mittlere Richtung. Striche: einzelne Modelle. Weit gestreut heißt: Richtung unsicher.</p>
+      <p class="note help">Pfeil: mittlere Richtung. Striche: einzelne Modelle. Weit gestreut heißt: Richtung unsicher.</p>
       <h3 class="dir-sub">Richtung in der Arbeitszeit</h3>
       <div class="dir-strip" id="dirStrip"></div>
       <div class="dir-turn" id="dirTurn"></div>
-      <p class="note">Pfeile zeigen, wohin der Wind weht, Farbe wie die Ampel (nur Wetter, ohne Beschichten). Lee-Seite: windabgewandte Turmseite. Drehung nur bei mindestens <span data-ms="2"></span> gewertet, bei Flaute ist die Richtung wenig aussagekräftig.</p>
+      <p class="note help">Pfeile zeigen, wohin der Wind weht, Farbe wie die Ampel (nur Wetter, ohne Beschichten). Lee-Seite: windabgewandte Turmseite. Drehung nur bei mindestens <span data-ms="2"></span> gewertet, bei Flaute ist die Richtung wenig aussagekräftig.</p>
     </section>
+  </div>
+
+  <!-- Umschalter: Details für Fachleute (Richtung, Profil, Regen, Temperatur, Matrix, Tabellen, Modelle, Ausfallprotokoll) -->
+  <div class="details-bar needs-data" id="detailsBar">
+    <button type="button" id="detailsBtn" aria-expanded="false">▾ Details für Fachleute einblenden</button>
+    <span class="note">Windrichtung, Höhenprofil, Regen, Temperatur, Modell-Matrix, Stunden im Detail, Modelle, Ausfallprotokoll</span>
   </div>
 
   <!-- Details -->
   <!-- Höhenprofil + Niederschlag -->
-  <div class="cols needs-data">
+  <div class="cols needs-data expert" id="sec-profil">
     <section class="card">
-      <div class="card-head"><h2>Höhenprofil</h2><span class="day-nav"><button type="button" data-dir="-1" aria-label="Vorheriger Tag" title="Vorheriger Tag">‹</button><span class="eyebrow" id="profileHour"></span><button type="button" data-dir="1" aria-label="Nächster Tag" title="Nächster Tag">›</button></span></div>
+      <div class="card-head"><h2>Höhenprofil</h2><span class="eyebrow" id="profileHour"></span></div>
       <div class="chart-sm"><canvas id="profile" aria-label="Windgeschwindigkeit nach Höhe"></canvas></div>
-      <p class="note" id="profileNote">Wind vom Boden bis über die Blattspitze zur gewählten Stunde.</p>
+      <p class="note help" id="profileNote">Wind vom Boden bis über die Blattspitze zur gewählten Stunde.</p>
     </section>
     <section class="card" id="sec-regen">
-      <div class="card-head"><h2>Regen &amp; Gewitter</h2><div class="row"><span class="day-nav"><button type="button" data-dir="-1" aria-label="Vorheriger Tag" title="Vorheriger Tag">‹</button><span class="eyebrow" id="rainDay"></span><button type="button" data-dir="1" aria-label="Nächster Tag" title="Nächster Tag">›</button></span><button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden">☾ Nacht ausblenden</button></div></div>
+      <div class="card-head"><h2>Regen &amp; Gewitter</h2><div class="row"><span class="eyebrow" id="rainDay"></span><button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden">☾ Nacht ausblenden</button></div></div>
       <div class="readout" id="roRain" hidden></div>
       <div class="chart-sm"><canvas id="rain" aria-label="Niederschlag und Gewitterneigung"></canvas></div>
       <p class="legend"><span><i class="lg-rain"></i>Regen mm/h (kräftiger = mehr Modelle einig)</span><span><i class="lg-cape"></i>Gewitterenergie CAPE</span></p>
@@ -309,41 +319,41 @@
   </div>
 
   <!-- Temperatur -->
-  <section class="card needs-data" id="sec-temp">
-    <div class="card-head"><h2 id="tempTitle">Temperatur</h2><div class="row"><span class="day-nav"><button type="button" data-dir="-1" aria-label="Vorheriger Tag" title="Vorheriger Tag">‹</button><span class="eyebrow" id="tempDay"></span><button type="button" data-dir="1" aria-label="Nächster Tag" title="Nächster Tag">›</button></span><button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden">☾ Nacht ausblenden</button></div></div>
+  <section class="card needs-data expert" id="sec-temp">
+    <div class="card-head"><h2 id="tempTitle">Temperatur</h2><div class="row"><span class="eyebrow" id="tempDay"></span><button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden">☾ Nacht ausblenden</button></div></div>
     <div class="readout" id="roTemp" hidden></div>
     <div class="chart-sm"><canvas id="temp" aria-label="Temperatur und gefühlte Temperatur in Arbeitshöhe, Luftfeuchte"></canvas></div>
     <p class="legend legend-btns" id="tempLegend" role="group" aria-label="Linien ein- oder ausblenden"><span><i class="lg-temp"></i>Temperatur in Arbeitshöhe</span><button type="button" data-s="t_feel" aria-pressed="true"><i class="lg-feel"></i>Gefühlt mit Wind</button><button type="button" data-s="t_dew" aria-pressed="true"><i class="lg-dew"></i>Taupunkt (2 m)</button><button type="button" data-s="t_rh" aria-pressed="true"><i class="lg-rh"></i>Luftfeuchte % (2 m, rechte Achse)</button></p>
     <p class="note" id="tempNote"></p>
     <div class="eyebrow dew-h">Taupunkt je Arbeitsstunde</div>
     <div class="mx dew-row" id="dewRow"></div>
-    <p class="note" id="dewRowNote"></p>
+    <p class="note help" id="dewRowNote"></p>
   </section>
 
   <!-- Modell-Matrix -->
-  <section class="card needs-data">
-    <div class="card-head"><h2>Modell-Matrix</h2><span class="day-nav"><button type="button" data-dir="-1" aria-label="Vorheriger Tag" title="Vorheriger Tag">‹</button><span class="eyebrow" id="mxDay"></span><button type="button" data-dir="1" aria-label="Nächster Tag" title="Nächster Tag">›</button></span></div>
+  <section class="card needs-data expert" id="sec-matrix">
+    <div class="card-head"><h2>Modell-Matrix</h2><span class="eyebrow" id="mxDay"></span></div>
     <div class="seg" id="mxSeg" role="group" aria-label="Größe in der Matrix"><button type="button" data-m="wind" aria-pressed="true">Wind</button><button type="button" data-m="boe" aria-pressed="false">Böe</button><button type="button" data-m="regen" aria-pressed="false">Regen</button><button type="button" data-m="feuchte" aria-pressed="false">Feuchte</button><button type="button" data-m="wolken" aria-pressed="false">Wolken</button></div>
     <div class="mx" id="matrix"></div>
-    <p class="note" id="mxLegend" hidden></p>
-    <p class="note" id="mxNote">Wind je Modell und Stunde in <span class="wu">m/s</span>. Gelb ab 75 % des Grenzwerts, rot über dem Grenzwert. Mit der Maus über ein Feld fahren zeigt auch die Böe. Zeigt, ob nur ein Ausreißer warnt oder fast alle.</p>
+    <p class="note help" id="mxLegend" hidden></p>
+    <p class="note help" id="mxNote">Wind je Modell und Stunde in <span class="wu">m/s</span>. Gelb ab 75 % des Grenzwerts, rot über dem Grenzwert. Mit der Maus über ein Feld fahren zeigt auch die Böe. Zeigt, ob nur ein Ausreißer warnt oder fast alle.</p>
   </section>
 
-  <section class="card needs-data">
-    <div class="card-head"><h2>Stunden im Detail</h2><span class="day-nav"><button type="button" data-dir="-1" aria-label="Vorheriger Tag" title="Vorheriger Tag">‹</button><span class="eyebrow" id="hourDay"></span><button type="button" data-dir="1" aria-label="Nächster Tag" title="Nächster Tag">›</button></span></div>
+  <section class="card needs-data expert" id="sec-stunden">
+    <div class="card-head"><h2>Stunden im Detail</h2><span class="eyebrow" id="hourDay"></span></div>
     <div class="scroll"><table class="t" id="hourTable"></table></div>
     <p class="legend" id="hourLegend"><span><i class="sw" style="background:var(--warn-bg);outline:1px solid var(--warn)"></i>Prüfen: ab 75 % der Grenze bzw. Prüfschwelle</span><span><i class="sw" style="background:var(--stop-bg);outline:1px solid var(--stop)"></i>Über der Grenze</span><span><i class="sw" style="background:var(--warn)"></i>Tau: Taupunkt erreicht</span></p>
-    <p class="note">Wind aus den Modellwerten in 10, 80, 120 und 180 m auf die Arbeitshöhe interpoliert. Böen liefern die Modelle nur in 10 m; die Böe in der Höhe ist daraus geschätzt und sollte mit NC2-Messwerten geprüft werden.</p>
+    <p class="note help">Wind aus den Modellwerten in 10, 80, 120 und 180 m auf die Arbeitshöhe interpoliert. Böen liefern die Modelle nur in 10 m; die Böe in der Höhe ist daraus geschätzt und sollte mit NC2-Messwerten geprüft werden.</p>
   </section>
 
-  <section class="card needs-data" id="sec-modelle">
-    <div class="card-head"><h2>Modelle am Standort</h2><span class="day-nav"><button type="button" data-dir="-1" aria-label="Vorheriger Tag" title="Vorheriger Tag">‹</button><span class="eyebrow" id="modelDay"></span><button type="button" data-dir="1" aria-label="Nächster Tag" title="Nächster Tag">›</button></span></div>
+  <section class="card needs-data expert" id="sec-modelle">
+    <div class="card-head"><h2>Modelle am Standort</h2><span class="eyebrow" id="modelDay"></span></div>
     <div class="scroll"><table class="t" id="modelTable"></table></div>
     <div class="rank">
       <div class="card-head"><h3>Welche Modelle treffen hier?</h3><button type="button" id="rankBtn">Modelle vergleichen</button></div>
       <div id="rankOut"></div>
     </div>
-    <p class="note">Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung. Mit dem Häkchen lassen sich einzelne Modelle für diese Anlage ausschließen, z. B. grobe Globalmodelle im Gebirge. Die Auswahl wird mit der Anlage gespeichert.</p>
+    <p class="note help">Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung. Mit dem Häkchen lassen sich einzelne Modelle für diese Anlage ausschließen, z. B. grobe Globalmodelle im Gebirge. Die Auswahl wird mit der Anlage gespeichert.</p>
   </section>
 
   <!-- 7-Tage-Ausblick -->
@@ -361,8 +371,8 @@
 
   <!-- Tagesbericht -->
   <section class="card needs-data" id="sec-bericht">
-    <div class="card-head"><h2>Tagesbericht</h2><span class="day-nav"><button type="button" data-dir="-1" aria-label="Vorheriger Tag" title="Vorheriger Tag">‹</button><span class="eyebrow" id="reportDay"></span><button type="button" data-dir="1" aria-label="Nächster Tag" title="Nächster Tag">›</button></span></div>
-    <p class="note">Dokumentiert die Prognose zum Zeitpunkt der Freigabe. Als PDF drucken und zur Projektdokumentation legen.</p>
+    <div class="card-head"><h2>Tagesbericht</h2><span class="eyebrow" id="reportDay"></span></div>
+    <p class="note help">Dokumentiert die Prognose zum Zeitpunkt der Freigabe. Als PDF drucken und zur Projektdokumentation legen.</p>
     <div class="grid">
       <label>Projekt / Auftraggeber<input id="r_project" type="text"></label>
       <label>Anlage / Typ<input id="r_turbine" type="text"></label>
@@ -386,9 +396,9 @@
   </section>
 
   <!-- Wetter-Ausfallprotokoll -->
-  <section class="card needs-data" id="sec-ausfall">
+  <section class="card needs-data expert" id="sec-ausfall">
     <h2>Wetter-Ausfallprotokoll</h2>
-    <p class="note">Weist nach, an welchen Tagen und in welchen Stunden der Wind eure Grenzwerte überschritten hat, zum Beispiel für Behinderungsanzeige und Abrechnung. Grundlage sind gemessene Werte der nächsten Wetterstation, auf euren Arbeitsbereich hochgerechnet.</p>
+    <p class="note help">Weist nach, an welchen Tagen und in welchen Stunden der Wind eure Grenzwerte überschritten hat, zum Beispiel für Behinderungsanzeige und Abrechnung. Grundlage sind gemessene Werte der nächsten Wetterstation, auf euren Arbeitsbereich hochgerechnet.</p>
     <div class="grid">
       <label>Von<input id="af_von" type="date"></label>
       <label>Bis<input id="af_bis" type="date"></label>
@@ -415,25 +425,25 @@
 </div>
 
 <!-- Skripte teilen sich den globalen Gültigkeitsbereich; Reihenfolge beachten. Bei Änderungen ?v= erhöhen. -->
-<script src="js/konfiguration.js?v=2026-10-29s"></script>
-<script src="js/hilfen.js?v=2026-10-29s"></script>
-<script src="js/physik.js?v=2026-10-29s"></script>
-<script src="js/daten.js?v=2026-10-29s"></script>
-<script src="js/offline.js?v=2026-10-29s"></script>
-<script src="js/tageslicht.js?v=2026-10-29s"></script>
-<script src="js/bewertung.js?v=2026-10-29s"></script>
-<script src="js/anzeige.js?v=2026-10-29s"></script>
-<script src="js/leiste.js?v=2026-10-29s"></script>
-<script src="js/diagramme.js?v=2026-10-29s"></script>
-<script src="js/tabellen.js?v=2026-10-29s"></script>
-<script src="js/modellvergleich.js?v=2026-10-29s"></script>
-<script src="js/ausblick.js?v=2026-10-29s"></script>
-<script src="js/karte.js?v=2026-10-29s"></script>
-<script src="js/radar.js?v=2026-10-29s"></script>
-<script src="js/bericht.js?v=2026-10-29s"></script>
-<script src="js/ausfall.js?v=2026-10-29s"></script>
-<script src="js/anlagen.js?v=2026-10-29s"></script>
-<script src="js/bedienung.js?v=2026-10-29s"></script>
-<script src="js/start.js?v=2026-10-29s"></script>
+<script src="js/konfiguration.js?v=2026-10-29t"></script>
+<script src="js/hilfen.js?v=2026-10-29t"></script>
+<script src="js/physik.js?v=2026-10-29t"></script>
+<script src="js/daten.js?v=2026-10-29t"></script>
+<script src="js/offline.js?v=2026-10-29t"></script>
+<script src="js/tageslicht.js?v=2026-10-29t"></script>
+<script src="js/bewertung.js?v=2026-10-29t"></script>
+<script src="js/anzeige.js?v=2026-10-29t"></script>
+<script src="js/leiste.js?v=2026-10-29t"></script>
+<script src="js/diagramme.js?v=2026-10-29t"></script>
+<script src="js/tabellen.js?v=2026-10-29t"></script>
+<script src="js/modellvergleich.js?v=2026-10-29t"></script>
+<script src="js/ausblick.js?v=2026-10-29t"></script>
+<script src="js/karte.js?v=2026-10-29t"></script>
+<script src="js/radar.js?v=2026-10-29t"></script>
+<script src="js/bericht.js?v=2026-10-29t"></script>
+<script src="js/ausfall.js?v=2026-10-29t"></script>
+<script src="js/anlagen.js?v=2026-10-29t"></script>
+<script src="js/bedienung.js?v=2026-10-29t"></script>
+<script src="js/start.js?v=2026-10-29t"></script>
 </body>
 </html>

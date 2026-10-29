@@ -42,6 +42,47 @@ $("saveBtn").onclick = () => {
 };
 $("s_windkraft").onchange = applyEinsatzUI;
 $("coatBtn").onclick = toggleCoat;
+/* Zwei Ebenen: einfache Ansicht (Standard) oder mit Details für Fachleute; gemerkt im Browser */
+let detailsOn = (() => { try{ return localStorage.getItem("wb_details")==="1"; }catch(e){ return false; } })();
+function setDetails(on){
+  detailsOn = on;
+  try{ localStorage.setItem("wb_details", on ? "1" : "0"); }catch(e){}
+  document.body.classList.toggle("simple", !on);
+  $("detailsBtn").setAttribute("aria-expanded", String(on));
+  $("detailsBtn").textContent = on ? "▴ Details für Fachleute ausblenden" : "▾ Details für Fachleute einblenden";
+  if(on && state.hours.length) render();   // Diagramme in vorher ausgeblendeten Abschnitten neu zeichnen
+}
+setDetails(detailsOn);
+$("detailsBtn").onclick = () => setDetails(!detailsOn);
+/* Erklärtexte (Klasse help) sind eingeklappt; jede Karte mit solchen Texten bekommt ein „?“ an der Überschrift */
+document.querySelectorAll(".card").forEach(card => {
+  const h = card.querySelector("h2");
+  if(!h || !card.querySelector(".help") || h.querySelector(".info-btn")) return;
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "info-btn help-btn"; b.textContent = "?";
+  b.title = "Erklärung ein- oder ausblenden"; b.setAttribute("aria-expanded", "false");
+  b.onclick = () => { const on = card.classList.toggle("show-help"); b.setAttribute("aria-expanded", String(on)); };
+  // neben die Überschrift (manche Überschriften werden per Text neu gesetzt); steht sie allein, eine Kopfzeile darum bauen
+  if(h.parentElement === card){ const head = document.createElement("div"); head.className = "card-head"; h.before(head); head.appendChild(h); }
+  const wrap = document.createElement("span"); wrap.className = "h-wrap"; h.before(wrap); wrap.append(h, b);
+});
+/* Design: automatisch (nach Gerät) → hell → dunkel. Diagramme lesen ihre Farben beim Zeichnen, deshalb neu zeichnen */
+const THEMES = [["auto","◐","automatisch"], ["light","☀","hell"], ["dark","☾","dunkel"]];
+function applyTheme(t){
+  if(t==="auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t;
+  const [, icon, name] = THEMES.find(x => x[0]===t);
+  $("themeBtn").textContent = icon; $("themeBtn").title = "Design: " + name;
+  const light = t==="light" || (t==="auto" && matchMedia("(prefers-color-scheme: light)").matches);
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", light ? "#eef1f4" : "#0d1217");
+}
+let theme = (() => { try{ return localStorage.getItem("wb_theme") || "auto"; }catch(e){ return "auto"; } })();
+applyTheme(theme);
+$("themeBtn").onclick = () => {
+  theme = THEMES[(THEMES.findIndex(x => x[0]===theme) + 1) % THEMES.length][0];
+  try{ localStorage.setItem("wb_theme", theme); }catch(e){}
+  applyTheme(theme); if(state.hours.length) render();
+};
+matchMedia("(prefers-color-scheme: light)").addEventListener?.("change", () => { if(theme==="auto"){ applyTheme(theme); if(state.hours.length) render(); } });
 // Zahnrad neben dem Beschichten-Modus: Einstellungen öffnen, direkt zu den Grenzen springen und sie kurz hervorheben
 $("coatGear").onclick = () => {
   fillSettings(); toggleSettings(true);
@@ -51,7 +92,6 @@ $("coatGear").onclick = () => {
     $("s_coatrh").focus({preventScroll:true});
   }, 350);
 };
-document.querySelectorAll(".day-nav button").forEach(b => b.onclick = () => stepDay(+b.dataset.dir));
 $("gpsBtn").onclick = () => {
   if(!navigator.geolocation){ $("gpsBtn").textContent = "GPS nicht verfügbar"; return; }
   navigator.geolocation.getCurrentPosition(p => { if(marker){ toggleSettings(false); pointToMap(); setPos(L.latLng(p.coords.latitude, p.coords.longitude)); } else { $("s_lat").value=p.coords.latitude.toFixed(4); $("s_lon").value=p.coords.longitude.toFixed(4);} if(map) map.setView([p.coords.latitude,p.coords.longitude],15); },

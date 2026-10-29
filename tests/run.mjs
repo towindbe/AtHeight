@@ -57,6 +57,9 @@ await page.addInitScript(fixed => {
   window.Date = FD;
 }, fixture.fixed);
 
+// Test prüft alle Abschnitte: Ansicht „Details für Fachleute“ einschalten (Standard ist die einfache Ansicht)
+await page.addInitScript(() => { try{ localStorage.setItem("wb_details", "1"); }catch(e){} });
+
 await page.route(TILES, r => r.fulfill({status: 204, body: ""}));
 await page.route(API, async route => {
   const url = route.request().url();

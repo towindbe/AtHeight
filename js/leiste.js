@@ -15,7 +15,18 @@ function renderSticky(){
   $("sbHour").innerHTML = `<b>${esc(dayLabel(h.t.slice(0,10), true))}, ${hh(h.t)} Uhr</b> <span class="dot d-${h.lamp}"></span> ${esc(fw(h.med))} · Böe ${esc(fwu(h.gMed))}`;
   $("sbPrev").disabled = state.sel <= 0;
   $("sbNext").disabled = state.sel >= state.hours.length - 1;
+  renderStickyDays();
   renderStrip();
+}
+/* Tagesauswahl in der Kurzleiste (ersetzt die Pfeile in den einzelnen Abschnitten): kurz beschriftet, Punkt in Ampelfarbe des Tages */
+function renderStickyDays(){
+  const days = [...new Set(state.times.map(t => t.slice(0,10)))];
+  const key = days.join() + "|" + state.day + "|" + days.map(d => buildSummary(dayHours(d)).lamp).join();
+  if($("sbDays").dataset.key === key) return;
+  $("sbDays").dataset.key = key;
+  $("sbDays").innerHTML = days.map(d => { const l = buildSummary(dayHours(d)).lamp, lab = dayLabel(d, true);
+    const short = lab === "Übermorgen" ? new Date(d+"T12:00:00").toLocaleDateString("de-DE", {weekday:"short"}) : lab;
+    return `<button type="button" data-day="${d}" aria-pressed="${d===state.day}" aria-label="${esc(lab)}: ${LAMP_TXT[l]}"><i class="dot d-${l}"></i>${esc(short)}</button>`; }).join("");
 }
 /* schmales Arbeitsfenster: eine Zelle je Stunde, wie die große Zeitleiste, zum seitlichen Durchscrollen */
 let stripKey = "";
@@ -52,7 +63,10 @@ function initSticky(){
   $("sbNav").innerHTML = NAV_SECTIONS.map(([id, t]) => `<button type="button" data-go="${id}">${t}</button>`).join("");
   $("sbNav").addEventListener("click", e => {
     const b = e.target.closest("button[data-go]"), el = b && $(b.dataset.go);
-    if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+    if(!el) return;
+    // Abschnitt liegt in den ausgeblendeten Details: erst einblenden, dann hinspringen
+    if(el.closest(".expert") && el.offsetParent===null){ setDetails(true); setTimeout(() => el.scrollIntoView({behavior:"smooth", block:"start"}), 60); }
+    else el.scrollIntoView({behavior:"smooth", block:"start"});
   });
   $("sbStrip").addEventListener("scroll", () => {
     if(Date.now() < stripIgnoreUntil) return;
@@ -60,6 +74,7 @@ function initSticky(){
     if(!stripRaf) stripRaf = requestAnimationFrame(stripScrubbed);
   }, {passive:true});
   $("sbStrip").addEventListener("click", e => { const b = e.target.closest(".tl-cell"); if(b) selectHour(+b.dataset.i); });
+  $("sbDays").addEventListener("click", e => { const b = e.target.closest("button[data-day]"); if(b && b.dataset.day !== state.day) goDay(b.dataset.day); });
   $("sbPrev").onclick = () => selectHour(state.sel - 1);
   $("sbNext").onclick = () => selectHour(state.sel + 1);
   if("IntersectionObserver" in window){

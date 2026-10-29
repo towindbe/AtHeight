@@ -8,13 +8,26 @@
 /* Layout: eine Spalte am Handy, zwei Spalten ab Tablet. Oben die Entscheidung, dann Karte, Zeitleiste, Verlauf, Analyse der gewählten Stunde, Modell-Matrix, Bericht */
 :root{
   /* Dunkles Design auf allen Geräten (wie TargetMate); der Druck des Tagesberichts ist hell */
-  --bg:#0d1217; --surface:#151d25; --raised:#1b252f; --fg:#e9eef3; --muted:#97a4b2; --line:#26313c;
+  --bg:#0d1217; --surface:#151d25; --raised:#1b252f; --fg:#e9eef3; --muted:#aab6c3; --line:#26313c;
   --accent:#ff7a33; --accent-ink:#1a0d05; --band:rgba(110,160,220,.20); --band-line:#7fb0e6; --gust:#c4a7ff;
   --go:#46c27b; --go-bg:#11301f; --warn:#e6b04c; --warn-bg:#352a11; --stop:#e5484d; --stop-bg:#3a1517; --none:#4f5b67;
   --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
   --f-body:"Barlow","Segoe UI",Roboto,Arial,sans-serif;
   --f-mono:"Barlow","Segoe UI",Roboto,Arial,sans-serif; /* Zahlen ebenfalls Barlow, mit gleich breiten Ziffern (tnum) */
   color-scheme:dark;
+}
+/* Helles Design: besser lesbar draußen in der Sonne. Automatisch nach Geräte-Einstellung oder per Schalter (data-theme) */
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
+  --bg:#eef1f4; --surface:#ffffff; --raised:#f2f4f7; --fg:#0f171f; --muted:#4a5866; --line:#d3dae1;
+  --accent:#d9561a; --accent-ink:#ffffff; --band:rgba(40,100,180,.16); --band-line:#2a68ad; --gust:#7346d0;
+  --go:#178a4b; --go-bg:#dcf2e4; --warn:#b97a06; --warn-bg:#fbefcf; --stop:#cc2a30; --stop-bg:#fbe1e1; --none:#8f9ba7;
+  color-scheme:light;
+} }
+:root[data-theme="light"]{
+  --bg:#eef1f4; --surface:#ffffff; --raised:#f2f4f7; --fg:#0f171f; --muted:#4a5866; --line:#d3dae1;
+  --accent:#d9561a; --accent-ink:#ffffff; --band:rgba(40,100,180,.16); --band-line:#2a68ad; --gust:#7346d0;
+  --go:#178a4b; --go-bg:#dcf2e4; --warn:#b97a06; --warn-bg:#fbefcf; --stop:#cc2a30; --stop-bg:#fbe1e1; --none:#8f9ba7;
+  color-scheme:light;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 var(--f-body);
@@ -437,9 +450,6 @@ body.info-open{overflow:hidden}
 .legend-btns button[aria-pressed="false"]{color:var(--muted);text-decoration:line-through;opacity:.6}
 .legend-btns button[aria-pressed="false"] i{opacity:.35}
 .legend-btns small{font-size:11px}
-.day-nav{display:inline-flex;align-items:center;gap:4px}
-.day-nav button{width:30px;height:30px;padding:0;border-radius:99px;font-size:18px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
-.day-nav button:disabled{opacity:.3;cursor:default}
 .night-btn{padding:4px 10px;font-size:12px;border-radius:99px}
 .night-btn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 
@@ -532,3 +542,42 @@ td.cell-edge{color:var(--warn)}
 .brand-logo{width:40px;height:40px;flex:none}
 @media (max-width:430px){ .brand-logo{width:34px;height:34px} }
 @media print{ .brand-logo{display:none} }
+
+/* Bedienbarkeit im Feld: größere Schrift und größere Tippflächen (auch mit Handschuhen), weniger Kleingedrucktes */
+.note{font-size:13.5px;line-height:1.5}
+.eyebrow{font-size:12px}
+.legend{font-size:13px}
+.legend-btns button{font-size:13px;padding:6px 12px;min-height:36px}
+.seg button{padding:9px 14px;font-size:14px;min-height:40px}
+.icon-btn{min-width:44px;min-height:44px}
+.night-btn{padding:8px 14px;font-size:13.5px;min-height:40px}
+.coat-bar{font-size:14px}
+.coat-bar button{min-height:40px;padding:8px 14px;font-size:14px}
+.coat-bar .coat-gear{width:40px;height:40px;font-size:18px}
+.mq button,.mchip{padding:7px 12px;font-size:13.5px;min-height:36px}
+.sb-row button{width:44px;height:38px}
+.sb-nav button{padding:8px 14px;font-size:14px}
+.ol-row small{font-size:12px}
+table.t{font-size:14px} table.t td.why-cell{font-size:13px}
+.mx th{font-size:11px} .mx td{height:28px;font-size:11.5px}
+.info-btn{width:24px;height:24px;font-size:13px}
+.tl-cell{font-size:11px}
+/* Zwei Ebenen: einfache Ansicht zeigt nur das Wichtigste; Details für Fachleute per Schalter.
+   Im Beschichten-Modus bleibt die Temperatur (Taupunkt) sichtbar. */
+body.simple .expert{display:none}
+body.simple.coat-on #sec-temp{display:flex}
+body.simple .cols{grid-template-columns:1fr}
+.details-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:12px 14px;border:1px dashed var(--line);border-radius:12px}
+.details-bar button{min-height:44px;font-size:15px}
+/* Erklärtexte eingeklappt: „?“ neben der Überschrift blendet sie ein */
+.card .help{display:none}
+.card.show-help .help:not([hidden]){display:block}
+.h-wrap{display:inline-flex;align-items:center;gap:8px;min-width:0}
+.help-btn{width:28px;height:28px;margin:0;flex:none}
+.card.show-help .help-btn{background:var(--band-line);color:var(--surface);border-color:var(--band-line)}
+/* Tagesauswahl in der Kurzleiste */
+.sb-navrow{display:flex;align-items:center;gap:8px;min-width:0}
+.sb-days{flex:none}
+.sb-days button{padding:6px 10px;font-size:13.5px;min-height:36px;display:inline-flex;align-items:center;gap:5px}
+.sb-days .dot{margin:0}
+.sb-nav{flex:1;min-width:0}
