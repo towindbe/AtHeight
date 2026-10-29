@@ -19,6 +19,8 @@ const ICON_PATHS = {
   week:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
   report:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>'
 };
+// Nach dem Einblenden einer Erklärung dorthin scrollen (sie steht oft weiter unten in der Karte)
+const showHelp = el => { if(el) setTimeout(() => el.scrollIntoView({behavior:"smooth", block:"center"}), 30); };
 const icon = (name, size = 20) => `<svg class="ico" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON_PATHS[name] || ""}</svg>`;
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt = (v, d=1) => v==null || isNaN(v) ? "–" : v.toFixed(d).replace(".", ",");

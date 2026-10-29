@@ -155,4 +155,4 @@ function renderOutlook(){
   });
 }
 
-$("olInfoBtn").onclick = () => { const open = $("olInfo").hidden; $("olInfo").hidden = !open; $("olInfoBtn").setAttribute("aria-expanded", String(open)); };
+$("olInfoBtn").onclick = () => { const open = $("olInfo").hidden; $("olInfo").hidden = !open; if(open) showHelp($("olInfo")); $("olInfoBtn").setAttribute("aria-expanded", String(open)); };

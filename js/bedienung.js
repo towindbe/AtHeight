@@ -10,7 +10,7 @@ function toggleSettings(open){
 $("siteMeta").onclick = () => toggleSettings(true);
 $("nowBox").addEventListener("click", e => {
   if(!e.target.closest("#ensInfoBtn")) return;
-  const open = $("ensInfo").hidden; $("ensInfo").hidden = !open;
+  const open = $("ensInfo").hidden; $("ensInfo").hidden = !open; if(open) showHelp($("ensInfo"));
   $("ensInfoBtn").setAttribute("aria-expanded", String(open));
 });
 $("setupBtn").onclick = () => toggleSettings(true);
@@ -61,7 +61,8 @@ document.querySelectorAll(".card").forEach(card => {
   const b = document.createElement("button");
   b.type = "button"; b.className = "info-btn help-btn"; b.textContent = "?";
   b.title = "Erklärung ein- oder ausblenden"; b.setAttribute("aria-expanded", "false");
-  b.onclick = () => { const on = card.classList.toggle("show-help"); b.setAttribute("aria-expanded", String(on)); };
+  b.onclick = () => { const on = card.classList.toggle("show-help"); b.setAttribute("aria-expanded", String(on));
+    if(on) showHelp([...card.querySelectorAll(".help")].find(n => n.offsetParent !== null)); };
   // neben die Überschrift (manche Überschriften werden per Text neu gesetzt); steht sie allein, eine Kopfzeile darum bauen
   if(h.parentElement === card){ const head = document.createElement("div"); head.className = "card-head"; h.before(head); head.appendChild(h); }
   const wrap = document.createElement("span"); wrap.className = "h-wrap"; h.before(wrap); wrap.append(h, b);
