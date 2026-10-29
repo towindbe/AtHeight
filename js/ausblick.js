@@ -62,7 +62,7 @@ function outlookDays(models, ens){
   return days.map(d => {
     // je Modell: Höchstwerte und Summen in der Arbeitszeit dieses Tages
     const per = models.map(m => {
-      let vMax=null, gMax=null, rain=0, rainN=0, storm=false, tMin=null, tMax=null;
+      let vMax=null, gMax=null, rain=0, rainN=0, storm=false, tMin=null, tMax=null; const hrs = new Map();
       m.h.time.forEach((t, i) => {
         if(!t.startsWith(d) || !isWork(t)) return;
         const lv = levelsAt(m.h, i), v = zoneWind(lv).v; if(v==null) return;
@@ -71,8 +71,10 @@ function outlookDays(models, ens){
         if(m.h.precipitation?.[i]!=null){ rain += m.h.precipitation[i]; rainN++; }
         if((m.h.weather_code?.[i] ?? 0) >= 95) storm = true;
         if(tw!=null){ tMin = Math.min(tMin ?? 99, tw); tMax = Math.max(tMax ?? -99, tw); }
+        const td = dewPoint(m.h.temperature_2m?.[i], m.h.relative_humidity_2m?.[i]);
+        hrs.set(t, {dew: tw!=null && td!=null ? tw - td : null, rh: m.h.relative_humidity_2m?.[i] ?? null});
       });
-      return vMax==null ? null : {vMax, gMax, rain: rainN ? rain : null, storm, tMin, tMax};
+      return vMax==null ? null : {vMax, gMax, rain: rainN ? rain : null, storm, tMin, tMax, hrs};
     }).filter(Boolean);
     if(!per.length) return {d, n:0};
     const vs = per.map(x => x.vMax), gs = per.map(x => x.gMax).filter(v => v!=null);
@@ -80,11 +82,29 @@ function outlookDays(models, ens){
       rain:median(per.map(x => x.rain).filter(v => v!=null)), storm:per.filter(x => x.storm).length/per.length,
       tMin:median(per.map(x => x.tMin).filter(v => v!=null)), tMax:median(per.map(x => x.tMax).filter(v => v!=null)),
       pEns:ens?.p.get(d)?.p ?? null};
+    // Taupunktabstand und Feuchte je Arbeitsstunde: Median der Modelle (für Tau und Beschichten, grob)
+    o.hrs = [...new Set(per.flatMap(x => [...x.hrs.keys()]))].sort().map(t => {
+      const xs = per.map(x => x.hrs.get(t)).filter(Boolean);
+      return {t, dew:median(xs.map(x => x.dew).filter(v => v!=null)), rh:median(xs.map(x => x.rh).filter(v => v!=null))};
+    });
     // grobe Tendenz, Regeln wie im Detail, aber auf Tageshöchstwerte bezogen
     o.lamp = (o.vMed > site.wind || (o.gMed!=null && o.gMed > site.gust) || o.storm >= 0.5) ? "stop"
       : (o.vHi > site.wind || (o.gHi!=null && o.gHi > site.gust) || (o.pEns!=null && o.pEns >= ENS_WARN) || o.storm > 0 || (o.rain!=null && o.rain >= 3)) ? "warn" : "go";
     return o;
   });
+}
+/* Zeile Taupunkt im Ausblick. Normal: Stunden mit Tau (Taupunkt erreicht). Im Beschichten-Modus: wann beschichtet werden darf. */
+function outlookDew(hs, d){
+  hs = hs.filter(h => h.dew!=null);
+  const short = r => r.replace("in der ganzen Arbeitszeit", "ganztägig");
+  if(!hs.length) return {label:"Tau", txt:"–", cls:"", tip:"Keine Werte zum Taupunkt"};
+  if(coatOn(d)){
+    const ok = hs.filter(h => !coatViol(h)).length, r = rangeTxt(hs, h => !coatViol(h));
+    return {label:"🖌 Beschichten", txt: ok ? short(r) : "nicht möglich", cls: ok===hs.length ? "ol-ok" : ok ? "ol-part" : (site.coatStop ? "ol-stop" : "ol-part"),
+      tip:`Beschichten möglich in ${ok} von ${hs.length} Arbeitsstunden (Grenzen: höchstens ${coatRh()} % Feuchte, Taupunktabstand mind. ${fmt(coatDew(), coatDew()%1 ? 1 : 0)} K)`};
+  }
+  const r = rangeTxt(hs, h => h.dew <= 0);
+  return {label:"💧 Tau", txt: r ? short(r) : "–", cls: r ? "ol-part" : "", tip: r ? "Taupunkt erreicht: Nebel oder Wolke in Arbeitshöhe, Oberflächen nass" : "Taupunkt in der Arbeitszeit nicht erreicht"};
 }
 function renderOutlook(){
   if(!$("outlook")) return;
@@ -111,6 +131,7 @@ function renderOutlook(){
       }
     }
     const date = new Date(o.d+"T12:00:00");
+    const dew = outlookDew(isDetail ? dayHours(o.d) : (o.hrs || []), o.d);
     return `<button type="button" class="ol-day ${isDetail ? "detail" : ""} ${o.d===state.day ? "cur" : ""}" data-day="${o.d}" ${isDetail ? "" : "disabled"}
         aria-label="${esc(date.toLocaleDateString("de-DE",{weekday:"long", day:"numeric", month:"long"}))}: ${LAMP_TXT[lamp]}">
       <span class="ol-date"><b>${esc(dayLabel(o.d,true))}</b> ${esc(date.toLocaleDateString("de-DE",{day:"2-digit", month:"2-digit"}))}</span>
@@ -122,6 +143,7 @@ function renderOutlook(){
       <span class="ol-row"><small>Zu windig</small>${riskHtml(o.pEns, outlook.ens?.members)}</span>
       <span class="ol-row"><small>Regen</small>${rain==null ? "–" : fmt(rain,1)+" mm"}${storm > 0 ? ` <span title="Gewittersignal">⚡</span>` : ""}</span>
       <span class="ol-row"><small>°C</small>${tMin==null ? "–" : `${fmt(tMin,0)} … ${fmt(tMax,0)}`}</span>
+      <span class="ol-row ${dew.cls}" title="${esc(dew.tip)}"><small>${dew.label}</small>${dew.txt}</span>
     </button>`;
   }).join("");
   $("outlook").innerHTML = `<div class="ol-scroll"><div class="ol-days">${cards}</div></div>

@@ -80,7 +80,7 @@ function rate(h){
   if(coatOn(h.t.slice(0,10))){   // Beschichten-Modus: Hinweis, auf Wunsch (Einstellungen) Stop
     const cl = site.coatStop ? "stop" : "info", k = fmt(coatDew(), coatDew()%1 ? 1 : 0);
     if(h.rh!=null && h.rh > coatRh()) add(cl, `Beschichten: Luftfeuchte ${Math.round(h.rh)} % (Grenze ${coatRh()} %)`, "coat");
-    if(h.dew!=null && h.dew < coatDew()) add(cl, `Beschichten: ${h.dew <= 0 ? "Taupunkt erreicht" : `${fmt(h.dew,1)} K über Taupunkt`} (Grenze mind. ${k} K)`, "coat");
+    if(h.dew!=null && h.dew < coatDew()) add(cl, `Beschichten: ${h.dew <= 0 ? "Taupunkt erreicht" : `Taupunktabstand ${fmt(h.dew,1)} K`} (Grenze mind. ${k} K)`, "coat");
   }
   const lamp = why.some(w => w.l==="stop") ? "stop" : why.some(w => w.l==="warn") ? "warn" : "go";
   // Stop allein wegen Beschichtung (nicht wegen Wetter): wird im Überblick und Bericht getrennt genannt

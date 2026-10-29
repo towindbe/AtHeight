@@ -234,14 +234,14 @@ function renderDewRow(){
   const rCls = h => h.rh==null ? "m-none" : h.rh > coatRh() ? (stopC ? "m-stop" : "d-near") : "d-ok";
   const td = (h, cls, txt, tip) => `<td class="${cls}" data-i="${h.i}" title="${esc(tip)}">${txt}</td>`;
   const row = (name, cell) => `<tr><th class="mname">${name}</th>${hs.map(cell).join("")}</tr>`;
-  let rows = row(`Abstand Taupunkt <small>K</small>`, h => td(h, dCls(h), h.dew==null ? "·" : h.dew <= 0 ? "Tau" : fmt(h.dew,1),
-    h.dew==null ? "" : `${hh(h.t)} Uhr: ${fmt(h.tW,1)} °C in ${workH()} m, Taupunkt (2 m) ${fmt(h.td,1)} °C: ${h.dew <= 0 ? "Taupunkt erreicht" : fmt(h.dew,1) + " K Abstand"}`));
+  let rows = row(`Taupunktabstand <small>K</small>`, h => td(h, dCls(h), h.dew==null ? "·" : h.dew <= 0 ? "Tau" : fmt(h.dew,1),
+    h.dew==null ? "" : `${hh(h.t)} Uhr: ${fmt(h.tW,1)} °C in ${workH()} m, Taupunkt (2 m) ${fmt(h.td,1)} °C: ${h.dew <= 0 ? "Taupunkt erreicht" : "Taupunktabstand " + fmt(h.dew,1) + " K"}`));
   if(coat) rows += row(`Luftfeuchte <small>%</small>`, h => td(h, rCls(h), h.rh==null ? "·" : Math.round(h.rh), `${hh(h.t)} Uhr: Luftfeuchte ${h.rh==null ? "–" : Math.round(h.rh) + " %"} (Grenze ${coatRh()} %)`));
   $("dewRow").innerHTML = `<table><tr><th></th>${hs.map(h => `<th>${hh(h.t)}</th>`).join("")}</tr>${rows}</table>`;
   $("dewRow").querySelectorAll("td[data-i]").forEach(c => c.onclick = () => selectHour(+c.dataset.i));
   $("dewRowNote").textContent = coat
-    ? `Beschichten-Modus: mind. ${k(coatDew())} K Abstand und höchstens ${coatRh()} % Feuchte. ${stopC ? "Rot: Grenze überschritten, Ampel STOP." : "Gelb: Grenze überschritten (Hinweis)."} „Tau“: Taupunkt erreicht, Nebel oder Wolke in Arbeitshöhe, alles nass.`
-    : `Zahl: Abstand der Temperatur in Arbeitshöhe zum Taupunkt in K. „Tau“ (gelb): Taupunkt erreicht, Nebel oder Wolke in Arbeitshöhe, Oberflächen und Seile nass. Hellgelb: bis ${k(DEW_INFO)} K, Kondenswasser möglich. Darüber rechnet die Prognose nicht mit Kondenswasser; Oberflächen können trotzdem kälter sein.`;
+    ? `Beschichten-Modus: Taupunktabstand mind. ${k(coatDew())} K und höchstens ${coatRh()} % Feuchte. ${stopC ? "Rot: Grenze überschritten, Ampel STOP." : "Gelb: Grenze überschritten (Hinweis)."} „Tau“: Taupunkt erreicht, Nebel oder Wolke in Arbeitshöhe, alles nass.`
+    : `Zahl: Taupunktabstand in K, also wie weit die Temperatur in Arbeitshöhe über dem Taupunkt liegt. „Tau“ (gelb): Taupunkt erreicht, Nebel oder Wolke in Arbeitshöhe, Oberflächen und Seile nass. Hellgelb: bis ${k(DEW_INFO)} K, Kondenswasser möglich. Darüber rechnet die Prognose nicht mit Kondenswasser; Oberflächen können trotzdem kälter sein.`;
 }
 function renderTemp(){
   if(typeof Chart==="undefined") return;
@@ -254,7 +254,7 @@ function renderTemp(){
   // Luftfeuchte auf eigener Achse rechts (0–100 %), nur Anzeige
   opt.scales.y2 = {display:!hid("t_rh"), position:"right", min:0, max:100, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"Barlow", size:10}, stepSize:25}, title:{display:true, text:"Feuchte %", color:css("--muted")}};
   opt.plugins.tooltip = {filter: it => !it.dataset.ref, callbacks:{label:c => c.dataset.yAxisID==="y2" ? `Luftfeuchte: ${Math.round(c.parsed.y)} %`
-    : c.dataset.dew ? `${c.dataset.label}: ${fmt(c.parsed.y)} °C` + (H[c.dataIndex]?.dew==null ? "" : H[c.dataIndex].dew <= 0 ? " · Taupunkt erreicht" : ` · Abstand ${fmt(H[c.dataIndex].dew,1)} K`)
+    : c.dataset.dew ? `${c.dataset.label}: ${fmt(c.parsed.y)} °C` + (H[c.dataIndex]?.dew==null ? "" : H[c.dataIndex].dew <= 0 ? " · Taupunkt erreicht" : ` · Taupunktabstand ${fmt(H[c.dataIndex].dew,1)} K`)
     : `${c.dataset.label}: ${fmt(c.parsed.y)} °C`}}; narrowReadout(opt, "roTemp");
   const ds = [
     {label:"Temperatur "+workH()+" m", data:H.map(h => r1(h.tW)), borderColor:css("--accent"), borderWidth:2.5, pointRadius:0, tension:0},

@@ -110,7 +110,7 @@ function renderCoatBar(){
   $("coatBar").classList.toggle("on", on);
   $("coatBtn").setAttribute("aria-pressed", String(on));
   $("coatBtn").textContent = on ? "🖌 Beschichten-Modus an" : "🖌 Beschichten-Modus";
-  $("coatInfo").textContent = on ? `An für alle Tage, endet von selbst nach ${new Date(coatEnd()+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"})} · Grenzen: höchstens ${coatRh()} % Feuchte, mind. ${k(coatDew())} K über Taupunkt${site.coatStop ? ", setzt die Ampel auf STOP" : " (nur Hinweis)"}. ${coatDaySummary(dayHours(state.day))}` : "";
+  $("coatInfo").textContent = on ? `An für alle Tage, endet von selbst nach ${new Date(coatEnd()+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"})} · Grenzen: höchstens ${coatRh()} % Feuchte, Taupunktabstand mind. ${k(coatDew())} K${site.coatStop ? ", setzt die Ampel auf STOP" : " (nur Hinweis)"}. ${coatDaySummary(dayHours(state.day))}` : "";
 }
 function toggleCoat(){
   setCoat(coatOn(state.day) ? null : coatDefaultEnd());

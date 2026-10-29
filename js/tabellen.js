@@ -95,7 +95,7 @@ function hourRows(hs, dots){
     <td class="why-cell">${esc(h.why.filter(w=>w.l!=="go").map(w=>shortWhy(w.t)).join(" · ")) || "–"}</td></tr>`; }).join("");
 }
 
-const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind <span class="wu">m/s</span></th><th>Spanne</th><th>Böe</th><th>Richtung</th><th title="Anzahl der Modelle mit Wind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th title="Anteil der Szenarien, in denen Wind oder Böe über Grenze liegen">Zu windig</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th title="Relative Luftfeuchte in 2 m">Feuchte %</th><th title="Abstand der Temperatur in Arbeitshöhe zum Taupunkt (2 m); Tau = Taupunkt erreicht">Taupunkt K</th><th>Gründe</th></tr></thead>`;
+const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind <span class="wu">m/s</span></th><th>Spanne</th><th>Böe</th><th>Richtung</th><th title="Anzahl der Modelle mit Wind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th title="Anteil der Szenarien, in denen Wind oder Böe über Grenze liegen">Zu windig</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th title="Relative Luftfeuchte in 2 m">Feuchte %</th><th title="Taupunktabstand: wie weit die Temperatur in Arbeitshöhe über dem Taupunkt (2 m) liegt; Tau = Taupunkt erreicht">Taupunktabstand K</th><th>Gründe</th></tr></thead>`;
 function renderHourTable(){ $("hourTable").innerHTML = HOUR_HEAD + "<tbody>" + hourRows(dayHours(state.day), true) + "</tbody>"; $("hourDay").textContent = dayLabel(state.day); }
 
 function renderModelTable(){
