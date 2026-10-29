@@ -25,7 +25,7 @@ function renderFavs(){
   $("favSaveRow").hidden = !!cur || !siteChosen;
   $("favList").querySelectorAll(".fav-go").forEach(b => b.onclick = () => {
     const f = loadFavs()[+b.dataset.k]; if(!f) return;
-    site = {...DEFAULT_SITE, ...f.site, name:f.name};
+    site = cleanSite({...DEFAULT_SITE, ...f.site, name:f.name});
     siteReady(); saveSite(); fillSettings(); toggleFavs(false);
     if(map){ cancelPending(); map.setView([site.lat, site.lon], 14); }
     load();

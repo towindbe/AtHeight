@@ -23,6 +23,7 @@ $("saveBtn").onclick = () => {
     hub:clamp(num("s_hub",site.hub),20,250), rotor:clamp(num("s_rotor",site.rotor),0,250),
     work: $("s_work").value.trim()==="" ? null : clamp(Math.round(num("s_work",0)),10,300), access:$("s_access").value,
     wind:windField("s_wind",site.wind), gust:windField("s_gust",site.gust), nightWind:windField("s_nwind",nightWind()), nightGust:windField("s_ngust",nightGust()), minTemp:clamp(Math.round(num("s_mintemp",minTemp())),-50,20), from:clamp(Math.round(num("s_from",site.from)),0,23), to:clamp(Math.round(num("s_to",site.to)),0,23)};
+  if(prev.excluded?.length && sameSpot(site, prev)) site.excluded = prev.excluded;   // von Hand ausgeschlossene Modelle bleiben, solange der Standort gleich ist
   site.windkraft = $("s_windkraft").checked;
   site.coatRh = clamp(Math.round(num("s_coatrh",coatRh())),30,100); site.coatDew = clamp(num("s_coatdew",coatDew()),0,10); site.coatStop = $("s_coatstop").checked;
   if(!site.windkraft){   // ohne Windenergieanlage: Arbeitshöhe ist die Bezugshöhe, kein Rotor, kein Zugang von der Gondel

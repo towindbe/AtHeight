@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-29i">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-29j">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tw-logo" viewBox="-6 -6 790 512"><g fill="currentColor" stroke="currentColor" stroke-linejoin="miter"><path stroke-width="3" d="M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z"/><path stroke-width="15" d="m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z"/></g></symbol></svg>
@@ -103,7 +103,7 @@
         <label>Min. Abstand Taupunkt (K)<input id="s_coatdew" type="number" step="0.5" min="0" max="10" inputmode="decimal"></label>
       </div>
       <label class="chk" id="coatStopLbl"><input type="checkbox" id="s_coatstop"><span>Grenzen verletzt: Ampel auf STOP (auch im Tagesbericht)</span></label>
-      <p class="note" id="coatNote">Eingeschaltet wird das Beschichten oben im Tagesüberblick mit „🖌 Beschichten-Modus“; es gilt dann für alle angezeigten Tage an diesem Standort und endet danach von selbst. Werte aus dem Datenblatt von Harz oder Lack eintragen (üblich: höchstens 80–85 %, mind. 3 K über Taupunkt). Die Oberflächentemperatur von Stahl oder Blatt kennt das Modell nicht: vor Ort messen.</p>
+      <p class="note" id="coatNote">Eingeschaltet wird das Beschichten oben im Tagesüberblick mit „🖌 Beschichten-Modus“; es gilt dann für alle Tage an diesem Standort, bis ihr es ausschaltet, höchstens 7 Tage. Werte aus dem Datenblatt von Harz oder Lack eintragen (üblich: höchstens 80–85 %, mind. 3 K über Taupunkt). Die Oberflächentemperatur von Stahl oder Blatt kennt das Modell nicht: vor Ort messen.</p>
     </fieldset>
     <fieldset>
       <legend>Grenzwerte</legend>
@@ -154,7 +154,7 @@
         <p class="muted" id="summary"></p>
         <p class="rain-note" id="rainNote"></p>
         <p class="rain-note" id="dewNote"></p>
-        <div class="coat-bar needs-data" id="coatBar"><button type="button" id="coatBtn" aria-pressed="false" title="Für alle Prognosetage an diesem Standort, endet danach von selbst; Grenzwerte in den Einstellungen">🖌 Beschichten-Modus</button><span id="coatInfo"></span></div>
+        <div class="coat-bar needs-data" id="coatBar"><button type="button" id="coatBtn" aria-pressed="false" title="Für alle Tage an diesem Standort, bis zum Ausschalten (höchstens 7 Tage); Grenzwerte in den Einstellungen">🖌 Beschichten-Modus</button><span id="coatInfo"></span></div>
         <p class="change-note" id="changeNote" hidden></p>
         <p class="decision-note">Entscheidungshilfe, keine Freigabe: Der Aufsichtführende entscheidet. Wind vor Ort messen.</p>
         <div class="loadbar" id="loadBar" hidden aria-live="polite"><div class="lb-track"><div class="lb-fill" id="loadFill"></div></div><span class="note" id="loadText"></span></div>
@@ -284,7 +284,7 @@
       <h3 class="dir-sub">Richtung in der Arbeitszeit</h3>
       <div class="dir-strip" id="dirStrip"></div>
       <div class="dir-turn" id="dirTurn"></div>
-      <p class="note">Pfeile zeigen, wohin der Wind weht, Farbe wie die Ampel. Lee-Seite: windabgewandte Turmseite. Drehung nur bei mindestens <span data-ms="2"></span> gewertet, bei Flaute ist die Richtung wenig aussagekräftig.</p>
+      <p class="note">Pfeile zeigen, wohin der Wind weht, Farbe wie die Ampel (nur Wetter, ohne Beschichten). Lee-Seite: windabgewandte Turmseite. Drehung nur bei mindestens <span data-ms="2"></span> gewertet, bei Flaute ist die Richtung wenig aussagekräftig.</p>
     </section>
   </div>
 
@@ -409,25 +409,25 @@
 </div>
 
 <!-- Skripte teilen sich den globalen Gültigkeitsbereich; Reihenfolge beachten. Bei Änderungen ?v= erhöhen. -->
-<script src="js/konfiguration.js?v=2026-10-29i"></script>
-<script src="js/hilfen.js?v=2026-10-29i"></script>
-<script src="js/physik.js?v=2026-10-29i"></script>
-<script src="js/daten.js?v=2026-10-29i"></script>
-<script src="js/offline.js?v=2026-10-29i"></script>
-<script src="js/tageslicht.js?v=2026-10-29i"></script>
-<script src="js/bewertung.js?v=2026-10-29i"></script>
-<script src="js/anzeige.js?v=2026-10-29i"></script>
-<script src="js/leiste.js?v=2026-10-29i"></script>
-<script src="js/diagramme.js?v=2026-10-29i"></script>
-<script src="js/tabellen.js?v=2026-10-29i"></script>
-<script src="js/modellvergleich.js?v=2026-10-29i"></script>
-<script src="js/ausblick.js?v=2026-10-29i"></script>
-<script src="js/karte.js?v=2026-10-29i"></script>
-<script src="js/radar.js?v=2026-10-29i"></script>
-<script src="js/bericht.js?v=2026-10-29i"></script>
-<script src="js/ausfall.js?v=2026-10-29i"></script>
-<script src="js/anlagen.js?v=2026-10-29i"></script>
-<script src="js/bedienung.js?v=2026-10-29i"></script>
-<script src="js/start.js?v=2026-10-29i"></script>
+<script src="js/konfiguration.js?v=2026-10-29j"></script>
+<script src="js/hilfen.js?v=2026-10-29j"></script>
+<script src="js/physik.js?v=2026-10-29j"></script>
+<script src="js/daten.js?v=2026-10-29j"></script>
+<script src="js/offline.js?v=2026-10-29j"></script>
+<script src="js/tageslicht.js?v=2026-10-29j"></script>
+<script src="js/bewertung.js?v=2026-10-29j"></script>
+<script src="js/anzeige.js?v=2026-10-29j"></script>
+<script src="js/leiste.js?v=2026-10-29j"></script>
+<script src="js/diagramme.js?v=2026-10-29j"></script>
+<script src="js/tabellen.js?v=2026-10-29j"></script>
+<script src="js/modellvergleich.js?v=2026-10-29j"></script>
+<script src="js/ausblick.js?v=2026-10-29j"></script>
+<script src="js/karte.js?v=2026-10-29j"></script>
+<script src="js/radar.js?v=2026-10-29j"></script>
+<script src="js/bericht.js?v=2026-10-29j"></script>
+<script src="js/ausfall.js?v=2026-10-29j"></script>
+<script src="js/anlagen.js?v=2026-10-29j"></script>
+<script src="js/bedienung.js?v=2026-10-29j"></script>
+<script src="js/start.js?v=2026-10-29j"></script>
 </body>
 </html>

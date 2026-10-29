@@ -104,16 +104,16 @@ function renderHero(){
     + ` · Ensemble (Szenarien): ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(" + ") || "nicht verfügbar"}`;
 }
 
-/* Schalter „Beschichten-Modus“ im Überblick (gilt für alle Prognosetage); ist er an, steht der Modus mit Grenzen und Ergebnis gut sichtbar daneben */
+/* Schalter „Beschichten-Modus“ im Überblick (gilt für alle Tage bis zum Ausschalten, höchstens 7 Tage); ist er an, steht der Modus mit Grenzen und Ergebnis gut sichtbar daneben */
 function renderCoatBar(){
   const on = coatOn(state.day), k = v => fmt(v, v%1 ? 1 : 0);
   $("coatBar").classList.toggle("on", on);
   $("coatBtn").setAttribute("aria-pressed", String(on));
   $("coatBtn").textContent = on ? "🖌 Beschichten-Modus an" : "🖌 Beschichten-Modus";
-  $("coatInfo").textContent = on ? `Gilt für alle Tage bis ${dayLabel(coatEnd()).replace(/^ · /, "")} · Grenzen: höchstens ${coatRh()} % Feuchte, mind. ${k(coatDew())} K über Taupunkt${site.coatStop ? ", setzt die Ampel auf STOP" : " (nur Hinweis)"}. ${coatDaySummary(dayHours(state.day))}` : "";
+  $("coatInfo").textContent = on ? `An für alle Tage, endet von selbst nach ${new Date(coatEnd()+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"})} · Grenzen: höchstens ${coatRh()} % Feuchte, mind. ${k(coatDew())} K über Taupunkt${site.coatStop ? ", setzt die Ampel auf STOP" : " (nur Hinweis)"}. ${coatDaySummary(dayHours(state.day))}` : "";
 }
 function toggleCoat(){
-  setCoat(coatOn(state.day) ? null : state.times[state.times.length-1].slice(0,10));
+  setCoat(coatOn(state.day) ? null : coatDefaultEnd());
   state.hours = computeHours(state.results, state.times);
   render();
 }

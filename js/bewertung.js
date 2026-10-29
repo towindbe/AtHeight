@@ -85,7 +85,9 @@ function rate(h){
   const lamp = why.some(w => w.l==="stop") ? "stop" : why.some(w => w.l==="warn") ? "warn" : "go";
   // Stop allein wegen Beschichtung (nicht wegen Wetter): wird im Überblick und Bericht getrennt genannt
   const coatOnly = lamp==="stop" && why.filter(w => w.l==="stop").every(w => w.cat==="coat");
-  return {lamp, why, coatOnly};
+  // Ampel nur nach Wetter (ohne Beschichten): für Anzeigen, die zum Wind gehören, z. B. die Windrichtungspfeile
+  const wx = why.filter(w => w.cat!=="coat"), lampW = wx.some(w => w.l==="stop") ? "stop" : wx.some(w => w.l==="warn") ? "warn" : "go";
+  return {lamp, why, coatOnly, lampW};
 }
 
 /* Über Nacht (Arbeitsende bis Arbeitsbeginn am Folgetag): dürfen Seile und Bühne hängen bleiben?

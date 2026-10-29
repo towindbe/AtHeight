@@ -142,7 +142,7 @@ function toggleLine(s){
   try{ localStorage.setItem("wb_hide", JSON.stringify([...state.hide])); }catch(e){}
   s.startsWith("t_") ? renderTemp() : renderChart();
 }
-/* „Nachtstunden ausblenden“: gilt für Wind, Regen und Temperatur gemeinsam (nur Anzeige) */
+/* „Nacht ausblenden“: gilt für Wind, Regen und Temperatur gemeinsam (nur Anzeige) */
 function renderNightBtns(){ document.querySelectorAll(".night-btn").forEach(b => b.setAttribute("aria-pressed", String(state.nightOff))); }
 function toggleNight(){
   state.nightOff = !state.nightOff;
@@ -360,7 +360,7 @@ function renderDirStrip(){
     const d = h.dir.mean;
     const arrow = d==null ? `<span class="dir-na">–</span>`
       : `<svg viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(${(d+180)%360} 12 12)"><line x1="12" y1="20" x2="12" y2="7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><polygon points="12,2 6.5,10 17.5,10" fill="currentColor"/></g></svg>`;
-    return `<button type="button" class="dir-cell d-${h.lamp} ${h.i===state.sel?"sel":""} ${h.med!=null && h.med < DIR_CALM ? "calm" : ""}" data-i="${h.i}" title="${hh(h.t)} Uhr: aus ${dirName(d)}${d==null?"":" ("+Math.round(d)+"°)"}, ${fwu(h.med)}">${arrow}<span>${hh(h.t)}</span></button>`;
+    return `<button type="button" class="dir-cell d-${h.lampW || h.lamp} ${h.i===state.sel?"sel":""} ${h.med!=null && h.med < DIR_CALM ? "calm" : ""}" data-i="${h.i}" title="${hh(h.t)} Uhr: aus ${dirName(d)}${d==null?"":" ("+Math.round(d)+"°)"}, ${fwu(h.med)}">${arrow}<span>${hh(h.t)}</span></button>`;
   }).join("");
   $("dirStrip").querySelectorAll(".dir-cell").forEach(b => b.onclick = () => selectHour(+b.dataset.i));
   // Lee-Seite zur gewählten Stunde

@@ -29,9 +29,10 @@ const CHILL_INFO = -10, HEAT_INFO = 32, UV_INFO = 6;
 const DEW_INFO = 1;   // Temperatur in Arbeitshöhe höchstens so viele K über dem Taupunkt: Hinweis Kondenswasser
 // Beschichten / Laminieren (Grenzen je Anlage): max. Luftfeuchte und Mindestabstand zum Taupunkt (ISO 8502-4: 3 K)
 const coatRh = () => site.coatRh ?? 80, coatDew = () => site.coatDew ?? 3;
-/* Beschichten wird im Überblick je Standort eingeschaltet und gilt dann für alle Prognosetage,
-   bis einschließlich dem letzten Tag, der beim Einschalten angezeigt wurde. Danach ist es von selbst aus:
-   so bleibt es nicht versehentlich wochenlang an und die Ampel steht nicht ohne Grund auf Stop. */
+/* Beschichten-Modus: im Überblick je Standort eingeschaltet, gilt für alle Tage bis zum Ausschalten,
+   höchstens COAT_DAYS Tage ab dem Einschalten. Danach ist er von selbst aus:
+   so bleibt er nicht versehentlich wochenlang an und die Ampel steht nicht ohne Grund auf Stop. */
+const COAT_DAYS = 7;
 const coatSpot = () => `${(+site.lat).toFixed(3)},${(+site.lon).toFixed(3)}`;
 let coatUntil = (() => { try{
   const t = new Date().toLocaleDateString("sv"), o = JSON.parse(localStorage.getItem("wb_coat")||"{}");
@@ -39,6 +40,7 @@ let coatUntil = (() => { try{
 }catch(e){ return {}; } })();
 const coatEnd = () => coatUntil[coatSpot()] || null;
 const coatOn = d => !!d && !!coatEnd() && d <= coatEnd();
+function coatDefaultEnd(){ const d = new Date(); d.setDate(d.getDate() + COAT_DAYS - 1); return d.toLocaleDateString("sv"); }
 function setCoat(until){
   until ? coatUntil[coatSpot()] = until : delete coatUntil[coatSpot()];
   try{ localStorage.setItem("wb_coat", JSON.stringify(coatUntil)); }catch(e){}
@@ -67,7 +69,9 @@ let map, marker, rotorCircle, arrowMarker, satLayer;
 
 /* ---------- Hilfsfunktionen ---------- */
 function loadSite(){
-  try{ const s = JSON.parse(localStorage.getItem("wb_site")||"null"); if(s && typeof s.lat==="number") return {...DEFAULT_SITE, ...s}; }catch(e){}
+  try{ const s = JSON.parse(localStorage.getItem("wb_site")||"null"); if(s && typeof s.lat==="number") return cleanSite({...DEFAULT_SITE, ...s}); }catch(e){}
   return {...DEFAULT_SITE};
 }
+// Felder aus früheren Versionen entfernen (coat: Beschichten war kurz je Anlage gespeichert, gilt jetzt im Überblick)
+function cleanSite(s){ const {coat, ...r} = s; return r; }
 function saveSite(){ try{ localStorage.setItem("wb_site", JSON.stringify(site)); }catch(e){} }
