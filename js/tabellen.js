@@ -53,7 +53,7 @@ function renderMatrix(){
     : `Wind je Modell und Stunde in <span class="wu">${WU()}</span>. Gelb ab 75 % des Grenzwerts, rot über dem Grenzwert. Mit der Maus über ein Feld fahren zeigt auch die Böe. Zeigt, ob nur ein Ausreißer warnt oder fast alle.`;
   $("mxLegend").hidden = !(rain || feu || wol);
   $("mxLegend").textContent = feu ? `Relative Luftfeuchte in % (2 m über Boden). Blau ab 60 %, kräftiger ab ${RH_MID} %, dunkel ab ${RH_HI} %: Nebel, Tau oder nasse Oberflächen wahrscheinlich. Nur Anzeige, die Ampel ändert sich dadurch nicht.`
-    : wol ? `Bewölkung gesamt: ☀️ klar · 🌤️ heiter · ⛅ wolkig · 🌥️ stark bewölkt · ☁️ bedeckt, nachts 🌙 bei klarem Himmel. Je dunkler das Feld, desto dichter die Wolken. Mit der Maus über ein Feld fahren zeigt den Wert in %. Nur Anzeige.`
+    : wol ? `Bewölkung gesamt: ☀️ klar · 🌤️ heiter · ⛅ wolkig · 🌥️ stark bewölkt · ☁️ bedeckt, nachts 🌙 bei klarem Himmel. Je kräftiger das Grau hinter dem Symbol, desto dichter die Wolken. Mit der Maus über ein Feld fahren zeigt den Wert in %. Nur Anzeige.`
     : rain ? `Regen in mm/h. Hellblau: leicht (bis ${fmt(RAIN_LIGHT,1)}), mittelblau: mäßig (bis ${fmt(RAIN_MOD,1)}), dunkelblau: stark. Gelber Rand: ab ${fmt(RAIN_WARN,1)} mm/h (Prüfen in der Ampel). ⚡ Gewittersignal. Nur Anzeige, die Ampel ändert sich dadurch nicht.` : "";
   document.querySelectorAll("#mxSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === mxMode)));
   highlightSel();
