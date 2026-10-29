@@ -186,7 +186,8 @@ function renderDayTabs(){
   $("dayTabs").innerHTML = days.map(d => { const l = buildSummary(dayHours(d)).lamp;
     return `<button type="button" data-day="${d}" aria-pressed="${d===state.day}" aria-label="${esc(dayLabel(d,true))}: ${LAMP_TXT[l]}"><i class="dot d-${l}"></i>${esc(dayLabel(d,true))}</button>`; }).join("");
   $("dayTabs").querySelectorAll("button").forEach(b => b.onclick = () => goDay(b.dataset.day));
-  // Pfeile in den Diagrammköpfen: am ersten bzw. letzten Tag gesperrt
+  $("zeitDay").textContent = $("reportDay").textContent = dayLabel(state.day);
+  // Pfeile in den Abschnittsköpfen: am ersten bzw. letzten Tag gesperrt
   const k = days.indexOf(state.day);
   document.querySelectorAll(".day-nav").forEach(n => {
     n.querySelector("[data-dir='-1']").disabled = k <= 0;
