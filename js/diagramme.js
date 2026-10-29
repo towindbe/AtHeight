@@ -109,7 +109,8 @@ function attachScrub(canvasId, chartKey){
 
 function renderChart(){
   if(typeof Chart==="undefined"){ $("chartTitle").textContent = "Wind (Diagramm nicht geladen)"; return; }
-  const idxs = dayIdx(), labels = idxs.map(i => hh(state.times[i]));
+  renderNightBtns();
+  const idxs = chartIdx(), labels = idxs.map(i => hh(state.times[i]));
   const H = idxs.map(i=>state.hours[i]), r2 = v => v==null?null:+cw(v).toFixed(2);
   const fg = css("--fg"), stop = css("--stop");
   let ds = [];
@@ -139,7 +140,14 @@ function renderLegend(){
 function toggleLine(s){
   state.hide.has(s) ? state.hide.delete(s) : state.hide.add(s);
   try{ localStorage.setItem("wb_hide", JSON.stringify([...state.hide])); }catch(e){}
-  renderChart();
+  s.startsWith("t_") ? renderTemp() : renderChart();
+}
+/* „Nachtstunden ausblenden“: gilt für Wind, Regen und Temperatur gemeinsam (nur Anzeige) */
+function renderNightBtns(){ document.querySelectorAll(".night-btn").forEach(b => b.setAttribute("aria-pressed", String(state.nightOff))); }
+function toggleNight(){
+  state.nightOff = !state.nightOff;
+  try{ localStorage.setItem("wb_night", state.nightOff ? "1" : "0"); }catch(e){}
+  renderChart(); renderRain(); renderTemp();
 }
 const modelColor = m => COLORS[MODELS.indexOf(m) % COLORS.length];
 /* Modell-Chips unter dem Windverlauf: einzelne Modelle ein- und ausblenden (ändert die Bewertung nicht) */
@@ -179,7 +187,7 @@ function rainColor(h){
 }
 function renderRain(){
   if(typeof Chart==="undefined") return;
-  const idxs = dayIdx(), labels = idxs.map(i => hh(state.times[i])), H = idxs.map(i=>state.hours[i]);
+  const idxs = chartIdx(), labels = idxs.map(i => hh(state.times[i])), H = idxs.map(i=>state.hours[i]);
   const opt = chartBase("mm/h"); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
   opt.scales.x.ticks.autoSkip = true; opt.scales.x.ticks.maxTicksLimit = 12;
   opt.scales.y.suggestedMax = 2;
@@ -195,30 +203,63 @@ function renderRain(){
   $("rainDay").textContent = dayLabel(state.day);
 }
 
+/* Kondenswasser im Temperatur-Diagramm: Fläche über die Stunden nahe am Taupunkt, „!“ über jedem Bereich.
+   Mit Beschichten-Einstellung zusätzlich schwach: Stunden unter dem Mindestabstand fürs Beschichten. */
+const rgbaOf = (hex, a) => { const h = hex.trim().replace("#",""); return `rgba(${[0,2,4].map(k => parseInt(h.slice(k,k+2),16)).join(",")},${a})`; };
+const dewMarks = c => { const H = c.$idxs.map(i => state.hours[i]);
+  return {wet:H.map(h => h?.dew!=null && h.dew <= DEW_INFO), coat:H.map(h => site.coat && h?.dew!=null && h.dew < coatDew())}; };
+const dewPlugin = {id:"dew", beforeDatasetsDraw(c){
+  if(!c.$idxs || state.hide.has("t_dew")) return;
+  const {ctx, chartArea:a, scales:{x}} = c, step = x.getPixelForValue(1) - x.getPixelForValue(0), warn = css("--warn"), {wet, coat} = dewMarks(c);
+  ctx.save(); ctx.beginPath(); ctx.rect(a.left, a.top, a.right-a.left, a.bottom-a.top); ctx.clip();
+  wet.forEach((w, k) => {
+    if(!w && !coat[k]) return;
+    const x0 = x.getPixelForValue(k) - step/2;
+    ctx.fillStyle = rgbaOf(warn, w ? .28 : .10); ctx.fillRect(x0, a.top, step, a.bottom - a.top);
+    if(w){ ctx.fillStyle = warn; ctx.fillRect(x0, a.top, step, 4); }   // kräftiger Streifen oben
+  });
+  ctx.restore();
+}, afterDatasetsDraw(c){
+  // „!“-Abzeichen mittig über jedem zusammenhängenden Bereich, über den Linien
+  if(!c.$idxs || state.hide.has("t_dew")) return;
+  const {ctx, chartArea:a, scales:{x}} = c, warn = css("--warn"), {wet} = dewMarks(c);
+  ctx.save(); ctx.font = "800 13px " + css("--f-body"); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  for(let k = 0; k < wet.length; k++){
+    if(!wet[k] || wet[k-1]) continue;
+    let e = k; while(wet[e+1]) e++;
+    const cx = Math.min(Math.max((x.getPixelForValue(k) + x.getPixelForValue(e))/2, a.left + 12), a.right - 12), cy = a.top + 30;
+    ctx.fillStyle = warn; ctx.strokeStyle = css("--surface"); ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(cx, cy, 10, 0, 2*Math.PI); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#1b1405"; ctx.fillText("!", cx, cy + 0.5);
+  }
+  ctx.restore();
+}};
 function renderTemp(){
   if(typeof Chart==="undefined") return;
-  const idxs = dayIdx(), labels = idxs.map(i => hh(state.times[i])), H = idxs.map(i=>state.hours[i]);
+  const idxs = chartIdx(), labels = idxs.map(i => hh(state.times[i])), H = idxs.map(i=>state.hours[i]);
   const r1 = v => v==null ? null : +v.toFixed(1);
-  const vals = H.flatMap(h => [h.tW, h.chill, h.td]).filter(v => v!=null), lo = vals.length ? Math.min(...vals) : 0;
+  const hid = k => state.hide.has(k);
+  const vals = H.flatMap(h => [h.tW, hid("t_feel") ? null : h.chill, hid("t_dew") ? null : h.td]).filter(v => v!=null), lo = vals.length ? Math.min(...vals) : 0;
   const opt = chartBase("°C"); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
   opt.scales.y.beginAtZero = false;
   // Luftfeuchte auf eigener Achse rechts (0–100 %), nur Anzeige
-  opt.scales.y2 = {position:"right", min:0, max:100, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"Barlow", size:10}, stepSize:25}, title:{display:true, text:"Feuchte %", color:css("--muted")}};
+  opt.scales.y2 = {display:!hid("t_rh"), position:"right", min:0, max:100, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"Barlow", size:10}, stepSize:25}, title:{display:true, text:"Feuchte %", color:css("--muted")}};
   opt.plugins.tooltip = {filter: it => !it.dataset.ref, callbacks:{label:c => c.dataset.yAxisID==="y2" ? `Luftfeuchte: ${Math.round(c.parsed.y)} %` : `${c.dataset.label}: ${fmt(c.parsed.y)} °C`}}; narrowReadout(opt, "roTemp");
   const ds = [
     {label:"Temperatur "+workH()+" m", data:H.map(h => r1(h.tW)), borderColor:css("--accent"), borderWidth:2.5, pointRadius:0, tension:.3},
-    {label:"Gefühlt", data:H.map(h => r1(h.chill)), borderColor:css("--band-line"), borderWidth:2, borderDash:[5,4], pointRadius:0, tension:.3},
-    {label:"Taupunkt", data:H.map(h => r1(h.td)), borderColor:"#3a9a9a", borderWidth:2, borderDash:[2,3], pointRadius:0, tension:.3},
-    {label:"Luftfeuchte", yAxisID:"y2", data:H.map(h => h.rh==null ? null : Math.round(h.rh)), borderColor:"#3a9a9a", backgroundColor:"rgba(58,154,154,.12)", fill:"origin", borderWidth:1.5, pointRadius:0, tension:.3}
-  ];
+    hid("t_feel") ? null : {label:"Gefühlt", data:H.map(h => r1(h.chill)), borderColor:css("--band-line"), borderWidth:2, borderDash:[5,4], pointRadius:0, tension:.3},
+    hid("t_dew") ? null : {label:"Taupunkt", data:H.map(h => r1(h.td)), borderColor:"#3a9a9a", borderWidth:2, borderDash:[2,3], pointRadius:0, tension:.3},
+    hid("t_rh") ? null : {label:"Luftfeuchte", yAxisID:"y2", data:H.map(h => h.rh==null ? null : Math.round(h.rh)), borderColor:"#3a9a9a", backgroundColor:"rgba(58,154,154,.12)", fill:"origin", borderWidth:1.5, pointRadius:0, tension:.3}
+  ].filter(Boolean);
   // Bezugslinien nur, wenn sie in die Nähe kommen: 0 °C (Frost), −10 °C (Kälteschutz)
   if(lo < 6) ds.push({label:"0 °C", ref:true, data:idxs.map(() => 0), borderColor:css("--muted"), borderWidth:1, borderDash:[2,3], pointRadius:0});
   if(lo < -5) ds.push({label:"−10 °C", ref:true, data:idxs.map(() => CHILL_INFO), borderColor:css("--band-line"), borderWidth:1, borderDash:[2,3], pointRadius:0});
   if(charts.temp) charts.temp.destroy();
-  charts.temp = new Chart($("temp"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin]});
+  charts.temp = new Chart($("temp"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, dewPlugin]});
   charts.temp.$idxs = idxs; charts.temp.update("none"); if(isNarrow()) syncTooltip(charts.temp);
   $("tempTitle").textContent = "Temperatur · " + workH() + " m & Feuchte";
   $("tempDay").textContent = dayLabel(state.day);
+  document.querySelectorAll("#tempLegend button").forEach(b => b.setAttribute("aria-pressed", String(!hid(b.dataset.s))));
 }
 
 function renderProfile(){

@@ -429,6 +429,8 @@ body.info-open{overflow:hidden}
 .legend-btns button[aria-pressed="false"]{color:var(--muted);text-decoration:line-through;opacity:.6}
 .legend-btns button[aria-pressed="false"] i{opacity:.35}
 .legend-btns small{font-size:11px}
+.night-btn{padding:4px 10px;font-size:12px;border-radius:99px}
+.night-btn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 
 /* Änderung seit dem letzten Stand */
 .change-note{margin:2px 0 0;font-size:13px;color:var(--muted)} .change-note b{color:var(--fg)}

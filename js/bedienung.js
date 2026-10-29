@@ -118,6 +118,8 @@ function chartMax(on){
   $("chartMaxBtn").textContent = on ? "✕ Schließen" : "⤢ Vergrößern";
   if(!on) setTimeout(() => $("chartCard").scrollIntoView({block:"start"}), 60);
 }
+$("tempLegend").addEventListener("click", e => { const b = e.target.closest("button[data-s]"); if(b) toggleLine(b.dataset.s); });
+document.querySelectorAll(".night-btn").forEach(b => b.onclick = toggleNight);
 $("chartLegend").addEventListener("click", e => { const b = e.target.closest("button[data-s]"); if(b) toggleLine(b.dataset.s); });
 $("chartMaxBtn").onclick = () => chartMax(!$("chartCard").classList.contains("chart-max"));
 document.addEventListener("keydown", e => { if(e.key==="Escape" && $("chartCard").classList.contains("chart-max")) chartMax(false); });

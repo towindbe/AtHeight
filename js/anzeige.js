@@ -185,3 +185,6 @@ function chartBase(yTitle){
       y:{beginAtZero:true, ticks:{color:muted, font:{family:"Barlow", size:10}}, grid:{color:line}, title:{display:!!yTitle, text:yTitle, color:muted}}}};
 }
 const dayIdx = () => state.times.map((t,i)=>[t,i]).filter(([t])=>t.startsWith(state.day)).map(([,i])=>i);
+// Stunden für die Diagramme: auf Wunsch ohne Nacht; dunkle Stunden in der Arbeitszeit bleiben immer sichtbar
+const chartIdx = () => { const d = dayIdx(); if(!state.nightOff) return d;
+  const f = d.filter(i => !(state.hours[i]?.dark && !isWork(state.times[i]))); return f.length ? f : d; };
