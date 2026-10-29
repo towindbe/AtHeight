@@ -5,11 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0d1217">
 <title>So funktioniert der Windbericht</title>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-29g">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-29h">
 <style>
   .info h2{margin-bottom:2px}
   .info p,.info li{margin:0;font-size:15px;line-height:1.55}
   .info ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+  .info details summary{cursor:pointer;margin:8px 0 4px;font-size:15px}
   .info ol{margin:6px 0;padding-left:22px;display:flex;flex-direction:column;gap:3px}
   .info ol li{font-size:14px}
   .info table{border-collapse:collapse;width:100%;font-size:14px}
@@ -76,11 +77,11 @@
     <p>Jede Stunde wird nach festen Regeln bewertet. Jede Regel hinterlegt ihren Grund; die Gründe stehen neben der gewählten Stunde, in der Stundentabelle und im Tagesbericht.</p>
     <table>
       <tr><th>Stufe</th><th>Wann</th></tr>
-      <tr><td><span class="tag stop">STOP</span></td><td>Median aller Modelle über der Wind- oder Böengrenze · Gewitter in mind. einem Drittel der Modelle (mind. 2) · Gewitterenergie CAPE ab 800 J/kg · Lufttemperatur in Arbeitshöhe unter eurer Mindesttemperatur (Einstellungen, Start 0 °C; genau 0 °C ist noch erlaubt) · nur wenn in den Einstellungen gewählt: Grenzen fürs Beschichten verletzt · amtliche Unwetterwarnung bzw. Warnstufe rot</td></tr>
+      <tr><td><span class="tag stop">STOP</span></td><td>Median aller Modelle über der Wind- oder Böengrenze · Gewitter in mind. einem Drittel der Modelle (mind. 2) · Gewitterenergie CAPE ab 800 J/kg · Lufttemperatur in Arbeitshöhe unter eurer Mindesttemperatur (Einstellungen, Start 0 °C; genau 0 °C ist noch erlaubt) · nur an Beschichten-Tagen und wenn in den Einstellungen gewählt: Grenze fürs Beschichten überschritten (im Überblick und Bericht als „Stop nur wegen Beschichtung“ getrennt genannt) · amtliche Unwetterwarnung bzw. Warnstufe rot</td></tr>
       <tr><td><span class="tag warn">PRÜFEN</span></td><td>einzelne Modelle über einer Grenze · Gewittersignal in einem Modell · CAPE ab 300 J/kg · Regen ab 0,5 mm/h · „Zu windig“ in mind. 30 % der Szenarien · amtliche Warnung zu Wind, Gewitter, Glatteis, Schnee oder Regen</td></tr>
       <tr><td><span class="tag go">KLAR</span></td><td>keine der Regeln greift</td></tr>
     </table>
-    <p><b>Hinweise</b> ohne Einfluss auf die Ampel: Nacht (außerhalb der bürgerlichen Dämmerung), Kälteschutz ab gefühlt −10 °C, Hitze ab gefühlt 32 °C, UV-Index ab 6, Kondenswasser (Temperatur in Arbeitshöhe höchstens 1 K über dem Taupunkt), Beschichten (nur wenn eingeschaltet und nicht auf STOP gestellt: Luftfeuchte oder Taupunktabstand außerhalb eurer Grenzen), „Zu windig“ in 10–29 % der Szenarien, Warnungen zu Frost, Nebel, Hitze oder UV.</p>
+    <p><b>Hinweise</b> ohne Einfluss auf die Ampel: Nacht (außerhalb der bürgerlichen Dämmerung), Kälteschutz ab gefühlt −10 °C, Hitze ab gefühlt 32 °C, UV-Index ab 6, Beschichten (nur an Tagen, an denen es eingeschaltet ist, und ohne STOP-Häkchen: Luftfeuchte oder Taupunktabstand außerhalb eurer Grenzen), „Zu windig“ in 10–29 % der Szenarien, Warnungen zu Frost, Nebel, Hitze oder UV.</p>
     <p>Die Tagesbewertung oben fasst die Stunden eurer Arbeitszeit zusammen, z. B. „Klar nur 10–16 Uhr“.</p>
   </section>
 
@@ -125,26 +126,31 @@
   <section class="card" id="feuchte">
     <h2>Feuchte, Taupunkt und Wolken</h2>
     <ul>
-      <li><b>Luftfeuchte:</b> relative Luftfeuchte in 2 m über dem Boden, je Modell und als Median. Die Modelle geben sie in der Höhe nicht aus. Ab etwa 95 % ist mit Nebel, Tau oder nassen Oberflächen zu rechnen.</li>
-      <li><b>Taupunkt:</b> die Temperatur, bei der die Luft so weit abgekühlt ist, dass sich Wasser niederschlägt. Der Windbericht berechnet ihn je Modell aus Temperatur und Luftfeuchte in 2 m (Magnus-Formel: Taupunkt = 243,12 · γ / (17,62 − γ) mit γ = ln(Feuchte/100) + 17,62 · T / (243,12 + T), T in °C). Beispiel: 10 °C bei 80 % ergeben 6,7 °C.</li>
-      <li><b>Taupunkt erreicht:</b> Liegt die Temperatur in Arbeitshöhe auf oder unter dem Taupunkt (2 m), ist die Luft oben gesättigt: Nebel oder eine tiefe Wolke in Arbeitshöhe sind wahrscheinlich, Stahl, Blatt und Seile werden nass und glatt. Im Temperatur-Diagramm ist das der Bereich zwischen den Schnittpunkten der beiden Linien: <b>kräftig gelb</b>, oben ein gelber Streifen und ein <b>!</b>. Wie weit die Temperatur darunter liegt, sagt nichts Zusätzliches aus, denn oben kann die Luft nicht feuchter als gesättigt sein.</li>
-      <li><b>Warnbereich davor (schwach gelb):</b> Ohne Einstellung gilt als Standard: höchstens <b>1 K</b> über dem Taupunkt, Hinweis „Taupunkt fast erreicht“, Kondenswasser auf kalten Oberflächen möglich. Ist in den Einstellungen „Beschichten / Laminieren“ eingeschaltet, richtet sich der schwach gelbe Bereich nach euren Grenzen (Mindestabstand zum Taupunkt und höchste Luftfeuchte), und die Feuchte-Grenze steht als gestrichelte Linie im Diagramm. Der Text unter dem Diagramm nennt jeweils die geltenden Werte.</li>
-      <li><b>Mehr als 1 K Abstand</b> heißt nur: Die Prognose rechnet nicht mit Kondenswasser in der Luft. Trocken sind Stahl und Seile damit nicht sicher (siehe Oberflächentemperatur).</li>
-      <li><b>Warum Temperatur oben, Taupunkt unten?</b> Der Taupunkt wird in 2 m berechnet und mit der Lufttemperatur in Arbeitshöhe verglichen. Mit der Höhe sinkt der Taupunkt etwas (etwa 0,2 K je 100 m), die Temperatur meist stärker. Der Abstand oben ist deshalb meist eher etwas größer als berechnet: Die Warnung kommt eher zu früh als zu spät. Bei Inversion (oben wärmer als unten, z. B. morgens in Tälern) kann es umgekehrt sein.</li>
+      <li><b>Taupunkt je Arbeitsstunde:</b> Unter dem Temperatur-Diagramm steht je Stunde, wie weit die Temperatur in Arbeitshöhe über dem Taupunkt liegt, in K. <b>„Tau“</b> (gelb) heißt: Taupunkt erreicht, die Luft oben ist gesättigt, Nebel oder eine tiefe Wolke in Arbeitshöhe sind wahrscheinlich, Stahl, Blatt und Seile werden nass und glatt. <b>Hellgelb</b>: höchstens 1 K Abstand, Kondenswasser möglich. Der Überblick oben fasst das einmal je Tag zusammen, z. B. „Kondenswasser: Taupunkt erreicht 06–09 Uhr“. Kein Einfluss auf die Ampel.</li>
+      <li><b>Mehr als 1 K Abstand</b> heißt nur: Die Prognose rechnet nicht mit Kondenswasser in der Luft. Trocken sind Stahl und Seile damit nicht sicher, siehe Oberflächentemperatur.</li>
       <li><b>Oberflächentemperatur:</b> Entscheidend für Kondenswasser ist die Temperatur der Oberfläche, nicht der Luft. Nach klaren Nächten ist Stahl oft kälter als die Luft. Das kennt kein Wettermodell: <b>vor Ort mit dem Oberflächenthermometer messen</b>.</li>
-      <li><b>Beschichten / Laminieren</b> (Einstellungen, je Anlage einschaltbar): Viele Harze und Lacke dürfen nur bis zu einer bestimmten Luftfeuchte und mit Abstand zum Taupunkt verarbeitet werden. Eingestellt werden die höchste Luftfeuchte (Start 80 %) und der Mindestabstand zum Taupunkt (Start 3 K, übliche Regel nach ISO 8502-4). Wird eine Grenze verletzt, erscheint ein Hinweis „Beschichten: …“, in der Feuchte-Matrix bekommen die Felder einen gelben Rand und im Temperatur-Diagramm sind die Stunden schwach gelb hinterlegt, die Feuchte-Grenze steht als gestrichelte Linie. Mit dem zweiten Häkchen „Grenzen verletzt: Ampel auf STOP“ werden diese Stunden rot statt nur mit Hinweis; die Regel steht dann auch im Tagesbericht. Im Temperatur-Diagramm sind diese Stunden dann <b>rot</b> hinterlegt und mit <b>STOP</b> beschriftet statt gelb mit „!“, die Feuchte-Grenze ist rot. Ohne Eingabe bleibt es bei Gelb und „!“. Maßgeblich bleibt das Datenblatt des Herstellers.</li>
-      <li><b>Bewölkung:</b> Gesamtbedeckung des Himmels in %, als Symbol in Achteln wie im Wetterbericht: ☀️ klar (0–1/8), 🌤️ heiter (2–3/8), ⛅ wolkig (4–5/8), 🌥️ stark bewölkt (6/8), ☁️ bedeckt (7–8/8), nachts 🌙. Wie hoch die Wolken hängen, sagt der Wert nicht.</li>
-      <li>Feuchte, Taupunkt, Bewölkung und Beschichten sind <b>nur Hinweise</b>, die Ampel ändert sich dadurch nicht. Nicht jedes Modell liefert jeden Wert; fehlt einer, steht „·“.</li>
+      <li><b>Beschichten / Laminieren:</b> Viele Harze und Lacke dürfen nur bis zu einer bestimmten Luftfeuchte und mit Abstand zum Taupunkt verarbeitet werden. Die Grenzen stehen in den Einstellungen (Start: höchstens 80 % Feuchte, mind. 3 K Abstand, übliche Regel nach ISO 8502-4). <b>Eingeschaltet wird es je Tag</b> im Überblick oben mit „🖌 Beschichten an diesem Tag“, nur für diesen Tag und diesen Standort; am nächsten Tag ist es wieder aus. Ist es an, steht oben gut sichtbar „Beschichten-Modus an“ mit den Grenzen und den Uhrzeiten, in denen nicht beschichtet werden darf. In der Taupunkt-Zeile kommt die Luftfeuchte dazu, im Diagramm die Feuchte-Grenze als gestrichelte Linie. Ohne das Häkchen „Ampel auf STOP“ in den Einstellungen sind das nur Hinweise (gelb). Mit Häkchen setzen überschrittene Grenzen die Ampel auf STOP (rot); Überblick und Tagesbericht nennen dann getrennt „Stop nur wegen Beschichtung, nicht wegen Wetter“. Maßgeblich bleibt das Datenblatt des Herstellers.</li>
+      <li><b>Luftfeuchte:</b> relative Luftfeuchte in 2 m über dem Boden, je Modell und als Median. Die Modelle geben sie in der Höhe nicht aus. Ab etwa 95 % ist mit Nebel, Tau oder nassen Oberflächen zu rechnen.</li>
+      <li><b>Bewölkung:</b> Gesamtbedeckung des Himmels in %, als Symbol in Achteln wie im Wetterbericht: ☀️ klar (0–1/8), 🌤️ heiter (2–3/8), ⛅ wolkig (4–5/8), 🌥️ stark bewölkt (6/8), ☁️ bedeckt (7–8/8), nachts 🌙. Wie hoch die Wolken hängen, sagt der Wert nicht. Nur Anzeige.</li>
+      <li>Nicht jedes Modell liefert jeden Wert; fehlt einer, steht „·“.</li>
     </ul>
+    <details>
+      <summary><b>Genauer: wie der Taupunkt berechnet wird</b></summary>
+      <ul>
+        <li>Der Taupunkt ist die Temperatur, bei der sich Wasser aus der Luft niederschlägt. Der Windbericht berechnet ihn je Modell aus Temperatur und Luftfeuchte in 2 m (Magnus-Formel: Taupunkt = 243,12 · γ / (17,62 − γ) mit γ = ln(Feuchte/100) + 17,62 · T / (243,12 + T), T in °C). Beispiel: 10 °C bei 80 % ergeben 6,7 °C.</li>
+        <li><b>Warum Temperatur oben, Taupunkt unten?</b> Die Modelle liefern die Feuchte nur in 2 m. Der Taupunkt von dort wird mit der Lufttemperatur in Arbeitshöhe verglichen. Mit der Höhe sinkt der Taupunkt etwas (etwa 0,2 K je 100 m), die Temperatur meist stärker. Der echte Abstand oben ist deshalb meist etwas größer als berechnet: Die Warnung kommt eher zu früh als zu spät. Bei Inversion (oben wärmer als unten, z. B. morgens in Tälern) kann es umgekehrt sein.</li>
+        <li><b>Temperatur unter dem Taupunkt (2 m)</b> ist kein Rechenfehler: Die feuchte Luft vom Boden würde oben sofort kondensieren, die Luft in Arbeitshöhe ist gesättigt. Wie weit darunter, sagt nichts Zusätzliches; deshalb steht in der Zeile nur „Tau“.</li>
+      </ul>
+    </details>
   </section>
 
   <section class="card" id="diagramme">
     <h2>Diagramme und Modell-Matrix</h2>
     <ul>
       <li><b>Windverlauf:</b> Median, Spanne der Modelle, Böe und Grenzlinien; Antippen in der Legende blendet Linien aus, unter „Modelle einblenden“ lassen sich einzelne Modelle dazunehmen.</li>
-      <li><b>Temperatur &amp; Feuchte:</b> Temperatur in Arbeitshöhe, gefühlte Temperatur mit Wind, Taupunkt (2 m) und Luftfeuchte (rechte Achse, in %). Gefühlt, Taupunkt und Luftfeuchte lassen sich in der Legende ausblenden. Mit dem Taupunkt verschwindet auch die gelbe Markierung. Das Infofenster zeigt beim Taupunkt den Abstand in K. Ist etwas gelb markiert, steht über dem Diagramm, warum und zu welchen Uhrzeiten (z. B. „Luftfeuchte über 80 %: ganzer angezeigter Zeitraum“). So bleibt es verständlich, auch wenn an einem feuchten Tag fast alles gelb ist. Die Legende erklärt „!“ und den Warnbereich.</li>
-      <li><b>Nachtstunden ausblenden:</b> Knopf bei Wind, Regen und Temperatur, gilt für alle drei Diagramme. Ausgeblendet werden dunkle Stunden außerhalb eurer Arbeitszeit. Liegt die Arbeitszeit im Dunkeln (z. B. Arbeitsbeginn 6 Uhr im Winter), bleiben diese Stunden sichtbar.</li>
-      <li><b>Modell-Matrix:</b> eine Zeile je Modell, eine Spalte je Arbeitsstunde, unten der Median. Umschaltbar zwischen Wind, Böe, Regen, Feuchte (in %, Blautöne ab 60, 85 und 95 %) und Wolken (Symbole, je kräftiger das Grau, desto dichter). So sieht man, ob nur ein Ausreißer warnt oder fast alle Modelle.</li>
+      <li><b>Temperatur &amp; Feuchte:</b> Temperatur in Arbeitshöhe (orange), gefühlte Temperatur mit Wind (gestrichelt), Taupunkt in 2 m (violett gestrichelt) und Luftfeuchte in 2 m (grün, rechte Achse in %). Die Linien verbinden die Stundenwerte direkt, ohne Glättung. Gefühlt, Taupunkt und Luftfeuchte lassen sich in der Legende ausblenden; was ausgeblendet ist, steht unter der Legende. Die Taupunkt-Zeile darunter bleibt immer sichtbar.</li>
+      <li><b>Nacht ausblenden:</b> Knopf bei Wind, Regen und Temperatur, gilt für alle drei Diagramme. Ausgeblendet werden dunkle Stunden außerhalb eurer Arbeitszeit. Liegt die Arbeitszeit im Dunkeln (z. B. Arbeitsbeginn 6 Uhr im Winter), bleiben diese Stunden sichtbar.</li>
+      <li><b>Modell-Matrix:</b> eine Zeile je Modell, eine Spalte je Arbeitsstunde, unten der Median. Umschaltbar zwischen Wind, Böe, Regen, Feuchte (in %, Grüntöne ab 60, 85 und 95 %) und Wolken (Symbole, je kräftiger das Grau, desto dichter). So sieht man, ob nur ein Ausreißer warnt oder fast alle Modelle.</li>
     </ul>
   </section>
 

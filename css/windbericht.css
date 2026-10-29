@@ -397,13 +397,11 @@ body.info-open{overflow:hidden}
 .legend i.lg-glim{border-top:2px dotted var(--stop)}
 .legend i.lg-temp{border-top:3px solid var(--accent)}
 .legend i.lg-feel{border-top:2px dashed var(--band-line)}
-.legend i.lg-dew{border-top:2px dotted #3a9a9a}
-.legend i.lg-dewbang{width:16px;height:16px;border:0;border-radius:50%;background:var(--warn);color:#1b1405;font:800 11px/16px var(--f-body);font-style:normal;text-align:center;box-shadow:0 0 0 4px rgba(230,176,76,.32);margin:0 4px}
-.legend i.lg-dewstop{width:auto;height:auto;border:0;border-radius:99px;background:var(--stop);color:#fff;font:800 9.5px/1 var(--f-body);font-style:normal;padding:4px 7px;margin-right:2px}
-.legend i.lg-dewnear{width:14px;height:12px;border:0;border-radius:2px;background:rgba(230,176,76,.2);outline:1px solid rgba(230,176,76,.45)}
-.dew-sum{margin:6px 0 4px;padding:7px 10px;border:1px solid var(--warn);background:var(--warn-bg);border-radius:8px;font-size:13px;line-height:1.45}
-.dew-sum b{font-weight:700}
-.dew-sum.stop{border-color:var(--stop);background:var(--stop-bg)}
+.legend i.lg-dew{border-top:2px dashed #b48ee6}
+.dew-h{margin-top:10px}
+.mx td.d-ok{background:var(--raised);color:var(--muted)}
+.mx td.d-near{background:rgba(230,176,76,.32)}
+.mx td.d-wet{background:var(--warn);color:#1b1405;font-weight:700}
 .legend i.lg-rh{border-top:2px solid #3a9a9a;background:rgba(58,154,154,.12)}
 .legend i.lg-rain{width:10px;height:10px;border:0;border-radius:2px;background:var(--band-line)}
 .legend i.lg-cape{border-top:2px solid var(--warn)}
@@ -487,6 +485,10 @@ body.info-open{overflow:hidden}
 .readout i{width:10px;height:10px;border-radius:2px;flex:none}
 .readout[hidden]{display:none}
 .rain-note{margin:2px 0 0;font-size:14px;color:var(--fg)} .rain-note:empty{display:none}
+.coat-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:4px;font-size:13px;color:var(--muted)}
+.coat-bar button{padding:4px 10px;font-size:12.5px;border-radius:99px}
+.coat-bar.on{padding:7px 10px;border:1.5px solid var(--warn);background:var(--warn-bg);border-radius:8px;color:var(--fg)}
+.coat-bar.on button{background:var(--warn);color:#1b1405;border-color:var(--warn);font-weight:700}
 
 /* Haftung: Bestätigung im Bericht, Hinweis an der Entscheidung, Ampel ohne bestätigte Grenzwerte */
 label.chk{flex-direction:row;gap:10px;align-items:flex-start;font-size:13px;line-height:1.4;color:var(--fg);font-weight:500}

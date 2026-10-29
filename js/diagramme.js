@@ -203,96 +203,44 @@ function renderRain(){
   $("rainDay").textContent = dayLabel(state.day);
 }
 
-/* Taupunkt im Temperatur-Diagramm. Kräftig mit „!“: Temperatur in Arbeitshöhe auf oder unter dem Taupunkt (zwischen den Schnittpunkten).
-   Schwach: Warnbereich davor. Mit Beschichten-Einstellung nach deren Grenzen (Abstand zum Taupunkt, Luftfeuchte), sonst Vorwarnung bis DEW_INFO.
-   Setzen die Beschichten-Grenzen die Ampel auf STOP (Häkchen in den Einstellungen), sind diese Stunden rot mit „STOP“ statt gelb. */
-const rgbaOf = (hex, a) => { const h = hex.trim().replace("#",""); return `rgba(${[0,2,4].map(k => parseInt(h.slice(k,k+2),16)).join(",")},${a})`; };
-const dewNear = h => h?.dew!=null && (site.coat ? h.dew < coatDew() || (h.rh!=null && h.rh > coatRh()) : h.dew <= DEW_INFO);
-const coatStopOn = () => !!(site.coat && site.coatStop);
-const coatViol = h => !!h && ((h.dew!=null && h.dew < coatDew()) || (h.rh!=null && h.rh > coatRh()));
-const dewMarks = c => { const H = c.$idxs.map(i => state.hours[i]);
-  const stop = H.map(h => coatStopOn() && coatViol(h));
-  const wet = H.map((h, k) => !stop[k] && h?.dew!=null && h.dew <= 0);
-  return {stop, wet, near:H.map((h, k) => !stop[k] && !wet[k] && dewNear(h))}; };
-// Abzeichen über jedem zusammenhängenden Bereich
-function dewBadges(c, on, draw){
-  const {chartArea:a, scales:{x}} = c;
-  for(let k = 0; k < on.length; k++){
-    if(!on[k] || on[k-1]) continue;
-    let e = k; while(on[e+1]) e++;
-    draw(Math.min(Math.max((x.getPixelForValue(k) + x.getPixelForValue(e))/2, a.left + 22), a.right - 22), a.top + 30);
-  }
-}
-const dewPlugin = {id:"dew", beforeDatasetsDraw(c){
-  if(!c.$idxs || state.hide.has("t_dew")) return;
-  const {ctx, chartArea:a, scales:{x}} = c, step = x.getPixelForValue(1) - x.getPixelForValue(0), warn = css("--warn"), red = css("--stop"), {stop, wet, near} = dewMarks(c);
-  ctx.save(); ctx.beginPath(); ctx.rect(a.left, a.top, a.right-a.left, a.bottom-a.top); ctx.clip();
-  wet.forEach((w, k) => {
-    if(!w && !near[k] && !stop[k]) return;
-    const x0 = x.getPixelForValue(k) - step/2, col = stop[k] ? red : warn;
-    ctx.fillStyle = rgbaOf(col, stop[k] ? .26 : w ? .32 : .12); ctx.fillRect(x0, a.top, step, a.bottom - a.top);
-    if(w || stop[k]){ ctx.fillStyle = col; ctx.fillRect(x0, a.top, step, 4); }   // kräftiger Streifen oben
-  });
-  ctx.restore();
-}, afterDatasetsDraw(c){
-  if(!c.$idxs) return;
-  const {ctx, chartArea:a, scales:{x, y2}} = c, warn = css("--warn");
-  // Feuchte-Grenze fürs Beschichten auf der rechten Achse
-  if(site.coat && !state.hide.has("t_rh") && y2){
-    const py = y2.getPixelForValue(coatRh()), t = `Grenze Feuchte ${coatRh()} %`, lc = coatStopOn() ? css("--stop") : warn;
-    ctx.save(); ctx.strokeStyle = lc; ctx.lineWidth = 1.2; ctx.setLineDash([6,4]);
-    ctx.beginPath(); ctx.moveTo(a.left, py); ctx.lineTo(a.right, py); ctx.stroke(); ctx.setLineDash([]);
-    ctx.font = "600 10.5px " + css("--f-body"); ctx.textAlign = "right"; ctx.textBaseline = "bottom";
-    const w = ctx.measureText(t).width; ctx.fillStyle = css("--surface"); ctx.globalAlpha = .75; ctx.fillRect(a.right - w - 8, py - 14, w + 6, 13); ctx.globalAlpha = 1;
-    ctx.fillStyle = lc; ctx.fillText(t, a.right - 5, py - 2);
-    ctx.restore();
-  }
-  // Abzeichen über den Linien: „!“ zwischen den Schnittpunkten, „STOP“ wo die Beschichten-Grenzen die Ampel setzen
-  if(state.hide.has("t_dew")) return;
-  const {stop, wet} = dewMarks(c);
-  ctx.save(); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.strokeStyle = css("--surface"); ctx.lineWidth = 2;
-  ctx.font = "800 13px " + css("--f-body");
-  dewBadges(c, wet, (cx, cy) => {
-    ctx.fillStyle = warn; ctx.beginPath(); ctx.arc(cx, cy, 10, 0, 2*Math.PI); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = "#1b1405"; ctx.fillText("!", cx, cy + 0.5);
-  });
-  ctx.font = "800 11px " + css("--f-body");
-  dewBadges(c, stop, (cx, cy) => {
-    const w = 40, h = 20; ctx.fillStyle = css("--stop");
-    ctx.beginPath(); ctx.roundRect ? ctx.roundRect(cx - w/2, cy - h/2, w, h, 10) : ctx.rect(cx - w/2, cy - h/2, w, h); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = "#fff"; ctx.fillText("STOP", cx, cy + 0.5);
-  });
+/* Temperatur-Diagramm: nur die Feuchte-Grenze fürs Beschichten als Linie (an Beschichten-Tagen).
+   Kondenswasser steht nicht mehr als Fläche im Diagramm, sondern in der Taupunkt-Zeile darunter (eine Zelle je Arbeitsstunde). */
+const DEW_COLOR = "#b48ee6", RH_COLOR = "#3a9a9a";
+const coatLimitPlugin = {id:"coatLimit", afterDatasetsDraw(c){
+  const {ctx, chartArea:a, scales:{y2}} = c;
+  if(!coatOn(state.day) || state.hide.has("t_rh") || !y2) return;
+  const py = y2.getPixelForValue(coatRh()), t = `Grenze Feuchte ${coatRh()} %`, lc = site.coatStop ? css("--stop") : css("--warn");
+  ctx.save(); ctx.strokeStyle = lc; ctx.lineWidth = 1.2; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(a.left, py); ctx.lineTo(a.right, py); ctx.stroke(); ctx.setLineDash([]);
+  ctx.font = "600 10.5px " + css("--f-body"); ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+  const w = ctx.measureText(t).width; ctx.fillStyle = css("--surface"); ctx.globalAlpha = .75; ctx.fillRect(a.right - w - 8, py - 14, w + 6, 13); ctx.globalAlpha = 1;
+  ctx.fillStyle = lc; ctx.fillText(t, a.right - 5, py - 2);
   ctx.restore();
 }};
-/* Zusammenfassung über dem Temperatur-Diagramm: warum es gelb ist und wann. Wichtig, wenn fast alles gelb ist. */
-function hourRanges(idxs, test){
-  const r = []; let s = null, p = null;
-  idxs.forEach((i, k) => { const on = test(state.hours[i]);
-    if(on && s==null) s = k;
-    if(!on && s!=null){ r.push([s, k-1]); s = null; } p = k; });
-  if(s!=null) r.push([s, p]);
-  if(r.length===1 && r[0][0]===0 && r[0][1]===idxs.length-1) return "ganzer angezeigter Zeitraum";
-  return r.map(([a, b]) => a===b ? hh(state.times[idxs[a]]) : hh(state.times[idxs[a]]) + "–" + hh(state.times[idxs[b]])).join(", ") + (r.length ? " Uhr" : "");
-}
-function dewSummary(idxs){
-  if(state.hide.has("t_dew")) return "";
-  const k = v => fmt(v, v%1 ? 1 : 0), parts = [];
-  const add = (label, test) => { const t = hourRanges(idxs, h => h && test(h)); if(t) parts.push(`<b>${label}:</b> ${t}`); };
-  if(coatStopOn()){
-    const t = hourRanges(idxs, coatViol); if(t) parts.push(`<b>STOP fürs Beschichten (Ampel rot):</b> ${t}`);
-  }
-  add("! Taupunkt erreicht (Nebel/Wolke, nass)", h => h.dew!=null && h.dew <= 0);
-  if(site.coat){
-    add(`Unter ${k(coatDew())} K Abstand zum Taupunkt (Beschichten)`, h => h.dew!=null && h.dew > 0 && h.dew < coatDew());
-    add(`Luftfeuchte über ${coatRh()} % (Beschichten)`, h => h.rh!=null && h.rh > coatRh());
-  } else add(`Bis ${k(DEW_INFO)} K über dem Taupunkt (Kondenswasser möglich)`, h => h.dew!=null && h.dew > 0 && h.dew <= DEW_INFO);
-  return parts.length ? (coatStopOn() ? "Markiert · " : "Gelb markiert · ") + parts.join(" · ") : "";
-}
-// Text unter dem Temperatur-Diagramm: woher der Warnbereich kommt
+// Text unter dem Temperatur-Diagramm: sagt, was ausgeblendet ist (ausgeblendet bleibt gespeichert)
 function tempNote(){
-  return (coatStopOn() ? "Rote Bereiche (STOP) nach euren Grenzen fürs Beschichten (Einstellungen), wie in der Ampel."
-    : site.coat ? "Gelbe Bereiche nach euren Grenzen fürs Beschichten (Einstellungen)." : "Warnbereich als Standard 1 K; mit „Beschichten“ in den Einstellungen gelten eure Grenzen.")
-    + " Taupunkt aus Temperatur und Feuchte in 2 m berechnet. Antippen in der Legende blendet Linien aus.";
+  const off = [["t_feel","Gefühlt"],["t_dew","Taupunkt"],["t_rh","Luftfeuchte"]].filter(([k]) => state.hide.has(k)).map(([,t]) => t);
+  return (off.length ? `Ausgeblendet: ${off.join(", ")} (in der Legende antippen zum Einblenden). ` : "Antippen in der Legende blendet Linien aus. ")
+    + "Taupunkt und Luftfeuchte gelten für 2 m über Boden.";
+}
+/* Taupunkt-Zeile: je Arbeitsstunde der Abstand der Temperatur in Arbeitshöhe zum Taupunkt (2 m).
+   „Tau“ = Taupunkt erreicht. An Beschichten-Tagen zusätzlich die Luftfeuchte, Farben nach euren Grenzen. */
+function renderDewRow(){
+  const hs = dayHours(state.day), coat = coatOn(state.day), stopC = coat && site.coatStop, k = v => fmt(v, v%1 ? 1 : 0);
+  if(!hs.some(h => h.dew!=null)){ $("dewRow").innerHTML = ""; $("dewRowNote").textContent = "Für diesen Tag liegen keine Werte zum Taupunkt vor."; return; }
+  const over = coat ? (h => h.dew < coatDew()) : (h => h.dew <= DEW_INFO);
+  const dCls = h => h.dew==null ? "m-none" : stopC && coatViol(h) ? "m-stop" : h.dew <= 0 ? "d-wet" : over(h) ? "d-near" : "d-ok";
+  const rCls = h => h.rh==null ? "m-none" : h.rh > coatRh() ? (stopC ? "m-stop" : "d-near") : "d-ok";
+  const td = (h, cls, txt, tip) => `<td class="${cls}" data-i="${h.i}" title="${esc(tip)}">${txt}</td>`;
+  const row = (name, cell) => `<tr><th class="mname">${name}</th>${hs.map(cell).join("")}</tr>`;
+  let rows = row(`Abstand Taupunkt <small>K</small>`, h => td(h, dCls(h), h.dew==null ? "·" : h.dew <= 0 ? "Tau" : fmt(h.dew,1),
+    h.dew==null ? "" : `${hh(h.t)} Uhr: ${fmt(h.tW,1)} °C in ${workH()} m, Taupunkt (2 m) ${fmt(h.td,1)} °C: ${h.dew <= 0 ? "Taupunkt erreicht" : fmt(h.dew,1) + " K Abstand"}`));
+  if(coat) rows += row(`Luftfeuchte <small>%</small>`, h => td(h, rCls(h), h.rh==null ? "·" : Math.round(h.rh), `${hh(h.t)} Uhr: Luftfeuchte ${h.rh==null ? "–" : Math.round(h.rh) + " %"} (Grenze ${coatRh()} %)`));
+  $("dewRow").innerHTML = `<table><tr><th></th>${hs.map(h => `<th>${hh(h.t)}</th>`).join("")}</tr>${rows}</table>`;
+  $("dewRow").querySelectorAll("td[data-i]").forEach(c => c.onclick = () => selectHour(+c.dataset.i));
+  $("dewRowNote").textContent = coat
+    ? `Beschichten an diesem Tag: mind. ${k(coatDew())} K Abstand und höchstens ${coatRh()} % Feuchte. ${stopC ? "Rot: Grenze überschritten, Ampel STOP." : "Gelb: Grenze überschritten (Hinweis)."} „Tau“: Taupunkt erreicht, Nebel oder Wolke in Arbeitshöhe, alles nass.`
+    : `Zahl: Abstand der Temperatur in Arbeitshöhe zum Taupunkt in K. „Tau“ (gelb): Taupunkt erreicht, Nebel oder Wolke in Arbeitshöhe, Stahl und Seile nass. Hellgelb: bis ${k(DEW_INFO)} K, Kondenswasser möglich. Darüber rechnet die Prognose nicht mit Kondenswasser; Oberflächen können trotzdem kälter sein.`;
 }
 function renderTemp(){
   if(typeof Chart==="undefined") return;
@@ -305,30 +253,24 @@ function renderTemp(){
   // Luftfeuchte auf eigener Achse rechts (0–100 %), nur Anzeige
   opt.scales.y2 = {display:!hid("t_rh"), position:"right", min:0, max:100, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"Barlow", size:10}, stepSize:25}, title:{display:true, text:"Feuchte %", color:css("--muted")}};
   opt.plugins.tooltip = {filter: it => !it.dataset.ref, callbacks:{label:c => c.dataset.yAxisID==="y2" ? `Luftfeuchte: ${Math.round(c.parsed.y)} %`
-    : c.dataset.dew ? `${c.dataset.label}: ${fmt(c.parsed.y)} °C` + (H[c.dataIndex]?.dew!=null ? ` · Abstand ${fmt(H[c.dataIndex].dew,1)} K` : "")
+    : c.dataset.dew ? `${c.dataset.label}: ${fmt(c.parsed.y)} °C` + (H[c.dataIndex]?.dew==null ? "" : H[c.dataIndex].dew <= 0 ? " · Taupunkt erreicht" : ` · Abstand ${fmt(H[c.dataIndex].dew,1)} K`)
     : `${c.dataset.label}: ${fmt(c.parsed.y)} °C`}}; narrowReadout(opt, "roTemp");
   const ds = [
-    {label:"Temperatur "+workH()+" m", data:H.map(h => r1(h.tW)), borderColor:css("--accent"), borderWidth:2.5, pointRadius:0, tension:.3},
-    hid("t_feel") ? null : {label:"Gefühlt", data:H.map(h => r1(h.chill)), borderColor:css("--band-line"), borderWidth:2, borderDash:[5,4], pointRadius:0, tension:.3},
-    hid("t_dew") ? null : {label:"Taupunkt (2 m)", dew:true, data:H.map(h => r1(h.td)), borderColor:"#3a9a9a", borderWidth:2, borderDash:[2,3], pointRadius:0, tension:.3},
-    hid("t_rh") ? null : {label:"Luftfeuchte", yAxisID:"y2", data:H.map(h => h.rh==null ? null : Math.round(h.rh)), borderColor:"#3a9a9a", backgroundColor:"rgba(58,154,154,.12)", fill:"origin", borderWidth:1.5, pointRadius:0, tension:.3}
+    {label:"Temperatur "+workH()+" m", data:H.map(h => r1(h.tW)), borderColor:css("--accent"), borderWidth:2.5, pointRadius:0, tension:0},
+    hid("t_feel") ? null : {label:"Gefühlt", data:H.map(h => r1(h.chill)), borderColor:css("--band-line"), borderWidth:2, borderDash:[5,4], pointRadius:0, tension:0},
+    hid("t_dew") ? null : {label:"Taupunkt (2 m)", dew:true, data:H.map(h => r1(h.td)), borderColor:DEW_COLOR, borderWidth:2.2, borderDash:[3,3], pointRadius:0, tension:0},
+    hid("t_rh") ? null : {label:"Luftfeuchte", yAxisID:"y2", data:H.map(h => h.rh==null ? null : Math.round(h.rh)), borderColor:RH_COLOR, backgroundColor:"rgba(58,154,154,.10)", fill:"origin", borderWidth:1.5, pointRadius:0, tension:0}
   ].filter(Boolean);
   // Bezugslinien nur, wenn sie in die Nähe kommen: 0 °C (Frost), −10 °C (Kälteschutz)
   if(lo < 6) ds.push({label:"0 °C", ref:true, data:idxs.map(() => 0), borderColor:css("--muted"), borderWidth:1, borderDash:[2,3], pointRadius:0});
   if(lo < -5) ds.push({label:"−10 °C", ref:true, data:idxs.map(() => CHILL_INFO), borderColor:css("--band-line"), borderWidth:1, borderDash:[2,3], pointRadius:0});
   if(charts.temp) charts.temp.destroy();
-  charts.temp = new Chart($("temp"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, dewPlugin]});
+  charts.temp = new Chart($("temp"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, coatLimitPlugin]});
   charts.temp.$idxs = idxs; charts.temp.update("none"); if(isNarrow()) syncTooltip(charts.temp);
   $("tempTitle").textContent = "Temperatur · " + workH() + " m & Feuchte";
   $("tempDay").textContent = dayLabel(state.day);
   $("tempNote").textContent = tempNote();
-  const sum = dewSummary(idxs); $("dewSum").hidden = !sum; $("dewSum").innerHTML = sum;
-  $("dewSum").classList.toggle("stop", coatStopOn() && idxs.some(i => coatViol(state.hours[i])));
-  $("dewStopLeg").hidden = !coatStopOn(); $("dewNearLeg").hidden = coatStopOn();
-  const k = v => fmt(v, v%1 ? 1 : 0);
-  $("dewLegend").hidden = hid("t_dew");
-  $("dewNearTxt").textContent = site.coat ? `Beschichten nicht zulässig (unter ${k(coatDew())} K Abstand oder über ${coatRh()} % Feuchte${site.coatStop ? ", STOP" : ""})`
-    : `Warnbereich: bis ${k(DEW_INFO)} K über dem Taupunkt, Kondenswasser möglich`;
+  renderDewRow();
   document.querySelectorAll("#tempLegend button").forEach(b => b.setAttribute("aria-pressed", String(!hid(b.dataset.s))));
 }
 

@@ -58,7 +58,7 @@ function defaultSel(day){
 /* Ampel pro Stunde. Jede Regel hinterlegt ihren Grund; "info" ändert die Ampel nicht. */
 function rate(h){
   if(!h.n) return {lamp:"none", why:[]};
-  const why = [], add = (l, t) => why.push({l, t});
+  const why = [], add = (l, t, cat) => why.push(cat ? {l, t, cat} : {l, t});
   if(h.med!=null && h.med > site.wind) add("stop", `Wind ${fwu(h.med)} über ${fw(site.wind)}`);
   else if(h.max!=null && h.max > site.wind) add("warn", "Einzelne Modelle über Wind-Grenze");
   if(h.gMed!=null && h.gMed > site.gust) add("stop", `Böe ${fwu(h.gMed)} über ${fw(site.gust)}`);
@@ -76,15 +76,16 @@ function rate(h){
   else if(h.chill!=null && h.chill <= CHILL_INFO) add("info", `Gefühlt ${fmt(h.chill,0)} °C in ${workH()} m: Kälteschutz`);
   if(h.app!=null && h.app >= HEAT_INFO) add("info", `Hitze: gefühlt ${fmt(h.app,0)} °C am Boden`);
   if(h.uv!=null && h.uv >= UV_INFO) add("info", `UV-Index ${fmt(h.uv,0)}: Sonnenschutz`);
-  if(h.dew!=null && h.dew <= 0) add("info", `Taupunkt erreicht in ${workH()} m: Nebel oder Wolke wahrscheinlich, Stahl und Seile nass/glatt`);
-  else if(h.dew!=null && h.dew <= DEW_INFO) add("info", `Taupunkt fast erreicht in ${workH()} m (${fmt(h.dew,1)} K): Kondenswasser möglich`);
-  if(site.coat){   // Beschichten: Hinweis, auf Wunsch (Häkchen in den Einstellungen) Stop
-    const cl = site.coatStop ? "stop" : "info";
-    if(h.rh!=null && h.rh > coatRh()) add(cl, `Beschichten: Luftfeuchte ${Math.round(h.rh)} % über ${coatRh()} %`);
-    if(h.dew!=null && h.dew < coatDew()) add(cl, `Beschichten: ${h.dew <= 0 ? "Taupunkt erreicht" : `nur ${fmt(h.dew,1)} K über Taupunkt`} (mind. ${fmt(coatDew(), coatDew()%1 ? 1 : 0)} K)`);
+  // Kondenswasser steht einmal je Tag im Überblick und in der Taupunkt-Zeile, nicht in jeder Stunde
+  if(coatOn(h.t.slice(0,10))){   // Beschichten an diesem Tag: Hinweis, auf Wunsch (Einstellungen) Stop
+    const cl = site.coatStop ? "stop" : "info", k = fmt(coatDew(), coatDew()%1 ? 1 : 0);
+    if(h.rh!=null && h.rh > coatRh()) add(cl, `Beschichten: Luftfeuchte ${Math.round(h.rh)} % (Grenze ${coatRh()} %)`, "coat");
+    if(h.dew!=null && h.dew < coatDew()) add(cl, `Beschichten: ${h.dew <= 0 ? "Taupunkt erreicht" : `${fmt(h.dew,1)} K über Taupunkt`} (Grenze mind. ${k} K)`, "coat");
   }
   const lamp = why.some(w => w.l==="stop") ? "stop" : why.some(w => w.l==="warn") ? "warn" : "go";
-  return {lamp, why};
+  // Stop allein wegen Beschichtung (nicht wegen Wetter): wird im Überblick und Bericht getrennt genannt
+  const coatOnly = lamp==="stop" && why.filter(w => w.l==="stop").every(w => w.cat==="coat");
+  return {lamp, why, coatOnly};
 }
 
 /* Über Nacht (Arbeitsende bis Arbeitsbeginn am Folgetag): dürfen Seile und Bühne hängen bleiben?
@@ -177,6 +178,28 @@ function rainSummary(hs){
   if(peak && peak.rain >= 0.1) t += `${mm >= 0.1 ? ", " : " "}am stärksten gegen ${hh(peak.t)} Uhr (${fmt(peak.rain,1)} mm/h, ${peak.rainYes} von ${peak.rainN} Modellen)`;
   return t + (mm >= 0.1 || (peak && peak.rain >= 0.1) ? "." : "");
 }
+/* Zeitbereiche als Text, z. B. "06–09, 11 Uhr" (Stunden der Liste gelten als aufeinanderfolgend) */
+function rangeTxt(hs, test){
+  const r = []; let s = null;
+  hs.forEach((h, k) => { const on = test(h); if(on && s==null) s = k; if(!on && s!=null){ r.push([s, k-1]); s = null; } });
+  if(s!=null) r.push([s, hs.length-1]);
+  if(!r.length) return "";
+  if(r.length===1 && r[0][0]===0 && r[0][1]===hs.length-1) return "in der ganzen Arbeitszeit";
+  return r.map(([a, b]) => a===b ? hh(hs[a].t) : hh(hs[a].t) + "–" + hh(hs[b].t)).join(", ") + " Uhr";
+}
+/* Kondenswasser einmal je Tag (Arbeitszeit): Taupunkt erreicht bzw. knapp */
+function dewDaySummary(hs){
+  const wet = rangeTxt(hs, h => h.dew!=null && h.dew <= 0), near = rangeTxt(hs, h => h.dew!=null && h.dew > 0 && h.dew <= DEW_INFO);
+  if(!wet && !near) return "";
+  return "Kondenswasser: " + [wet && `Taupunkt erreicht ${wet} (Nebel/Wolke, alles nass)`, near && `knapp ${near} (bis ${fmt(DEW_INFO,0)} K)`].filter(Boolean).join(" · ") + ".";
+}
+/* Beschichten an diesem Tag: wann die Grenzen überschritten sind */
+const coatViol = h => !!h && ((h.dew!=null && h.dew < coatDew()) || (h.rh!=null && h.rh > coatRh()));
+function coatDaySummary(hs){
+  if(!hs.length || !coatOn(hs[0].t.slice(0,10))) return "";
+  const bad = rangeTxt(hs, coatViol);
+  return bad ? `Beschichten nicht zulässig ${bad}${site.coatStop ? " (Ampel STOP)" : ""}.` : "Beschichten: Grenzen in der ganzen Arbeitszeit eingehalten.";
+}
 function buildSummary(hs){
   if(!hs.length || !hs.some(h=>h.n)) return {lamp:"none", head:"Für diesen Tag liegen keine Modelldaten vor.", text:""};
   const c = {go:0,warn:0,stop:0};
@@ -186,12 +209,14 @@ function buildSummary(hs){
   let lamp, head;
   if(c.go===hs.length){ lamp="go"; head=`Ganzer Arbeitstag klar (${site.from}–${site.to} Uhr).`; }
   else if(best && best.len>=2){ lamp = best.len>=4 ? "warn" : "warn"; const win = `${hh(best.start)}–${String(hourOf(best.end)+1).padStart(2,"0")} Uhr`; head=`Klar nur ${win} (${best.len} h), übrige Stunden prüfen.`; if(c.stop===0 && best.len>=hs.length-2){ lamp="go"; head=`Grün ${win}, Randstunden prüfen.`; } }
-  else if(c.stop===hs.length){ lamp="stop"; head="Kein Arbeitsfenster: Grenzwerte ganztägig überschritten."; }
-  else if(c.stop > hs.length/2){ lamp="stop"; head=`Überwiegend Stop: in ${c.stop} von ${hs.length} Stunden über Grenzwert.`; }
+  else if(c.stop===hs.length){ lamp="stop"; head = hs.every(h => h.coatOnly) ? "Kein Fenster fürs Beschichten: Feuchte oder Taupunkt ganztägig außerhalb eurer Grenzen." : "Kein Arbeitsfenster: Grenzwerte ganztägig überschritten."; }
+  else if(c.stop > hs.length/2){ lamp="stop"; head = hs.filter(h => h.lamp==="stop").every(h => h.coatOnly) ? `Überwiegend Stop wegen Beschichtung: in ${c.stop} von ${hs.length} Stunden Feuchte oder Taupunkt außerhalb eurer Grenzen.` : `Überwiegend Stop: in ${c.stop} von ${hs.length} Stunden über Grenzwert.`; }
   else { lamp="warn"; head="Kein klares Fenster, nur Stunden mit Prüfbedarf."; }
   const parts = [];
-  const firstStop = hs.find(h => h.lamp==="stop");
+  const firstStop = hs.find(h => h.lamp==="stop" && !h.coatOnly);
   if(firstStop && c.stop!==hs.length) parts.push(`Ab ${hh(firstStop.t)} Uhr liegen ${firstStop.over} von ${firstStop.n} Modellen über euren Grenzwerten.`);
+  const co = rangeTxt(hs, h => h.coatOnly);
+  if(co) parts.push(`Stop nur wegen Beschichtung (Feuchte/Taupunkt, nicht Wetter): ${co}.`);
   const peak = hs.reduce((a,h) => h.med!=null && (!a || h.med>a.med) ? h : a, null);
   if(peak) parts.push(`Stärkster Wind gegen ${hh(peak.t)} Uhr: ${fwu(peak.med)} (Spanne ${fw(peak.min)}–${fw(peak.max)}), Böen ca. ${fwu(peak.gMed)}.`);
   const st = hs.find(h=>h.storms>0);

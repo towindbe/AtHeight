@@ -21,6 +21,7 @@ function snapshot(){
     version: ownVersion() || "unbekannt",
     warnlage: warnState(state.day).note || null,
     warnungen: allWarnings().map(w => ({quelle:w.src, stufe:w.lvl, titel:w.title, ampelrelevant:w.relevant, beginn:isFinite(w.start)?new Date(w.start).toISOString():null, ende:isFinite(w.end)?new Date(w.end).toISOString():null})),
+    ...(coatOn(state.day) ? {beschichten:{grenzeFeuchte:coatRh(), grenzeTaupunktAbstand:coatDew(), ampelStop:!!site.coatStop, ergebnis:coatDaySummary(dayHours(state.day))}} : {}),
     fazit:{ampel:state.summary?.lamp, text:(state.summary?.head||"")+" "+(state.summary?.text||""), regen:rainSummary(dayHours(state.day))},
     nacht:(() => { const n = nightRig(state.day); return n && {status:n.lvl, von:n.from, bis:n.to, vollstaendig:n.complete, grenzeWind:nightWind(), grenzeBoe:nightGust(), maxWind:n.v, maxBoe:n.g, maxBoeEinzelmodell:n.gMax}; })(),
     einheit:{daten:"m/s", anzeige:WU()},
@@ -72,6 +73,7 @@ async function buildReport(){
         <div class="rp-big"><span class="rp-lamp ${sum.lamp}">${esc(LAMP_TXT[sum.lamp]||"")}</span>${esc(sum.head||"")}</div>
         <div style="margin-top:4px">${esc(sum.text||"")}</div>
         <div style="margin-top:3px">${esc(rainSummary(hs))}</div>
+        ${dewDaySummary(hs) ? `<div style="margin-top:3px">${esc(dewDaySummary(hs))}</div>` : ""}
       </div>
       <div class="rp-box rp-dec ${dec}"><small>Entscheidung Aufsichtführender</small><b>${esc(b.entscheidung)}</b><small class="${b.vorOrtGeprueft ? "" : "rp-alert"}">${b.vorOrtGeprueft ? "✓ Prognose, Grenzwerte und Lage vor Ort geprüft" : "Prüfung vor Ort nicht bestätigt"}</small></div>
     </div>
@@ -93,6 +95,7 @@ async function buildReport(){
       ${ws.map(w => `<div class="wb-${!w.relevant ? "info" : w.lvl>=3 ? "stop" : "warn"}"><b>${esc(w.src)}: ${esc(w.title)}</b> · ${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))}</div>`).join("")}
       ${note ? `<div style="border:0;padding:0">${kind==="ok" ? "✓ " : ""}${esc(note)}</div>` : ""}
     </div>
+    ${coatOn(state.day) ? `<div class="rp-sec rp-box ${hs.some(coatViol) ? (site.coatStop ? "stop" : "warn") : "go"}"><h3>Beschichten / Laminieren</h3>Grenzen: höchstens ${coatRh()} % Luftfeuchte, mind. ${esc(fmt(coatDew(), coatDew()%1 ? 1 : 0))} K über dem Taupunkt (2 m)${site.coatStop ? ", Überschreitung setzt die Ampel auf STOP" : ", nur Hinweis"}. <b>${esc(coatDaySummary(hs))}</b>${hs.some(h => h.coatOnly) ? ` Stop allein wegen Beschichtung, nicht wegen Wetter: ${esc(rangeTxt(hs, h => h.coatOnly))}.` : ""}</div>` : ""}
     ${(nt => nt ? `<div class="rp-sec rp-box ${nt.lvl}"><h3>Seile und Bühne über Nacht</h3><b>${nt.lvl==="go" ? "✓ " : ""}${esc(nt.head)}.</b> ${esc(nt.text)}</div>` : "")(nightText(nightRig(state.day)))}
 
     <div class="rp-sec">
@@ -110,7 +113,7 @@ async function buildReport(){
       Ausgewertete Modelle (${u.length}): ${u.map(r=>esc(r.m.name+" ("+r.m.org+")")).join(", ")}.
       ${(() => { const x = state.results.filter(r => isExcluded(r) && (r.status==="ok"||r.status==="extrap")); return x.length ? `<b>Von Hand ausgeschlossen:</b> ${x.map(r=>esc(r.m.name+" ("+r.m.org+")")).join(", ")}.` : ""; })()}
       Ensemble-Vorhersage (Szenarien): ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(", ") || "nicht verfügbar"}.
-      Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle (mind. 2), CAPE ab ${CAPE_STOP} J/kg, Temperatur in Arbeitshöhe unter ${fmt(minTemp(),0)} °C${site.coat && site.coatStop ? `, Beschichten: Luftfeuchte über ${coatRh()} % oder weniger als ${fmt(coatDew(), coatDew()%1 ? 1 : 0)} K über dem Taupunkt (2 m)` : ""} oder Unwetterwarnung bzw. Warnstufe rot.
+      Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle (mind. 2), CAPE ab ${CAPE_STOP} J/kg, Temperatur in Arbeitshöhe unter ${fmt(minTemp(),0)} °C${coatOn(state.day) && site.coatStop ? `, Beschichten: Luftfeuchte über ${coatRh()} % oder weniger als ${fmt(coatDew(), coatDew()%1 ? 1 : 0)} K über dem Taupunkt (2 m)` : ""} oder Unwetterwarnung bzw. Warnstufe rot.
       Prüfen bei einzelnen Modellen über Grenzwert, Gewittersignal, CAPE ab ${CAPE_WARN} J/kg, Regen ab ${fmt(RAIN_WARN)} mm/h, mind. ${Math.round(ENS_WARN*100)} % der Szenarien über Grenze oder amtlicher Warnung. Nacht nur als Hinweis.
       Wind als Stundenwert der Modelle; kurzzeitig (z. B. im 10-Minuten-Mittel der Anlage) kann der Wind darüber liegen. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0).
       <b>Grenzen:</b> Die Prognosewerte sind Stundenmittel und können kurzzeitig überschritten werden. Lokale Effekte (Kuppen und Gelände, Nachlauf anderer Anlagen, Böenfronten, einzelne Gewitterzellen) bilden die Modelle nicht ab, Wind und Böen in der Höhe sind berechnet bzw. geschätzt, und die Prognose kann sich ändern. Wind vor Ort messen, bei Unsicherheit abbrechen.

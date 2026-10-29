@@ -29,6 +29,15 @@ const CHILL_INFO = -10, HEAT_INFO = 32, UV_INFO = 6;
 const DEW_INFO = 1;   // Temperatur in Arbeitshöhe höchstens so viele K über dem Taupunkt: Hinweis Kondenswasser
 // Beschichten / Laminieren (je Anlage einschaltbar): max. Luftfeuchte und Mindestabstand zum Taupunkt (ISO 8502-4: 3 K)
 const coatRh = () => site.coatRh ?? 80, coatDew = () => site.coatDew ?? 3;
+/* Eingeschaltet wird Beschichten je Tag und Standort (im Tagesüberblick), nicht dauerhaft je Anlage:
+   sonst bleibt es versehentlich an und die Ampel steht tagelang auf Stop. Vergangene Tage werden verworfen. */
+const coatKey = d => `${(+site.lat).toFixed(3)},${(+site.lon).toFixed(3)}|${d}`;
+let coatDays = (() => { try{ const t = new Date().toLocaleDateString("sv"); return new Set(JSON.parse(localStorage.getItem("wb_coat")||"[]").filter(k => k.slice(-10) >= t)); }catch(e){ return new Set(); } })();
+const coatOn = d => !!d && coatDays.has(coatKey(d));
+function setCoat(d, on){
+  on ? coatDays.add(coatKey(d)) : coatDays.delete(coatKey(d));
+  try{ localStorage.setItem("wb_coat", JSON.stringify([...coatDays])); }catch(e){}
+}
 const minTemp = () => site.minTemp ?? 0;   // Mindesttemperatur (Luft in Arbeitshöhe), darunter Stop
 const ENS_WARN = 0.3, ENS_INFO = 0.1;   // Anteil der Ensemble-Läufe über Grenze
 const ENSEMBLES = [{id:"icon_d2_eps", name:"ICON-D2-EPS"}, {id:"ecmwf_ifs025_ensemble", name:"ECMWF-ENS"}];

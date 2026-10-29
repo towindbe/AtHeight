@@ -19,7 +19,6 @@ function applyEinsatzUI(){
   if(!on && $("s_access").value === "nacelle") $("s_access").value = "ground";
   $("s_work").placeholder = on ? "= Nabe" : "z. B. 40";
 }
-function showCoat(){ $("coatGrid").hidden = $("coatNote").hidden = $("coatStopLbl").hidden = !$("s_coat").checked; }
 function fillSettings(){
   $("s_name").value = site.name; $("s_lat").value = site.lat; $("s_lon").value = site.lon;
   $("s_work").value = site.work ?? ""; $("s_access").value = accessMode();
@@ -27,7 +26,7 @@ function fillSettings(){
   $("s_windkraft").checked = isWind(); applyEinsatzUI();
   setWindField("s_wind", site.wind); setWindField("s_gust", site.gust); setWindField("s_nwind", nightWind()); setWindField("s_ngust", nightGust());
   $("s_from").value = site.from; $("s_to").value = site.to; $("s_mintemp").value = minTemp();
-  $("s_coat").checked = !!site.coat; $("s_coatrh").value = coatRh(); $("s_coatdew").value = coatDew(); $("s_coatstop").checked = !!site.coatStop; showCoat();
+  $("s_coatrh").value = coatRh(); $("s_coatdew").value = coatDew(); $("s_coatstop").checked = !!site.coatStop;
   $("siteTitle").textContent = site.name;
   $("siteMeta").innerHTML = `<span>Arbeit ${zoneTxt()}</span><span>Grenze ${fw(site.wind)} · Böe ${fwu(site.gust)}</span><span>${site.from}–${site.to} Uhr</span>`;
   // Hinweis, bis die Werte dieser Anlage einmal bestätigt wurden
@@ -60,6 +59,8 @@ function renderHero(){
   $("heroDay").textContent = `${new Date(state.day+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"})} · Arbeitszeit ${site.from}–${site.to} Uhr` + (dl.start && dl.end ? ` · hell ${dl.start}–${dl.end}` : "");
   $("headline").textContent = sum.head; $("summary").textContent = sum.text;
   $("rainNote").textContent = rainSummary(dayHours(state.day));
+  $("dewNote").textContent = dewDaySummary(dayHours(state.day));
+  renderCoatBar();
   renderChange();
   checkStale();
   const u = usableModels();
@@ -103,6 +104,19 @@ function renderHero(){
     + ` · Ensemble (Szenarien): ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(" + ") || "nicht verfügbar"}`;
 }
 
+/* Schalter „Beschichten an diesem Tag“ im Überblick; ist er an, steht der Modus mit Grenzen und Ergebnis gut sichtbar daneben */
+function renderCoatBar(){
+  const on = coatOn(state.day), k = v => fmt(v, v%1 ? 1 : 0);
+  $("coatBar").classList.toggle("on", on);
+  $("coatBtn").setAttribute("aria-pressed", String(on));
+  $("coatBtn").textContent = on ? "🖌 Beschichten-Modus an" : "🖌 Beschichten an diesem Tag";
+  $("coatInfo").textContent = on ? `Grenzen: höchstens ${coatRh()} % Feuchte, mind. ${k(coatDew())} K über Taupunkt${site.coatStop ? ", setzt die Ampel auf STOP" : " (nur Hinweis)"}. ${coatDaySummary(dayHours(state.day))}` : "";
+}
+function toggleCoat(){
+  setCoat(state.day, !coatOn(state.day));
+  state.hours = computeHours(state.results, state.times);
+  render();
+}
 function renderNow(){
   const h = state.hours[state.sel]; if(!h) return;
   $("nowLabel").textContent = `${dayLabel(h.t.slice(0,10),true)}, ${hh(h.t)} Uhr`;
