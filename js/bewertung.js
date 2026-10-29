@@ -77,7 +77,7 @@ function rate(h){
   if(h.app!=null && h.app >= HEAT_INFO) add("info", `Hitze: gefühlt ${fmt(h.app,0)} °C am Boden`);
   if(h.uv!=null && h.uv >= UV_INFO) add("info", `UV-Index ${fmt(h.uv,0)}: Sonnenschutz`);
   // Kondenswasser steht einmal je Tag im Überblick und in der Taupunkt-Zeile, nicht in jeder Stunde
-  if(coatOn(h.t.slice(0,10))){   // Beschichten an diesem Tag: Hinweis, auf Wunsch (Einstellungen) Stop
+  if(coatOn(h.t.slice(0,10))){   // Beschichten-Modus: Hinweis, auf Wunsch (Einstellungen) Stop
     const cl = site.coatStop ? "stop" : "info", k = fmt(coatDew(), coatDew()%1 ? 1 : 0);
     if(h.rh!=null && h.rh > coatRh()) add(cl, `Beschichten: Luftfeuchte ${Math.round(h.rh)} % (Grenze ${coatRh()} %)`, "coat");
     if(h.dew!=null && h.dew < coatDew()) add(cl, `Beschichten: ${h.dew <= 0 ? "Taupunkt erreicht" : `${fmt(h.dew,1)} K über Taupunkt`} (Grenze mind. ${k} K)`, "coat");
@@ -193,7 +193,7 @@ function dewDaySummary(hs){
   if(!wet && !near) return "";
   return "Kondenswasser: " + [wet && `Taupunkt erreicht ${wet} (Nebel/Wolke, alles nass)`, near && `knapp ${near} (bis ${fmt(DEW_INFO,0)} K)`].filter(Boolean).join(" · ") + ".";
 }
-/* Beschichten an diesem Tag: wann die Grenzen überschritten sind */
+/* Beschichten-Modus: wann an diesem Tag die Grenzen überschritten sind */
 const coatViol = h => !!h && ((h.dew!=null && h.dew < coatDew()) || (h.rh!=null && h.rh > coatRh()));
 function coatDaySummary(hs){
   if(!hs.length || !coatOn(hs[0].t.slice(0,10))) return "";

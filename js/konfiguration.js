@@ -27,16 +27,21 @@ const VARS = ["wind_speed_10m","wind_speed_80m","wind_speed_120m","wind_speed_18
   "relative_humidity_2m","cloud_cover"];
 const CHILL_INFO = -10, HEAT_INFO = 32, UV_INFO = 6;
 const DEW_INFO = 1;   // Temperatur in Arbeitshöhe höchstens so viele K über dem Taupunkt: Hinweis Kondenswasser
-// Beschichten / Laminieren (je Anlage einschaltbar): max. Luftfeuchte und Mindestabstand zum Taupunkt (ISO 8502-4: 3 K)
+// Beschichten / Laminieren (Grenzen je Anlage): max. Luftfeuchte und Mindestabstand zum Taupunkt (ISO 8502-4: 3 K)
 const coatRh = () => site.coatRh ?? 80, coatDew = () => site.coatDew ?? 3;
-/* Eingeschaltet wird Beschichten je Tag und Standort (im Tagesüberblick), nicht dauerhaft je Anlage:
-   sonst bleibt es versehentlich an und die Ampel steht tagelang auf Stop. Vergangene Tage werden verworfen. */
-const coatKey = d => `${(+site.lat).toFixed(3)},${(+site.lon).toFixed(3)}|${d}`;
-let coatDays = (() => { try{ const t = new Date().toLocaleDateString("sv"); return new Set(JSON.parse(localStorage.getItem("wb_coat")||"[]").filter(k => k.slice(-10) >= t)); }catch(e){ return new Set(); } })();
-const coatOn = d => !!d && coatDays.has(coatKey(d));
-function setCoat(d, on){
-  on ? coatDays.add(coatKey(d)) : coatDays.delete(coatKey(d));
-  try{ localStorage.setItem("wb_coat", JSON.stringify([...coatDays])); }catch(e){}
+/* Beschichten wird im Überblick je Standort eingeschaltet und gilt dann für alle Prognosetage,
+   bis einschließlich dem letzten Tag, der beim Einschalten angezeigt wurde. Danach ist es von selbst aus:
+   so bleibt es nicht versehentlich wochenlang an und die Ampel steht nicht ohne Grund auf Stop. */
+const coatSpot = () => `${(+site.lat).toFixed(3)},${(+site.lon).toFixed(3)}`;
+let coatUntil = (() => { try{
+  const t = new Date().toLocaleDateString("sv"), o = JSON.parse(localStorage.getItem("wb_coat")||"{}");
+  return Object.fromEntries(Object.entries(Array.isArray(o) ? {} : o).filter(([, u]) => u >= t));
+}catch(e){ return {}; } })();
+const coatEnd = () => coatUntil[coatSpot()] || null;
+const coatOn = d => !!d && !!coatEnd() && d <= coatEnd();
+function setCoat(until){
+  until ? coatUntil[coatSpot()] = until : delete coatUntil[coatSpot()];
+  try{ localStorage.setItem("wb_coat", JSON.stringify(coatUntil)); }catch(e){}
 }
 const minTemp = () => site.minTemp ?? 0;   // Mindesttemperatur (Luft in Arbeitshöhe), darunter Stop
 const ENS_WARN = 0.3, ENS_INFO = 0.1;   // Anteil der Ensemble-Läufe über Grenze

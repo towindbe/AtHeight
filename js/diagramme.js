@@ -203,7 +203,7 @@ function renderRain(){
   $("rainDay").textContent = dayLabel(state.day);
 }
 
-/* Temperatur-Diagramm: nur die Feuchte-Grenze fürs Beschichten als Linie (an Beschichten-Tagen).
+/* Temperatur-Diagramm: nur die Feuchte-Grenze fürs Beschichten als Linie (im Beschichten-Modus).
    Kondenswasser steht nicht mehr als Fläche im Diagramm, sondern in der Taupunkt-Zeile darunter (eine Zelle je Arbeitsstunde). */
 const DEW_COLOR = "#b48ee6", RH_COLOR = "#3a9a9a";
 const coatLimitPlugin = {id:"coatLimit", afterDatasetsDraw(c){
@@ -224,7 +224,7 @@ function tempNote(){
     + "Taupunkt und Luftfeuchte gelten für 2 m über Boden.";
 }
 /* Taupunkt-Zeile: je Arbeitsstunde der Abstand der Temperatur in Arbeitshöhe zum Taupunkt (2 m).
-   „Tau“ = Taupunkt erreicht. An Beschichten-Tagen zusätzlich die Luftfeuchte, Farben nach euren Grenzen. */
+   „Tau“ = Taupunkt erreicht. Im Beschichten-Modus zusätzlich die Luftfeuchte, Farben nach euren Grenzen. */
 function renderDewRow(){
   const hs = dayHours(state.day), coat = coatOn(state.day), stopC = coat && site.coatStop, k = v => fmt(v, v%1 ? 1 : 0);
   if(!hs.some(h => h.dew!=null)){ $("dewRow").innerHTML = ""; $("dewRowNote").textContent = "Für diesen Tag liegen keine Werte zum Taupunkt vor."; return; }
@@ -239,7 +239,7 @@ function renderDewRow(){
   $("dewRow").innerHTML = `<table><tr><th></th>${hs.map(h => `<th>${hh(h.t)}</th>`).join("")}</tr>${rows}</table>`;
   $("dewRow").querySelectorAll("td[data-i]").forEach(c => c.onclick = () => selectHour(+c.dataset.i));
   $("dewRowNote").textContent = coat
-    ? `Beschichten an diesem Tag: mind. ${k(coatDew())} K Abstand und höchstens ${coatRh()} % Feuchte. ${stopC ? "Rot: Grenze überschritten, Ampel STOP." : "Gelb: Grenze überschritten (Hinweis)."} „Tau“: Taupunkt erreicht, Nebel oder Wolke in Arbeitshöhe, alles nass.`
+    ? `Beschichten-Modus: mind. ${k(coatDew())} K Abstand und höchstens ${coatRh()} % Feuchte. ${stopC ? "Rot: Grenze überschritten, Ampel STOP." : "Gelb: Grenze überschritten (Hinweis)."} „Tau“: Taupunkt erreicht, Nebel oder Wolke in Arbeitshöhe, alles nass.`
     : `Zahl: Abstand der Temperatur in Arbeitshöhe zum Taupunkt in K. „Tau“ (gelb): Taupunkt erreicht, Nebel oder Wolke in Arbeitshöhe, Stahl und Seile nass. Hellgelb: bis ${k(DEW_INFO)} K, Kondenswasser möglich. Darüber rechnet die Prognose nicht mit Kondenswasser; Oberflächen können trotzdem kälter sein.`;
 }
 function renderTemp(){

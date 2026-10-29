@@ -20,7 +20,7 @@ function renderSticky(){
 /* schmales Arbeitsfenster: eine Zelle je Stunde, wie die große Zeitleiste, zum seitlichen Durchscrollen */
 let stripKey = "";
 function renderStrip(){
-  const box = $("sbStrip"), key = state.fetchedAt + "|" + state.hours.length + "|" + site.from + "-" + site.to;
+  const box = $("sbStrip"), key = state.fetchedAt + "|" + state.hours.map(h => h.lamp[0]).join("") + "|" + site.from + "-" + site.to;   // Ampelfarben im Schlüssel: neu zeichnen, wenn sich die Bewertung ändert
   if(key !== stripKey){
     stripKey = key;
     const nk = nowKey();

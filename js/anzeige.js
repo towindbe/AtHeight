@@ -104,16 +104,16 @@ function renderHero(){
     + ` · Ensemble (Szenarien): ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(" + ") || "nicht verfügbar"}`;
 }
 
-/* Schalter „Beschichten an diesem Tag“ im Überblick; ist er an, steht der Modus mit Grenzen und Ergebnis gut sichtbar daneben */
+/* Schalter „Beschichten-Modus“ im Überblick (gilt für alle Prognosetage); ist er an, steht der Modus mit Grenzen und Ergebnis gut sichtbar daneben */
 function renderCoatBar(){
   const on = coatOn(state.day), k = v => fmt(v, v%1 ? 1 : 0);
   $("coatBar").classList.toggle("on", on);
   $("coatBtn").setAttribute("aria-pressed", String(on));
-  $("coatBtn").textContent = on ? "🖌 Beschichten-Modus an" : "🖌 Beschichten an diesem Tag";
-  $("coatInfo").textContent = on ? `Grenzen: höchstens ${coatRh()} % Feuchte, mind. ${k(coatDew())} K über Taupunkt${site.coatStop ? ", setzt die Ampel auf STOP" : " (nur Hinweis)"}. ${coatDaySummary(dayHours(state.day))}` : "";
+  $("coatBtn").textContent = on ? "🖌 Beschichten-Modus an" : "🖌 Beschichten-Modus";
+  $("coatInfo").textContent = on ? `Gilt für alle Tage bis ${dayLabel(coatEnd()).replace(/^ · /, "")} · Grenzen: höchstens ${coatRh()} % Feuchte, mind. ${k(coatDew())} K über Taupunkt${site.coatStop ? ", setzt die Ampel auf STOP" : " (nur Hinweis)"}. ${coatDaySummary(dayHours(state.day))}` : "";
 }
 function toggleCoat(){
-  setCoat(state.day, !coatOn(state.day));
+  setCoat(coatOn(state.day) ? null : state.times[state.times.length-1].slice(0,10));
   state.hours = computeHours(state.results, state.times);
   render();
 }
