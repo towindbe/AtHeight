@@ -241,7 +241,7 @@ function renderDewRow(){
   $("dewRow").querySelectorAll("td[data-i]").forEach(c => c.onclick = () => selectHour(+c.dataset.i));
   $("dewRowNote").textContent = coat
     ? `Beschichten-Modus: mind. ${k(coatDew())} K Abstand und höchstens ${coatRh()} % Feuchte. ${stopC ? "Rot: Grenze überschritten, Ampel STOP." : "Gelb: Grenze überschritten (Hinweis)."} „Tau“: Taupunkt erreicht, Nebel oder Wolke in Arbeitshöhe, alles nass.`
-    : `Zahl: Abstand der Temperatur in Arbeitshöhe zum Taupunkt in K. „Tau“ (gelb): Taupunkt erreicht, Nebel oder Wolke in Arbeitshöhe, Stahl und Seile nass. Hellgelb: bis ${k(DEW_INFO)} K, Kondenswasser möglich. Darüber rechnet die Prognose nicht mit Kondenswasser; Oberflächen können trotzdem kälter sein.`;
+    : `Zahl: Abstand der Temperatur in Arbeitshöhe zum Taupunkt in K. „Tau“ (gelb): Taupunkt erreicht, Nebel oder Wolke in Arbeitshöhe, Oberflächen und Seile nass. Hellgelb: bis ${k(DEW_INFO)} K, Kondenswasser möglich. Darüber rechnet die Prognose nicht mit Kondenswasser; Oberflächen können trotzdem kälter sein.`;
 }
 function renderTemp(){
   if(typeof Chart==="undefined") return;
