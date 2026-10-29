@@ -579,3 +579,57 @@ body.simple .cols{grid-template-columns:1fr}
 header.top .row button{height:48px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 14px}
 header.top .row .icon-btn{width:48px;min-width:48px;padding:0;font-size:20px}
 @media (max-width:430px){ #settingsBtn{width:48px;min-width:48px;padding:0;font-size:20px} #settingsBtn .chev{display:none} }
+
+/* ===== Neuer Überblick: ein Instrument statt vieler Kästen; Farbe nur mit Bedeutung; Linien-Symbole ===== */
+.ico{flex:none;display:inline-block;vertical-align:-4px}
+#favBtn .ico{color:var(--accent);fill:currentColor}
+#detailsBtn[aria-expanded="true"] .ico{transform:rotate(180deg)}
+.coat-bar button .ico,.night-btn .ico{margin-right:2px}
+.hero{display:flex;flex-direction:column;align-items:stretch;gap:12px;margin-top:12px;padding:18px;border-radius:18px;background:var(--raised);border:1px solid var(--line)}
+.inst-top{display:flex;align-items:center;gap:10px}
+.lamp{width:auto;height:auto;flex-direction:row;gap:6px;padding:6px 14px;border-radius:99px;font:700 17px var(--f-display);letter-spacing:.1em}
+.lamp svg{width:18px;height:18px}
+.inst-win{display:flex;align-items:baseline;gap:8px}
+.inst-win b{font:600 68px/.9 var(--f-display);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.inst-win span{font-size:18px;color:var(--muted)}
+.hero-text{display:flex;flex-direction:column;gap:6px;min-width:0}
+.hero .headline{font:600 22px/1.2 var(--f-display)}
+.inst-strip{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:3px;margin:8px 0 2px}
+.inst-strip:empty{display:none}
+.ic{height:38px;min-width:0;padding:0 0 3px;border:0;border-radius:6px;display:flex;align-items:flex-end;justify-content:center;font:600 11px var(--f-mono);color:#0d1217}
+.ic.c-stop{color:#fff}
+.ic.sel{outline:2px solid var(--fg);outline-offset:2px}
+.inst-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-top:12px;margin-top:4px;border-top:1px solid var(--line)}
+.inst-metrics:empty{display:none}
+.inst-metrics small{display:block;font:600 11px/1.2 var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.inst-metrics b{font:600 30px/1.1 var(--f-display);font-variant-numeric:tabular-nums;white-space:nowrap}
+.inst-metrics i{font:500 13px var(--f-body);font-style:normal;color:var(--muted);margin-left:3px}
+.inst-metrics .m-warn b{color:var(--warn)} .inst-metrics .m-stop b{color:var(--stop)}
+/* Hinweise (Warnungen, Seile über Nacht, Einigkeit, Zellrand) als ruhige Zeilen: Symbol-Plakette links in der Farbe der Bedeutung */
+.status-row{grid-template-columns:1fr!important;gap:0;margin-top:10px}
+.status-row > div{position:relative;padding:12px 4px 12px 52px!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;background:transparent!important;min-height:58px;font-size:14px}
+.status-row > div::before{content:"";position:absolute;left:4px;top:12px;width:34px;height:34px;border-radius:10px;background:var(--sev-bg)}
+.status-row > div::after{content:"";position:absolute;left:12px;top:20px;width:18px;height:18px;background:var(--sev);-webkit-mask:var(--ico) center/contain no-repeat;mask:var(--ico) center/contain no-repeat}
+.status-row > .warnbox{--sev:var(--stop);--sev-bg:var(--stop-bg);--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z'/%3E%3Cpath d='M12 9v4M12 17h.01'/%3E%3C/svg%3E")}
+.status-row > .warnbox.ok{--sev:var(--go);--sev-bg:var(--go-bg);--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E")}
+.status-row > .warnbox.na{--sev:var(--muted);--sev-bg:var(--surface);--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 16v-4M12 8h.01'/%3E%3C/svg%3E")}
+.status-row > .rigbox{--sev:var(--go);--sev-bg:var(--go-bg);--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z'/%3E%3C/svg%3E")}
+.status-row > .rigbox.r-warn{--sev:var(--warn);--sev-bg:var(--warn-bg)} .status-row > .rigbox.r-stop{--sev:var(--stop);--sev-bg:var(--stop-bg)}
+.status-row > .spreadbox{--sev:var(--warn);--sev-bg:var(--warn-bg);--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l9 5-9 5-9-5z'/%3E%3Cpath d='M3 13l9 5 9-5'/%3E%3C/svg%3E")}
+.status-row > .spreadbox.s-einig{--sev:var(--go);--sev-bg:var(--go-bg)} .status-row > .spreadbox.s-unsicher{--sev:var(--band-line);--sev-bg:var(--surface)}
+.status-row > .cellbox{--sev:var(--band-line);--sev-bg:var(--surface);--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E")}
+.status-row > div > b:first-child{color:var(--fg)!important}
+/* Navigation unten: nur am Handy; oben bleiben in der Kurzleiste Ampel, Stunde und Tagesreiter */
+.bottom-nav{display:none}
+@media (max-width:759px){
+  .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:1100;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--surface);border-top:1px solid var(--line);padding:6px 4px calc(8px + env(safe-area-inset-bottom,0px))}
+  body.no-site .bottom-nav{display:none}
+  .bottom-nav button{min-height:54px;border:0;background:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:600 12px var(--f-body);padding:0;border-radius:12px}
+  .bottom-nav button .ico{width:22px;height:22px}
+  .bottom-nav button[aria-current="page"]{color:var(--accent)}
+  body{padding-bottom:96px}
+  .sb-nav{display:none}
+}
+@media print{.bottom-nav{display:none!important}}
+/* Helles Design: weiße Schrift auf den kräftigeren Ampelfarben (Kontrast) */
+:root[data-theme="light"] .lamp.go,:root[data-theme="light"] .lamp.warn,:root[data-theme="light"] .lamp.stop,:root[data-theme="light"] .ic{color:#fff}

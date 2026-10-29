@@ -58,6 +58,7 @@ function renderHero(){
   const dl = daylight(state.day);
   $("heroDay").textContent = `${new Date(state.day+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"})} · Arbeitszeit ${site.from}–${site.to} Uhr` + (dl.start && dl.end ? ` · hell ${dl.start}–${dl.end}` : "");
   $("headline").textContent = sum.head; $("summary").textContent = sum.text;
+  renderInstrument(sum);
   $("rainNote").textContent = rainSummary(dayHours(state.day));
   $("dewNote").textContent = dewDaySummary(dayHours(state.day));
   renderCoatBar();
@@ -71,7 +72,7 @@ function renderHero(){
   $("warnBox").innerHTML = kind==="list"
     ? `<b>Amtliche Warnungen</b>` + ws.map(w => `<div class="wb-${!w.relevant ? "info" : w.lvl>=3 ? "stop" : "warn"}">
       <span>${esc(w.src)}: ${esc(w.title)}</span><small>${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))}</small></div>`).join("") + (note ? `<small>${esc(note)}</small>` : "")
-    : kind==="ok" ? `<b>✓ Keine amtlichen Warnungen</b><small>${esc(note.replace(/^Keine amtlichen Warnungen für /, "").replace(/\.$/, ""))}</small>`
+    : kind==="ok" ? `<b>Keine amtlichen Warnungen</b><small>${esc(note.replace(/^Keine amtlichen Warnungen für /, "").replace(/\.$/, ""))}</small>`
     : `<b>Amtliche Warnungen</b><small>${esc(note)}</small>`;
   const sg = spreadGroups(state.day);
   $("spreadBox").hidden = !sg || !sg.all;
@@ -85,7 +86,7 @@ function renderHero(){
       ${sg.hi ? "" : `<small>Hochauflösende Modelle reichen nur 1–2 Tage weit.</small>`}
       <small>Am stürmischsten: ${esc(sg.top.r.m.name)} (${esc(sg.top.r.m.org)}) mit ${fwu(sg.top.v)}${sg.pMax!=null ? ` · Zu windig bis ${riskTen(sg.pMax)} der Szenarien` : ""}.</small>
       <small>Ausreißer nicht einfach ausschließen, sie können recht haben. Neuere Läufe abwarten, vor der Abfahrt neu laden, vor Ort messen.</small>`
-      : `<b>${sg.lvl==="einig" ? "✓ Modelle weitgehend einig" : "Modelle streuen mäßig"}</b>
+      : `<b>${sg.lvl==="einig" ? "Modelle weitgehend einig" : "Modelle streuen mäßig"}</b>
       ${row("Höchster Wind in der Arbeitszeit, alle Modelle", sg.all)}
       ${sg.lvl==="maessig" ? `<small>Am stürmischsten: ${esc(sg.top.r.m.name)} (${esc(sg.top.r.m.org)}) mit ${fwu(sg.top.v)}.</small>` : ""}`;
   }
@@ -97,20 +98,49 @@ function renderHero(){
     <small>Bei ${edgy.length} von ${hiRes.length} hochauflösenden Modellen (${edgy.slice(0,4).map(x => `${esc(x.r.m.name)} ${x.c.dir}`).join(", ")}${edgy.length > 4 ? " …" : ""}). Die Nachbarzelle kann anderen Wind rechnen, besonders am Ufer, an Kuppen und im Tal. Vor Ort messen.</small>`;
   const nt = nightText(nightRig(state.day));
   $("rigBox").hidden = !nt;
-  if(nt){ $("rigBox").className = "rigbox needs-data r-" + nt.lvl; $("rigBox").innerHTML = `<b>${nt.lvl==="go" ? "✓ " : "⚠ "}${esc(nt.head)}</b><small>${esc(nt.text)}</small>`; }
+  if(nt){ $("rigBox").className = "rigbox needs-data r-" + nt.lvl; $("rigBox").innerHTML = `<b>${esc(nt.head)}</b><small>${esc(nt.text)}</small>`; }
   const wsrc = [extras.dwd?.ok===false ? "DWD nicht abrufbar" : null, extras.geo?.ok===false ? "GeoSphere nicht abrufbar" : null].filter(Boolean);
   $("status").textContent = `Abgerufen ${state.fetchedAt.toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"})} · ${u.length} Modelle aktiv, davon ${u.filter(r=>r.m.hi).length} hochauflösend`
     + ` · Warnungen: ${wsrc.length ? wsrc.join(", ") : ws.length ? ws.length+" am gewählten Tag" : "keine"}`
     + ` · Ensemble (Szenarien): ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(" + ") || "nicht verfügbar"}`;
 }
 
+/* Instrument im Überblick: Arbeitsfenster groß, Stundenleiste der Arbeitszeit (antippen wählt die Stunde), drei Kennzahlen.
+   Im Beschichten-Modus: Feuchte, Taupunktabstand und Wind. Farben nach denselben Schwellen wie überall. */
+function renderInstrument(sum){
+  const hs = dayHours(state.day).filter(h => h.n), p2 = n => String(n).padStart(2, "0");
+  let win = "–";
+  if(sum.lamp !== "none" && hs.length){
+    if(sum.counts?.go === hs.length) win = `${p2(site.from)}–${p2(site.to)}`;
+    else if(sum.best) win = `${hh(sum.best.start)}–${p2(hourOf(sum.best.end) + 1)}`;
+  }
+  $("instWin").textContent = win; $("instUnit").textContent = win === "–" ? "" : "Uhr";
+  $("instStrip").innerHTML = hs.map(h => `<button type="button" class="ic c-${h.lamp}${h.i===state.sel ? " sel" : ""}" data-i="${h.i}" aria-label="${hh(h.t)} Uhr: ${LAMP_TXT[h.lamp]}"><span>${hourOf(h.t) % 3 === 0 ? hh(h.t) : ""}</span></button>`).join("");
+  $("instStrip").querySelectorAll(".ic").forEach(b => b.onclick = () => selectHour(+b.dataset.i));
+  const max = k => { const v = hs.map(h => h[k]).filter(x => x!=null); return v.length ? Math.max(...v) : null; };
+  const min = k => { const v = hs.map(h => h[k]).filter(x => x!=null); return v.length ? Math.min(...v) : null; };
+  const lim = (v, l) => v==null ? "" : v > l ? "m-stop" : v >= l*.75 ? "m-warn" : "";
+  const tile = (label, value, unit, cls) => `<div class="${cls}"><small>${label}</small><b>${value ?? "–"}<i>${value==null ? "" : unit}</i></b></div>`;
+  const wMax = max("med"), gMax = max("gMed");
+  if(coatOn(state.day)){
+    const rh = max("rh"), dew = min("dew"), bad = site.coatStop ? "m-stop" : "m-warn";
+    $("instMetrics").innerHTML = tile("Feuchte max", rh==null ? null : Math.round(rh), "%", rh!=null && rh > coatRh() ? bad : "")
+      + tile("Taupunktabst.", dew==null ? null : dew <= 0 ? "Tau" : fmt(dew,1), dew!=null && dew > 0 ? "K" : "", dew!=null && dew < coatDew() ? bad : "")
+      + tile("Wind max", wMax==null ? null : fw(wMax), WU(), lim(wMax, site.wind));
+  } else {
+    const tMin = min("tW"), tMax = max("tW");
+    $("instMetrics").innerHTML = tile("Wind max", wMax==null ? null : fw(wMax), WU(), lim(wMax, site.wind))
+      + tile("Böe max", gMax==null ? null : fw(gMax), WU(), lim(gMax, site.gust))
+      + tile("Temp.", tMin==null ? null : (Math.round(tMin)===Math.round(tMax) ? fmt(tMin,0) : `${fmt(tMin,0)}…${fmt(tMax,0)}`), "°C", tMin!=null && tMin < minTemp() ? "m-stop" : "");
+  }
+}
 /* Schalter „Beschichten-Modus“ im Überblick (gilt für alle Tage bis zum Ausschalten, höchstens 7 Tage); ist er an, steht der Modus mit Grenzen und Ergebnis gut sichtbar daneben */
 function renderCoatBar(){
   const on = coatOn(state.day), k = v => fmt(v, v%1 ? 1 : 0);
   document.body.classList.toggle("coat-on", on);   // im Beschichten-Modus bleibt die Temperatur auch in der einfachen Ansicht sichtbar
   $("coatBar").classList.toggle("on", on);
   $("coatBtn").setAttribute("aria-pressed", String(on));
-  $("coatBtn").textContent = on ? "🖌 Beschichten-Modus an" : "🖌 Beschichten-Modus";
+  $("coatLbl").textContent = on ? "Beschichten-Modus an" : "Beschichten-Modus";
   $("coatInfo").textContent = on ? `An für alle Tage, endet von selbst nach ${new Date(coatEnd()+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short", day:"2-digit", month:"2-digit"})} · Grenzen: höchstens ${coatRh()} % Feuchte, Taupunktabstand mind. ${k(coatDew())} K${site.coatStop ? ", setzt die Ampel auf STOP" : " (nur Hinweis)"}. ${coatDaySummary(dayHours(state.day))}` : "";
 }
 function toggleCoat(){
@@ -162,6 +192,7 @@ function scrollTimeline(){
 }
 function highlightSel(){
   $("timeline").querySelectorAll(".tl-cell").forEach(b => b.classList.toggle("sel", +b.dataset.i===state.sel));
+  $("instStrip").querySelectorAll(".ic").forEach(b => b.classList.toggle("sel", +b.dataset.i===state.sel));
   document.querySelectorAll(".mx td[data-i]").forEach(td => td.classList.toggle("selcol", +td.dataset.i===state.sel));
 }
 function selectHour(i, fromTimeline){

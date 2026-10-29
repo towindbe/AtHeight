@@ -49,7 +49,7 @@ function setDetails(on){
   try{ localStorage.setItem("wb_details", on ? "1" : "0"); }catch(e){}
   document.body.classList.toggle("simple", !on);
   $("detailsBtn").setAttribute("aria-expanded", String(on));
-  $("detailsBtn").textContent = on ? "▴ Details für Fachleute ausblenden" : "▾ Details für Fachleute einblenden";
+  $("detailsLbl").textContent = on ? "Details für Fachleute ausblenden" : "Details für Fachleute einblenden";
   if(on && state.hours.length) render();   // Diagramme in vorher ausgeblendeten Abschnitten neu zeichnen
 }
 setDetails(detailsOn);
@@ -66,10 +66,12 @@ document.querySelectorAll(".card").forEach(card => {
   if(h.parentElement === card){ const head = document.createElement("div"); head.className = "card-head"; h.before(head); head.appendChild(h); }
   const wrap = document.createElement("span"); wrap.className = "h-wrap"; h.before(wrap); wrap.append(h, b);
 });
+// Symbol-Platzhalter füllen (vor allem anderen, damit Knöpfe ihre Symbole haben)
+document.querySelectorAll("[data-ico]").forEach(e => { e.outerHTML = icon(e.dataset.ico); });
 /* Design: Standard dunkel auf allen Geräten, per Knopf hell (für draußen). Diagramme lesen ihre Farben beim Zeichnen, deshalb neu zeichnen */
 function applyTheme(t){
   if(t==="light") document.documentElement.dataset.theme = "light"; else delete document.documentElement.dataset.theme;
-  $("themeBtn").textContent = t==="light" ? "☾" : "☀";
+  $("themeBtn").innerHTML = icon(t==="light" ? "moon" : "sun");
   $("themeBtn").title = t==="light" ? "Dunkles Design" : "Helles Design (für draußen)";
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", t==="light" ? "#eef1f4" : "#0d1217");
 }

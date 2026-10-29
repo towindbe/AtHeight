@@ -82,3 +82,15 @@ function initSticky(){
   }
 }
 initSticky();
+
+/* Navigation unten (Handy): springt zum Abschnitt; markiert den Abschnitt, der gerade die Bildschirmmitte kreuzt */
+function initBottomNav(){
+  const nav = $("bottomNav"); if(!nav) return;
+  const mark = id => nav.querySelectorAll("button").forEach(b => b.setAttribute("aria-current", b.dataset.go===id ? "page" : "false"));
+  nav.addEventListener("click", e => { const b = e.target.closest("button[data-go]"), el = b && $(b.dataset.go); if(!el) return; mark(b.dataset.go); el.scrollIntoView({behavior:"smooth", block:"start"}); });
+  if("IntersectionObserver" in window){
+    const io = new IntersectionObserver(ens => ens.forEach(en => { if(en.isIntersecting) mark(en.target.id); }), {rootMargin:"-45% 0px -50% 0px"});
+    nav.querySelectorAll("button[data-go]").forEach(b => { const el = $(b.dataset.go); if(el) io.observe(el); });
+  }
+}
+initBottomNav();

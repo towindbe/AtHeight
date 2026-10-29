@@ -100,11 +100,11 @@ function outlookDew(hs, d){
   if(!hs.length) return {label:"Tau", txt:"–", cls:"", tip:"Keine Werte zum Taupunkt"};
   if(coatOn(d)){
     const ok = hs.filter(h => !coatViol(h)).length, r = rangeTxt(hs, h => !coatViol(h));
-    return {label:"🖌 Beschichten", txt: ok ? short(r) : "nicht möglich", cls: ok===hs.length ? "ol-ok" : ok ? "ol-part" : (site.coatStop ? "ol-stop" : "ol-part"),
+    return {label:icon("brush", 14) + " Beschichten", txt: ok ? short(r) : "nicht möglich", cls: ok===hs.length ? "ol-ok" : ok ? "ol-part" : (site.coatStop ? "ol-stop" : "ol-part"),
       tip:`Beschichten möglich in ${ok} von ${hs.length} Arbeitsstunden (Grenzen: höchstens ${coatRh()} % Feuchte, Taupunktabstand mind. ${fmt(coatDew(), coatDew()%1 ? 1 : 0)} K)`};
   }
   const r = rangeTxt(hs, h => h.dew <= 0);
-  return {label:"💧 Tau", txt: r ? short(r) : "–", cls: r ? "ol-part" : "", tip: r ? "Taupunkt erreicht: Nebel oder Wolke in Arbeitshöhe, Oberflächen nass" : "Taupunkt in der Arbeitszeit nicht erreicht"};
+  return {label:icon("drop", 14) + " Tau", txt: r ? short(r) : "–", cls: r ? "ol-part" : "", tip: r ? "Taupunkt erreicht: Nebel oder Wolke in Arbeitshöhe, Oberflächen nass" : "Taupunkt in der Arbeitszeit nicht erreicht"};
 }
 function renderOutlook(){
   if(!$("outlook")) return;

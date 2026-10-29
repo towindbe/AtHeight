@@ -17,7 +17,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-29v">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-29w">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tw-logo" viewBox="-6 -6 790 512"><g fill="currentColor" stroke="currentColor" stroke-linejoin="miter"><path stroke-width="3" d="M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z"/><path stroke-width="15" d="m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z"/></g></symbol></svg>
@@ -25,6 +25,13 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
   <div class="io-bar"><b>So funktioniert der Windbericht</b><button type="button" id="infoClose">✕ Schließen</button></div>
   <iframe id="infoFrame" title="Infoseite" src="about:blank"></iframe>
 </div>
+<!-- Navigation unten (nur am Handy): in Daumenreichweite, auch mit Handschuhen -->
+<nav class="bottom-nav needs-data" id="bottomNav" aria-label="Hauptnavigation">
+  <button type="button" data-go="sec-ueberblick" aria-current="page"><i data-ico="home"></i><span>Überblick</span></button>
+  <button type="button" data-go="chartCard"><i data-ico="wind"></i><span>Wind</span></button>
+  <button type="button" data-go="sec-ausblick"><i data-ico="week"></i><span>7 Tage</span></button>
+  <button type="button" data-go="sec-bericht"><i data-ico="report"></i><span>Bericht</span></button>
+</nav>
 <div class="sticky-bar" id="stickyBar" hidden>
   <div class="sb-in">
     <div class="sb-row">
@@ -49,11 +56,11 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       </div>
     </div>
     <div class="row">
-      <button id="favBtn" type="button" aria-expanded="false" aria-controls="favPanel"><span class="star">★</span> Anlagen</button>
-      <button id="settingsBtn" class="settings-btn" type="button" aria-expanded="false" aria-controls="settings" aria-label="Einstellungen"><span aria-hidden="true">⚙</span><span class="lbl"> Einstellungen</span> <span class="chev" aria-hidden="true"></span></button>
-      <button id="themeBtn" class="icon-btn" type="button" title="Helles Design (für draußen)" aria-label="Design wechseln: hell oder dunkel">☀</button>
-      <button id="infoBtn" class="icon-btn" type="button" title="So funktioniert der Windbericht" aria-label="Infoseite öffnen" aria-haspopup="dialog">?</button>
-      <button id="reloadBtn" class="icon-btn" type="button" title="Wetterdaten neu laden" aria-label="Wetterdaten neu laden">↻</button>
+      <button id="favBtn" type="button" aria-expanded="false" aria-controls="favPanel"><i class="star" data-ico="star"></i> Anlagen</button>
+      <button id="settingsBtn" class="settings-btn" type="button" aria-expanded="false" aria-controls="settings" aria-label="Einstellungen"><i data-ico="gear"></i><span class="lbl"> Einstellungen</span> <span class="chev" aria-hidden="true"></span></button>
+      <button id="themeBtn" class="icon-btn" type="button" title="Helles Design (für draußen)" aria-label="Design wechseln: hell oder dunkel"><i data-ico="sun"></i></button>
+      <button id="infoBtn" class="icon-btn" type="button" title="So funktioniert der Windbericht" aria-label="Infoseite öffnen" aria-haspopup="dialog"><i data-ico="help"></i></button>
+      <button id="reloadBtn" class="icon-btn" type="button" title="Wetterdaten neu laden" aria-label="Wetterdaten neu laden"><i data-ico="reload"></i></button>
     </div>
     <div class="fav-panel" id="favPanel" hidden>
       <div class="eyebrow">Gespeicherte Anlagen</div>
@@ -144,7 +151,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
   <div id="errorBox" class="error" hidden></div>
 
   <!-- Entscheidung -->
-  <section class="card">
+  <section class="card" id="sec-ueberblick">
     <div class="hero-top needs-data">
       <div class="seg seg-day" role="group" aria-label="Tag" id="dayTabs"></div>
       <span class="eyebrow" id="heroDay"></span>
@@ -154,13 +161,16 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <button class="primary" id="staleBtn" type="button">Jetzt neu laden</button>
     </div>
     <div class="hero">
-      <div class="lamp" id="lamp">…</div>
-      <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+      <div class="inst-top"><div class="lamp" id="lamp">…</div><span class="eyebrow needs-data">Arbeitsfenster</span></div>
+      <div class="inst-win needs-data"><b id="instWin">–</b><span id="instUnit"></span></div>
+      <div class="hero-text">
         <p class="headline" id="headline">Lade Wettermodelle…</p>
         <p class="muted" id="summary"></p>
+        <div class="inst-strip needs-data" id="instStrip" role="group" aria-label="Arbeitsstunden: Stunde wählen"></div>
+        <div class="inst-metrics needs-data" id="instMetrics"></div>
         <p class="rain-note" id="rainNote"></p>
         <p class="rain-note" id="dewNote"></p>
-        <div class="coat-bar needs-data" id="coatBar"><button type="button" id="coatBtn" aria-pressed="false" title="Für alle Tage an diesem Standort, bis zum Ausschalten (höchstens 7 Tage); Grenzwerte in den Einstellungen">🖌 Beschichten-Modus</button><button type="button" class="coat-gear" id="coatGear" title="Grenzen fürs Beschichten einstellen" aria-label="Grenzen fürs Beschichten einstellen">⚙</button><span id="coatInfo"></span></div>
+        <div class="coat-bar needs-data" id="coatBar"><button type="button" id="coatBtn" aria-pressed="false" title="Für alle Tage an diesem Standort, bis zum Ausschalten (höchstens 7 Tage); Grenzwerte in den Einstellungen"><i data-ico="brush"></i><span id="coatLbl">Beschichten-Modus</span></button><button type="button" class="coat-gear" id="coatGear" title="Grenzen fürs Beschichten einstellen" aria-label="Grenzen fürs Beschichten einstellen"><i data-ico="gear"></i></button><span id="coatInfo"></span></div>
         <p class="change-note" id="changeNote" hidden></p>
         <p class="decision-note">Entscheidungshilfe, keine Freigabe: Der Aufsichtführende entscheidet. Wind vor Ort messen.</p>
         <div class="loadbar" id="loadBar" hidden aria-live="polite"><div class="lb-track"><div class="lb-fill" id="loadFill"></div></div><span class="note" id="loadText"></span></div>
@@ -220,7 +230,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
         <div class="seg" role="group" aria-label="Darstellung">
           <button type="button" id="chartMaxBtn" aria-pressed="false" title="Windverlauf groß anzeigen">⤢ Vergrößern</button>
         </div>
-        <button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden">☾ Nacht ausblenden</button>
+        <button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden"><i data-ico="moon"></i>Nacht ausblenden</button>
       </div>
     </div>
     <div class="readout" id="roMain" hidden></div>
@@ -298,7 +308,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 
   <!-- Umschalter: Details für Fachleute (Richtung, Profil, Regen, Temperatur, Matrix, Tabellen, Modelle, Ausfallprotokoll) -->
   <div class="details-bar needs-data" id="detailsBar">
-    <button type="button" id="detailsBtn" aria-expanded="false">▾ Details für Fachleute einblenden</button>
+    <button type="button" id="detailsBtn" aria-expanded="false"><i data-ico="chevron"></i><span id="detailsLbl">Details für Fachleute einblenden</span></button>
     <span class="note">Windrichtung, Höhenprofil, Regen, Temperatur, Modell-Matrix, Stunden im Detail, Modelle, Ausfallprotokoll</span>
   </div>
 
@@ -311,7 +321,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <p class="note help" id="profileNote">Wind vom Boden bis über die Blattspitze zur gewählten Stunde.</p>
     </section>
     <section class="card" id="sec-regen">
-      <div class="card-head"><h2>Regen &amp; Gewitter</h2><div class="row"><span class="eyebrow" id="rainDay"></span><button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden">☾ Nacht ausblenden</button></div></div>
+      <div class="card-head"><h2>Regen &amp; Gewitter</h2><div class="row"><span class="eyebrow" id="rainDay"></span><button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden"><i data-ico="moon"></i>Nacht ausblenden</button></div></div>
       <div class="readout" id="roRain" hidden></div>
       <div class="chart-sm"><canvas id="rain" aria-label="Niederschlag und Gewitterneigung"></canvas></div>
       <p class="legend"><span><i class="lg-rain"></i>Regen mm/h (kräftiger = mehr Modelle einig)</span><span><i class="lg-cape"></i>Gewitterenergie CAPE</span></p>
@@ -320,7 +330,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 
   <!-- Temperatur -->
   <section class="card needs-data expert" id="sec-temp">
-    <div class="card-head"><h2 id="tempTitle">Temperatur</h2><div class="row"><span class="eyebrow" id="tempDay"></span><button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden">☾ Nacht ausblenden</button></div></div>
+    <div class="card-head"><h2 id="tempTitle">Temperatur</h2><div class="row"><span class="eyebrow" id="tempDay"></span><button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden"><i data-ico="moon"></i>Nacht ausblenden</button></div></div>
     <div class="readout" id="roTemp" hidden></div>
     <div class="chart-sm"><canvas id="temp" aria-label="Temperatur und gefühlte Temperatur in Arbeitshöhe, Luftfeuchte"></canvas></div>
     <p class="legend legend-btns" id="tempLegend" role="group" aria-label="Linien ein- oder ausblenden"><span><i class="lg-temp"></i>Temperatur in Arbeitshöhe</span><button type="button" data-s="t_feel" aria-pressed="true"><i class="lg-feel"></i>Gefühlt mit Wind</button><button type="button" data-s="t_dew" aria-pressed="true"><i class="lg-dew"></i>Taupunkt (2 m)</button><button type="button" data-s="t_rh" aria-pressed="true"><i class="lg-rh"></i>Luftfeuchte % (2 m, rechte Achse)</button></p>
@@ -425,25 +435,25 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 </div>
 
 <!-- Skripte teilen sich den globalen Gültigkeitsbereich; Reihenfolge beachten. Bei Änderungen ?v= erhöhen. -->
-<script src="js/konfiguration.js?v=2026-10-29v"></script>
-<script src="js/hilfen.js?v=2026-10-29v"></script>
-<script src="js/physik.js?v=2026-10-29v"></script>
-<script src="js/daten.js?v=2026-10-29v"></script>
-<script src="js/offline.js?v=2026-10-29v"></script>
-<script src="js/tageslicht.js?v=2026-10-29v"></script>
-<script src="js/bewertung.js?v=2026-10-29v"></script>
-<script src="js/anzeige.js?v=2026-10-29v"></script>
-<script src="js/leiste.js?v=2026-10-29v"></script>
-<script src="js/diagramme.js?v=2026-10-29v"></script>
-<script src="js/tabellen.js?v=2026-10-29v"></script>
-<script src="js/modellvergleich.js?v=2026-10-29v"></script>
-<script src="js/ausblick.js?v=2026-10-29v"></script>
-<script src="js/karte.js?v=2026-10-29v"></script>
-<script src="js/radar.js?v=2026-10-29v"></script>
-<script src="js/bericht.js?v=2026-10-29v"></script>
-<script src="js/ausfall.js?v=2026-10-29v"></script>
-<script src="js/anlagen.js?v=2026-10-29v"></script>
-<script src="js/bedienung.js?v=2026-10-29v"></script>
-<script src="js/start.js?v=2026-10-29v"></script>
+<script src="js/konfiguration.js?v=2026-10-29w"></script>
+<script src="js/hilfen.js?v=2026-10-29w"></script>
+<script src="js/physik.js?v=2026-10-29w"></script>
+<script src="js/daten.js?v=2026-10-29w"></script>
+<script src="js/offline.js?v=2026-10-29w"></script>
+<script src="js/tageslicht.js?v=2026-10-29w"></script>
+<script src="js/bewertung.js?v=2026-10-29w"></script>
+<script src="js/anzeige.js?v=2026-10-29w"></script>
+<script src="js/leiste.js?v=2026-10-29w"></script>
+<script src="js/diagramme.js?v=2026-10-29w"></script>
+<script src="js/tabellen.js?v=2026-10-29w"></script>
+<script src="js/modellvergleich.js?v=2026-10-29w"></script>
+<script src="js/ausblick.js?v=2026-10-29w"></script>
+<script src="js/karte.js?v=2026-10-29w"></script>
+<script src="js/radar.js?v=2026-10-29w"></script>
+<script src="js/bericht.js?v=2026-10-29w"></script>
+<script src="js/ausfall.js?v=2026-10-29w"></script>
+<script src="js/anlagen.js?v=2026-10-29w"></script>
+<script src="js/bedienung.js?v=2026-10-29w"></script>
+<script src="js/start.js?v=2026-10-29w"></script>
 </body>
 </html>
