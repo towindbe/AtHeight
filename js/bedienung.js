@@ -24,6 +24,7 @@ $("saveBtn").onclick = () => {
     work: $("s_work").value.trim()==="" ? null : clamp(Math.round(num("s_work",0)),10,300), access:$("s_access").value,
     wind:windField("s_wind",site.wind), gust:windField("s_gust",site.gust), nightWind:windField("s_nwind",nightWind()), nightGust:windField("s_ngust",nightGust()), minTemp:clamp(Math.round(num("s_mintemp",minTemp())),-50,20), from:clamp(Math.round(num("s_from",site.from)),0,23), to:clamp(Math.round(num("s_to",site.to)),0,23)};
   site.windkraft = $("s_windkraft").checked;
+  site.coat = $("s_coat").checked; site.coatRh = clamp(Math.round(num("s_coatrh",coatRh())),30,100); site.coatDew = clamp(num("s_coatdew",coatDew()),0,10);
   if(!site.windkraft){   // ohne Windenergieanlage: Arbeitshöhe ist die Bezugshöhe, kein Rotor, kein Zugang von der Gondel
     const w = clamp(site.work ?? prev.work ?? prev.hub, 10, 300);
     site.work = w; site.hub = w; site.rotor = 0; if(site.access === "nacelle") site.access = "ground";
@@ -39,6 +40,7 @@ $("saveBtn").onclick = () => {
   load();
 };
 $("s_windkraft").onchange = applyEinsatzUI;
+$("s_coat").onchange = showCoat;
 $("gpsBtn").onclick = () => {
   if(!navigator.geolocation){ $("gpsBtn").textContent = "GPS nicht verfügbar"; return; }
   navigator.geolocation.getCurrentPosition(p => { if(marker){ toggleSettings(false); pointToMap(); setPos(L.latLng(p.coords.latitude, p.coords.longitude)); } else { $("s_lat").value=p.coords.latitude.toFixed(4); $("s_lon").value=p.coords.longitude.toFixed(4);} if(map) map.setView([p.coords.latitude,p.coords.longitude],15); },

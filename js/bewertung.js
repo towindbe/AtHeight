@@ -17,12 +17,15 @@ function computeHours(results, times){
       t2:median(pts.map(x=>x.s.t2).filter(v=>v!=null)),
       tW:median(pts.map(x=>x.s.tW).filter(v=>v!=null)), app:median(pts.map(x=>x.s.app).filter(v=>v!=null)),
       rh:median(pts.map(x=>x.s.rh).filter(v=>v!=null)), cc:median(pts.map(x=>x.s.cc).filter(v=>v!=null)),   // Feuchte und Bewölkung: nur Anzeige
+      td:median(pts.map(x=>x.s.td).filter(v=>v!=null)),
       uv:extras.uv?.get(t) ?? null,
       storms:pts.filter(x => x.s.wc!=null && x.s.wc>=95).length,
       over:pts.filter(x => x.s.v > site.wind || (x.s.g!=null && x.s.g > site.gust)).length,
       dir:dirMean(pts)};
     h.dark = isDark(t);
     h.chill = windChill(h.tW, h.med);
+    // Abstand Temperatur in Arbeitshöhe zum Taupunkt (2 m). Oben ist der Taupunkt etwas niedriger, der Abstand also eher größer: vorsichtige Schätzung
+    h.dew = h.tW!=null && h.td!=null ? h.tW - h.td : null;
     const a = localMs(t);
     h.warns = allWarnings().filter(w => w.start < a + 36e5 && w.end > a);
     const ens = (extras.ens||[]).filter(e => e.ok && e.p.has(t)).map(e => e.p.get(t));
@@ -73,6 +76,11 @@ function rate(h){
   else if(h.chill!=null && h.chill <= CHILL_INFO) add("info", `Gefühlt ${fmt(h.chill,0)} °C in ${workH()} m: Kälteschutz`);
   if(h.app!=null && h.app >= HEAT_INFO) add("info", `Hitze: gefühlt ${fmt(h.app,0)} °C am Boden`);
   if(h.uv!=null && h.uv >= UV_INFO) add("info", `UV-Index ${fmt(h.uv,0)}: Sonnenschutz`);
+  if(h.dew!=null && h.dew <= DEW_INFO) add("info", `Taupunkt ${h.dew <= 0 ? "erreicht" : "fast erreicht"} in ${workH()} m: Kondenswasser, Stahl und Seile nass/glatt`);
+  if(site.coat){
+    if(h.rh!=null && h.rh > coatRh()) add("info", `Beschichten: Luftfeuchte ${Math.round(h.rh)} % über ${coatRh()} %`);
+    if(h.dew!=null && h.dew < coatDew()) add("info", `Beschichten: nur ${fmt(Math.max(h.dew,0),1)} K über Taupunkt (mind. ${fmt(coatDew(), coatDew()%1 ? 1 : 0)} K)`);
+  }
   const lamp = why.some(w => w.l==="stop") ? "stop" : why.some(w => w.l==="warn") ? "warn" : "go";
   return {lamp, why};
 }

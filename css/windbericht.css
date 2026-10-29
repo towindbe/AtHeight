@@ -397,6 +397,7 @@ body.info-open{overflow:hidden}
 .legend i.lg-glim{border-top:2px dotted var(--stop)}
 .legend i.lg-temp{border-top:3px solid var(--accent)}
 .legend i.lg-feel{border-top:2px dashed var(--band-line)}
+.legend i.lg-dew{border-top:2px dotted #3a9a9a}
 .legend i.lg-rh{border-top:2px solid #3a9a9a;background:rgba(58,154,154,.12)}
 .legend i.lg-rain{width:10px;height:10px;border:0;border-radius:2px;background:var(--band-line)}
 .legend i.lg-cape{border-top:2px solid var(--warn)}

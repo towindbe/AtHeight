@@ -199,7 +199,7 @@ function renderTemp(){
   if(typeof Chart==="undefined") return;
   const idxs = dayIdx(), labels = idxs.map(i => hh(state.times[i])), H = idxs.map(i=>state.hours[i]);
   const r1 = v => v==null ? null : +v.toFixed(1);
-  const vals = H.flatMap(h => [h.tW, h.chill]).filter(v => v!=null), lo = vals.length ? Math.min(...vals) : 0;
+  const vals = H.flatMap(h => [h.tW, h.chill, h.td]).filter(v => v!=null), lo = vals.length ? Math.min(...vals) : 0;
   const opt = chartBase("°C"); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
   opt.scales.y.beginAtZero = false;
   // Luftfeuchte auf eigener Achse rechts (0–100 %), nur Anzeige
@@ -208,6 +208,7 @@ function renderTemp(){
   const ds = [
     {label:"Temperatur "+workH()+" m", data:H.map(h => r1(h.tW)), borderColor:css("--accent"), borderWidth:2.5, pointRadius:0, tension:.3},
     {label:"Gefühlt", data:H.map(h => r1(h.chill)), borderColor:css("--band-line"), borderWidth:2, borderDash:[5,4], pointRadius:0, tension:.3},
+    {label:"Taupunkt", data:H.map(h => r1(h.td)), borderColor:"#3a9a9a", borderWidth:2, borderDash:[2,3], pointRadius:0, tension:.3},
     {label:"Luftfeuchte", yAxisID:"y2", data:H.map(h => h.rh==null ? null : Math.round(h.rh)), borderColor:"#3a9a9a", backgroundColor:"rgba(58,154,154,.12)", fill:"origin", borderWidth:1.5, pointRadius:0, tension:.3}
   ];
   // Bezugslinien nur, wenn sie in die Nähe kommen: 0 °C (Frost), −10 °C (Kälteschutz)

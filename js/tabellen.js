@@ -29,7 +29,7 @@ function renderMatrix(){
   const rtxt = (v, storm) => v==null ? "·" : (v < 0.05 ? "0" : fmt(v,1)) + (storm ? "⚡" : "");
   const u = usableModels().sort((a,b)=> (b.m.hi-a.m.hi));
   const head = `<tr><th></th>${idxs.map(i=>`<th>${hh(state.times[i])}</th>`).join("")}</tr>`;
-  const rhTd = (v, i, tip, b) => `<td class="${rhCls(v)}" data-i="${i}" title="${tip}"${b ? ' style="font-weight:700"' : ""}>${v==null ? "·" : Math.round(v)}</td>`;
+  const rhTd = (v, i, tip, b) => `<td class="${rhCls(v)}${site.coat && v!=null && v > coatRh() ? " r-w" : ""}" data-i="${i}" title="${tip}"${b ? ' style="font-weight:700"' : ""}>${v==null ? "·" : Math.round(v)}</td>`;
   const ccTd = (v, i, tip) => { const [sym, txt] = cloudSym(v, isDark(state.times[i]));
     return `<td class="cl" data-i="${i}" title="${tip}: ${txt}${v==null ? "" : " (" + Math.round(v) + " %)"}" style="--cc:${v==null ? 0 : (v/100).toFixed(2)}">${sym}</td>`; };
   const cellOf = (s, i, r) => {
@@ -52,7 +52,7 @@ function renderMatrix(){
   $("mxNote").innerHTML = mxMode === "boe" ? `Böe je Modell und Stunde in <span class="wu">${WU()}</span>. Gelb ab 75 % des Grenzwerts für die Böe, rot darüber. Zeigt, ob nur ein Ausreißer warnt oder fast alle.`
     : `Wind je Modell und Stunde in <span class="wu">${WU()}</span>. Gelb ab 75 % des Grenzwerts, rot über dem Grenzwert. Mit der Maus über ein Feld fahren zeigt auch die Böe. Zeigt, ob nur ein Ausreißer warnt oder fast alle.`;
   $("mxLegend").hidden = !(rain || feu || wol);
-  $("mxLegend").textContent = feu ? `Relative Luftfeuchte in % (2 m über Boden). Blau ab 60 %, kräftiger ab ${RH_MID} %, dunkel ab ${RH_HI} %: Nebel, Tau oder nasse Oberflächen wahrscheinlich. Nur Anzeige, die Ampel ändert sich dadurch nicht.`
+  $("mxLegend").textContent = feu ? `Relative Luftfeuchte in % (2 m über Boden). Blau ab 60 %, kräftiger ab ${RH_MID} %, dunkel ab ${RH_HI} %: Nebel, Tau oder nasse Oberflächen wahrscheinlich.${site.coat ? ` Gelber Rand: über ${coatRh()} % (Grenze fürs Beschichten).` : ""} Nur Anzeige, die Ampel ändert sich dadurch nicht.`
     : wol ? `Bewölkung gesamt: ☀️ klar · 🌤️ heiter · ⛅ wolkig · 🌥️ stark bewölkt · ☁️ bedeckt, nachts 🌙 bei klarem Himmel. Je kräftiger das Grau hinter dem Symbol, desto dichter die Wolken. Mit der Maus über ein Feld fahren zeigt den Wert in %. Nur Anzeige.`
     : rain ? `Regen in mm/h. Hellblau: leicht (bis ${fmt(RAIN_LIGHT,1)}), mittelblau: mäßig (bis ${fmt(RAIN_MOD,1)}), dunkelblau: stark. Gelber Rand: ab ${fmt(RAIN_WARN,1)} mm/h (Prüfen in der Ampel). ⚡ Gewittersignal. Nur Anzeige, die Ampel ändert sich dadurch nicht.` : "";
   document.querySelectorAll("#mxSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === mxMode)));

@@ -180,7 +180,8 @@ async function load(){
       const vR = rigWind(lv);
       return {v:hw.v, ext:hw.ext, g:gustAt(h,i,hw.v), vR, gR:gustAt(h,i,vR), dir:dirAt(lv, workH()), lv,
         rain:h.precipitation?.[i], cape:h.cape?.[i], wc:h.weather_code?.[i], t2:h.temperature_2m?.[i],
-        tW:tempAt(h, i, workH()), app:h.apparent_temperature?.[i], rh:h.relative_humidity_2m?.[i], cc:h.cloud_cover?.[i]};
+        tW:tempAt(h, i, workH()), app:h.apparent_temperature?.[i], rh:h.relative_humidity_2m?.[i], cc:h.cloud_cover?.[i],
+        td:dewPoint(h.temperature_2m?.[i], h.relative_humidity_2m?.[i])};
     });
     const n = series.filter(Boolean).length;
     if(n===0) return {...r, status:"outside", series};

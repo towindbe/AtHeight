@@ -66,6 +66,12 @@ function tempAt(h, i, z){
   const [zt, vt] = z < lv[0][0] ? lv[0] : lv[lv.length-1];
   return vt - 0.0065*(z - zt);
 }
+/* Taupunkt aus Temperatur und relativer Feuchte (Magnus-Formel, Konstanten nach Sonntag 1990) */
+function dewPoint(t, rh){
+  if(t==null || rh==null || rh <= 0) return null;
+  const g = Math.log(Math.min(rh,100)/100) + 17.62*t/(243.12+t);
+  return 243.12*g/(17.62-g);
+}
 /* Gefühlte Temperatur (Windchill, Formel von Environment Canada / NWS), Wind in m/s */
 function windChill(t, v){
   if(t==null || v==null) return null;

@@ -26,6 +26,9 @@ const VARS = ["wind_speed_10m","wind_speed_80m","wind_speed_120m","wind_speed_18
   "temperature_80m","temperature_120m","temperature_180m","apparent_temperature",
   "relative_humidity_2m","cloud_cover"];
 const CHILL_INFO = -10, HEAT_INFO = 32, UV_INFO = 6;
+const DEW_INFO = 1;   // Temperatur in Arbeitshöhe höchstens so viele K über dem Taupunkt: Hinweis Kondenswasser
+// Beschichten / Laminieren (je Anlage einschaltbar): max. Luftfeuchte und Mindestabstand zum Taupunkt (ISO 8502-4: 3 K)
+const coatRh = () => site.coatRh ?? 80, coatDew = () => site.coatDew ?? 3;
 const minTemp = () => site.minTemp ?? 0;   // Mindesttemperatur (Luft in Arbeitshöhe), darunter Stop
 const ENS_WARN = 0.3, ENS_INFO = 0.1;   // Anteil der Ensemble-Läufe über Grenze
 const ENSEMBLES = [{id:"icon_d2_eps", name:"ICON-D2-EPS"}, {id:"ecmwf_ifs025_ensemble", name:"ECMWF-ENS"}];
