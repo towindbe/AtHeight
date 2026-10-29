@@ -16,13 +16,7 @@
   --f-mono:"Barlow","Segoe UI",Roboto,Arial,sans-serif; /* Zahlen ebenfalls Barlow, mit gleich breiten Ziffern (tnum) */
   color-scheme:dark;
 }
-/* Helles Design: besser lesbar draußen in der Sonne. Automatisch nach Geräte-Einstellung oder per Schalter (data-theme) */
-@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
-  --bg:#eef1f4; --surface:#ffffff; --raised:#f2f4f7; --fg:#0f171f; --muted:#4a5866; --line:#d3dae1;
-  --accent:#d9561a; --accent-ink:#ffffff; --band:rgba(40,100,180,.16); --band-line:#2a68ad; --gust:#7346d0;
-  --go:#178a4b; --go-bg:#dcf2e4; --warn:#b97a06; --warn-bg:#fbefcf; --stop:#cc2a30; --stop-bg:#fbe1e1; --none:#8f9ba7;
-  color-scheme:light;
-} }
+/* Helles Design (per Schalter): besser lesbar draußen in der Sonne. Standard ist auf allen Geräten dunkel */
 :root[data-theme="light"]{
   --bg:#eef1f4; --surface:#ffffff; --raised:#f2f4f7; --fg:#0f171f; --muted:#4a5866; --line:#d3dae1;
   --accent:#d9561a; --accent-ink:#ffffff; --band:rgba(40,100,180,.16); --band-line:#2a68ad; --gust:#7346d0;

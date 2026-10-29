@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0d1217">
-<script>/* Design (hell/dunkel/automatisch) vor dem Zeichnen setzen, damit nichts aufblitzt */
-try{ const t = localStorage.getItem("wb_theme"); if(t==="light" || t==="dark") document.documentElement.dataset.theme = t; }catch(e){}</script>
+<script>/* Hell nur, wenn so gewählt (Standard dunkel); vor dem Zeichnen setzen, damit nichts aufblitzt */
+try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
 
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -17,7 +17,7 @@ try{ const t = localStorage.getItem("wb_theme"); if(t==="light" || t==="dark") d
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-29u">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-29v">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tw-logo" viewBox="-6 -6 790 512"><g fill="currentColor" stroke="currentColor" stroke-linejoin="miter"><path stroke-width="3" d="M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z"/><path stroke-width="15" d="m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z"/></g></symbol></svg>
@@ -51,7 +51,7 @@ try{ const t = localStorage.getItem("wb_theme"); if(t==="light" || t==="dark") d
     <div class="row">
       <button id="favBtn" type="button" aria-expanded="false" aria-controls="favPanel"><span class="star">★</span> Anlagen</button>
       <button id="settingsBtn" class="settings-btn" type="button" aria-expanded="false" aria-controls="settings" aria-label="Einstellungen"><span aria-hidden="true">⚙</span><span class="lbl"> Einstellungen</span> <span class="chev" aria-hidden="true"></span></button>
-      <button id="themeBtn" class="icon-btn" type="button" title="Design: automatisch" aria-label="Design wechseln: automatisch, hell, dunkel">◐</button>
+      <button id="themeBtn" class="icon-btn" type="button" title="Helles Design (für draußen)" aria-label="Design wechseln: hell oder dunkel">☀</button>
       <button id="infoBtn" class="icon-btn" type="button" title="So funktioniert der Windbericht" aria-label="Infoseite öffnen" aria-haspopup="dialog">?</button>
       <button id="reloadBtn" class="icon-btn" type="button" title="Wetterdaten neu laden" aria-label="Wetterdaten neu laden">↻</button>
     </div>
@@ -425,25 +425,25 @@ try{ const t = localStorage.getItem("wb_theme"); if(t==="light" || t==="dark") d
 </div>
 
 <!-- Skripte teilen sich den globalen Gültigkeitsbereich; Reihenfolge beachten. Bei Änderungen ?v= erhöhen. -->
-<script src="js/konfiguration.js?v=2026-10-29u"></script>
-<script src="js/hilfen.js?v=2026-10-29u"></script>
-<script src="js/physik.js?v=2026-10-29u"></script>
-<script src="js/daten.js?v=2026-10-29u"></script>
-<script src="js/offline.js?v=2026-10-29u"></script>
-<script src="js/tageslicht.js?v=2026-10-29u"></script>
-<script src="js/bewertung.js?v=2026-10-29u"></script>
-<script src="js/anzeige.js?v=2026-10-29u"></script>
-<script src="js/leiste.js?v=2026-10-29u"></script>
-<script src="js/diagramme.js?v=2026-10-29u"></script>
-<script src="js/tabellen.js?v=2026-10-29u"></script>
-<script src="js/modellvergleich.js?v=2026-10-29u"></script>
-<script src="js/ausblick.js?v=2026-10-29u"></script>
-<script src="js/karte.js?v=2026-10-29u"></script>
-<script src="js/radar.js?v=2026-10-29u"></script>
-<script src="js/bericht.js?v=2026-10-29u"></script>
-<script src="js/ausfall.js?v=2026-10-29u"></script>
-<script src="js/anlagen.js?v=2026-10-29u"></script>
-<script src="js/bedienung.js?v=2026-10-29u"></script>
-<script src="js/start.js?v=2026-10-29u"></script>
+<script src="js/konfiguration.js?v=2026-10-29v"></script>
+<script src="js/hilfen.js?v=2026-10-29v"></script>
+<script src="js/physik.js?v=2026-10-29v"></script>
+<script src="js/daten.js?v=2026-10-29v"></script>
+<script src="js/offline.js?v=2026-10-29v"></script>
+<script src="js/tageslicht.js?v=2026-10-29v"></script>
+<script src="js/bewertung.js?v=2026-10-29v"></script>
+<script src="js/anzeige.js?v=2026-10-29v"></script>
+<script src="js/leiste.js?v=2026-10-29v"></script>
+<script src="js/diagramme.js?v=2026-10-29v"></script>
+<script src="js/tabellen.js?v=2026-10-29v"></script>
+<script src="js/modellvergleich.js?v=2026-10-29v"></script>
+<script src="js/ausblick.js?v=2026-10-29v"></script>
+<script src="js/karte.js?v=2026-10-29v"></script>
+<script src="js/radar.js?v=2026-10-29v"></script>
+<script src="js/bericht.js?v=2026-10-29v"></script>
+<script src="js/ausfall.js?v=2026-10-29v"></script>
+<script src="js/anlagen.js?v=2026-10-29v"></script>
+<script src="js/bedienung.js?v=2026-10-29v"></script>
+<script src="js/start.js?v=2026-10-29v"></script>
 </body>
 </html>

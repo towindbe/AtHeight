@@ -66,23 +66,20 @@ document.querySelectorAll(".card").forEach(card => {
   if(h.parentElement === card){ const head = document.createElement("div"); head.className = "card-head"; h.before(head); head.appendChild(h); }
   const wrap = document.createElement("span"); wrap.className = "h-wrap"; h.before(wrap); wrap.append(h, b);
 });
-/* Design: automatisch (nach Gerät) → hell → dunkel. Diagramme lesen ihre Farben beim Zeichnen, deshalb neu zeichnen */
-const THEMES = [["auto","◐","automatisch"], ["light","☀","hell"], ["dark","☾","dunkel"]];
+/* Design: Standard dunkel auf allen Geräten, per Knopf hell (für draußen). Diagramme lesen ihre Farben beim Zeichnen, deshalb neu zeichnen */
 function applyTheme(t){
-  if(t==="auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t;
-  const [, icon, name] = THEMES.find(x => x[0]===t);
-  $("themeBtn").textContent = icon; $("themeBtn").title = "Design: " + name;
-  const light = t==="light" || (t==="auto" && matchMedia("(prefers-color-scheme: light)").matches);
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", light ? "#eef1f4" : "#0d1217");
+  if(t==="light") document.documentElement.dataset.theme = "light"; else delete document.documentElement.dataset.theme;
+  $("themeBtn").textContent = t==="light" ? "☾" : "☀";
+  $("themeBtn").title = t==="light" ? "Dunkles Design" : "Helles Design (für draußen)";
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", t==="light" ? "#eef1f4" : "#0d1217");
 }
-let theme = (() => { try{ return localStorage.getItem("wb_theme") || "auto"; }catch(e){ return "auto"; } })();
+let theme = (() => { try{ return localStorage.getItem("wb_theme")==="light" ? "light" : "dark"; }catch(e){ return "dark"; } })();
 applyTheme(theme);
 $("themeBtn").onclick = () => {
-  theme = THEMES[(THEMES.findIndex(x => x[0]===theme) + 1) % THEMES.length][0];
+  theme = theme==="light" ? "dark" : "light";
   try{ localStorage.setItem("wb_theme", theme); }catch(e){}
   applyTheme(theme); if(state.hours.length) render();
 };
-matchMedia("(prefers-color-scheme: light)").addEventListener?.("change", () => { if(theme==="auto"){ applyTheme(theme); if(state.hours.length) render(); } });
 // Zahnrad neben dem Beschichten-Modus: Einstellungen öffnen, direkt zu den Grenzen springen und sie kurz hervorheben
 $("coatGear").onclick = () => {
   fillSettings(); toggleSettings(true);
