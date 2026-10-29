@@ -19,7 +19,7 @@ function applyEinsatzUI(){
   if(!on && $("s_access").value === "nacelle") $("s_access").value = "ground";
   $("s_work").placeholder = on ? "= Nabe" : "z. B. 40";
 }
-function showCoat(){ $("coatGrid").hidden = $("coatNote").hidden = !$("s_coat").checked; }
+function showCoat(){ $("coatGrid").hidden = $("coatNote").hidden = $("coatStopLbl").hidden = !$("s_coat").checked; }
 function fillSettings(){
   $("s_name").value = site.name; $("s_lat").value = site.lat; $("s_lon").value = site.lon;
   $("s_work").value = site.work ?? ""; $("s_access").value = accessMode();
@@ -27,7 +27,7 @@ function fillSettings(){
   $("s_windkraft").checked = isWind(); applyEinsatzUI();
   setWindField("s_wind", site.wind); setWindField("s_gust", site.gust); setWindField("s_nwind", nightWind()); setWindField("s_ngust", nightGust());
   $("s_from").value = site.from; $("s_to").value = site.to; $("s_mintemp").value = minTemp();
-  $("s_coat").checked = !!site.coat; $("s_coatrh").value = coatRh(); $("s_coatdew").value = coatDew(); showCoat();
+  $("s_coat").checked = !!site.coat; $("s_coatrh").value = coatRh(); $("s_coatdew").value = coatDew(); $("s_coatstop").checked = !!site.coatStop; showCoat();
   $("siteTitle").textContent = site.name;
   $("siteMeta").innerHTML = `<span>Arbeit ${zoneTxt()}</span><span>Grenze ${fw(site.wind)} · Böe ${fwu(site.gust)}</span><span>${site.from}–${site.to} Uhr</span>`;
   // Hinweis, bis die Werte dieser Anlage einmal bestätigt wurden

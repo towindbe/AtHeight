@@ -76,10 +76,12 @@ function rate(h){
   else if(h.chill!=null && h.chill <= CHILL_INFO) add("info", `Gefühlt ${fmt(h.chill,0)} °C in ${workH()} m: Kälteschutz`);
   if(h.app!=null && h.app >= HEAT_INFO) add("info", `Hitze: gefühlt ${fmt(h.app,0)} °C am Boden`);
   if(h.uv!=null && h.uv >= UV_INFO) add("info", `UV-Index ${fmt(h.uv,0)}: Sonnenschutz`);
-  if(h.dew!=null && h.dew <= DEW_INFO) add("info", `Taupunkt ${h.dew <= 0 ? "erreicht" : "fast erreicht"} in ${workH()} m: Kondenswasser, Stahl und Seile nass/glatt`);
-  if(site.coat){
-    if(h.rh!=null && h.rh > coatRh()) add("info", `Beschichten: Luftfeuchte ${Math.round(h.rh)} % über ${coatRh()} %`);
-    if(h.dew!=null && h.dew < coatDew()) add("info", `Beschichten: nur ${fmt(Math.max(h.dew,0),1)} K über Taupunkt (mind. ${fmt(coatDew(), coatDew()%1 ? 1 : 0)} K)`);
+  if(h.dew!=null && h.dew <= 0) add("info", `Taupunkt erreicht in ${workH()} m: Nebel oder Wolke wahrscheinlich, Stahl und Seile nass/glatt`);
+  else if(h.dew!=null && h.dew <= DEW_INFO) add("info", `Taupunkt fast erreicht in ${workH()} m (${fmt(h.dew,1)} K): Kondenswasser möglich`);
+  if(site.coat){   // Beschichten: Hinweis, auf Wunsch (Häkchen in den Einstellungen) Stop
+    const cl = site.coatStop ? "stop" : "info";
+    if(h.rh!=null && h.rh > coatRh()) add(cl, `Beschichten: Luftfeuchte ${Math.round(h.rh)} % über ${coatRh()} %`);
+    if(h.dew!=null && h.dew < coatDew()) add(cl, `Beschichten: ${h.dew <= 0 ? "Taupunkt erreicht" : `nur ${fmt(h.dew,1)} K über Taupunkt`} (mind. ${fmt(coatDew(), coatDew()%1 ? 1 : 0)} K)`);
   }
   const lamp = why.some(w => w.l==="stop") ? "stop" : why.some(w => w.l==="warn") ? "warn" : "go";
   return {lamp, why};
