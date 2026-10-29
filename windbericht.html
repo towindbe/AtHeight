@@ -298,14 +298,14 @@
   <section class="card needs-data" id="sec-temp">
     <div class="card-head"><h2 id="tempTitle">Temperatur</h2><span class="eyebrow" id="tempDay"></span></div>
     <div class="readout" id="roTemp" hidden></div>
-    <div class="chart-sm"><canvas id="temp" aria-label="Temperatur und gefühlte Temperatur in Arbeitshöhe"></canvas></div>
-    <p class="legend"><span><i class="lg-temp"></i>Temperatur in Arbeitshöhe</span><span><i class="lg-feel"></i>Gefühlt mit Wind</span></p>
+    <div class="chart-sm"><canvas id="temp" aria-label="Temperatur und gefühlte Temperatur in Arbeitshöhe, Luftfeuchte"></canvas></div>
+    <p class="legend"><span><i class="lg-temp"></i>Temperatur in Arbeitshöhe</span><span><i class="lg-feel"></i>Gefühlt mit Wind</span><span><i class="lg-rh"></i>Luftfeuchte % (2 m, rechte Achse)</span></p>
   </section>
 
   <!-- Modell-Matrix -->
   <section class="card needs-data">
     <div class="card-head"><h2>Modell-Matrix</h2><span class="eyebrow" id="mxDay"></span></div>
-    <div class="seg" id="mxSeg" role="group" aria-label="Größe in der Matrix"><button type="button" data-m="wind" aria-pressed="true">Wind</button><button type="button" data-m="boe" aria-pressed="false">Böe</button><button type="button" data-m="regen" aria-pressed="false">Regen</button></div>
+    <div class="seg" id="mxSeg" role="group" aria-label="Größe in der Matrix"><button type="button" data-m="wind" aria-pressed="true">Wind</button><button type="button" data-m="boe" aria-pressed="false">Böe</button><button type="button" data-m="regen" aria-pressed="false">Regen</button><button type="button" data-m="feuchte" aria-pressed="false">Feuchte</button><button type="button" data-m="wolken" aria-pressed="false">Wolken</button></div>
     <div class="mx" id="matrix"></div>
     <p class="note" id="mxLegend" hidden></p>
     <p class="note" id="mxNote">Wind je Modell und Stunde in <span class="wu">m/s</span>. Gelb ab 75 % des Grenzwerts, rot über dem Grenzwert. Mit der Maus über ein Feld fahren zeigt auch die Böe. Zeigt, ob nur ein Ausreißer warnt oder fast alle.</p>

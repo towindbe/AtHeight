@@ -397,6 +397,7 @@ body.info-open{overflow:hidden}
 .legend i.lg-glim{border-top:2px dotted var(--stop)}
 .legend i.lg-temp{border-top:3px solid var(--accent)}
 .legend i.lg-feel{border-top:2px dashed var(--band-line)}
+.legend i.lg-rh{border-top:2px solid #3a9a9a;background:rgba(58,154,154,.12)}
 .legend i.lg-rain{width:10px;height:10px;border:0;border-radius:2px;background:var(--band-line)}
 .legend i.lg-cape{border-top:2px solid var(--warn)}
 .legend i.sw{width:12px;height:12px;border:0;border-radius:3px}
@@ -491,6 +492,9 @@ body.unconfirmed #timeline,body.unconfirmed #sbStrip{filter:grayscale(1);opacity
 #mxSeg{align-self:flex-start}
 .mx td.r-0{background:var(--raised);color:var(--muted)}
 .mx td.r-1{background:rgba(127,176,230,.28)} .mx td.r-2{background:rgba(127,176,230,.55)} .mx td.r-3{background:#4a86c8;color:#fff}
+.mx td.f-0{background:var(--raised);color:var(--muted)}
+.mx td.f-1{background:rgba(95,190,190,.22)} .mx td.f-2{background:rgba(95,190,190,.5)} .mx td.f-3{background:#3a9a9a;color:#fff}
+.mx td.cl{background:rgba(128,138,150,calc(var(--cc) * .55));font-size:15px;line-height:1}
 .mx td.r-w{border:1.5px solid var(--warn)}
 
 /* Hinweis: Standort am Rand der Modellzelle */

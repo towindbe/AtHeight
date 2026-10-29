@@ -23,7 +23,8 @@ const LEVELS = [10,80,120,180];
 const VARS = ["wind_speed_10m","wind_speed_80m","wind_speed_120m","wind_speed_180m",
   "wind_direction_10m","wind_direction_80m","wind_direction_120m","wind_direction_180m",
   "wind_gusts_10m","precipitation","cape","weather_code","temperature_2m",
-  "temperature_80m","temperature_120m","temperature_180m","apparent_temperature"];
+  "temperature_80m","temperature_120m","temperature_180m","apparent_temperature",
+  "relative_humidity_2m","cloud_cover"];
 const CHILL_INFO = -10, HEAT_INFO = 32, UV_INFO = 6;
 const minTemp = () => site.minTemp ?? 0;   // Mindesttemperatur (Luft in Arbeitshöhe), darunter Stop
 const ENS_WARN = 0.3, ENS_INFO = 0.1;   // Anteil der Ensemble-Läufe über Grenze

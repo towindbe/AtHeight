@@ -16,6 +16,7 @@ function computeHours(results, times){
       cape:median(pts.map(x=>x.s.cape).filter(v=>v!=null)),
       t2:median(pts.map(x=>x.s.t2).filter(v=>v!=null)),
       tW:median(pts.map(x=>x.s.tW).filter(v=>v!=null)), app:median(pts.map(x=>x.s.app).filter(v=>v!=null)),
+      rh:median(pts.map(x=>x.s.rh).filter(v=>v!=null)), cc:median(pts.map(x=>x.s.cc).filter(v=>v!=null)),   // Feuchte und Bewölkung: nur Anzeige
       uv:extras.uv?.get(t) ?? null,
       storms:pts.filter(x => x.s.wc!=null && x.s.wc>=95).length,
       over:pts.filter(x => x.s.v > site.wind || (x.s.g!=null && x.s.g > site.gust)).length,

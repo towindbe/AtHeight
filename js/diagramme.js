@@ -202,10 +202,13 @@ function renderTemp(){
   const vals = H.flatMap(h => [h.tW, h.chill]).filter(v => v!=null), lo = vals.length ? Math.min(...vals) : 0;
   const opt = chartBase("°C"); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
   opt.scales.y.beginAtZero = false;
-  opt.plugins.tooltip = {filter: it => !it.dataset.ref, callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y)} °C`}}; narrowReadout(opt, "roTemp");
+  // Luftfeuchte auf eigener Achse rechts (0–100 %), nur Anzeige
+  opt.scales.y2 = {position:"right", min:0, max:100, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"Barlow", size:10}, stepSize:25}, title:{display:true, text:"Feuchte %", color:css("--muted")}};
+  opt.plugins.tooltip = {filter: it => !it.dataset.ref, callbacks:{label:c => c.dataset.yAxisID==="y2" ? `Luftfeuchte: ${Math.round(c.parsed.y)} %` : `${c.dataset.label}: ${fmt(c.parsed.y)} °C`}}; narrowReadout(opt, "roTemp");
   const ds = [
     {label:"Temperatur "+workH()+" m", data:H.map(h => r1(h.tW)), borderColor:css("--accent"), borderWidth:2.5, pointRadius:0, tension:.3},
-    {label:"Gefühlt", data:H.map(h => r1(h.chill)), borderColor:css("--band-line"), borderWidth:2, borderDash:[5,4], pointRadius:0, tension:.3}
+    {label:"Gefühlt", data:H.map(h => r1(h.chill)), borderColor:css("--band-line"), borderWidth:2, borderDash:[5,4], pointRadius:0, tension:.3},
+    {label:"Luftfeuchte", yAxisID:"y2", data:H.map(h => h.rh==null ? null : Math.round(h.rh)), borderColor:"#3a9a9a", backgroundColor:"rgba(58,154,154,.12)", fill:"origin", borderWidth:1.5, pointRadius:0, tension:.3}
   ];
   // Bezugslinien nur, wenn sie in die Nähe kommen: 0 °C (Frost), −10 °C (Kälteschutz)
   if(lo < 6) ds.push({label:"0 °C", ref:true, data:idxs.map(() => 0), borderColor:css("--muted"), borderWidth:1, borderDash:[2,3], pointRadius:0});
@@ -213,7 +216,7 @@ function renderTemp(){
   if(charts.temp) charts.temp.destroy();
   charts.temp = new Chart($("temp"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin]});
   charts.temp.$idxs = idxs; charts.temp.update("none"); if(isNarrow()) syncTooltip(charts.temp);
-  $("tempTitle").textContent = "Temperatur · " + workH() + " m";
+  $("tempTitle").textContent = "Temperatur · " + workH() + " m & Feuchte";
   $("tempDay").textContent = dayLabel(state.day);
 }
 
