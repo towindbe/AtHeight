@@ -42,6 +42,7 @@ $("saveBtn").onclick = () => {
 };
 $("s_windkraft").onchange = applyEinsatzUI;
 $("coatBtn").onclick = toggleCoat;
+document.querySelectorAll(".day-nav button").forEach(b => b.onclick = () => stepDay(+b.dataset.dir));
 $("gpsBtn").onclick = () => {
   if(!navigator.geolocation){ $("gpsBtn").textContent = "GPS nicht verfügbar"; return; }
   navigator.geolocation.getCurrentPosition(p => { if(marker){ toggleSettings(false); pointToMap(); setPos(L.latLng(p.coords.latitude, p.coords.longitude)); } else { $("s_lat").value=p.coords.latitude.toFixed(4); $("s_lon").value=p.coords.longitude.toFixed(4);} if(map) map.setView([p.coords.latitude,p.coords.longitude],15); },

@@ -436,6 +436,9 @@ body.info-open{overflow:hidden}
 .legend-btns button[aria-pressed="false"]{color:var(--muted);text-decoration:line-through;opacity:.6}
 .legend-btns button[aria-pressed="false"] i{opacity:.35}
 .legend-btns small{font-size:11px}
+.day-nav{display:inline-flex;align-items:center;gap:4px}
+.day-nav button{width:30px;height:30px;padding:0;border-radius:99px;font-size:18px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.day-nav button:disabled{opacity:.3;cursor:default}
 .night-btn{padding:4px 10px;font-size:12px;border-radius:99px}
 .night-btn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 

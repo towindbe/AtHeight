@@ -185,10 +185,22 @@ function renderDayTabs(){
   const days = [...new Set(state.times.map(t=>t.slice(0,10)))];
   $("dayTabs").innerHTML = days.map(d => { const l = buildSummary(dayHours(d)).lamp;
     return `<button type="button" data-day="${d}" aria-pressed="${d===state.day}" aria-label="${esc(dayLabel(d,true))}: ${LAMP_TXT[l]}"><i class="dot d-${l}"></i>${esc(dayLabel(d,true))}</button>`; }).join("");
-  $("dayTabs").querySelectorAll("button").forEach(b => b.onclick = () => {
-    state.day = b.dataset.day; state.sel = defaultSel(state.day);
-    renderHero(); renderDayTabs(); renderTimeline(); renderChart(); renderRain(); renderTemp(); renderMatrix(); renderHourTable(); renderModelTable(); renderSelected();
+  $("dayTabs").querySelectorAll("button").forEach(b => b.onclick = () => goDay(b.dataset.day));
+  // Pfeile in den Diagrammköpfen: am ersten bzw. letzten Tag gesperrt
+  const k = days.indexOf(state.day);
+  document.querySelectorAll(".day-nav").forEach(n => {
+    n.querySelector("[data-dir='-1']").disabled = k <= 0;
+    n.querySelector("[data-dir='1']").disabled = k >= days.length - 1;
   });
+}
+/* Tag wechseln (Tages-Reiter und Pfeile in den Diagrammen): alles läuft mit */
+function goDay(d){
+  state.day = d; state.sel = defaultSel(state.day);
+  renderHero(); renderDayTabs(); renderTimeline(); renderChart(); renderRain(); renderTemp(); renderMatrix(); renderHourTable(); renderModelTable(); renderSelected();
+}
+function stepDay(dir){
+  const days = [...new Set(state.times.map(t=>t.slice(0,10)))], k = days.indexOf(state.day) + dir;
+  if(k >= 0 && k < days.length) goDay(days[k]);
 }
 
 function chartBase(yTitle){

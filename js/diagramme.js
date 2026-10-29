@@ -131,6 +131,7 @@ function renderChart(){
   charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, limitLabels]});
   charts.main.$idxs = idxs; charts.main.update("none"); if(isNarrow()) syncTooltip(charts.main);
   $("chartTitle").textContent = "Windverlauf · " + zoneTxt();
+  $("chartDay").textContent = dayLabel(state.day);
   renderChips(); renderLegend();
 }
 /* Legende unter dem Windverlauf: Antippen blendet Median, Spanne, Böe und Grenzlinien ein/aus (nur Anzeige) */
