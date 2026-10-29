@@ -42,6 +42,15 @@ $("saveBtn").onclick = () => {
 };
 $("s_windkraft").onchange = applyEinsatzUI;
 $("coatBtn").onclick = toggleCoat;
+// Zahnrad neben dem Beschichten-Modus: Einstellungen öffnen, direkt zu den Grenzen springen und sie kurz hervorheben
+$("coatGear").onclick = () => {
+  fillSettings(); toggleSettings(true);
+  setTimeout(() => {
+    $("coatSet").scrollIntoView({behavior:"smooth", block:"center"});
+    $("coatSet").classList.remove("flash"); void $("coatSet").offsetWidth; $("coatSet").classList.add("flash");
+    $("s_coatrh").focus({preventScroll:true});
+  }, 350);
+};
 document.querySelectorAll(".day-nav button").forEach(b => b.onclick = () => stepDay(+b.dataset.dir));
 $("gpsBtn").onclick = () => {
   if(!navigator.geolocation){ $("gpsBtn").textContent = "GPS nicht verfügbar"; return; }

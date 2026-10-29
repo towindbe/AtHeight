@@ -495,6 +495,11 @@ body.info-open{overflow:hidden}
 .coat-bar button{padding:4px 10px;font-size:12.5px;border-radius:99px}
 .coat-bar.on{padding:7px 10px;border:1.5px solid var(--warn);background:var(--warn-bg);border-radius:8px;color:var(--fg)}
 .coat-bar.on button{background:var(--warn);color:#1b1405;border-color:var(--warn);font-weight:700}
+.coat-bar .coat-gear{width:30px;height:30px;padding:0;border-radius:99px;font-size:16px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.coat-bar.on .coat-gear{background:transparent;color:var(--fg);border-color:var(--warn);font-weight:400}
+.coat-set{border-radius:8px;transition:box-shadow .3s}
+.coat-set.flash{animation:coatFlash 1.8s ease-out}
+@keyframes coatFlash{0%,40%{box-shadow:0 0 0 3px var(--warn);background:var(--warn-bg)}100%{box-shadow:0 0 0 0 transparent;background:transparent}}
 
 /* Haftung: Bestätigung im Bericht, Hinweis an der Entscheidung, Ampel ohne bestätigte Grenzwerte */
 label.chk{flex-direction:row;gap:10px;align-items:flex-start;font-size:13px;line-height:1.4;color:var(--fg);font-weight:500}
