@@ -1,4 +1,4 @@
-/* JobsiteWX · Windverlauf, Regen & Gewitter, Höhenprofil, Windrichtung, Zeitmarker */
+/* AtHeight · Windverlauf, Regen & Gewitter, Höhenprofil, Windrichtung, Zeitmarker */
 "use strict";
 
 // Farbkästchen im Infofenster mit der Linienfarbe füllen (Linien haben nur eine Strichfarbe)

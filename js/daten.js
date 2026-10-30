@@ -1,4 +1,4 @@
-/* JobsiteWX · Datenabruf: Wettermodelle, Szenarien, UV, amtliche Warnungen; load() */
+/* AtHeight · Datenabruf: Wettermodelle, Szenarien, UV, amtliche Warnungen; load() */
 "use strict";
 
 /* ---------- Daten laden ---------- */

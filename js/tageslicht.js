@@ -1,4 +1,4 @@
-/* JobsiteWX · Sonnenstand und bürgerliche Dämmerung */
+/* AtHeight · Sonnenstand und bürgerliche Dämmerung */
 "use strict";
 
 /* ---------- Tageslicht: Sonnenstand nach NOAA-Näherung ---------- */

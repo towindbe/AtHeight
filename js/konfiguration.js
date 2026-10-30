@@ -1,4 +1,4 @@
-/* JobsiteWX · Modelle, Schwellen, Standard-Anlage und App-Zustand */
+/* AtHeight · Modelle, Schwellen, Standard-Anlage und App-Zustand */
 "use strict";
 
 const MODELS = [
