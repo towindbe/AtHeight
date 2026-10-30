@@ -614,7 +614,7 @@ header.top .row .icon-btn{width:48px;min-width:48px;padding:0;font-size:20px}
 /* Navigation unten: nur am Handy; oben bleiben in der Kurzleiste Ampel, Stunde und Tagesreiter */
 .bottom-nav{display:none}
 @media (max-width:759px){
-  .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:1100;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--surface);border-top:1px solid var(--line);padding:6px 4px calc(8px + env(safe-area-inset-bottom,0px))}
+  .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:1100;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:var(--surface);border-top:1px solid var(--line);padding:6px 4px calc(8px + env(safe-area-inset-bottom,0px))}
   body.no-site .bottom-nav{display:none}
   .bottom-nav button{min-height:54px;border:0;background:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:600 12px var(--f-body);padding:0;border-radius:12px}
   .bottom-nav button .ico{width:22px;height:22px}
