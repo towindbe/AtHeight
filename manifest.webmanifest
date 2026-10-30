@@ -1,6 +1,6 @@
 {
-  "name": "Windbericht für Höhenarbeit",
-  "short_name": "Windbericht",
+  "name": "AltiWX – Wetter-Check für Höhenarbeit",
+  "short_name": "AltiWX",
   "description": "Wind- und Wetterbericht in Nabenhöhe für Seilarbeiten an Windenergieanlagen. Entscheidungshilfe, keine Freigabe.",
   "lang": "de",
   "start_url": "windbericht.html",

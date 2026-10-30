@@ -115,7 +115,7 @@ function afPrint(){
     <div class="rp-sec rp-box"><h3>Grenzwerte</h3>Arbeitsbereich ${esc(data.bereich)} · max. Windstärke ${fwu(data.grenzwerte.wind)} · max. Böe ${fwu(data.grenzwerte.boe)}</div>
     <div class="rp-sec"><h3>Tage im Zeitraum</h3><table class="rp-t af-rp">${afHead()}<tbody>${afRows(data)}</tbody></table>
       <div class="rp-small" style="margin-top:3px">Rot: über Grenzwert · Einstufung AUSFALL: mehr als die Hälfte der Arbeitsstunden über Grenzwert · BEGRENZT: mindestens eine Stunde darüber</div></div>
-    <div class="rp-sec rp-small"><b>Grundlagen.</b> ${afMethod(data)} Erstellt ${new Date(data.erstellt).toLocaleString("de-DE")} mit Windbericht-Version ${esc(data.version)}. Datenquellen: ${data.station ? esc(data.station.quelle) + ", " : ""}Open-Meteo.com (CC BY 4.0). Der Bericht ist eine Auswertung von Wetterdaten und ersetzt keine Messung an der Anlage.</div>
+    <div class="rp-sec rp-small"><b>Grundlagen.</b> ${afMethod(data)} Erstellt ${new Date(data.erstellt).toLocaleString("de-DE")} mit AltiWX-Version ${esc(data.version)}. Datenquellen: ${data.station ? esc(data.station.quelle) + ", " : ""}Open-Meteo.com (CC BY 4.0). Der Bericht ist eine Auswertung von Wetterdaten und ersetzt keine Messung an der Anlage.</div>
     <div class="sig"><div>Datum, Unterschrift Aufsichtführender</div><div>Datum, Unterschrift Auftraggeber (optional)</div></div>
     <div class="rp-small" style="margin-top:8px">Prüfsumme (SHA-256) der Auswertungsdaten: <span class="mono">${hash}</span> · dieselbe Zahl steht in der zugehörigen JSON-Datei.</div>`;
   r.style.zoom = "";
