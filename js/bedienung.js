@@ -155,8 +155,17 @@ function chartMax(on){
   document.body.classList.toggle("map-open", on);
   $("chartMaxBtn").setAttribute("aria-pressed", String(on));
   $("chartMaxBtn").textContent = on ? "✕ Schließen" : "⤢ Vergrößern";
-  if(!on) setTimeout(() => $("chartCard").scrollIntoView({block:"start"}), 60);
+  // am Handy echtes Vollbild und quer, wenn der Browser das erlaubt (sonst bleibt es bei der großen Darstellung)
+  const card = $("chartCard");
+  if(on){
+    if(card.requestFullscreen && matchMedia("(pointer:coarse)").matches) card.requestFullscreen().then(() => screen.orientation?.lock?.("landscape")).catch(() => {});
+  }else{
+    try{ screen.orientation?.unlock?.(); }catch(e){}
+    if(document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    setTimeout(() => card.scrollIntoView({block:"start"}), 60);
+  }
 }
+document.addEventListener("fullscreenchange", () => { if(!document.fullscreenElement && $("chartCard").classList.contains("chart-max")) chartMax(false); });
 $("tempLegend").addEventListener("click", e => { const b = e.target.closest("button[data-s]"); if(b) toggleLine(b.dataset.s); });
 document.querySelectorAll(".night-btn").forEach(b => b.onclick = toggleNight);
 $("chartLegend").addEventListener("click", e => { const b = e.target.closest("button[data-s]"); if(b) toggleLine(b.dataset.s); });
