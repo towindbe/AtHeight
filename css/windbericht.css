@@ -119,9 +119,12 @@ legend{font:600 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:upper
 #mapCard.map-max{position:fixed;inset:0;z-index:3000;border-radius:0;border:0;padding:12px max(12px,env(safe-area-inset-left,0px));overflow:auto;background:var(--surface)}
 #mapCard.map-max #map{height:calc(100dvh - 170px);min-height:260px}
 #mapCard.map-max #mapNote{display:none}
+/* Vollbild: Standort übernehmen/verwerfen liegt über der Karte und wird nicht übersehen */
+#mapCard.map-max .pickbar:not([hidden]){position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:10;max-height:60dvh;overflow:auto;box-shadow:0 8px 28px rgba(0,0,0,.55)}
 body.map-open{overflow:hidden}
 #chartCard.chart-max{position:fixed;inset:0;z-index:3000;border-radius:0;border:0;padding:12px max(12px,env(safe-area-inset-left,0px));overflow:auto;background:var(--surface)}
 #chartCard.chart-max .chart-box{height:calc(100dvh - 150px);min-height:260px}
+@media (orientation:landscape) and (max-height:520px){ #chartCard.chart-max .chart-box{height:calc(100dvh - 78px);min-height:160px} }
 .map-wrap{position:relative}
 .radar-time{position:absolute;top:10px;right:10px;z-index:500;background:rgba(0,0,0,.6);color:#fff;font:600 14px var(--f-mono);padding:5px 9px;border-radius:6px;pointer-events:none}
 .radar-time span{font:600 10.5px var(--f-body);text-transform:uppercase;letter-spacing:.06em;margin-left:6px;padding:1px 6px;border-radius:4px}

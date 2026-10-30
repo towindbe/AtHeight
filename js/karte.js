@@ -44,6 +44,16 @@ function setPos(ll, fromDrag){
   $("pickName").value = pendingName || (fromDrag && siteChosen ? site.name : "");
   $("pickForm").hidden = false;
   $("pickBar").hidden = false; $("pickApply").disabled = false;
+  keepPickVisible(ll);
+}
+/* Vollbild: die Bestätigung liegt über der Karte (unten); den Marker nach oben schieben, falls sie ihn verdeckt */
+function keepPickVisible(ll){
+  if(!$("mapCard").classList.contains("map-max")) return;
+  setTimeout(() => {
+    const bar = $("pickBar").getBoundingClientRect(), box = map.getContainer().getBoundingClientRect();
+    const y = map.latLngToContainerPoint(ll).y, limit = bar.top - box.top - 40;
+    if(y > limit) map.panBy([0, y - limit + 40]);
+  }, 80);
 }
 function siteReady(){
   if(siteChosen) return;
