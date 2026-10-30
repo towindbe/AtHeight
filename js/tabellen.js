@@ -111,22 +111,18 @@ function renderModelTable(){
       const pts = idxs.map(i=>r.series[i] ? {t:state.times[i], ...r.series[i]} : null).filter(Boolean);
       if(pts.length){ mx = fmt(Math.max(...pts.map(p=>p.v))); const f = pts.find(p=>p.v>site.wind || (p.g!=null && p.g>site.gust)); first = f ? hh(f.t)+" Uhr" : "nie"; }
     }
-    const lv = can ? r.series.find(Boolean)?.lv : null, need = zoneTop();
-    let heights = "–";
-    if(lv && lv.length){
-      const zs = lv.map(l => l[0]), top = Math.max(...zs);
-      const [txt2, cls2] = top >= need ? ["liefert die Arbeitshöhe", "ok"] : need - top <= 5 ? ["knapp unter der Arbeitshöhe", "ok"] : [`bis ${top} m, darüber hochgerechnet`, "ext"];
-      heights = `${zs.join(", ")} m<br><small class="hgt-${cls2}">${txt2}</small>`;
-    }
+    const lv = can ? r.series.find(Boolean)?.lv : null, zs = lv ? lv.map(l => l[0]) : [], top = zs.length ? Math.max(...zs) : null;
+    const status = !off && r.status==="extrap" && top!=null ? `Hochgerechnet ab ${top} m` : txt;
+    const heights = zs.length ? `<br><small class="muted">Daten: ${zs.join(", ")} m</small>` : "";
     const cp = can ? cellPos(r) : null;
     const lage = !cp ? "–" : cp.far ? `abweichend (${fmt(cp.dist,1)} km ${cp.dir})` : cp.edge ? `Rand (${cp.dir})` : "Mitte";
     return `<tr class="${off ? "excl" : ""}"><td class="use">${can ? `<input type="checkbox" data-model="${esc(r.m.id)}" ${off ? "" : "checked"} aria-label="${esc(r.m.name)} (${esc(r.m.org)}) verwenden">` : ""}</td>
       <td>${esc(r.m.name)} <span class="muted">· ${esc(r.m.org)}</span></td><td>${esc(r.m.res)}</td>
       <td class="${cp && (cp.edge || cp.far) ? "cell-edge" : ""}" title="${cp ? `Standort liegt ${fmt(cp.dist,1)} km von der Mitte der Modellzelle (Zellgröße ${fmt(cp.res,1)} km) entfernt` : ""}">${lage}</td>
-      <td><span class="badge ${cls}" title="${esc(r.status==="extrap" ? "Das Modell liefert keine Winddaten bis zur Arbeitshöhe. Der Wind darüber ist aus den höchsten gelieferten Höhen hochgerechnet." : r.reason||"")}">${txt}</span></td><td class="hgt">${heights}</td><td class="num">${mx}</td><td class="num">${first}</td>
+      <td><span class="badge ${cls}" title="${esc(r.status==="extrap" ? "Das Modell liefert keine Winddaten bis zur Arbeitshöhe. Der Wind darüber ist aus den höchsten gelieferten Höhen hochgerechnet." : r.reason||"")}">${status}</span>${heights}</td><td class="num">${mx}</td><td class="num">${first}</td>
       <td class="num raw"><a href="${esc(apiUrl(r.m))}" target="_blank" rel="noopener" title="Rohdaten dieses Modells direkt von Open-Meteo">JSON</a> · <a href="${esc(apiUrl(r.m,"csv"))}" target="_blank" rel="noopener" title="Als CSV, z. B. für Excel">CSV</a></td></tr>`;
   });
-  $("modelTable").innerHTML = `<thead><tr><th title="Häkchen: Modell geht in die Bewertung ein">Nutzen</th><th>Modell</th><th>Auflösung</th><th title="Lage des Standorts in der Gitterzelle des Modells">Lage in der Zelle</th><th>Status</th><th title="Höhen, für die das Modell Winddaten liefert, und ob sie die Arbeitshöhe abdecken">Winddaten in</th><th>Max. Wind</th><th>Über Grenze ab</th><th class="raw">Rohdaten</th></tr></thead><tbody>${rows.join("")}</tbody>`;
+  $("modelTable").innerHTML = `<thead><tr><th title="Häkchen: Modell geht in die Bewertung ein">Nutzen</th><th>Modell</th><th>Auflösung</th><th title="Lage des Standorts in der Gitterzelle des Modells">Lage in der Zelle</th><th>Status</th><th>Max. Wind</th><th>Über Grenze ab</th><th class="raw">Rohdaten</th></tr></thead><tbody>${rows.join("")}</tbody>`;
   $("modelTable").querySelectorAll("input[data-model]").forEach(c => c.onchange = () => setModelUsed(c.dataset.model, c.checked));
   renderRanking();
 }
