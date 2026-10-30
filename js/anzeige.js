@@ -29,7 +29,7 @@ function fillSettings(){
   $("s_coatrh").value = coatRh(); $("s_coatdew").value = coatDew(); $("s_coatstop").checked = !!site.coatStop;
   $("siteTitle").textContent = site.name;
   $("siteMeta").innerHTML = `<span>${T("Arbeit", "Work")} ${zoneTxt()}</span><span>${T("Grenze", "Limit")} ${fw(site.wind)} · ${T("Böe", "Gust")} ${fwu(site.gust)}</span><span>${site.from}–${site.to}${UHR()}</span>`;
-  // Hinweis, bis die Werte dieser Anlage einmal bestätigt wurden
+  // Hinweis, bis die Werte dieser Baustelle einmal bestätigt wurden
   const todo = siteChosen && !site.checked;
   $("setupHint").hidden = !todo;
   $("settingsBtn").classList.toggle("pulse-hint", todo && $("settings").hidden);
@@ -49,10 +49,10 @@ setInterval(checkStale, 6e4);
 document.addEventListener("visibilitychange", () => { if(!document.hidden) checkStale(); });
 function renderHero(){
   let sum = buildSummary(dayHours(state.day));
-  // Solange Höhen und Grenzwerte der Anlage nicht bestätigt sind, gibt es keine Bewertung (die Werte sind nur Beispiele)
+  // Solange Höhen und Grenzwerte der Baustelle nicht bestätigt sind, gibt es keine Bewertung (die Werte sind nur Beispiele)
   const unconfirmed = siteChosen && !site.checked;
   document.body.classList.toggle("unconfirmed", unconfirmed);
-  if(unconfirmed) sum = {...sum, lamp:"none", head:T("Erst Höhen und Grenzwerte bestätigen", "Confirm heights and limits first"), text:T("Die Werte dieser Anlage sind noch Beispielwerte. Bitte unter Einstellungen prüfen und „Übernehmen“ antippen, erst dann gilt die Bewertung.", "The values of this site are still example values. Please check them under Settings and tap “Apply”; only then does the assessment apply.")};
+  if(unconfirmed) sum = {...sum, lamp:"none", head:T("Erst Höhen und Grenzwerte bestätigen", "Confirm heights and limits first"), text:T("Die Werte dieser Baustelle sind noch Beispielwerte. Bitte unter Einstellungen prüfen und „Übernehmen“ antippen, erst dann gilt die Bewertung.", "The values of this site are still example values. Please check them under Settings and tap “Apply”; only then does the assessment apply.")};
   state.summary = sum;
   $("lamp").className = "lamp " + sum.lamp; $("lamp").innerHTML = (LAMP_ICON[sum.lamp] || "") + `<span>${LAMP_TXT[sum.lamp]}</span>`;
   const dl = daylight(state.day);

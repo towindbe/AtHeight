@@ -7,7 +7,7 @@ function initMap(){
   map = L.map("map", {zoomControl:true, attributionControl:true}).setView([site.lat, site.lon], 14);
   map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');   // ohne Flaggen-Symbol
   satLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {maxZoom:19, attribution:"Map data © Esri, Maxar, Earthstar Geographics"}).addTo(map);
-  marker = L.marker([site.lat, site.lon], {draggable:true, title:"Anlage"}).addTo(map);
+  marker = L.marker([site.lat, site.lon], {draggable:true, title:"Baustelle"}).addTo(map);
   rotorCircle = L.circle([site.lat, site.lon], {radius:site.rotor/2, color:"#ff7a33", weight:2, fillOpacity:.08}).addTo(map);
   rotorCircle.setStyle({opacity: site.rotor ? 1 : 0, fillOpacity: site.rotor ? .08 : 0});
   marker.on("dragend", () => setPos(marker.getLatLng(), true));
@@ -102,9 +102,9 @@ function pointToMap(ms){
 function startFirstRun(){
   document.body.classList.add("no-site");
   $("lamp").className = "lamp"; $("lamp").textContent = "–";
-  $("headline").textContent = T("Noch keine Anlage gewählt.", "No site chosen yet.");
-  $("summary").textContent = T("Ort suchen und die Anlage auf der Karte antippen. Danach erscheint hier die Bewertung für euren Arbeitstag.", "Search for the place and tap the site on the map. The assessment for your working day then appears here.");
-  $("siteTitle").textContent = T("Anlage wählen", "Choose a site"); $("siteMeta").innerHTML = "";
+  $("headline").textContent = T("Noch keine Baustelle gewählt.", "No site chosen yet.");
+  $("summary").textContent = T("Ort suchen und die Baustelle auf der Karte antippen. Danach erscheint hier die Bewertung für euren Arbeitstag.", "Search for the place and tap the site on the map. The assessment for your working day then appears here.");
+  $("siteTitle").textContent = T("Baustelle wählen", "Choose a site"); $("siteMeta").innerHTML = "";
   if(map){ showMarker(false); map.setView([48.4, 11.3], 6); }
   setTimeout(() => pointToMap(), 300);
 }
@@ -133,7 +133,7 @@ async function search(q){
     map.setView([x.lat, x.lon], 15);
     map.getContainer().classList.add("picking");
     $("pickTitle").textContent = x.name;
-    $("pickText").textContent = T("Jetzt die Anlage auf der Karte antippen.", "Now tap the site on the map.");
+    $("pickText").textContent = T("Jetzt die Baustelle auf der Karte antippen.", "Now tap the site on the map.");
     $("pickForm").hidden = true;
     $("pickBar").hidden = false; pending = null; $("pickApply").disabled = true;
     startPulse(8000);

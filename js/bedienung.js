@@ -32,12 +32,12 @@ $("saveBtn").onclick = () => {
   }
   if(site.to < site.from) [site.from, site.to] = [site.to, site.from];
   site.checked = true;
-  // ist die Anlage gespeichert, wird der Eintrag mit aktualisiert
+  // ist die Baustelle gespeichert, wird der Eintrag mit aktualisiert
   const favs = loadFavs(), k = siteChosen ? favs.findIndex(f => sameSpot(f.site, prev)) : -1;
   if(k >= 0){ favs[k] = {name:site.name, site:{...site}}; saveFavs(favs); }
   siteReady(); saveSite(); toggleSettings(false);
   if(map) map.setView([site.lat, site.lon], Math.max(map.getZoom(), 13));
-  $("mapNote").textContent = T("Ort suchen oder direkt auf die Anlage tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Regenradar: DWD, nur Deutschland und Grenzgebiete.", "Search for a place or tap the site directly. The marker can be dragged. Arrow: wind direction at the selected hour. Rain radar: DWD, Germany and border areas only.");
+  $("mapNote").textContent = T("Ort suchen oder direkt auf die Baustelle tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Regenradar: DWD, nur Deutschland und Grenzgebiete.", "Search for a place or tap the site directly. The marker can be dragged. Arrow: wind direction at the selected hour. Rain radar: DWD, Germany and border areas only.");
   load();
 };
 $("s_windkraft").onchange = applyEinsatzUI;
@@ -134,7 +134,7 @@ $("s_unit").onchange = () => {
   renderRanking();
 };
 applyUnitLabels();
-const needConfirm = () => { if(site.checked) return false; alert(T("Bitte zuerst unter Einstellungen die Höhen und Grenzwerte dieser Anlage prüfen und „Übernehmen“ antippen.", "Please first check the heights and limits of this site under Settings and tap “Apply”.")); return true; };
+const needConfirm = () => { if(site.checked) return false; alert(T("Bitte zuerst unter Einstellungen die Höhen und Grenzwerte dieser Baustelle prüfen und „Übernehmen“ antippen.", "Please first check the heights and limits of this site under Settings and tap “Apply”.")); return true; };
 $("printBtn").onclick = async () => { if(!state.fetchedAt || needConfirm()) return; await buildReport(); window.print(); };
 const appTitle = document.title;
 window.addEventListener("beforeprint", () => { if(state.fetchedAt) document.title = `Tagesbericht ${site.name} ${state.day}`; });

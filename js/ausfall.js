@@ -86,7 +86,7 @@ function afSummary(d){
 }
 const afMethod = d => T(`${d.station ? `Messstation ${esc(d.station.name)} (${esc(d.station.quelle)}), ${fmt(d.station.entfernungKm,1)} km entfernt${d.station.hoehe!=null ? `, ${Math.round(d.station.hoehe)} m ü. NN` : ""}.` : "Keine Messstation im Umkreis gefunden, es gelten die Werte der Modellrechnung."}
   Die Station misst in 10 m Höhe. Ihr Wind ist mit dem Höhenverhältnis der archivierten Modellrechnung auf den Arbeitsbereich ${esc(d.bereich)} hochgerechnet (stärkster Wind im Bereich; Böe aus dem gemessenen Böenfaktor geschätzt).
-  Eine Messstation in einiger Entfernung bildet die Lage an der Anlage nur angenähert ab. Stunden ohne Messwert sind mit dem Modellwert gefüllt und in der letzten Spalte ausgewiesen.
+  Eine Messstation in einiger Entfernung bildet die Lage an der Baustelle nur angenähert ab. Stunden ohne Messwert sind mit dem Modellwert gefüllt und in der letzten Spalte ausgewiesen.
   Gewertet werden nur Arbeitsstunden (${d.arbeitszeit.von}–${d.arbeitszeit.bis} Uhr) und nur Wind und Böe; Gewitter, Regen, Frost und amtliche Warnungen sind nicht enthalten.`, `${d.station ? `Weather station ${esc(d.station.name)} (${esc(d.station.quelle)}), ${fmt(d.station.entfernungKm,1)} km away${d.station.hoehe!=null ? `, ${Math.round(d.station.hoehe)} m a.s.l.` : ""}.` : "No weather station found nearby; the model values apply."}
   The station measures at 10 m height. Its wind is extrapolated to the working zone ${esc(d.bereich)} using the height ratio of the archived model run (strongest wind in the zone; gust estimated from the measured gust factor).
   A station some distance away only approximates the conditions at the site. Hours without a measurement are filled with the model value and shown in the last column.
@@ -96,7 +96,7 @@ async function afShow(){
   const out = $("afOut"), von = $("af_von").value, bis = $("af_bis").value, yesterday = addDays(isoDay(Date.now()), -1);
   const err = m => { out.innerHTML = `<p class="note err">${esc(m)}</p>`; $("afPrint").hidden = $("afJson").hidden = true; };
   if(!state.fetchedAt) return err(T("Bitte zuerst die Wetterdaten laden.", "Please load the weather data first."));
-  if(!site.checked) return err(T("Bitte zuerst unter Einstellungen die Höhen und Grenzwerte dieser Anlage prüfen und „Übernehmen“ antippen.", "Please first check the heights and limits of this site under Settings and tap “Apply”."));
+  if(!site.checked) return err(T("Bitte zuerst unter Einstellungen die Höhen und Grenzwerte dieser Baustelle prüfen und „Übernehmen“ antippen.", "Please first check the heights and limits of this site under Settings and tap “Apply”."));
   if(!von || !bis || von > bis) return err(T("Bitte einen gültigen Zeitraum wählen (von ≤ bis).", "Please choose a valid period (from ≤ to)."));
   if(bis > yesterday) return err(T("Der Zeitraum darf höchstens bis gestern reichen, für heute liegen noch keine vollständigen Messwerte vor.", "The period may only go up to yesterday; complete measurements for today are not yet available."));
   if((Date.parse(bis) - Date.parse(von))/864e5 + 1 > AF_MAX_DAYS) return err(T(`Der Zeitraum darf höchstens ${AF_MAX_DAYS} Tage umfassen.`, `The period may cover at most ${AF_MAX_DAYS} days.`));
@@ -119,7 +119,7 @@ function afPrint(){
     <div class="rp-sec rp-box"><h3>Grenzwerte</h3>Arbeitsbereich ${esc(data.bereich)} · max. Windstärke ${fwu(data.grenzwerte.wind)} · max. Böe ${fwu(data.grenzwerte.boe)}</div>
     <div class="rp-sec"><h3>Tage im Zeitraum</h3><table class="rp-t af-rp">${afHead()}<tbody>${afRows(data)}</tbody></table>
       <div class="rp-small" style="margin-top:3px">Rot: über Grenzwert · Einstufung AUSFALL: mehr als die Hälfte der Arbeitsstunden über Grenzwert · BEGRENZT: mindestens eine Stunde darüber</div></div>
-    <div class="rp-sec rp-small"><b>Grundlagen.</b> ${afMethod(data)} Erstellt ${new Date(data.erstellt).toLocaleString("de-DE")} mit AtHeight-Version ${esc(data.version)}. Datenquellen: ${data.station ? esc(data.station.quelle) + ", " : ""}Open-Meteo.com (CC BY 4.0). Der Bericht ist eine Auswertung von Wetterdaten und ersetzt keine Messung an der Anlage.</div>
+    <div class="rp-sec rp-small"><b>Grundlagen.</b> ${afMethod(data)} Erstellt ${new Date(data.erstellt).toLocaleString("de-DE")} mit AtHeight-Version ${esc(data.version)}. Datenquellen: ${data.station ? esc(data.station.quelle) + ", " : ""}Open-Meteo.com (CC BY 4.0). Der Bericht ist eine Auswertung von Wetterdaten und ersetzt keine Messung an der Baustelle.</div>
     <div class="sig"><div>Datum, Unterschrift Aufsichtführender</div><div>Datum, Unterschrift Auftraggeber (optional)</div></div>
     <div class="rp-small" style="margin-top:8px">Prüfsumme (SHA-256) der Auswertungsdaten: <span class="mono">${hash}</span> · dieselbe Zahl steht in der zugehörigen JSON-Datei.</div>`;
   r.style.zoom = "";

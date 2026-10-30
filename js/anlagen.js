@@ -1,7 +1,7 @@
-/* AtHeight · Gespeicherte Anlagen (Favoriten) */
+/* AtHeight · Gespeicherte Baustellen (Favoriten) */
 "use strict";
 
-/* ---------- Favoriten (gespeicherte Anlagen) ---------- */
+/* ---------- Favoriten (gespeicherte Baustellen) ---------- */
 function loadFavs(){ try{ const f = JSON.parse(localStorage.getItem("wb_favs")||"[]"); return Array.isArray(f) ? f.filter(x => x && x.site && typeof x.site.lat==="number") : []; }catch(e){ return []; } }
 function saveFavs(f){ try{ localStorage.setItem("wb_favs", JSON.stringify(f)); }catch(e){} }
 const sameSpot = (a, b) => Math.abs(a.lat-b.lat)<1e-4 && Math.abs(a.lon-b.lon)<1e-4;

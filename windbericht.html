@@ -93,7 +93,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
         <label id="lbl_hub"><span data-en="Hub height (m)">Nabenhöhe (m)</span><input id="s_hub" type="number" step="1" min="20" max="250" inputmode="numeric"></label>
         <label id="lbl_rotor"><span data-en="Rotor diameter (m)">Rotordurchmesser (m)</span><input id="s_rotor" type="number" step="1" min="0" max="250" inputmode="numeric"></label>
       </div>
-      <p class="note"><span data-en="Easiest: set the location on the map, search for the place and tap the site.">Standort am einfachsten auf der Karte setzen: Ort suchen und Anlage antippen.</span> <button class="link" id="gpsBtn" type="button" data-en="Or use GPS location">Oder GPS-Standort verwenden</button></p>
+      <p class="note"><span data-en="Easiest: set the location on the map, search for the place and tap the site.">Standort am einfachsten auf der Karte setzen: Ort suchen und Baustelle antippen.</span> <button class="link" id="gpsBtn" type="button" data-en="Or use GPS location">Oder GPS-Standort verwenden</button></p>
     </fieldset>
     <fieldset>
       <legend data-en="Job">Einsatz</legend>
@@ -178,10 +178,10 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
         <p class="decision-note" data-en="Decision aid, not a release: the supervisor decides. Measure the wind on site.">Entscheidungshilfe, keine Freigabe: Der Aufsichtführende entscheidet. Wind vor Ort messen.</p>
         <div class="loadbar" id="loadBar" hidden aria-live="polite"><div class="lb-track"><div class="lb-fill" id="loadFill"></div></div><span class="note" id="loadText"></span></div>
         <div class="setup-hint needs-data" id="setupHint" hidden>
-          <div><b data-en="New site: check heights and limits">Neue Anlage: Höhen und Grenzwerte prüfen</b><span data-en="Heights and limits are still example values.">Höhen und Grenzwerte sind noch Beispielwerte.</span></div>
+          <div><b data-en="New site: check heights and limits">Neue Baustelle: Höhen und Grenzwerte prüfen</b><span data-en="Heights and limits are still example values.">Höhen und Grenzwerte sind noch Beispielwerte.</span></div>
           <button class="primary" id="setupBtn" type="button" data-en="Open settings">Einstellungen öffnen</button>
         </div>
-        <div class="only-no-site"><button class="primary" id="heroMapBtn" type="button" data-en="Choose site on the map">Anlage auf der Karte wählen</button></div>
+        <div class="only-no-site"><button class="primary" id="heroMapBtn" type="button" data-en="Choose site on the map">Baustelle auf der Karte wählen</button></div>
       </div>
     </div>
     <div class="status-row needs-data">
@@ -256,7 +256,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
   <div class="cols">
     <section class="card" id="mapCard">
       <div class="card-head">
-        <h2 data-en="Site on the map">Anlage auf der Karte</h2>
+        <h2 data-en="Site on the map">Baustelle auf der Karte</h2>
         <div class="seg" role="group" aria-label="Kartenebene">
           <button type="button" id="radarBtn" aria-pressed="false" data-en="Rain radar">Regenradar</button>
           <button type="button" id="mapMaxBtn" aria-pressed="false" title="Karte groß anzeigen" data-en-title="Show map large" data-en="⤢ Enlarge">⤢ Vergrößern</button>
@@ -268,7 +268,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       </form>
       <ul class="results" id="searchResults" hidden></ul>
       <div class="map-wrap">
-        <div id="map" role="application" aria-label="Karte des Anlagenstandorts"></div>
+        <div id="map" role="application" aria-label="Karte des Baustellenstandorts"></div>
         <div class="radar-time" id="radarTime" hidden></div>
       </div>
       <div class="radar-bar" id="radarBar" hidden>
@@ -283,7 +283,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <div class="pickbar" id="pickBar" hidden>
         <div class="pick-info"><b id="pickTitle" data-en="New location">Neuer Standort</b><span class="mono" id="pickText"></span></div>
         <div class="pick-form" id="pickForm">
-          <label><span data-en="Site name">Name der Anlage</span><input id="pickName" type="text" maxlength="40" placeholder="z. B. WP Musterberg WEA 3" data-en-ph="e.g. Hill Wind Farm T3"></label>
+          <label><span data-en="Site name">Name der Baustelle</span><input id="pickName" type="text" maxlength="40" placeholder="z. B. WP Musterberg WEA 3" data-en-ph="e.g. Hill Wind Farm T3"></label>
           <label class="check"><input id="pickFav" type="checkbox" checked><span data-en="Save in “Sites”">In „Baustellen“ speichern</span></label>
           <p class="note" data-en="Heights and limits are kept. Change them under “Settings”.">Höhen und Grenzwerte werden übernommen. Ändern unter „Einstellungen“.</p>
         </div>
@@ -292,7 +292,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
           <button class="ghost" id="pickCancel" type="button" data-en="Discard">Verwerfen</button>
         </div>
       </div>
-      <p class="note" id="mapNote" data-en="Search for a place or tap the site directly. The marker can be dragged. Arrow: wind direction at the selected hour. Rain radar: DWD, Germany and border areas only.">Ort suchen oder direkt auf die Anlage tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Regenradar: DWD, nur Deutschland und Grenzgebiete.</p>
+      <p class="note" id="mapNote" data-en="Search for a place or tap the site directly. The marker can be dragged. Arrow: wind direction at the selected hour. Rain radar: DWD, Germany and border areas only.">Ort suchen oder direkt auf die Baustelle tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Regenradar: DWD, nur Deutschland und Grenzgebiete.</p>
       <p class="note touch-only" data-en="On a phone one finger scrolls the page. Move the map with two fingers or in full screen (“Enlarge”).">Am Handy scrollt ein Finger die Seite. Die Karte verschiebst du mit zwei Fingern oder im Vollbild („Vergrößern“).</p>
     </section>
 
@@ -361,7 +361,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <div class="card-head"><h3 data-en="Which models are accurate here?">Welche Modelle treffen hier?</h3><button type="button" id="rankBtn" data-en="Compare models">Modelle vergleichen</button></div>
       <div id="rankOut"></div>
     </div>
-    <p class="note help" data-en="Status: “Active” means the working height lies within the heights for which the model provides wind data (“Data: …”). “Extrapolated from X m” means the model only provides data up to X m; the wind above is extrapolated from the topmost heights. Models that do not cover the site are dropped automatically. The tick box excludes single models for this site, e.g. coarse global models in the mountains. The choice is saved with the site.">Status: „Aktiv“ heißt, die Arbeitshöhe liegt innerhalb der Höhen, in denen das Modell Winddaten liefert („Daten: …“). „Hochgerechnet ab X m“ heißt, das Modell liefert nur bis X m, der Wind darüber ist aus den obersten Höhen hochgerechnet und unsicherer. Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung. Mit dem Häkchen lassen sich einzelne Modelle für diese Anlage ausschließen, z. B. grobe Globalmodelle im Gebirge. Die Auswahl wird mit der Anlage gespeichert.</p>
+    <p class="note help" data-en="Status: “Active” means the working height lies within the heights for which the model provides wind data (“Data: …”). “Extrapolated from X m” means the model only provides data up to X m; the wind above is extrapolated from the topmost heights. Models that do not cover the site are dropped automatically. The tick box excludes single models for this site, e.g. coarse global models in the mountains. The choice is saved with the site.">Status: „Aktiv“ heißt, die Arbeitshöhe liegt innerhalb der Höhen, in denen das Modell Winddaten liefert („Daten: …“). „Hochgerechnet ab X m“ heißt, das Modell liefert nur bis X m, der Wind darüber ist aus den obersten Höhen hochgerechnet und unsicherer. Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung. Mit dem Häkchen lassen sich einzelne Modelle für diese Baustelle ausschließen, z. B. grobe Globalmodelle im Gebirge. Die Auswahl wird mit der Baustelle gespeichert.</p>
   </section>
 
   <!-- 7-Tage-Ausblick -->
@@ -383,7 +383,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
     <p class="note help" data-en="Documents the forecast at the time of release. Print as PDF and file with the project documentation. The report itself is in German for now.">Dokumentiert die Prognose zum Zeitpunkt der Freigabe. Als PDF drucken und zur Projektdokumentation legen.</p>
     <div class="grid">
       <label><span data-en="Project / client">Projekt / Auftraggeber</span><input id="r_project" type="text"></label>
-      <label><span data-en="Site / type">Anlage / Typ</span><input id="r_turbine" type="text"></label>
+      <label><span data-en="Site / type">Baustelle / Typ</span><input id="r_turbine" type="text"></label>
       <label>Team<input id="r_team" type="text"></label>
       <label><span data-en="Supervisor">Aufsichtführender</span><input id="r_lead" type="text"></label>
       <label><span data-en="Task">Tätigkeit</span><input id="r_task" type="text"></label>
