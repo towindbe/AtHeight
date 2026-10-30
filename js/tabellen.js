@@ -26,7 +26,7 @@ function renderMatrix(){
   // knapp über der Grenze (gerundet gleich dem Grenzwert): zwei Nachkommastellen, damit Rot nachvollziehbar ist
   const num = v => { const d = U().d, r = x => Math.round(cw(x)*10**d)/10**d; return v > lim && r(v) <= r(lim) ? fw(v, d+1) : fw(v); };
   const rcls = v => v==null ? "m-none" : v >= RAIN_MOD ? "r-3" : v >= RAIN_LIGHT ? "r-2" : v >= 0.1 ? "r-1" : "r-0";
-  const rtxt = (v, storm) => v==null ? "·" : (v < 0.05 ? "0" : fmt(v,1)) + (storm ? "⚡" : "");
+  const rtxt = (v, storm) => v==null ? "·" : (v < 0.05 ? "0" : fmt(v,1)) + (storm ? " " + icon("bolt", 14) : "");
   const u = usableModels().sort((a,b)=> (b.m.hi-a.m.hi));
   const head = `<tr><th></th>${idxs.map(i=>`<th>${hh(state.times[i])}</th>`).join("")}</tr>`;
   const rhTd = (v, i, tip, b) => `<td class="${rhCls(v)}${coatOn(state.day) && v!=null && v > coatRh() ? " r-w" : ""}" data-i="${i}" title="${tip}"${b ? ' style="font-weight:700"' : ""}>${v==null ? "·" : Math.round(v)}</td>`;
@@ -54,7 +54,7 @@ function renderMatrix(){
   $("mxLegend").hidden = !(rain || feu || wol);
   $("mxLegend").innerHTML = feu ? `Relative Luftfeuchte in % (2 m über Boden). Grün ab 60 %, kräftiger ab ${RH_MID} %, dunkel ab ${RH_HI} %: Nebel, Tau oder nasse Oberflächen wahrscheinlich.${coatOn(state.day) ? ` Gelber Rand: über ${coatRh()} % (Grenze Beschichten).` : ""} Nur Anzeige, die Ampel ändert sich dadurch nicht.`
     : wol ? `Bewölkung gesamt: ${icon("sun",16)} klar · ${icon("sunfew",16)} heiter · ${icon("cloudsun",16)} wolkig · ${icon("cloud",16)} stark bewölkt · ${icon("clouds",16)} bedeckt, nachts ${icon("moon",16)} bei klarem Himmel. Je kräftiger das Grau hinter dem Symbol, desto dichter die Wolken. Mit der Maus über ein Feld fahren zeigt den Wert in %. Nur Anzeige.`
-    : rain ? `Regen in mm/h. Hellblau: leicht (bis ${fmt(RAIN_LIGHT,1)}), mittelblau: mäßig (bis ${fmt(RAIN_MOD,1)}), dunkelblau: stark. Gelber Rand: ab ${fmt(RAIN_WARN,1)} mm/h (Prüfen in der Ampel). ⚡ Gewittersignal. Nur Anzeige, die Ampel ändert sich dadurch nicht.` : "";
+    : rain ? `Regen in mm/h. Hellblau: leicht (bis ${fmt(RAIN_LIGHT,1)}), mittelblau: mäßig (bis ${fmt(RAIN_MOD,1)}), dunkelblau: stark. Gelber Rand: ab ${fmt(RAIN_WARN,1)} mm/h (Prüfen in der Ampel). ${icon("bolt",14)} Gewittersignal. Nur Anzeige, die Ampel ändert sich dadurch nicht.` : "";
   document.querySelectorAll("#mxSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === mxMode)));
   highlightSel();
 }

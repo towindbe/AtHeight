@@ -7,7 +7,7 @@
 <title>So funktioniert der Windbericht</title>
 <script>/* Hell nur, wenn so gewählt (Standard dunkel); vor dem Zeichnen setzen, damit nichts aufblitzt */
 try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-30h">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-30i">
 <style>
   .info h2{margin-bottom:2px}
   .info p,.info li{margin:0;font-size:15px;line-height:1.55}
@@ -28,7 +28,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 <div class="wrap info">
   <header class="top">
     <div class="brand-wrap" style="min-width:0">
-      <img class="brand-logo" src="icons/logo.svg" alt="" width="40" height="40">
+      <img class="brand-logo logo-dunkel" src="icons/logo.svg" alt="" width="40" height="40"><img class="brand-logo logo-hell" src="icons/logo-hell.svg" alt="" width="40" height="40">
       <div style="min-width:0">
         <div class="eyebrow">Windbericht für Höhenarbeit</div>
         <h1>So funktioniert der Windbericht</h1>
@@ -110,7 +110,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
           <li><b>Aktualität:</b> läuft für jede Anlage automatisch im Hintergrund und wird nach 7 Tagen erneuert, von Hand über „Vergleich neu berechnen“. „Am besten bewertet“ unter dem Windverlauf blendet die als „gut“ eingestuften Modelle ein.</li>
         </ol>
         <b>Grenzen:</b> die Station misst in 10 m Höhe und steht oft einige Kilometer entfernt; über den Wind in Arbeitshöhe sagt der Vergleich deshalb nur begrenzt etwas. 30 Tage sind ein Kompromiss zwischen „passt zur aktuellen Wetterlage“ und „genug Daten“. Die Bewertung (Ampel, Median) nutzt unabhängig davon alle aktiven Modelle.</li>
-      <li><b>Ausblick 7 Tage:</b> Tage 1–3 aus der Detailprognose, ab Tag 4 grobe Tendenz aus vier Globalmodellen und den ECMWF-Szenarien. Nur zur Planung. Je Tag steht auch, wann der Taupunkt erreicht wird („💧 Tau“), im Beschichten-Modus stattdessen, wann beschichtet werden darf („🖌 Beschichten“). Ab Tag 4 ist das nur grob, und es geht dort nicht in die Ampel ein.</li>
+      <li><b>Ausblick 7 Tage:</b> Tage 1–3 aus der Detailprognose, ab Tag 4 grobe Tendenz aus vier Globalmodellen und den ECMWF-Szenarien. Nur zur Planung. Je Tag steht auch, wann der Taupunkt erreicht wird („Tau“), im Beschichten-Modus stattdessen, wann beschichtet werden darf („Beschichten“). Ab Tag 4 ist das nur grob, und es geht dort nicht in die Ampel ein.</li>
     </ul>
   </section>
 
@@ -131,9 +131,9 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <li><b>Taupunktabstand:</b> wie weit die Temperatur über dem Taupunkt liegt, in K (Kelvin; 1 K entspricht 1 °C Unterschied). Unter dem Temperatur-Diagramm steht er je Arbeitsstunde, ebenso in „Stunden im Detail“. <b>„Tau“</b> (gelb) heißt: Taupunkt erreicht, die Luft oben ist gesättigt, Nebel oder eine tiefe Wolke in Arbeitshöhe sind wahrscheinlich, Oberflächen und Seile werden nass und glatt. <b>Hellgelb</b>: Taupunktabstand höchstens 1 K, Kondenswasser möglich. Der Überblick oben fasst das einmal je Tag zusammen, z. B. „Kondenswasser: Taupunkt erreicht 06–09 Uhr“. Kein Einfluss auf die Ampel.</li>
       <li><b>Mehr als 1 K Taupunktabstand</b> heißt nur: Die Prognose rechnet nicht mit Kondenswasser in der Luft. Trocken sind Oberflächen damit nicht sicher, siehe Oberflächentemperatur.</li>
       <li><b>Oberflächentemperatur:</b> Entscheidend für Kondenswasser ist die Temperatur der Oberfläche, nicht der Luft. Nach klaren Nächten sind Untergründe wie Stahl, Beton oder Glas oft kälter als die Luft. Das kennt kein Wettermodell: <b>vor Ort mit dem Oberflächenthermometer messen</b>.</li>
-      <li><b>Beschichten / Laminieren:</b> Viele Harze und Lacke dürfen nur bis zu einer bestimmten Luftfeuchte und mit ausreichendem Taupunktabstand verarbeitet werden. Die Grenzen stehen in den Einstellungen (Start: höchstens 80 % Feuchte, Taupunktabstand mind. 3 K, übliche Regel nach ISO 8502-4). <b>Eingeschaltet wird es im Überblick oben</b> mit „🖌 Beschichten-Modus“. Es gilt dann für alle Tage an diesem Standort, bis ihr es wieder ausschaltet, höchstens 7 Tage; danach ist es von selbst aus, damit es nicht versehentlich wochenlang an bleibt. Ist es an, steht oben gut sichtbar „Beschichten-Modus an“ mit den Grenzen und den Uhrzeiten, in denen nicht beschichtet werden darf. In der Taupunkt-Zeile kommt die Luftfeuchte dazu, im Diagramm die Feuchte-Grenze als gestrichelte Linie. Ohne das Häkchen „Ampel auf STOP“ in den Einstellungen sind das nur Hinweise (gelb). Mit Häkchen setzen überschrittene Grenzen die Ampel auf STOP (rot); Überblick und Tagesbericht nennen dann getrennt „Stop nur wegen Beschichtung, nicht wegen Wetter“. Maßgeblich bleibt das Datenblatt des Herstellers.</li>
+      <li><b>Beschichten / Laminieren:</b> Viele Harze und Lacke dürfen nur bis zu einer bestimmten Luftfeuchte und mit ausreichendem Taupunktabstand verarbeitet werden. Die Grenzen stehen in den Einstellungen (Start: höchstens 80 % Feuchte, Taupunktabstand mind. 3 K, übliche Regel nach ISO 8502-4). <b>Eingeschaltet wird es im Überblick oben</b> mit „Beschichten-Modus“. Es gilt dann für alle Tage an diesem Standort, bis ihr es wieder ausschaltet, höchstens 7 Tage; danach ist es von selbst aus, damit es nicht versehentlich wochenlang an bleibt. Ist es an, steht oben gut sichtbar „Beschichten-Modus an“ mit den Grenzen und den Uhrzeiten, in denen nicht beschichtet werden darf. In der Taupunkt-Zeile kommt die Luftfeuchte dazu, im Diagramm die Feuchte-Grenze als gestrichelte Linie. Ohne das Häkchen „Ampel auf STOP“ in den Einstellungen sind das nur Hinweise (gelb). Mit Häkchen setzen überschrittene Grenzen die Ampel auf STOP (rot); Überblick und Tagesbericht nennen dann getrennt „Stop nur wegen Beschichtung, nicht wegen Wetter“. Maßgeblich bleibt das Datenblatt des Herstellers.</li>
       <li><b>Luftfeuchte:</b> relative Luftfeuchte in 2 m über dem Boden, je Modell und als Median. Die Modelle geben sie in der Höhe nicht aus. Ab etwa 95 % ist mit Nebel, Tau oder nassen Oberflächen zu rechnen.</li>
-      <li><b>Bewölkung:</b> Gesamtbedeckung des Himmels in %, als Symbol in Achteln wie im Wetterbericht: ☀️ klar (0–1/8), 🌤️ heiter (2–3/8), ⛅ wolkig (4–5/8), 🌥️ stark bewölkt (6/8), ☁️ bedeckt (7–8/8), nachts 🌙. Wie hoch die Wolken hängen, sagt der Wert nicht. Nur Anzeige.</li>
+      <li><b>Bewölkung:</b> Gesamtbedeckung des Himmels in %, als Symbol in Achteln wie im Wetterbericht: Sonne = klar (0–1/8), Sonne mit kleiner Wolke = heiter (2–3/8), Sonne hinter Wolke = wolkig (4–5/8), Wolke = stark bewölkt (6/8), zwei Wolken = bedeckt (7–8/8); nachts Mond statt Sonne. Wie hoch die Wolken hängen, sagt der Wert nicht. Nur Anzeige.</li>
       <li>Nicht jedes Modell liefert jeden Wert; fehlt einer, steht „·“.</li>
     </ul>
     <details>
