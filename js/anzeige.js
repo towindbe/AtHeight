@@ -23,7 +23,7 @@ function fillSettings(){
   $("s_name").value = site.name; $("s_lat").value = site.lat; $("s_lon").value = site.lon;
   $("s_work").value = site.work ?? ""; $("s_access").value = accessMode();
   $("s_hub").value = site.hub; $("s_rotor").value = site.rotor; $("s_unit").value = windUnit;
-  $("s_windkraft").checked = isWind(); applyEinsatzUI();
+  $("s_windkraft").checked = isWind(); applyEinsatzUI(); $("lbl_turbine").hidden = !isWind();
   setWindField("s_wind", site.wind); setWindField("s_gust", site.gust); setWindField("s_nwind", nightWind()); setWindField("s_ngust", nightGust());
   $("s_from").value = site.from; $("s_to").value = site.to; $("s_mintemp").value = minTemp();
   $("s_coatrh").value = coatRh(); $("s_coatdew").value = coatDew(); $("s_coatstop").checked = !!site.coatStop;
