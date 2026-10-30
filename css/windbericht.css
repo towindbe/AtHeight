@@ -633,3 +633,10 @@ header.top .row .icon-btn{width:48px;min-width:48px;padding:0;font-size:20px}
 @media print{.bottom-nav{display:none!important}}
 /* Helles Design: weiße Schrift auf den kräftigeren Ampelfarben (Kontrast) */
 :root[data-theme="light"] .lamp.go,:root[data-theme="light"] .lamp.warn,:root[data-theme="light"] .lamp.stop,:root[data-theme="light"] .ic{color:#fff}
+
+/* Symbole im Fließtext (Erklärtexte): so groß wie die Schrift */
+.note .ico,.help .ico{width:1.05em;height:1.05em;vertical-align:-2px}
+/* Zwei Logo-Dateien: im hellen Design das Weiß im Logo dunkel (logo-hell.svg) */
+.brand-logo.logo-hell{display:none}
+:root[data-theme="light"] .brand-logo.logo-dunkel{display:none}
+:root[data-theme="light"] .brand-logo.logo-hell{display:block}

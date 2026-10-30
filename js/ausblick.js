@@ -141,7 +141,7 @@ function renderOutlook(){
       <span class="ol-row" title="Höchster Wind des Tages: vom vorsichtigsten bis zum stürmischsten Modell. Schmal = einig, breit = unsicher."><small>Spanne</small>${vSpan}</span>
       <span class="ol-row"><small>Böe max</small>${gTxt} ${WU()}</span>
       <span class="ol-row"><small>Zu windig</small>${riskHtml(o.pEns, outlook.ens?.members)}</span>
-      <span class="ol-row"><small>Regen</small>${rain==null ? "–" : fmt(rain,1)+" mm"}${storm > 0 ? ` <span title="Gewittersignal">⚡</span>` : ""}</span>
+      <span class="ol-row"><small>Regen</small>${rain==null ? "–" : fmt(rain,1)+" mm"}${storm > 0 ? ` <span title="Gewittersignal">${icon("bolt",14)}</span>` : ""}</span>
       <span class="ol-row"><small>°C</small>${tMin==null ? "–" : `${fmt(tMin,0)} … ${fmt(tMax,0)}`}</span>
       <span class="ol-row ${dew.cls}" title="${esc(dew.tip)}"><small>${dew.label}</small>${dew.txt}</span>
     </button>`;

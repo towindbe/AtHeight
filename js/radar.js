@@ -54,7 +54,7 @@ function radarShow(i){
 }
 function radarPlay(on){
   radar.playing = on;
-  $("radarPlay").textContent = on ? "⏸" : "▶";
+  $("radarPlay").innerHTML = icon(on ? "pause" : "play", 18);
   $("radarPlay").setAttribute("aria-label", on ? "Animation anhalten" : "Animation abspielen");
   clearTimeout(radar.timer);
   if(!on) return;

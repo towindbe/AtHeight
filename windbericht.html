@@ -17,7 +17,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-30h">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-30i">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tw-logo" viewBox="-6 -6 790 512"><g fill="currentColor" stroke="currentColor" stroke-linejoin="miter"><path stroke-width="3" d="M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z"/><path stroke-width="15" d="m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z"/></g></symbol></svg>
@@ -49,7 +49,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 
   <header class="top">
     <div class="brand-wrap" style="min-width:0">
-      <img class="brand-logo" src="icons/logo.svg" alt="" width="40" height="40">
+      <img class="brand-logo logo-dunkel" src="icons/logo.svg" alt="" width="40" height="40"><img class="brand-logo logo-hell" src="icons/logo-hell.svg" alt="" width="40" height="40">
       <div style="min-width:0">
         <div class="eyebrow">Windbericht für Höhenarbeit</div>
         <h1 id="siteTitle">Windbericht</h1>
@@ -117,7 +117,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
         <label>Min. Taupunktabstand (K)<input id="s_coatdew" type="number" step="0.5" min="0" max="10" inputmode="decimal"></label>
       </div>
       <label class="chk" id="coatStopLbl"><input type="checkbox" id="s_coatstop"><span>Grenzen verletzt: Ampel auf STOP (auch im Tagesbericht)</span></label>
-      <p class="note" id="coatNote">Eingeschaltet wird das Beschichten oben im Tagesüberblick mit „🖌 Beschichten-Modus“; es gilt dann für alle Tage an diesem Standort, bis ihr es ausschaltet, höchstens 7 Tage. Werte aus dem Datenblatt von Harz oder Lack eintragen (üblich: höchstens 80–85 %, mind. 3 K über Taupunkt). Die Oberflächentemperatur des Untergrunds (z. B. Stahl, Beton, Holz, Kunststoff) kennt das Modell nicht: vor Ort messen.</p>
+      <p class="note" id="coatNote">Eingeschaltet wird das Beschichten oben im Tagesüberblick mit „<i data-ico="brush"></i> Beschichten-Modus“; es gilt dann für alle Tage an diesem Standort, bis ihr es ausschaltet, höchstens 7 Tage. Werte aus dem Datenblatt von Harz oder Lack eintragen (üblich: höchstens 80–85 %, mind. 3 K über Taupunkt). Die Oberflächentemperatur des Untergrunds (z. B. Stahl, Beton, Holz, Kunststoff) kennt das Modell nicht: vor Ort messen.</p>
       </div>
     </fieldset>
     <fieldset>
@@ -271,7 +271,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
         <div class="radar-time" id="radarTime" hidden></div>
       </div>
       <div class="radar-bar" id="radarBar" hidden>
-        <button type="button" id="radarPlay" class="icon-btn" aria-label="Animation anhalten">⏸</button>
+        <button type="button" id="radarPlay" class="icon-btn" aria-label="Animation anhalten"><i data-ico="pause"></i></button>
         <input type="range" id="radarSlider" min="0" max="0" value="0" aria-label="Zeitpunkt des Radarbilds">
         <div class="radar-legend" aria-label="Niederschlag in mm/h">
           <div class="rl-bar"></div>
@@ -371,7 +371,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <b>Böe max:</b> stärkste geschätzte Böe des Tages (Median der Modelle).<br>
       <b>Zu windig:</b> Anteil der 51 Szenarien des ECMWF-Ensembles (mögliche Wetterverläufe), in denen an diesem Tag mindestens eine Arbeitsstunde über eurer Grenze liegt. Balken grün = unter 10 %, gelb = ab 10 %, rot = ab 30 %.<br>
       <b>Detail oben / Tendenz:</b> Die ersten 3 Tage stammen aus der Detailprognose mit allen Modellen (antippen wechselt zu diesem Tag). Ab Tag 4 rechnen nur noch 4 Globalmodelle (ECMWF, ICON, GFS, GEM); das ist eine grobe Tendenz für die Planung, nicht für die Freigabe.<br>
-      <b>💧 Tau:</b> Arbeitsstunden, in denen der Taupunkt erreicht wird (Nebel oder Wolke in Arbeitshöhe, Oberflächen nass). <b>🖌 Beschichten</b> (nur im Beschichten-Modus): wann eure Grenzen für Feuchte und Taupunktabstand eingehalten sind. Ab Tag 4 nur grob: Feuchte und Taupunkt sind in den Globalmodellen ungenauer als der Wind, besonders bei Nebel im Tal.</p>
+      <b><i data-ico="drop"></i> Tau:</b> Arbeitsstunden, in denen der Taupunkt erreicht wird (Nebel oder Wolke in Arbeitshöhe, Oberflächen nass). <b><i data-ico="brush"></i> Beschichten</b> (nur im Beschichten-Modus): wann eure Grenzen für Feuchte und Taupunktabstand eingehalten sind. Ab Tag 4 nur grob: Feuchte und Taupunkt sind in den Globalmodellen ungenauer als der Wind, besonders bei Nebel im Tal.</p>
     <div id="outlook"></div>
   </section>
 
@@ -431,25 +431,25 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 </div>
 
 <!-- Skripte teilen sich den globalen Gültigkeitsbereich; Reihenfolge beachten. Bei Änderungen ?v= erhöhen. -->
-<script src="js/konfiguration.js?v=2026-10-30h"></script>
-<script src="js/hilfen.js?v=2026-10-30h"></script>
-<script src="js/physik.js?v=2026-10-30h"></script>
-<script src="js/daten.js?v=2026-10-30h"></script>
-<script src="js/offline.js?v=2026-10-30h"></script>
-<script src="js/tageslicht.js?v=2026-10-30h"></script>
-<script src="js/bewertung.js?v=2026-10-30h"></script>
-<script src="js/anzeige.js?v=2026-10-30h"></script>
-<script src="js/leiste.js?v=2026-10-30h"></script>
-<script src="js/diagramme.js?v=2026-10-30h"></script>
-<script src="js/tabellen.js?v=2026-10-30h"></script>
-<script src="js/modellvergleich.js?v=2026-10-30h"></script>
-<script src="js/ausblick.js?v=2026-10-30h"></script>
-<script src="js/karte.js?v=2026-10-30h"></script>
-<script src="js/radar.js?v=2026-10-30h"></script>
-<script src="js/bericht.js?v=2026-10-30h"></script>
-<script src="js/ausfall.js?v=2026-10-30h"></script>
-<script src="js/anlagen.js?v=2026-10-30h"></script>
-<script src="js/bedienung.js?v=2026-10-30h"></script>
-<script src="js/start.js?v=2026-10-30h"></script>
+<script src="js/konfiguration.js?v=2026-10-30i"></script>
+<script src="js/hilfen.js?v=2026-10-30i"></script>
+<script src="js/physik.js?v=2026-10-30i"></script>
+<script src="js/daten.js?v=2026-10-30i"></script>
+<script src="js/offline.js?v=2026-10-30i"></script>
+<script src="js/tageslicht.js?v=2026-10-30i"></script>
+<script src="js/bewertung.js?v=2026-10-30i"></script>
+<script src="js/anzeige.js?v=2026-10-30i"></script>
+<script src="js/leiste.js?v=2026-10-30i"></script>
+<script src="js/diagramme.js?v=2026-10-30i"></script>
+<script src="js/tabellen.js?v=2026-10-30i"></script>
+<script src="js/modellvergleich.js?v=2026-10-30i"></script>
+<script src="js/ausblick.js?v=2026-10-30i"></script>
+<script src="js/karte.js?v=2026-10-30i"></script>
+<script src="js/radar.js?v=2026-10-30i"></script>
+<script src="js/bericht.js?v=2026-10-30i"></script>
+<script src="js/ausfall.js?v=2026-10-30i"></script>
+<script src="js/anlagen.js?v=2026-10-30i"></script>
+<script src="js/bedienung.js?v=2026-10-30i"></script>
+<script src="js/start.js?v=2026-10-30i"></script>
 </body>
 </html>
