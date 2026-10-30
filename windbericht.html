@@ -270,6 +270,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <div class="map-wrap">
         <div id="map" role="application" aria-label="Karte des Baustellenstandorts"></div>
         <div class="radar-time" id="radarTime" hidden></div>
+        <div class="map-hint touch-only" id="mapHint" aria-hidden="true" data-en="Two fingers move the map · or “Enlarge”">Zwei Finger verschieben die Karte · oder „Vergrößern“</div>
       </div>
       <div class="radar-bar" id="radarBar" hidden>
         <button type="button" id="radarPlay" class="icon-btn" aria-label="Animation anhalten"><i data-ico="pause"></i></button>
@@ -293,7 +294,6 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
         </div>
       </div>
       <p class="note" id="mapNote" data-en="Search for a place or tap the site directly. The marker can be dragged. Arrow: wind direction at the selected hour. Rain radar: DWD, Germany and border areas only.">Ort suchen oder direkt auf die Baustelle tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Regenradar: DWD, nur Deutschland und Grenzgebiete.</p>
-      <p class="note touch-only" data-en="On a phone one finger scrolls the page. Move the map with two fingers or in full screen (“Enlarge”).">Am Handy scrollt ein Finger die Seite. Die Karte verschiebst du mit zwei Fingern oder im Vollbild („Vergrößern“).</p>
     </section>
 
     <section class="card needs-data expert" id="sec-richtung">

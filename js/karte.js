@@ -13,6 +13,7 @@ function initMap(){
   marker.on("dragend", () => setPos(marker.getLatLng(), true));
   map.on("click", e => setPos(e.latlng));
   mapScrollLock(true);
+  mapHintInit();
   $("mapMaxBtn").onclick = () => mapMax(!$("mapCard").classList.contains("map-max"));
   document.addEventListener("keydown", e => { if(e.key==="Escape" && $("mapCard").classList.contains("map-max")) mapMax(false); });
   $("radarBtn").onclick = () => radarToggle($("radarBtn").getAttribute("aria-pressed")!=="true");
@@ -26,6 +27,13 @@ function initMap(){
 function mapScrollLock(on){
   if(!map || !matchMedia("(pointer:coarse)").matches) return;
   on ? map.dragging.disable() : map.dragging.enable();
+}
+/* Hinweis auf der Karte (nur Touch): blinkt, bis einmal gezoomt oder vergrößert wurde */
+function mapHintInit(){
+  const hide = () => { $("mapHint").hidden = true; try{ localStorage.setItem("wb_maphint","1"); }catch(e){} };
+  try{ if(localStorage.getItem("wb_maphint")){ $("mapHint").hidden = true; return; } }catch(e){}
+  map.once("zoomstart", hide);
+  $("mapMaxBtn").addEventListener("click", hide, {once:true});
 }
 function mapMax(on, stay){
   mapScrollLock(!on);
