@@ -10,6 +10,8 @@ const LOC = () => LANG === "en" ? "en-GB" : "de-DE";
 const UHR = () => T(" Uhr", "h");   // Zeitangabe hinter Uhrzeiten: „06–19 Uhr“ bzw. „06–19h“
 function applyStaticLang(){
   document.documentElement.lang = LANG;
+  if(!document.documentElement.dataset.titleDe) document.documentElement.dataset.titleDe = document.title;
+  document.title = LANG === "en" ? "AtHeight – weather check for work at height" : document.documentElement.dataset.titleDe;
   const swap = (sel, get, set, key) => document.querySelectorAll(sel).forEach(e => {
     if(e.dataset[key + "De"] == null) e.dataset[key + "De"] = get(e);
     set(e, LANG === "en" ? e.dataset[key] : e.dataset[key + "De"]);

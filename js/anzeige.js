@@ -71,7 +71,7 @@ function renderHero(){
   $("warnBox").className = "warnbox needs-data " + kind;
   $("warnBox").innerHTML = kind==="list"
     ? `<b>${T("Amtliche Warnungen", "Official warnings")}</b>` + ws.map(w => `<div class="wb-${!w.relevant ? "info" : w.lvl>=3 ? "stop" : "warn"}">
-      <span>${esc(w.src)}: ${esc(w.title)}</span><small>${esc(fmtWhen(w.start))} bis ${esc(fmtWhen(w.end))}</small></div>`).join("") + (note ? `<small>${esc(note)}</small>` : "")
+      <span>${esc(w.src)}: ${esc(w.title)}</span><small>${esc(fmtWhen(w.start))} ${T("bis", "to")} ${esc(fmtWhen(w.end))}</small></div>`).join("") + (note ? `<small>${esc(note)}</small>` : "")
     : kind==="ok" ? `<b>${T("Keine amtlichen Warnungen", "No official warnings")}</b><small>${esc(note.replace(/^(Keine amtlichen Warnungen für |No official warnings for )/, "").replace(/\.$/, ""))}</small>`
     : `<b>${T("Amtliche Warnungen", "Official warnings")}</b><small>${esc(note)}</small>`;
   const sg = spreadGroups(state.day);
