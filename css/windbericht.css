@@ -556,13 +556,6 @@ table.t{font-size:14px} table.t td.why-cell{font-size:13px}
 .mx th{font-size:11px} .mx td{height:28px;font-size:11.5px}
 .info-btn{width:24px;height:24px;font-size:13px}
 .tl-cell{font-size:11px}
-/* Zwei Ebenen: einfache Ansicht zeigt nur das Wichtigste; Details für Fachleute per Schalter.
-   Im Beschichten-Modus bleibt die Temperatur (Taupunkt) sichtbar. */
-body.simple .expert{display:none}
-body.simple.coat-on #sec-temp{display:flex}
-body.simple .cols{grid-template-columns:1fr}
-.details-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:12px 14px;border:1px dashed var(--line);border-radius:12px}
-.details-bar button{min-height:44px;font-size:15px}
 /* Erklärtexte eingeklappt: „?“ neben der Überschrift blendet sie ein */
 .card .help{display:none}
 .card.show-help .help:not([hidden]){display:block}
@@ -583,7 +576,6 @@ header.top .row .icon-btn{width:48px;min-width:48px;padding:0;font-size:20px}
 /* ===== Neuer Überblick: ein Instrument statt vieler Kästen; Farbe nur mit Bedeutung; Linien-Symbole ===== */
 .ico{flex:none;display:inline-block;vertical-align:-4px}
 #favBtn .ico{color:var(--accent);fill:currentColor}
-#detailsBtn[aria-expanded="true"] .ico{transform:rotate(180deg)}
 .coat-bar button .ico,.night-btn .ico{margin-right:2px}
 .hero{display:flex;flex-direction:column;align-items:stretch;gap:12px;margin-top:12px;padding:18px;border-radius:18px;background:var(--raised);border:1px solid var(--line)}
 .inst-top{display:flex;align-items:center;gap:10px}
