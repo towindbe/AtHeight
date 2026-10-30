@@ -523,6 +523,7 @@ body.unconfirmed #timeline,body.unconfirmed #sbStrip{filter:grayscale(1);opacity
 .mx td.f-0{background:var(--raised);color:var(--muted)}
 .mx td.f-1{background:rgba(95,190,190,.22)} .mx td.f-2{background:rgba(95,190,190,.5)} .mx td.f-3{background:#3a9a9a;color:#fff}
 .mx td.cl{background:rgba(128,138,150,calc(var(--cc) * .55));font-size:15px;line-height:1}
+.mx td.cl .ico{vertical-align:middle}
 .mx td.r-w{border:1.5px solid var(--warn)}
 
 /* Hinweis: Standort am Rand der Modellzelle */
