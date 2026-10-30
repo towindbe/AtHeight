@@ -119,9 +119,12 @@ legend{font:600 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:upper
 #mapCard.map-max{position:fixed;inset:0;z-index:3000;border-radius:0;border:0;padding:12px max(12px,env(safe-area-inset-left,0px));overflow:auto;background:var(--surface)}
 #mapCard.map-max #map{height:calc(100dvh - 170px);min-height:260px}
 #mapCard.map-max #mapNote{display:none}
+/* Vollbild: Standort übernehmen/verwerfen liegt über der Karte und wird nicht übersehen */
+#mapCard.map-max .pickbar:not([hidden]){position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:10;max-height:60dvh;overflow:auto;box-shadow:0 8px 28px rgba(0,0,0,.55)}
 body.map-open{overflow:hidden}
 #chartCard.chart-max{position:fixed;inset:0;z-index:3000;border-radius:0;border:0;padding:12px max(12px,env(safe-area-inset-left,0px));overflow:auto;background:var(--surface)}
 #chartCard.chart-max .chart-box{height:calc(100dvh - 150px);min-height:260px}
+@media (orientation:landscape) and (max-height:520px){ #chartCard.chart-max .chart-box{height:calc(100dvh - 78px);min-height:160px} }
 .map-wrap{position:relative}
 .radar-time{position:absolute;top:10px;right:10px;z-index:500;background:rgba(0,0,0,.6);color:#fff;font:600 14px var(--f-mono);padding:5px 9px;border-radius:6px;pointer-events:none}
 .radar-time span{font:600 10.5px var(--f-body);text-transform:uppercase;letter-spacing:.06em;margin-left:6px;padding:1px 6px;border-radius:4px}
@@ -523,6 +526,13 @@ body.unconfirmed #timeline,body.unconfirmed #sbStrip{filter:grayscale(1);opacity
 .mx td.f-0{background:var(--raised);color:var(--muted)}
 .mx td.f-1{background:rgba(95,190,190,.22)} .mx td.f-2{background:rgba(95,190,190,.5)} .mx td.f-3{background:#3a9a9a;color:#fff}
 .mx td.cl{background:rgba(128,138,150,calc(var(--cc) * .55));font-size:15px;line-height:1}
+.mx td.cl .ico{vertical-align:middle}
+/* Wolken-Matrix: Sonne gelb, Mond hellblau, Wolken in Wolkenfarbe; bei Sonne/Mond mit Wolke wird nur der Sonnen-/Mondteil (ic-a) gefärbt */
+.mx td.cl{--sun:#f2b84b;--moon:#b9c6ff;--wolke:#9fb0c0}
+:root[data-theme="light"] .mx td.cl{--sun:#c98a0a;--moon:#5a6fd0;--wolke:#6b7a89}
+.mx td.cl-sun{color:var(--sun)} .mx td.cl-moon{color:var(--moon)} .mx td.cl-cloud{color:var(--wolke)}
+.mx td.cl-sunc{color:var(--wolke);--a:var(--sun)} .mx td.cl-moonc{color:var(--wolke);--a:var(--moon)}
+.mx td.cl .ic-a{stroke:var(--a,currentColor)}
 .mx td.r-w{border:1.5px solid var(--warn)}
 
 /* Hinweis: Standort am Rand der Modellzelle */
@@ -556,13 +566,6 @@ table.t{font-size:14px} table.t td.why-cell{font-size:13px}
 .mx th{font-size:11px} .mx td{height:28px;font-size:11.5px}
 .info-btn{width:24px;height:24px;font-size:13px}
 .tl-cell{font-size:11px}
-/* Zwei Ebenen: einfache Ansicht zeigt nur das Wichtigste; Details für Fachleute per Schalter.
-   Im Beschichten-Modus bleibt die Temperatur (Taupunkt) sichtbar. */
-body.simple .expert{display:none}
-body.simple.coat-on #sec-temp{display:flex}
-body.simple .cols{grid-template-columns:1fr}
-.details-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:12px 14px;border:1px dashed var(--line);border-radius:12px}
-.details-bar button{min-height:44px;font-size:15px}
 /* Erklärtexte eingeklappt: „?“ neben der Überschrift blendet sie ein */
 .card .help{display:none}
 .card.show-help .help:not([hidden]){display:block}
@@ -579,11 +582,11 @@ body.simple .cols{grid-template-columns:1fr}
 header.top .row button{height:48px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 14px}
 header.top .row .icon-btn{width:48px;min-width:48px;padding:0;font-size:20px}
 @media (max-width:430px){ #settingsBtn{width:48px;min-width:48px;padding:0;font-size:20px} #settingsBtn .chev{display:none} }
+@media (max-width:400px){ header.top .row{gap:5px} header.top .row button{height:42px;min-height:42px} header.top .row .icon-btn,header.top .row #settingsBtn{width:42px;min-width:42px} header.top .row #favBtn{padding:0 10px} }
 
 /* ===== Neuer Überblick: ein Instrument statt vieler Kästen; Farbe nur mit Bedeutung; Linien-Symbole ===== */
 .ico{flex:none;display:inline-block;vertical-align:-4px}
 #favBtn .ico{color:var(--accent);fill:currentColor}
-#detailsBtn[aria-expanded="true"] .ico{transform:rotate(180deg)}
 .coat-bar button .ico,.night-btn .ico{margin-right:2px}
 .hero{display:flex;flex-direction:column;align-items:stretch;gap:12px;margin-top:12px;padding:18px;border-radius:18px;background:var(--raised);border:1px solid var(--line)}
 .inst-top{display:flex;align-items:center;gap:10px}
@@ -622,7 +625,7 @@ header.top .row .icon-btn{width:48px;min-width:48px;padding:0;font-size:20px}
 /* Navigation unten: nur am Handy; oben bleiben in der Kurzleiste Ampel, Stunde und Tagesreiter */
 .bottom-nav{display:none}
 @media (max-width:759px){
-  .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:1100;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--surface);border-top:1px solid var(--line);padding:6px 4px calc(8px + env(safe-area-inset-bottom,0px))}
+  .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:1100;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:var(--surface);border-top:1px solid var(--line);padding:6px 4px calc(8px + env(safe-area-inset-bottom,0px))}
   body.no-site .bottom-nav{display:none}
   .bottom-nav button{min-height:54px;border:0;background:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:600 12px var(--f-body);padding:0;border-radius:12px}
   .bottom-nav button .ico{width:22px;height:22px}
@@ -635,3 +638,18 @@ header.top .row .icon-btn{width:48px;min-width:48px;padding:0;font-size:20px}
 :root[data-theme="light"] .lamp.go,:root[data-theme="light"] .lamp.warn,:root[data-theme="light"] .lamp.stop,:root[data-theme="light"] .ic{color:#fff}
 /* Sprachknopf: Kürzel statt Symbol, gleiche Größe wie die anderen */
 header.top .row .lang-btn{font:700 15px var(--f-body);letter-spacing:.04em}
+
+/* Symbole im Fließtext (Erklärtexte): so groß wie die Schrift */
+.note .ico,.help .ico{width:1.05em;height:1.05em;vertical-align:-2px}
+/* Zwei Logo-Dateien: im hellen Design das Weiß im Logo dunkel (logo-hell.svg) */
+.brand-logo.logo-hell{display:none}
+:root[data-theme="light"] .brand-logo.logo-dunkel{display:none}
+:root[data-theme="light"] .brand-logo.logo-hell{display:block}
+
+/* Hinweis nur auf Touchgeräten, nicht im Vollbild */
+.touch-only{display:none}
+@media (pointer:coarse){ .touch-only{display:block} #mapCard.map-max .touch-only{display:none} }
+
+/* Markenzeile: AtHeight in Originalschreibweise; auf schmalen Handys enger, damit sie in eine Zeile passt */
+.eyebrow-brand .bn{text-transform:none;letter-spacing:.04em;font-size:1.2em;color:var(--fg)}
+@media (max-width:430px){ .eyebrow-brand{letter-spacing:.07em;font-size:10.5px} }

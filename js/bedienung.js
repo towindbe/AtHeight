@@ -1,4 +1,4 @@
-/* Windbericht · Knöpfe, Einstellungen, Drucken */
+/* AtHeight · Knöpfe, Einstellungen, Drucken */
 "use strict";
 
 /* ---------- Bedienung ---------- */
@@ -42,18 +42,6 @@ $("saveBtn").onclick = () => {
 };
 $("s_windkraft").onchange = applyEinsatzUI;
 $("coatBtn").onclick = toggleCoat;
-/* Zwei Ebenen: einfache Ansicht (Standard) oder mit Details für Fachleute; gemerkt im Browser */
-let detailsOn = (() => { try{ return localStorage.getItem("wb_details")==="1"; }catch(e){ return false; } })();
-function setDetails(on){
-  detailsOn = on;
-  try{ localStorage.setItem("wb_details", on ? "1" : "0"); }catch(e){}
-  document.body.classList.toggle("simple", !on);
-  $("detailsBtn").setAttribute("aria-expanded", String(on));
-  $("detailsLbl").textContent = on ? T("Details für Fachleute ausblenden", "Hide details for specialists") : T("Details für Fachleute einblenden", "Show details for specialists");
-  if(on && state.hours.length) render();   // Diagramme in vorher ausgeblendeten Abschnitten neu zeichnen
-}
-setDetails(detailsOn);
-$("detailsBtn").onclick = () => setDetails(!detailsOn);
 /* Erklärtexte (Klasse help) sind eingeklappt; jede Karte mit solchen Texten bekommt ein „?“ an der Überschrift */
 document.querySelectorAll(".card").forEach(card => {
   const h = card.querySelector("h2");
@@ -76,7 +64,6 @@ function setLang(l){
   try{ localStorage.setItem("wb_lang", l); }catch(e){}
   applyStaticLang();
   if(typeof initStickyNav === "function") initStickyNav();
-  setDetails(detailsOn);
   if(state.results.length){ state.hours = computeHours(state.results, state.times); render(); }
 }
 $("langBtn").onclick = () => setLang(LANG === "en" ? "de" : "en");
@@ -178,8 +165,17 @@ function chartMax(on){
   document.body.classList.toggle("map-open", on);
   $("chartMaxBtn").setAttribute("aria-pressed", String(on));
   $("chartMaxBtn").textContent = on ? T("✕ Schließen", "✕ Close") : T("⤢ Vergrößern", "⤢ Enlarge");
-  if(!on) setTimeout(() => $("chartCard").scrollIntoView({block:"start"}), 60);
+  // am Handy echtes Vollbild und quer, wenn der Browser das erlaubt (sonst bleibt es bei der großen Darstellung)
+  const card = $("chartCard");
+  if(on){
+    if(card.requestFullscreen && matchMedia("(pointer:coarse)").matches) card.requestFullscreen().then(() => screen.orientation?.lock?.("landscape")).catch(() => {});
+  }else{
+    try{ screen.orientation?.unlock?.(); }catch(e){}
+    if(document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    setTimeout(() => card.scrollIntoView({block:"start"}), 60);
+  }
 }
+document.addEventListener("fullscreenchange", () => { if(!document.fullscreenElement && $("chartCard").classList.contains("chart-max")) chartMax(false); });
 $("tempLegend").addEventListener("click", e => { const b = e.target.closest("button[data-s]"); if(b) toggleLine(b.dataset.s); });
 document.querySelectorAll(".night-btn").forEach(b => b.onclick = toggleNight);
 $("chartLegend").addEventListener("click", e => { const b = e.target.closest("button[data-s]"); if(b) toggleLine(b.dataset.s); });

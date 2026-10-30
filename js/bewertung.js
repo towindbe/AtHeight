@@ -1,4 +1,4 @@
-/* Windbericht · Ampelregeln mit Gründen, Stundenberechnung, Tageszusammenfassung */
+/* AtHeight · Ampelregeln mit Gründen, Stundenberechnung, Tageszusammenfassung */
 "use strict";
 
 /* Modelle, die in die Bewertung eingehen: aktiv und nicht von Hand ausgeschlossen */

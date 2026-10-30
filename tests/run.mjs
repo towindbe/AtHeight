@@ -1,4 +1,4 @@
-// Automatischer Test des Windberichts.
+// Automatischer Test von AtHeight.
 //
 // Öffnet die App in einem Browser ohne Fenster, spielt aufgezeichnete Antworten der
 // Wetterdienste ab (tests/fixtures/api.json) und friert die Uhrzeit ein. So ist das
@@ -60,8 +60,8 @@ await page.addInitScript(fixed => {
   window.Date = FD;
 }, fixture.fixed);
 
-// Test prüft alle Abschnitte: Ansicht „Details für Fachleute“ einschalten (Standard ist die einfache Ansicht)
-await page.addInitScript(lang => { try{ localStorage.setItem("wb_details", "1"); if(lang === "en") localStorage.setItem("wb_lang", "en"); }catch(e){} }, LANG);
+// englische Oberfläche: Sprache vor dem Laden setzen
+await page.addInitScript(lang => { try{ if(lang === "en") localStorage.setItem("wb_lang", "en"); }catch(e){} }, LANG);
 
 await page.route(TILES, r => r.fulfill({status: 204, body: ""}));
 await page.route(API, async route => {

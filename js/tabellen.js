@@ -1,4 +1,4 @@
-/* Windbericht · Modell-Matrix, Stundentabelle, Modelltabelle */
+/* AtHeight · Modell-Matrix, Stundentabelle, Modelltabelle */
 "use strict";
 
 /* Modell-Matrix mit Umschalter: Wind, Böe, Regen, Feuchte oder Wolken je Modell und Stunde. Nur Anzeige, die Ampel bleibt unverändert.
@@ -8,15 +8,15 @@ let mxMode = (() => { try{ return localStorage.getItem("wb_mx") || "wind"; }catc
 const RAIN_LIGHT = 2.5, RAIN_MOD = 7.5;
 const RH_MID = 85, RH_HI = 95;
 const rhCls = v => v==null ? "m-none" : v >= RH_HI ? "f-3" : v >= RH_MID ? "f-2" : v >= 60 ? "f-1" : "f-0";
-// Bewölkung in Achteln wie im Wetterbericht: klar, heiter, wolkig, stark bewölkt, bedeckt; nachts Mond statt Sonne
+// Bewölkung in Achteln wie im Wetterbericht: klar, heiter, wolkig, stark bewölkt, bedeckt; nachts Mond statt Sonne (Linien-Symbole, Farbe = Textfarbe)
 function cloudSym(cc, dark){
-  if(cc==null) return ["·", T("keine Angabe", "no data")];
+  if(cc==null) return ["·", T("keine Angabe", "no data"), ""];
   const o = Math.round(cc/12.5);
-  if(o <= 1) return [dark ? "🌙" : "☀️", T("klar", "clear")];
-  if(o <= 3) return [dark ? "🌙" : "🌤️", T("heiter", "mostly sunny")];
-  if(o <= 5) return [dark ? "☁️" : "⛅", T("wolkig", "partly cloudy")];
-  if(o <= 6) return [dark ? "☁️" : "🌥️", T("stark bewölkt", "mostly cloudy")];
-  return ["☁️", T("bedeckt", "overcast")];
+  if(o <= 1) return [icon(dark ? "moon" : "sun", 22), T("klar", "clear"), dark ? "cl-moon" : "cl-sun"];
+  if(o <= 3) return [icon(dark ? "moonfew" : "sunfew", 22), T("heiter", "mostly sunny"), dark ? "cl-moonc" : "cl-sunc"];
+  if(o <= 5) return dark ? [icon("cloud", 22), T("wolkig", "partly cloudy"), "cl-cloud"] : [icon("cloudsun", 22), T("wolkig", "partly cloudy"), "cl-sunc"];
+  if(o <= 6) return [icon("cloud", 22), T("stark bewölkt", "mostly cloudy"), "cl-cloud"];
+  return [icon("clouds", 22), T("bedeckt", "overcast"), "cl-cloud"];
 }
 function renderMatrix(){
   const idxs = dayIdx().filter(i => isWork(state.times[i]));
@@ -26,12 +26,12 @@ function renderMatrix(){
   // knapp über der Grenze (gerundet gleich dem Grenzwert): zwei Nachkommastellen, damit Rot nachvollziehbar ist
   const num = v => { const d = U().d, r = x => Math.round(cw(x)*10**d)/10**d; return v > lim && r(v) <= r(lim) ? fw(v, d+1) : fw(v); };
   const rcls = v => v==null ? "m-none" : v >= RAIN_MOD ? "r-3" : v >= RAIN_LIGHT ? "r-2" : v >= 0.1 ? "r-1" : "r-0";
-  const rtxt = (v, storm) => v==null ? "·" : (v < 0.05 ? "0" : fmt(v,1)) + (storm ? "⚡" : "");
+  const rtxt = (v, storm) => v==null ? "·" : (v < 0.05 ? "0" : fmt(v,1)) + (storm ? " " + icon("bolt", 14) : "");
   const u = usableModels().sort((a,b)=> (b.m.hi-a.m.hi));
   const head = `<tr><th></th>${idxs.map(i=>`<th>${hh(state.times[i])}</th>`).join("")}</tr>`;
   const rhTd = (v, i, tip, b) => `<td class="${rhCls(v)}${coatOn(state.day) && v!=null && v > coatRh() ? " r-w" : ""}" data-i="${i}" title="${tip}"${b ? ' style="font-weight:700"' : ""}>${v==null ? "·" : Math.round(v)}</td>`;
-  const ccTd = (v, i, tip) => { const [sym, txt] = cloudSym(v, isDark(state.times[i]));
-    return `<td class="cl" data-i="${i}" title="${tip}: ${txt}${v==null ? "" : " (" + Math.round(v) + " %)"}" style="--cc:${v==null ? 0 : (v/100).toFixed(2)}">${sym}</td>`; };
+  const ccTd = (v, i, tip) => { const [sym, txt, kind] = cloudSym(v, isDark(state.times[i]));
+    return `<td class="cl ${kind}" data-i="${i}" title="${tip}: ${txt}${v==null ? "" : " (" + Math.round(v) + " %)"}" style="--cc:${v==null ? 0 : (v/100).toFixed(2)}">${sym}</td>`; };
   const cellOf = (s, i, r) => {
     if(feu) return rhTd(s?.rh, i, `${esc(r.m.name)} ${hh(state.times[i])}${UHR()}: ${T("Luftfeuchte", "humidity")} ${s?.rh==null ? "–" : Math.round(s.rh)+" %"}`);
     if(wol) return ccTd(s?.cc, i, `${esc(r.m.name)} ${hh(state.times[i])}${UHR()}`);
@@ -52,9 +52,9 @@ function renderMatrix(){
   $("mxNote").innerHTML = mxMode === "boe" ? T(`Böe je Modell und Stunde in <span class="wu">${WU()}</span>. Gelb ab 75 % des Grenzwerts für die Böe, rot darüber. Zeigt, ob nur ein Ausreißer warnt oder fast alle.`, `Gust per model and hour in <span class="wu">${WU()}</span>. Yellow from 75 % of the gust limit, red above. Shows whether only one outlier warns or almost all.`)
     : T(`Wind je Modell und Stunde in <span class="wu">${WU()}</span>. Gelb ab 75 % des Grenzwerts, rot über dem Grenzwert. Mit der Maus über ein Feld fahren zeigt auch die Böe. Zeigt, ob nur ein Ausreißer warnt oder fast alle.`, `Wind per model and hour in <span class="wu">${WU()}</span>. Yellow from 75 % of the limit, red above the limit. Hovering over a cell also shows the gust. Shows whether only one outlier warns or almost all.`);
   $("mxLegend").hidden = !(rain || feu || wol);
-  $("mxLegend").textContent = feu ? T(`Relative Luftfeuchte in % (2 m über Boden). Grün ab 60 %, kräftiger ab ${RH_MID} %, dunkel ab ${RH_HI} %: Nebel, Tau oder nasse Oberflächen wahrscheinlich.${coatOn(state.day) ? ` Gelber Rand: über ${coatRh()} % (Grenze Beschichten).` : ""} Nur Anzeige, die Ampel ändert sich dadurch nicht.`, `Relative humidity in % (2 m above ground). Green from 60 %, stronger from ${RH_MID} %, dark from ${RH_HI} %: fog, dew or wet surfaces likely.${coatOn(state.day) ? ` Yellow border: above ${coatRh()} % (coating limit).` : ""} Display only, the traffic light does not change.`)
-    : wol ? T(`Bewölkung gesamt: ☀️ klar · 🌤️ heiter · ⛅ wolkig · 🌥️ stark bewölkt · ☁️ bedeckt, nachts 🌙 bei klarem Himmel. Je kräftiger das Grau hinter dem Symbol, desto dichter die Wolken. Mit der Maus über ein Feld fahren zeigt den Wert in %. Nur Anzeige.`, `Total cloud cover: ☀️ clear · 🌤️ mostly sunny · ⛅ partly cloudy · 🌥️ mostly cloudy · ☁️ overcast, at night 🌙 for a clear sky. The stronger the grey behind the symbol, the denser the clouds. Hovering over a cell shows the value in %. Display only.`)
-    : rain ? T(`Regen in mm/h. Hellblau: leicht (bis ${fmt(RAIN_LIGHT,1)}), mittelblau: mäßig (bis ${fmt(RAIN_MOD,1)}), dunkelblau: stark. Gelber Rand: ab ${fmt(RAIN_WARN,1)} mm/h (Prüfen in der Ampel). ⚡ Gewittersignal. Nur Anzeige, die Ampel ändert sich dadurch nicht.`, `Rain in mm/h. Light blue: light (up to ${fmt(RAIN_LIGHT,1)}), mid blue: moderate (up to ${fmt(RAIN_MOD,1)}), dark blue: heavy. Yellow border: from ${fmt(RAIN_WARN,1)} mm/h (check in the traffic light). ⚡ thunderstorm signal. Display only, the traffic light does not change.`) : "";
+  $("mxLegend").innerHTML = feu ? T(`Relative Luftfeuchte in % (2 m über Boden). Grün ab 60 %, kräftiger ab ${RH_MID} %, dunkel ab ${RH_HI} %: Nebel, Tau oder nasse Oberflächen wahrscheinlich.${coatOn(state.day) ? ` Gelber Rand: über ${coatRh()} % (Grenze Beschichten).` : ""} Nur Anzeige, die Ampel ändert sich dadurch nicht.`, `Relative humidity in % (2 m above ground). Green from 60 %, stronger from ${RH_MID} %, dark from ${RH_HI} %: fog, dew or wet surfaces likely.${coatOn(state.day) ? ` Yellow border: above ${coatRh()} % (coating limit).` : ""} Display only, the traffic light does not change.`)
+    : wol ? T(`Bewölkung gesamt: ${icon("sun",16)} klar · ${icon("sunfew",16)} heiter · ${icon("cloudsun",16)} wolkig · ${icon("cloud",16)} stark bewölkt · ${icon("clouds",16)} bedeckt, nachts ${icon("moon",16)} bei klarem Himmel. Je kräftiger das Grau hinter dem Symbol, desto dichter die Wolken. Mit der Maus über ein Feld fahren zeigt den Wert in %. Nur Anzeige.`, `Total cloud cover: ${icon("sun",16)} clear · ${icon("sunfew",16)} mostly sunny · ${icon("cloudsun",16)} partly cloudy · ${icon("cloud",16)} mostly cloudy · ${icon("clouds",16)} overcast, at night ${icon("moon",16)} for a clear sky. The stronger the grey behind the symbol, the denser the clouds. Hovering over a cell shows the value in %. Display only.`)
+    : rain ? T(`Regen in mm/h. Hellblau: leicht (bis ${fmt(RAIN_LIGHT,1)}), mittelblau: mäßig (bis ${fmt(RAIN_MOD,1)}), dunkelblau: stark. Gelber Rand: ab ${fmt(RAIN_WARN,1)} mm/h (Prüfen in der Ampel). ${icon("bolt",14)} Gewittersignal. Nur Anzeige, die Ampel ändert sich dadurch nicht.`, `Rain in mm/h. Light blue: light (up to ${fmt(RAIN_LIGHT,1)}), mid blue: moderate (up to ${fmt(RAIN_MOD,1)}), dark blue: heavy. Yellow border: from ${fmt(RAIN_WARN,1)} mm/h (check in the traffic light). ${icon("bolt",14)} thunderstorm signal. Display only, the traffic light does not change.`) : "";
   document.querySelectorAll("#mxSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === mxMode)));
   highlightSel();
 }
@@ -111,12 +111,15 @@ function renderModelTable(){
       const pts = idxs.map(i=>r.series[i] ? {t:state.times[i], ...r.series[i]} : null).filter(Boolean);
       if(pts.length){ mx = fmt(Math.max(...pts.map(p=>p.v))); const f = pts.find(p=>p.v>site.wind || (p.g!=null && p.g>site.gust)); first = f ? hh(f.t)+UHR() : T("nie", "never"); }
     }
+    const lv = can ? r.series.find(Boolean)?.lv : null, zs = lv ? lv.map(l => l[0]) : [], top = zs.length ? Math.max(...zs) : null;
+    const status = !off && r.status==="extrap" && top!=null ? `${T("Hochgerechnet ab", "Extrapolated from")} ${top} m` : txt;
+    const heights = zs.length ? `<br><small class="muted">${T("Daten", "Data")}: ${zs.join(", ")} m</small>` : "";
     const cp = can ? cellPos(r) : null;
     const lage = !cp ? "–" : cp.far ? `${T("abweichend", "offset")} (${fmt(cp.dist,1)} km ${cp.dir})` : cp.edge ? `${T("Rand", "edge")} (${cp.dir})` : T("Mitte", "centre");
     return `<tr class="${off ? "excl" : ""}"><td class="use">${can ? `<input type="checkbox" data-model="${esc(r.m.id)}" ${off ? "" : "checked"} aria-label="${esc(r.m.name)} (${esc(r.m.org)}) ${T("verwenden", "use")}">` : ""}</td>
       <td>${esc(r.m.name)} <span class="muted">· ${esc(r.m.org)}</span></td><td>${esc(r.m.res)}</td>
       <td class="${cp && (cp.edge || cp.far) ? "cell-edge" : ""}" title="${cp ? T(`Standort liegt ${fmt(cp.dist,1)} km von der Mitte der Modellzelle (Zellgröße ${fmt(cp.res,1)} km) entfernt`, `Site is ${fmt(cp.dist,1)} km from the centre of the model cell (cell size ${fmt(cp.res,1)} km)`) : ""}">${lage}</td>
-      <td><span class="badge ${cls}" title="${esc(r.reason||"")}">${txt}</span></td><td class="num">${mx}</td><td class="num">${first}</td>
+      <td><span class="badge ${cls}" title="${esc(r.status==="extrap" ? T("Das Modell liefert keine Winddaten bis zur Arbeitshöhe. Der Wind darüber ist aus den höchsten gelieferten Höhen hochgerechnet.", "The model provides no wind data up to working height. The wind above is extrapolated from the highest heights provided.") : r.reason||"")}">${status}</span>${heights}</td><td class="num">${mx}</td><td class="num">${first}</td>
       <td class="num raw"><a href="${esc(apiUrl(r.m))}" target="_blank" rel="noopener" title="${T("Rohdaten dieses Modells direkt von Open-Meteo", "Raw data of this model directly from Open-Meteo")}">JSON</a> · <a href="${esc(apiUrl(r.m,"csv"))}" target="_blank" rel="noopener" title="${T("Als CSV, z. B. für Excel", "As CSV, e.g. for Excel")}">CSV</a></td></tr>`;
   });
   $("modelTable").innerHTML = `<thead><tr><th title="${T("Häkchen: Modell geht in die Bewertung ein", "Tick: model is included in the assessment")}">${T("Nutzen", "Use")}</th><th>${T("Modell", "Model")}</th><th>${T("Auflösung", "Resolution")}</th><th title="${T("Lage des Standorts in der Gitterzelle des Modells", "Position of the site in the model grid cell")}">${T("Lage in der Zelle", "Position in cell")}</th><th>Status</th><th>Max. Wind</th><th>${T("Über Grenze ab", "Above limit from")}</th><th class="raw">${T("Rohdaten", "Raw data")}</th></tr></thead><tbody>${rows.join("")}</tbody>`;

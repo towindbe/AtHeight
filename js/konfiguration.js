@@ -1,4 +1,4 @@
-/* Windbericht · Modelle, Schwellen, Standard-Anlage und App-Zustand */
+/* AtHeight · Modelle, Schwellen, Standard-Anlage und App-Zustand */
 "use strict";
 
 /* Sprache: Deutsch (Standard) oder Englisch, gemerkt im Browser. T("deutsch", "english") liefert den Text der gewählten Sprache.

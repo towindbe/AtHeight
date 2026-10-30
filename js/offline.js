@@ -1,4 +1,4 @@
-/* Windbericht · letzter Stand für den Betrieb ohne Netz (IndexedDB) und Änderung seit dem letzten Stand (localStorage) */
+/* AtHeight · letzter Stand für den Betrieb ohne Netz (IndexedDB) und Änderung seit dem letzten Stand (localStorage) */
 "use strict";
 
 /* ---------- Offline-Stand: die zuletzt geladenen Wetterdaten je Standort ---------- */
@@ -93,7 +93,7 @@ function installShow(ios){
   const box = document.createElement("div");
   box.id = "installBox"; box.className = "install-box"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", T("App installieren", "Install app"));
   box.innerHTML = `<img src="icons/icon-192.png" alt="" width="44" height="44">
-    <div><b>${T("Windbericht als App installieren", "Install the wind report as an app")}</b><span>${ios ? T("Teilen-Symbol antippen, dann „Zum Home-Bildschirm“. Danach ohne Browserleiste und mit gespeichertem Stand ohne Netz.", "Tap the share icon, then “Add to Home Screen”. It then runs without the browser bar and with saved data offline.") : T("Startet ohne Browserleiste, mit Symbol auf dem Startbildschirm und gespeichertem Stand ohne Netz.", "Starts without the browser bar, with an icon on the home screen and saved data offline.")}</span></div>
+    <div><b>${T("AtHeight als App installieren", "Install AtHeight as an app")}</b><span>${ios ? T("Teilen-Symbol antippen, dann „Zum Home-Bildschirm“. Danach ohne Browserleiste und mit gespeichertem Stand ohne Netz.", "Tap the share icon, then “Add to Home Screen”. It then runs without the browser bar and with saved data offline.") : T("Startet ohne Browserleiste, mit Symbol auf dem Startbildschirm und gespeichertem Stand ohne Netz.", "Starts without the browser bar, with an icon on the home screen and saved data offline.")}</span></div>
     <div class="ib-btns">${ios ? "" : `<button type="button" class="primary" id="installGo">${T("Installieren", "Install")}</button>`}<button type="button" class="ghost" id="installLater">${T("Später", "Later")}</button></div>`;
   document.body.appendChild(box);
   $("installLater").onclick = () => installClose(true);

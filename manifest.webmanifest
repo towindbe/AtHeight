@@ -1,6 +1,6 @@
 {
-  "name": "Windbericht für Höhenarbeit",
-  "short_name": "Windbericht",
+  "name": "AtHeight – Wetter-Check für Höhenarbeit",
+  "short_name": "AtHeight",
   "description": "Wind- und Wetterbericht in Nabenhöhe für Seilarbeiten an Windenergieanlagen. Entscheidungshilfe, keine Freigabe.",
   "lang": "de",
   "start_url": "windbericht.html",

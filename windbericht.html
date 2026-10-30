@@ -7,28 +7,29 @@
 <script>/* Hell nur, wenn so gewählt (Standard dunkel); vor dem Zeichnen setzen, damit nichts aufblitzt */
 try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
 
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="manifest.webmanifest?v=2026-10-30s">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Windbericht">
+<meta name="apple-mobile-web-app-title" content="AtHeight">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Cdefs%3E%3ClinearGradient id=%22bg%22 x1=%220%22 y1=%220%22 x2=%22.55%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%231b252f%22/%3E%3Cstop offset=%22.7%22 stop-color=%22%230d1217%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%22100%22 height=%22100%22 rx=%2222.5%22 fill=%22url(%23bg)%22/%3E%3Cg transform=%22translate(9 9) scale(.82)%22%3E%3Cg fill=%22none%22 stroke-width=%226.5%22 stroke-linecap=%22round%22%3E%3Cpath d=%22M20.9 74.4 A38 38 0 0 1 17.1 31%22 stroke=%22%2346c27b%22/%3E%3Cpath d=%22M25.6 20.9 A38 38 0 0 1 74.4 20.9%22 stroke=%22%23e6b04c%22/%3E%3Cpath d=%22M82.9 31 A38 38 0 0 1 79.1 74.4%22 stroke=%22%23e5484d%22/%3E%3C/g%3E%3Cpath d=%22M29 31 V84%22 stroke=%22%23f5f5f7%22 stroke-width=%226%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M33 34 L45.7 36.5 V58.5 L33 61 Z%22 fill=%22%23f5f5f7%22/%3E%3Cpath d=%22M48.7 37.1 L61.3 39.6 V55.4 L48.7 57.9 Z%22 fill=%22%23ff7a33%22/%3E%3Cpath d=%22M64.3 40.2 L77 42.6 V52.4 L64.3 54.8 Z%22 fill=%22%23f5f5f7%22/%3E%3C/g%3E%3C/svg%3E">
-<title>Windbericht für Höhenarbeit</title>
+<title>AtHeight – Wetter-Check für Höhenarbeit</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-30a">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-30s">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tw-logo" viewBox="-6 -6 790 512"><g fill="currentColor" stroke="currentColor" stroke-linejoin="miter"><path stroke-width="3" d="M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z"/><path stroke-width="15" d="m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z"/></g></symbol></svg>
-<div class="info-overlay" id="infoOverlay" role="dialog" aria-modal="true" aria-label="So funktioniert der Windbericht" hidden>
-  <div class="io-bar"><b data-en="How the wind report works">So funktioniert der Windbericht</b><button type="button" id="infoClose" data-en="✕ Close">✕ Schließen</button></div>
+<div class="info-overlay" id="infoOverlay" role="dialog" aria-modal="true" aria-label="So funktioniert AtHeight" data-en-aria="How AtHeight works" hidden>
+  <div class="io-bar"><b data-en="How AtHeight works">So funktioniert AtHeight</b><button type="button" id="infoClose" data-en="✕ Close">✕ Schließen</button></div>
   <iframe id="infoFrame" title="Infoseite" src="about:blank"></iframe>
 </div>
 <!-- Navigation unten (nur am Handy): in Daumenreichweite, auch mit Handschuhen -->
 <nav class="bottom-nav needs-data" id="bottomNav" aria-label="Hauptnavigation">
   <button type="button" data-go="sec-ueberblick" aria-current="page"><i data-ico="home"></i><span data-en="Overview">Überblick</span></button>
   <button type="button" data-go="chartCard"><i data-ico="wind"></i><span>Wind</span></button>
+  <button type="button" data-go="sec-matrix"><i data-ico="matrix"></i><span data-en="Models">Modelle</span></button>
   <button type="button" data-go="sec-ausblick"><i data-ico="week"></i><span data-en="7 days">7 Tage</span></button>
   <button type="button" data-go="sec-bericht"><i data-ico="report"></i><span data-en="Report">Bericht</span></button>
 </nav>
@@ -37,8 +38,8 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
     <div class="sb-row">
       <span class="sb-lamp" id="sbLamp"></span>
       <span class="sb-hour" id="sbHour"></span>
-      <button type="button" id="sbPrev" aria-label="Eine Stunde früher" title="Eine Stunde früher" data-en-aria="One hour earlier" data-en-title="One hour earlier">‹</button>
-      <button type="button" id="sbNext" aria-label="Eine Stunde später" title="Eine Stunde später" data-en-aria="One hour later" data-en-title="One hour later">›</button>
+      <button type="button" id="sbPrev" aria-label="Ein Tag früher" title="Ein Tag früher" data-en-aria="One day earlier" data-en-title="One day earlier">‹</button>
+      <button type="button" id="sbNext" aria-label="Ein Tag später" title="Ein Tag später" data-en-aria="One day later" data-en-title="One day later">›</button>
     </div>
     <div class="sb-strip" id="sbStrip" role="group" aria-label="Arbeitsfenster, Stunde wählen"></div>
     <div class="sb-navrow"><div class="sb-days seg" id="sbDays" role="group" aria-label="Tag wählen"></div><nav class="sb-nav" id="sbNav" aria-label="Zu Abschnitt springen"></nav></div>
@@ -48,19 +49,20 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 
   <header class="top">
     <div class="brand-wrap" style="min-width:0">
-      <img class="brand-logo" src="icons/logo.svg" alt="" width="40" height="40">
+      <img class="brand-logo logo-dunkel" src="icons/logo.svg" alt="" width="40" height="40"><img class="brand-logo logo-hell" src="icons/logo-hell.svg" alt="" width="40" height="40">
       <div style="min-width:0">
-        <div class="eyebrow" data-en="Wind report for work at height">Windbericht für Höhenarbeit</div>
-        <h1 id="siteTitle">Windbericht</h1>
+        <div class="eyebrow eyebrow-brand"><b class="bn">AtHeight</b> · <span data-en="weather check for work at height">Wetter-Check für Höhenarbeit</span></div>
+        <h1 id="siteTitle">AtHeight</h1>
         <button class="site-meta mono" id="siteMeta" type="button" title="Einstellungen öffnen" data-en-title="Open settings"></button>
       </div>
     </div>
     <div class="row">
       <button id="favBtn" type="button" aria-expanded="false" aria-controls="favPanel"><i class="star" data-ico="star"></i> <span data-en="Sites">Anlagen</span></button>
+      <button id="mapJumpBtn" class="icon-btn" type="button" title="Standort auf der Karte zeigen" aria-label="Standort auf der Karte zeigen" data-en-title="Show site on the map" data-en-aria="Show site on the map"><i data-ico="pin"></i></button>
       <button id="settingsBtn" class="settings-btn" type="button" aria-expanded="false" aria-controls="settings" aria-label="Einstellungen" data-en-aria="Settings"><i data-ico="gear"></i><span class="lbl" data-en=" Settings"> Einstellungen</span> <span class="chev" aria-hidden="true"></span></button>
       <button id="langBtn" class="icon-btn lang-btn" type="button" title="English" aria-label="Sprache: Englisch" data-en-title="Deutsch" data-en-aria="Language: German" data-en="DE">EN</button>
       <button id="themeBtn" class="icon-btn" type="button" title="Helles Design (für draußen)" aria-label="Design wechseln: hell oder dunkel" data-en-aria="Switch theme: light or dark"><i data-ico="sun"></i></button>
-      <button id="infoBtn" class="icon-btn" type="button" title="So funktioniert der Windbericht" aria-label="Infoseite öffnen" aria-haspopup="dialog" data-en-title="How the wind report works" data-en-aria="Open info page"><i data-ico="help"></i></button>
+      <button id="infoBtn" class="icon-btn" type="button" title="So funktioniert AtHeight" aria-label="Infoseite öffnen" aria-haspopup="dialog" data-en-title="How AtHeight works" data-en-aria="Open info page"><i data-ico="help"></i></button>
       <button id="reloadBtn" class="icon-btn" type="button" title="Wetterdaten neu laden" aria-label="Wetterdaten neu laden" data-en-title="Reload weather data" data-en-aria="Reload weather data"><i data-ico="reload"></i></button>
     </div>
     <div class="fav-panel" id="favPanel" hidden>
@@ -116,7 +118,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
         <label><span data-en="Min. dew point spread (K)">Min. Taupunktabstand (K)</span><input id="s_coatdew" type="number" step="0.5" min="0" max="10" inputmode="decimal"></label>
       </div>
       <label class="chk" id="coatStopLbl"><input type="checkbox" id="s_coatstop"><span data-en="Limits exceeded: traffic light to STOP (also in the daily report)">Grenzen verletzt: Ampel auf STOP (auch im Tagesbericht)</span></label>
-      <p class="note" id="coatNote" data-en="Coating is switched on at the top of the overview with “Coating mode”; it then applies to all days at this site until you switch it off, for at most 7 days. Enter the values from the resin or paint data sheet (typical: at most 80–85 %, at least 3 K above dew point). The model does not know the surface temperature of the substrate (e.g. steel, concrete, wood, plastic): measure on site.">Eingeschaltet wird das Beschichten oben im Tagesüberblick mit „🖌 Beschichten-Modus“; es gilt dann für alle Tage an diesem Standort, bis ihr es ausschaltet, höchstens 7 Tage. Werte aus dem Datenblatt von Harz oder Lack eintragen (üblich: höchstens 80–85 %, mind. 3 K über Taupunkt). Die Oberflächentemperatur des Untergrunds (z. B. Stahl, Beton, Holz, Kunststoff) kennt das Modell nicht: vor Ort messen.</p>
+      <p class="note" id="coatNote" data-en="Coating is switched on at the top of the overview with “&lt;i data-ico=&quot;brush&quot;&gt;&lt;/i&gt; Coating mode”; it then applies to all days at this site until you switch it off, for at most 7 days. Enter the values from the resin or paint data sheet (typical: at most 80–85 %, at least 3 K above dew point). The model does not know the surface temperature of the substrate (e.g. steel, concrete, wood, plastic): measure on site.">Eingeschaltet wird das Beschichten oben im Tagesüberblick mit „<i data-ico="brush"></i> Beschichten-Modus“; es gilt dann für alle Tage an diesem Standort, bis ihr es ausschaltet, höchstens 7 Tage. Werte aus dem Datenblatt von Harz oder Lack eintragen (üblich: höchstens 80–85 %, mind. 3 K über Taupunkt). Die Oberflächentemperatur des Untergrunds (z. B. Stahl, Beton, Holz, Kunststoff) kennt das Modell nicht: vor Ort messen.</p>
       </div>
     </fieldset>
     <fieldset>
@@ -190,9 +192,9 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
     </div>
     <div class="now-head needs-data">
       <div class="now-sel" id="nowSel">
-        <button type="button" id="nowPrev" aria-label="Eine Stunde früher" title="Eine Stunde früher" data-en-aria="One hour earlier" data-en-title="One hour earlier">‹</button>
+        <button type="button" id="nowPrev" aria-label="Ein Tag früher" title="Ein Tag früher" data-en-aria="One day earlier" data-en-title="One day earlier">‹</button>
         <div><span class="eyebrow" data-en="Values for">Werte für</span><b id="nowLabel">Gewählte Stunde</b><span class="now-off" id="nowOff" hidden data-en="outside working hours">außerhalb der Arbeitszeit</span></div>
-        <button type="button" id="nowNext" aria-label="Eine Stunde später" title="Eine Stunde später" data-en-aria="One hour later" data-en-title="One hour later">›</button>
+        <button type="button" id="nowNext" aria-label="Ein Tag später" title="Ein Tag später" data-en-aria="One day later" data-en-title="One day later">›</button>
       </div>
       <ul class="why" id="nowWhy" aria-label="Gründe für diese Stunde" data-en-aria="Reasons for this hour"></ul>
     </div>
@@ -231,7 +233,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
         <div class="seg" role="group" aria-label="Darstellung">
           <button type="button" id="chartMaxBtn" aria-pressed="false" title="Windverlauf groß anzeigen" data-en-title="Show wind chart large" data-en="⤢ Enlarge">⤢ Vergrößern</button>
         </div>
-        <button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden" data-en-title="Hide dark hours outside working hours in the charts"><i data-ico="moon"></i><span data-en="Hide night">Nacht ausblenden</span></button>
+        <button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden" data-en-title="Hide dark hours outside working hours in the charts"><i data-ico="moon"></i><span class="nl">Nacht ausblenden</span></button>
       </div>
     </div>
     <div class="readout" id="roMain" hidden></div>
@@ -270,7 +272,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
         <div class="radar-time" id="radarTime" hidden></div>
       </div>
       <div class="radar-bar" id="radarBar" hidden>
-        <button type="button" id="radarPlay" class="icon-btn" aria-label="Animation anhalten">⏸</button>
+        <button type="button" id="radarPlay" class="icon-btn" aria-label="Animation anhalten"><i data-ico="pause"></i></button>
         <input type="range" id="radarSlider" min="0" max="0" value="0" aria-label="Zeitpunkt des Radarbilds">
         <div class="radar-legend" aria-label="Niederschlag in mm/h">
           <div class="rl-bar"></div>
@@ -291,6 +293,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
         </div>
       </div>
       <p class="note" id="mapNote" data-en="Search for a place or tap the site directly. The marker can be dragged. Arrow: wind direction at the selected hour. Rain radar: DWD, Germany and border areas only.">Ort suchen oder direkt auf die Anlage tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Regenradar: DWD, nur Deutschland und Grenzgebiete.</p>
+      <p class="note touch-only" data-en="On a phone one finger scrolls the page. Move the map with two fingers or in full screen (“Enlarge”).">Am Handy scrollt ein Finger die Seite. Die Karte verschiebst du mit zwei Fingern oder im Vollbild („Vergrößern“).</p>
     </section>
 
     <section class="card needs-data expert" id="sec-richtung">
@@ -307,12 +310,6 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
     </section>
   </div>
 
-  <!-- Umschalter: Details für Fachleute (Richtung, Profil, Regen, Temperatur, Matrix, Tabellen, Modelle, Ausfallprotokoll) -->
-  <div class="details-bar needs-data" id="detailsBar">
-    <button type="button" id="detailsBtn" aria-expanded="false"><i data-ico="chevron"></i><span id="detailsLbl">Details für Fachleute einblenden</span></button>
-    <span class="note" data-en="Wind direction, height profile, rain, temperature, model matrix, hours in detail, models, downtime log">Windrichtung, Höhenprofil, Regen, Temperatur, Modell-Matrix, Stunden im Detail, Modelle, Ausfallprotokoll</span>
-  </div>
-
   <!-- Details -->
   <!-- Höhenprofil + Niederschlag -->
   <div class="cols needs-data expert" id="sec-profil">
@@ -322,7 +319,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <p class="note help" id="profileNote">Wind vom Boden bis über die Blattspitze zur gewählten Stunde.</p>
     </section>
     <section class="card" id="sec-regen">
-      <div class="card-head"><h2 data-en="Rain &amp;amp; thunderstorms">Regen &amp; Gewitter</h2><div class="row"><span class="eyebrow" id="rainDay"></span><button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden" data-en-title="Hide dark hours outside working hours in the charts"><i data-ico="moon"></i><span data-en="Hide night">Nacht ausblenden</span></button></div></div>
+      <div class="card-head"><h2 data-en="Rain &amp;amp; thunderstorms">Regen &amp; Gewitter</h2><div class="row"><span class="eyebrow" id="rainDay"></span><button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden" data-en-title="Hide dark hours outside working hours in the charts"><i data-ico="moon"></i><span class="nl">Nacht ausblenden</span></button></div></div>
       <div class="readout" id="roRain" hidden></div>
       <div class="chart-sm"><canvas id="rain" aria-label="Niederschlag und Gewitterneigung"></canvas></div>
       <p class="legend"><span><i class="lg-rain"></i><span data-en="Rain mm/h (stronger = more models agree)">Regen mm/h (kräftiger = mehr Modelle einig)</span></span><span><i class="lg-cape"></i><span data-en="Thunderstorm energy CAPE">Gewitterenergie CAPE</span></span></p>
@@ -331,7 +328,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 
   <!-- Temperatur -->
   <section class="card needs-data expert" id="sec-temp">
-    <div class="card-head"><h2 id="tempTitle">Temperatur</h2><div class="row"><span class="eyebrow" id="tempDay"></span><button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden" data-en-title="Hide dark hours outside working hours in the charts"><i data-ico="moon"></i><span data-en="Hide night">Nacht ausblenden</span></button></div></div>
+    <div class="card-head"><h2 id="tempTitle">Temperatur</h2><div class="row"><span class="eyebrow" id="tempDay"></span><button type="button" class="night-btn" aria-pressed="false" title="Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden" data-en-title="Hide dark hours outside working hours in the charts"><i data-ico="moon"></i><span class="nl">Nacht ausblenden</span></button></div></div>
     <div class="readout" id="roTemp" hidden></div>
     <div class="chart-sm"><canvas id="temp" aria-label="Temperatur und gefühlte Temperatur in Arbeitshöhe, Luftfeuchte"></canvas></div>
     <p class="legend legend-btns" id="tempLegend" role="group" aria-label="Linien ein- oder ausblenden"><span><i class="lg-temp"></i><span data-en="Temperature at working height">Temperatur in Arbeitshöhe</span></span><button type="button" data-s="t_feel" aria-pressed="true"><i class="lg-feel"></i><span data-en="Feels like with wind">Gefühlt mit Wind</span></button><button type="button" data-s="t_dew" aria-pressed="true"><i class="lg-dew"></i><span data-en="Dew point (2 m)">Taupunkt (2 m)</span></button><button type="button" data-s="t_rh" aria-pressed="true"><i class="lg-rh"></i><span data-en="Humidity % (2 m, right axis)">Luftfeuchte % (2 m, rechte Achse)</span></button></p>
@@ -364,7 +361,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <div class="card-head"><h3 data-en="Which models are accurate here?">Welche Modelle treffen hier?</h3><button type="button" id="rankBtn" data-en="Compare models">Modelle vergleichen</button></div>
       <div id="rankOut"></div>
     </div>
-    <p class="note help" data-en="Models that do not cover the site are dropped automatically. The tick box excludes single models for this site, e.g. coarse global models in the mountains. The choice is saved with the site.">Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung. Mit dem Häkchen lassen sich einzelne Modelle für diese Anlage ausschließen, z. B. grobe Globalmodelle im Gebirge. Die Auswahl wird mit der Anlage gespeichert.</p>
+    <p class="note help" data-en="Status: “Active” means the working height lies within the heights for which the model provides wind data (“Data: …”). “Extrapolated from X m” means the model only provides data up to X m; the wind above is extrapolated from the topmost heights. Models that do not cover the site are dropped automatically. The tick box excludes single models for this site, e.g. coarse global models in the mountains. The choice is saved with the site.">Status: „Aktiv“ heißt, die Arbeitshöhe liegt innerhalb der Höhen, in denen das Modell Winddaten liefert („Daten: …“). „Hochgerechnet ab X m“ heißt, das Modell liefert nur bis X m, der Wind darüber ist aus den obersten Höhen hochgerechnet und unsicherer. Modelle, die den Standort nicht abdecken, fallen automatisch aus der Auswertung. Mit dem Häkchen lassen sich einzelne Modelle für diese Anlage ausschließen, z. B. grobe Globalmodelle im Gebirge. Die Auswahl wird mit der Anlage gespeichert.</p>
   </section>
 
   <!-- 7-Tage-Ausblick -->
@@ -376,7 +373,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <b>Böe max:</b> stärkste geschätzte Böe des Tages (Median der Modelle).<br>
       <b>Zu windig:</b> Anteil der 51 Szenarien des ECMWF-Ensembles (mögliche Wetterverläufe), in denen an diesem Tag mindestens eine Arbeitsstunde über eurer Grenze liegt. Balken grün = unter 10 %, gelb = ab 10 %, rot = ab 30 %.<br>
       <b>Detail oben / Tendenz:</b> Die ersten 3 Tage stammen aus der Detailprognose mit allen Modellen (antippen wechselt zu diesem Tag). Ab Tag 4 rechnen nur noch 4 Globalmodelle (ECMWF, ICON, GFS, GEM); das ist eine grobe Tendenz für die Planung, nicht für die Freigabe.<br>
-      <b>💧 Tau:</b> Arbeitsstunden, in denen der Taupunkt erreicht wird (Nebel oder Wolke in Arbeitshöhe, Oberflächen nass). <b>🖌 Beschichten</b> (nur im Beschichten-Modus): wann eure Grenzen für Feuchte und Taupunktabstand eingehalten sind. Ab Tag 4 nur grob: Feuchte und Taupunkt sind in den Globalmodellen ungenauer als der Wind, besonders bei Nebel im Tal.</p>
+      <b><i data-ico="drop"></i> Tau:</b> Arbeitsstunden, in denen der Taupunkt erreicht wird (Nebel oder Wolke in Arbeitshöhe, Oberflächen nass). <b><i data-ico="brush"></i> Beschichten</b> (nur im Beschichten-Modus): wann eure Grenzen für Feuchte und Taupunktabstand eingehalten sind. Ab Tag 4 nur grob: Feuchte und Taupunkt sind in den Globalmodellen ungenauer als der Wind, besonders bei Nebel im Tal.</p>
     <div id="outlook"></div>
   </section>
 
@@ -426,7 +423,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
   <footer class="foot">
     <svg class="logo" role="img" aria-label="Logo Tobias Windberg"><use href="#tw-logo"/></svg>
     <div class="foot-text">
-      <p class="foot-info"><a href="info.html" id="infoLink" data-en="? How the wind report works (German)">? So funktioniert der Windbericht</a></p>
+      <p class="foot-info"><a href="info.html" id="infoLink" data-en="? How AtHeight works (German)">? So funktioniert AtHeight</a></p>
       <p class="note" data-en="Weather data: Open-Meteo.com (CC BY 4.0) with models from DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA and others. Radar: DWD. Satellite image: Esri. Place search: OpenStreetMap (Nominatim). Open-Meteo is free for non-commercial use only. Decision aid, does not replace the assessment on site by the supervisor.">Wetterdaten: Open-Meteo.com (CC BY 4.0) mit Modellen von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA u. a. Radar: DWD. Satellitenbild: Esri. Ortssuche: OpenStreetMap (Nominatim). Open-Meteo ist kostenlos nur für nicht-kommerzielle Nutzung. Entscheidungshilfe, ersetzt nicht die Beurteilung vor Ort durch den Aufsichtführenden.</p>
       <p class="foot-by">© 2026 Tobias Windberg · <a href="https://www.windberg-ropeaccess.com" target="_blank" rel="noopener">www.windberg-ropeaccess.com</a></p>
     </div>
@@ -436,25 +433,25 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 </div>
 
 <!-- Skripte teilen sich den globalen Gültigkeitsbereich; Reihenfolge beachten. Bei Änderungen ?v= erhöhen. -->
-<script src="js/konfiguration.js?v=2026-10-30a"></script>
-<script src="js/hilfen.js?v=2026-10-30a"></script>
-<script src="js/physik.js?v=2026-10-30a"></script>
-<script src="js/daten.js?v=2026-10-30a"></script>
-<script src="js/offline.js?v=2026-10-30a"></script>
-<script src="js/tageslicht.js?v=2026-10-30a"></script>
-<script src="js/bewertung.js?v=2026-10-30a"></script>
-<script src="js/anzeige.js?v=2026-10-30a"></script>
-<script src="js/leiste.js?v=2026-10-30a"></script>
-<script src="js/diagramme.js?v=2026-10-30a"></script>
-<script src="js/tabellen.js?v=2026-10-30a"></script>
-<script src="js/modellvergleich.js?v=2026-10-30a"></script>
-<script src="js/ausblick.js?v=2026-10-30a"></script>
-<script src="js/karte.js?v=2026-10-30a"></script>
-<script src="js/radar.js?v=2026-10-30a"></script>
-<script src="js/bericht.js?v=2026-10-30a"></script>
-<script src="js/ausfall.js?v=2026-10-30a"></script>
-<script src="js/anlagen.js?v=2026-10-30a"></script>
-<script src="js/bedienung.js?v=2026-10-30a"></script>
-<script src="js/start.js?v=2026-10-30a"></script>
+<script src="js/konfiguration.js?v=2026-10-30s"></script>
+<script src="js/hilfen.js?v=2026-10-30s"></script>
+<script src="js/physik.js?v=2026-10-30s"></script>
+<script src="js/daten.js?v=2026-10-30s"></script>
+<script src="js/offline.js?v=2026-10-30s"></script>
+<script src="js/tageslicht.js?v=2026-10-30s"></script>
+<script src="js/bewertung.js?v=2026-10-30s"></script>
+<script src="js/anzeige.js?v=2026-10-30s"></script>
+<script src="js/leiste.js?v=2026-10-30s"></script>
+<script src="js/diagramme.js?v=2026-10-30s"></script>
+<script src="js/tabellen.js?v=2026-10-30s"></script>
+<script src="js/modellvergleich.js?v=2026-10-30s"></script>
+<script src="js/ausblick.js?v=2026-10-30s"></script>
+<script src="js/karte.js?v=2026-10-30s"></script>
+<script src="js/radar.js?v=2026-10-30s"></script>
+<script src="js/bericht.js?v=2026-10-30s"></script>
+<script src="js/ausfall.js?v=2026-10-30s"></script>
+<script src="js/anlagen.js?v=2026-10-30s"></script>
+<script src="js/bedienung.js?v=2026-10-30s"></script>
+<script src="js/start.js?v=2026-10-30s"></script>
 </body>
 </html>

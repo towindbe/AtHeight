@@ -1,4 +1,4 @@
-/* Windbericht · Gespeicherte Anlagen (Favoriten) */
+/* AtHeight · Gespeicherte Anlagen (Favoriten) */
 "use strict";
 
 /* ---------- Favoriten (gespeicherte Anlagen) ---------- */
@@ -48,6 +48,7 @@ function addFav(){
 }
 $("favNew").onclick = () => pointToMap(8000);
 $("heroMapBtn").onclick = () => pointToMap();
+$("mapJumpBtn").onclick = () => pointToMap();
 $("favBtn").onclick = e => { e.stopPropagation(); toggleFavs($("favPanel").hidden); };
 document.addEventListener("click", e => { if(!$("favPanel").hidden && e.target.isConnected && !$("favPanel").contains(e.target)) toggleFavs(false); });
 document.addEventListener("keydown", e => { if(e.key==="Escape" && !$("favPanel").hidden) toggleFavs(false); });

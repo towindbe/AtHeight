@@ -1,4 +1,4 @@
-/* Windbericht · Regenradar als Animation */
+/* AtHeight · Regenradar als Animation */
 "use strict";
 
 /* ---------- Regenradar als Animation (DWD, 5-Minuten-Bilder) ----------
@@ -54,7 +54,7 @@ function radarShow(i){
 }
 function radarPlay(on){
   radar.playing = on;
-  $("radarPlay").textContent = on ? "⏸" : "▶";
+  $("radarPlay").innerHTML = icon(on ? "pause" : "play", 18);
   $("radarPlay").setAttribute("aria-label", on ? T("Animation anhalten", "Pause animation") : T("Animation abspielen", "Play animation"));
   clearTimeout(radar.timer);
   if(!on) return;

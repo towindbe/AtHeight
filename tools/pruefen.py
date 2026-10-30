@@ -1,4 +1,4 @@
-"""Prüft einen JSON-Export des Windberichts gegen die Rohdaten von Open-Meteo.
+"""Prüft einen JSON-Export von AtHeight gegen die Rohdaten von Open-Meteo.
 
 Holt für jedes Modell im Export die Rohdaten neu, rechnet den Wind im
 Arbeitsbereich, die Richtung und die geschätzte Böe unabhängig von der App nach

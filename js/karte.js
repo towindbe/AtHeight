@@ -1,4 +1,4 @@
-/* Windbericht · Karte, Standortwahl, Ortssuche, Erststart */
+/* AtHeight · Karte, Standortwahl, Ortssuche, Erststart */
 "use strict";
 
 /* ---------- Karte ---------- */
@@ -12,6 +12,7 @@ function initMap(){
   rotorCircle.setStyle({opacity: site.rotor ? 1 : 0, fillOpacity: site.rotor ? .08 : 0});
   marker.on("dragend", () => setPos(marker.getLatLng(), true));
   map.on("click", e => setPos(e.latlng));
+  mapScrollLock(true);
   $("mapMaxBtn").onclick = () => mapMax(!$("mapCard").classList.contains("map-max"));
   document.addEventListener("keydown", e => { if(e.key==="Escape" && $("mapCard").classList.contains("map-max")) mapMax(false); });
   $("radarBtn").onclick = () => radarToggle($("radarBtn").getAttribute("aria-pressed")!=="true");
@@ -20,7 +21,14 @@ function initMap(){
   map.on("moveend", () => { if(radar.on){ clearTimeout(radar.rebuild); radar.rebuild = setTimeout(radarFrames, 300); } });
 }
 
+/* Am Handy bleibt ein Finger auf der Karte beim Scrollen der Seite nicht hängen: ein Finger scrollt die Seite,
+   Verschieben mit zwei Fingern (oder im Vollbild mit einem). Tippen, Marker ziehen und Zoomen gehen weiter. */
+function mapScrollLock(on){
+  if(!map || !matchMedia("(pointer:coarse)").matches) return;
+  on ? map.dragging.disable() : map.dragging.enable();
+}
 function mapMax(on, stay){
+  mapScrollLock(!on);
   $("mapCard").classList.toggle("map-max", on);
   document.body.classList.toggle("map-open", on);
   $("mapMaxBtn").setAttribute("aria-pressed", String(on));
@@ -44,6 +52,16 @@ function setPos(ll, fromDrag){
   $("pickName").value = pendingName || (fromDrag && siteChosen ? site.name : "");
   $("pickForm").hidden = false;
   $("pickBar").hidden = false; $("pickApply").disabled = false;
+  keepPickVisible(ll);
+}
+/* Vollbild: die Bestätigung liegt über der Karte (unten); den Marker nach oben schieben, falls sie ihn verdeckt */
+function keepPickVisible(ll){
+  if(!$("mapCard").classList.contains("map-max")) return;
+  setTimeout(() => {
+    const bar = $("pickBar").getBoundingClientRect(), box = map.getContainer().getBoundingClientRect();
+    const y = map.latLngToContainerPoint(ll).y, limit = bar.top - box.top - 40;
+    if(y > limit) map.panBy([0, y - limit + 40]);
+  }, 80);
 }
 function siteReady(){
   if(siteChosen) return;

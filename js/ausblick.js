@@ -1,4 +1,4 @@
-/* Windbericht · 7-Tage-Ausblick (grob): Globalmodelle und ECMWF-Szenarien, je Tag in der Arbeitszeit */
+/* AtHeight · 7-Tage-Ausblick (grob): Globalmodelle und ECMWF-Szenarien, je Tag in der Arbeitszeit */
 "use strict";
 
 const OUTLOOK_MODELS = [
@@ -141,7 +141,7 @@ function renderOutlook(){
       <span class="ol-row" title="${T("Höchster Wind des Tages: vom vorsichtigsten bis zum stürmischsten Modell. Schmal = einig, breit = unsicher.", "Highest wind of the day: from the most cautious to the windiest model. Narrow = agree, wide = uncertain.")}"><small>${T("Spanne", "Spread")}</small>${vSpan}</span>
       <span class="ol-row"><small>${T("Böe max", "Gust max")}</small>${gTxt} ${WU()}</span>
       <span class="ol-row"><small>${T("Zu windig", "Too windy")}</small>${riskHtml(o.pEns, outlook.ens?.members)}</span>
-      <span class="ol-row"><small>${T("Regen", "Rain")}</small>${rain==null ? "–" : fmt(rain,1)+" mm"}${storm > 0 ? ` <span title="${T("Gewittersignal", "Thunderstorm signal")}">⚡</span>` : ""}</span>
+      <span class="ol-row"><small>${T("Regen", "Rain")}</small>${rain==null ? "–" : fmt(rain,1)+" mm"}${storm > 0 ? ` <span title="${T("Gewittersignal", "Thunderstorm signal")}">${icon("bolt",14)}</span>` : ""}</span>
       <span class="ol-row"><small>°C</small>${tMin==null ? "–" : `${fmt(tMin,0)} … ${fmt(tMax,0)}`}</span>
       <span class="ol-row ${dew.cls}" title="${esc(dew.tip)}"><small>${dew.label}</small>${dew.txt}</span>
     </button>`;

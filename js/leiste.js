@@ -1,10 +1,12 @@
-/* Windbericht · mitlaufende Kurzleiste (Ampel, gewählte Stunde, Sprungmarken), sobald das Arbeitsfenster nach oben aus dem Bild ist */
+/* AtHeight · mitlaufende Kurzleiste (Ampel, gewählte Stunde, Sprungmarken), sobald das Arbeitsfenster nach oben aus dem Bild ist */
 "use strict";
 
 const NAV_SECTIONS = () => [["chartCard","Wind"], ["sec-richtung",T("Richtung","Direction")], ["sec-regen",T("Regen","Rain")], ["sec-temp",T("Temperatur","Temperature")],
   ["sec-modelle",T("Modelle","Models")], ["sec-ausblick",T("Ausblick","Outlook")], ["sec-bericht",T("Bericht","Report")]];
 let stickyPast = false;   // Arbeitsfenster ist nach oben aus dem Bild gescrollt
 
+const dayList = () => [...new Set(state.times.map(t => t.slice(0,10)))];
+function stepDay(n){ const days = dayList(), d = days[days.indexOf(state.day) + n]; if(d) goDay(d); }
 function renderSticky(){
   const bar = $("stickyBar"); if(!bar) return;
   const h = state.hours[state.sel], day = state.summary;
@@ -13,8 +15,9 @@ function renderSticky(){
   $("sbLamp").className = "sb-lamp c-" + day.lamp;
   $("sbLamp").textContent = LAMP_TXT[day.lamp];
   $("sbHour").innerHTML = `<b>${esc(dayLabel(h.t.slice(0,10), true))}, ${hh(h.t)}${UHR()}</b> <span class="dot d-${h.lamp}"></span> ${esc(fw(h.med))} · ${T("Böe", "Gust")} ${esc(fwu(h.gMed))}`;
-  $("sbPrev").disabled = state.sel <= 0;
-  $("sbNext").disabled = state.sel >= state.hours.length - 1;
+  const days = dayList(), k = days.indexOf(state.day);
+  $("sbPrev").disabled = k <= 0;
+  $("sbNext").disabled = k < 0 || k >= days.length - 1;
   renderStickyDays();
   renderStrip();
 }
@@ -66,9 +69,7 @@ function initSticky(){
   $("sbNav").addEventListener("click", e => {
     const b = e.target.closest("button[data-go]"), el = b && $(b.dataset.go);
     if(!el) return;
-    // Abschnitt liegt in den ausgeblendeten Details: erst einblenden, dann hinspringen
-    if(el.closest(".expert") && el.offsetParent===null){ setDetails(true); setTimeout(() => el.scrollIntoView({behavior:"smooth", block:"start"}), 60); }
-    else el.scrollIntoView({behavior:"smooth", block:"start"});
+    el.scrollIntoView({behavior:"smooth", block:"start"});
   });
   $("sbStrip").addEventListener("scroll", () => {
     if(Date.now() < stripIgnoreUntil) return;
@@ -77,8 +78,8 @@ function initSticky(){
   }, {passive:true});
   $("sbStrip").addEventListener("click", e => { const b = e.target.closest(".tl-cell"); if(b) selectHour(+b.dataset.i); });
   $("sbDays").addEventListener("click", e => { const b = e.target.closest("button[data-day]"); if(b && b.dataset.day !== state.day) goDay(b.dataset.day); });
-  $("sbPrev").onclick = () => selectHour(state.sel - 1);
-  $("sbNext").onclick = () => selectHour(state.sel + 1);
+  $("sbPrev").onclick = () => stepDay(-1);
+  $("sbNext").onclick = () => stepDay(1);
   if("IntersectionObserver" in window){
     new IntersectionObserver(([en]) => { stickyPast = !en.isIntersecting && en.boundingClientRect.top < 0; renderSticky(); }).observe($("sec-zeit"));
   }
