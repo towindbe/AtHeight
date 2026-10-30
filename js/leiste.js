@@ -5,6 +5,8 @@ const NAV_SECTIONS = [["chartCard","Wind"], ["sec-richtung","Richtung"], ["sec-r
   ["sec-modelle","Modelle"], ["sec-ausblick","Ausblick"], ["sec-bericht","Bericht"]];
 let stickyPast = false;   // Arbeitsfenster ist nach oben aus dem Bild gescrollt
 
+const dayList = () => [...new Set(state.times.map(t => t.slice(0,10)))];
+function stepDay(n){ const days = dayList(), d = days[days.indexOf(state.day) + n]; if(d) goDay(d); }
 function renderSticky(){
   const bar = $("stickyBar"); if(!bar) return;
   const h = state.hours[state.sel], day = state.summary;
@@ -13,8 +15,9 @@ function renderSticky(){
   $("sbLamp").className = "sb-lamp c-" + day.lamp;
   $("sbLamp").textContent = LAMP_TXT[day.lamp];
   $("sbHour").innerHTML = `<b>${esc(dayLabel(h.t.slice(0,10), true))}, ${hh(h.t)} Uhr</b> <span class="dot d-${h.lamp}"></span> ${esc(fw(h.med))} · Böe ${esc(fwu(h.gMed))}`;
-  $("sbPrev").disabled = state.sel <= 0;
-  $("sbNext").disabled = state.sel >= state.hours.length - 1;
+  const days = dayList(), k = days.indexOf(state.day);
+  $("sbPrev").disabled = k <= 0;
+  $("sbNext").disabled = k < 0 || k >= days.length - 1;
   renderStickyDays();
   renderStrip();
 }
@@ -73,8 +76,8 @@ function initSticky(){
   }, {passive:true});
   $("sbStrip").addEventListener("click", e => { const b = e.target.closest(".tl-cell"); if(b) selectHour(+b.dataset.i); });
   $("sbDays").addEventListener("click", e => { const b = e.target.closest("button[data-day]"); if(b && b.dataset.day !== state.day) goDay(b.dataset.day); });
-  $("sbPrev").onclick = () => selectHour(state.sel - 1);
-  $("sbNext").onclick = () => selectHour(state.sel + 1);
+  $("sbPrev").onclick = () => stepDay(-1);
+  $("sbNext").onclick = () => stepDay(1);
   if("IntersectionObserver" in window){
     new IntersectionObserver(([en]) => { stickyPast = !en.isIntersecting && en.boundingClientRect.top < 0; renderSticky(); }).observe($("sec-zeit"));
   }
