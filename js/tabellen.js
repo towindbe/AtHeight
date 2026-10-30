@@ -1,4 +1,4 @@
-/* JobsiteWX · Modell-Matrix, Stundentabelle, Modelltabelle */
+/* AtHeight · Modell-Matrix, Stundentabelle, Modelltabelle */
 "use strict";
 
 /* Modell-Matrix mit Umschalter: Wind, Böe, Regen, Feuchte oder Wolken je Modell und Stunde. Nur Anzeige, die Ampel bleibt unverändert.

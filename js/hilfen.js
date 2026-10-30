@@ -1,4 +1,4 @@
-/* JobsiteWX · Allgemeine Hilfsfunktionen: Formatierung, Zeitzonen */
+/* AtHeight · Allgemeine Hilfsfunktionen: Formatierung, Zeitzonen */
 "use strict";
 
 const $ = id => document.getElementById(id);

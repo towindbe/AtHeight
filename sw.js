@@ -1,4 +1,4 @@
-/* JobsiteWX · Service Worker: App-Dateien offline verfügbar machen.
+/* AtHeight · Service Worker: App-Dateien offline verfügbar machen.
    Wetterdaten werden hier nicht zwischengespeichert (das macht die App selbst, mit Zeitstempel). */
 "use strict";
 const CACHE = "windbericht-app-v1";

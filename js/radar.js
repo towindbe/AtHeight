@@ -1,4 +1,4 @@
-/* JobsiteWX · Regenradar als Animation */
+/* AtHeight · Regenradar als Animation */
 "use strict";
 
 /* ---------- Regenradar als Animation (DWD, 5-Minuten-Bilder) ----------

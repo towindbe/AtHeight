@@ -1,4 +1,4 @@
-/* JobsiteWX · Höhenrechnung: Wind im Arbeitsbereich, Böe, Temperatur, Windchill */
+/* AtHeight · Höhenrechnung: Wind im Arbeitsbereich, Böe, Temperatur, Windchill */
 "use strict";
 
 /* ---------- Physik: Nabenhöhe ---------- */

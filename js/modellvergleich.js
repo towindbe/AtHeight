@@ -1,4 +1,4 @@
-/* JobsiteWX · Modellvergleich: Vortagesprognose gegen Messstationen */
+/* AtHeight · Modellvergleich: Vortagesprognose gegen Messstationen */
 "use strict";
 
 /* ---------- Modell-Rangliste: Vortagesprognose gegen Messwerte der nächsten Station ----------

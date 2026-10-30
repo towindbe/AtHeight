@@ -1,4 +1,4 @@
-# JobsiteWX – Wetter-Check für Höhenarbeit
+# AtHeight – Wetterfenster für Höhenarbeit
 
 Wind- und Wetterbericht in Nabenhöhe für Seilarbeiten an Windenergieanlagen. Eigenständige Web-App (eine HTML-Datei, kein Build).
 

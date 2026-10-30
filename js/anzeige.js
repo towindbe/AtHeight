@@ -1,4 +1,4 @@
-/* JobsiteWX · Entscheidung, Kacheln, Zeitleiste, Tagauswahl, Hinweis bei alten Daten */
+/* AtHeight · Entscheidung, Kacheln, Zeitleiste, Tagauswahl, Hinweis bei alten Daten */
 "use strict";
 
 /* ---------- Darstellung ---------- */

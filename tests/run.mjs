@@ -1,4 +1,4 @@
-// Automatischer Test von JobsiteWX.
+// Automatischer Test von AtHeight.
 //
 // Öffnet die App in einem Browser ohne Fenster, spielt aufgezeichnete Antworten der
 // Wetterdienste ab (tests/fixtures/api.json) und friert die Uhrzeit ein. So ist das
