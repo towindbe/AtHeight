@@ -1,4 +1,4 @@
-/* Windbericht · Wetter-Ausfallprotokoll: an welchen Tagen und Stunden lag der Wind über euren Grenzwerten?
+/* JobsiteWX · Wetter-Ausfallprotokoll: an welchen Tagen und Stunden lag der Wind über euren Grenzwerten?
    Grundlage sind gemessene Werte der nächsten Station (DWD / GeoSphere, 10 m), hochgerechnet auf den Arbeitsbereich mit dem
    Höhenverhältnis der archivierten Modellrechnung (Open-Meteo Historical Forecast). Fehlt ein Messwert, steht an dieser Stelle der Modellwert. */
 "use strict";

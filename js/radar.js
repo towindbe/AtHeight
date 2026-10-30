@@ -1,4 +1,4 @@
-/* Windbericht · Regenradar als Animation */
+/* JobsiteWX · Regenradar als Animation */
 "use strict";
 
 /* ---------- Regenradar als Animation (DWD, 5-Minuten-Bilder) ----------

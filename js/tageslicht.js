@@ -1,4 +1,4 @@
-/* Windbericht · Sonnenstand und bürgerliche Dämmerung */
+/* JobsiteWX · Sonnenstand und bürgerliche Dämmerung */
 "use strict";
 
 /* ---------- Tageslicht: Sonnenstand nach NOAA-Näherung ---------- */

@@ -1,4 +1,4 @@
-/* Windbericht · Start der App (muss als letztes Skript geladen werden) */
+/* JobsiteWX · Start der App (muss als letztes Skript geladen werden) */
 "use strict";
 
 /* App-Dateien offline verfügbar machen (nicht im automatischen Test) */

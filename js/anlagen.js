@@ -1,4 +1,4 @@
-/* Windbericht · Gespeicherte Anlagen (Favoriten) */
+/* JobsiteWX · Gespeicherte Anlagen (Favoriten) */
 "use strict";
 
 /* ---------- Favoriten (gespeicherte Anlagen) ---------- */

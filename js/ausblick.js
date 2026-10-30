@@ -1,4 +1,4 @@
-/* Windbericht · 7-Tage-Ausblick (grob): Globalmodelle und ECMWF-Szenarien, je Tag in der Arbeitszeit */
+/* JobsiteWX · 7-Tage-Ausblick (grob): Globalmodelle und ECMWF-Szenarien, je Tag in der Arbeitszeit */
 "use strict";
 
 const OUTLOOK_MODELS = [

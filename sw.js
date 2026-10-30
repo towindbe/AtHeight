@@ -1,4 +1,4 @@
-/* Windbericht · Service Worker: App-Dateien offline verfügbar machen.
+/* JobsiteWX · Service Worker: App-Dateien offline verfügbar machen.
    Wetterdaten werden hier nicht zwischengespeichert (das macht die App selbst, mit Zeitstempel). */
 "use strict";
 const CACHE = "windbericht-app-v1";

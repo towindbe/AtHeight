@@ -1,4 +1,4 @@
-/* Windbericht · Karte, Standortwahl, Ortssuche, Erststart */
+/* JobsiteWX · Karte, Standortwahl, Ortssuche, Erststart */
 "use strict";
 
 /* ---------- Karte ---------- */

@@ -1,4 +1,4 @@
-/* Windbericht · Allgemeine Hilfsfunktionen: Formatierung, Zeitzonen */
+/* JobsiteWX · Allgemeine Hilfsfunktionen: Formatierung, Zeitzonen */
 "use strict";
 
 const $ = id => document.getElementById(id);
