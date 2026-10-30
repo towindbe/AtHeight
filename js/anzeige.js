@@ -1,4 +1,4 @@
-/* Windbericht · Entscheidung, Kacheln, Zeitleiste, Tagauswahl, Hinweis bei alten Daten */
+/* JobsiteWX · Entscheidung, Kacheln, Zeitleiste, Tagauswahl, Hinweis bei alten Daten */
 "use strict";
 
 /* ---------- Darstellung ---------- */

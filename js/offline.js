@@ -1,4 +1,4 @@
-/* Windbericht · letzter Stand für den Betrieb ohne Netz (IndexedDB) und Änderung seit dem letzten Stand (localStorage) */
+/* JobsiteWX · letzter Stand für den Betrieb ohne Netz (IndexedDB) und Änderung seit dem letzten Stand (localStorage) */
 "use strict";
 
 /* ---------- Offline-Stand: die zuletzt geladenen Wetterdaten je Standort ---------- */

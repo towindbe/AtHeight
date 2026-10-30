@@ -1,7 +1,7 @@
 {
   "name": "windbericht",
   "private": true,
-  "description": "Tests für den Windbericht (die App selbst braucht keinen Build).",
+  "description": "Tests für JobsiteWX (die App selbst braucht keinen Build).",
   "scripts": {
     "test": "node tests/run.mjs",
     "test:accept": "node tests/run.mjs --accept",

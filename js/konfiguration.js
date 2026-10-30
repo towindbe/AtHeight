@@ -1,4 +1,4 @@
-/* Windbericht · Modelle, Schwellen, Standard-Anlage und App-Zustand */
+/* JobsiteWX · Modelle, Schwellen, Standard-Anlage und App-Zustand */
 "use strict";
 
 const MODELS = [

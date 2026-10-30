@@ -1,4 +1,4 @@
-/* Windbericht · Tagesbericht, Prüfsumme, JSON-Export */
+/* JobsiteWX · Tagesbericht, Prüfsumme, JSON-Export */
 "use strict";
 
 /* ---------- Tagesbericht ---------- */

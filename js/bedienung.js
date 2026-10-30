@@ -1,4 +1,4 @@
-/* Windbericht · Knöpfe, Einstellungen, Drucken */
+/* JobsiteWX · Knöpfe, Einstellungen, Drucken */
 "use strict";
 
 /* ---------- Bedienung ---------- */
