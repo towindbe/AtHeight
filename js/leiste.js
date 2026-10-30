@@ -64,9 +64,7 @@ function initSticky(){
   $("sbNav").addEventListener("click", e => {
     const b = e.target.closest("button[data-go]"), el = b && $(b.dataset.go);
     if(!el) return;
-    // Abschnitt liegt in den ausgeblendeten Details: erst einblenden, dann hinspringen
-    if(el.closest(".expert") && el.offsetParent===null){ setDetails(true); setTimeout(() => el.scrollIntoView({behavior:"smooth", block:"start"}), 60); }
-    else el.scrollIntoView({behavior:"smooth", block:"start"});
+    el.scrollIntoView({behavior:"smooth", block:"start"});
   });
   $("sbStrip").addEventListener("scroll", () => {
     if(Date.now() < stripIgnoreUntil) return;

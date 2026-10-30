@@ -42,18 +42,6 @@ $("saveBtn").onclick = () => {
 };
 $("s_windkraft").onchange = applyEinsatzUI;
 $("coatBtn").onclick = toggleCoat;
-/* Zwei Ebenen: einfache Ansicht (Standard) oder mit Details für Fachleute; gemerkt im Browser */
-let detailsOn = (() => { try{ return localStorage.getItem("wb_details")==="1"; }catch(e){ return false; } })();
-function setDetails(on){
-  detailsOn = on;
-  try{ localStorage.setItem("wb_details", on ? "1" : "0"); }catch(e){}
-  document.body.classList.toggle("simple", !on);
-  $("detailsBtn").setAttribute("aria-expanded", String(on));
-  $("detailsLbl").textContent = on ? "Details für Fachleute ausblenden" : "Details für Fachleute einblenden";
-  if(on && state.hours.length) render();   // Diagramme in vorher ausgeblendeten Abschnitten neu zeichnen
-}
-setDetails(detailsOn);
-$("detailsBtn").onclick = () => setDetails(!detailsOn);
 /* Erklärtexte (Klasse help) sind eingeklappt; jede Karte mit solchen Texten bekommt ein „?“ an der Überschrift */
 document.querySelectorAll(".card").forEach(card => {
   const h = card.querySelector("h2");
