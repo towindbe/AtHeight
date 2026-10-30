@@ -23,6 +23,7 @@ const ICON_PATHS = {
   cloudsun:'<g class="ic-a"><path d="M12 3v1.5M5 6l1 1M19 6l-1 1M3 12h1.5M20 12h1.5"/><path d="M8.2 12.6a4 4 0 1 1 7.1-2.8"/></g><path d="M17 20H9.5a3.25 3.25 0 0 1-.3-6.5A4.5 4.5 0 0 1 18 14.5a2.75 2.75 0 0 1-1 5.5z"/>',
   sunfew:'<g class="ic-a"><circle cx="10" cy="10" r="3.5"/><path d="M10 3v1.5M3 10h1.5M5 5l1 1M15 5l-1 1M5 15l1-1"/></g><path d="M19 20h-5a2.5 2.5 0 0 1-.2-5 3.5 3.5 0 0 1 6.7 1.3 2 2 0 0 1-1.5 3.700z"/>',
   moonfew:'<path class="ic-a" d="M15 9.5A6 6 0 1 1 8.5 3a4.8 4.8 0 0 0 6.5 6.5z"/><path d="M19 20h-5a2.5 2.5 0 0 1-.2-5 3.5 3.5 0 0 1 6.7 1.3 2 2 0 0 1-1.5 3.700z"/>',
+  pin:'<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
   matrix:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>'
 };
 // Nach dem Einblenden einer Erklärung dorthin scrollen (sie steht oft weiter unten in der Karte)

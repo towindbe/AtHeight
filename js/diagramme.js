@@ -144,7 +144,14 @@ function toggleLine(s){
   s.startsWith("t_") ? renderTemp() : renderChart();
 }
 /* „Nacht ausblenden“: gilt für Wind, Regen und Temperatur gemeinsam (nur Anzeige) */
-function renderNightBtns(){ document.querySelectorAll(".night-btn").forEach(b => b.setAttribute("aria-pressed", String(state.nightOff))); }
+function renderNightBtns(){
+  const off = state.nightOff;
+  document.querySelectorAll(".night-btn").forEach(b => {
+    b.setAttribute("aria-pressed", String(off));
+    b.querySelector(".nl").textContent = off ? "Nacht einblenden" : "Nacht ausblenden";
+    b.title = off ? "Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen wieder einblenden" : "Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden";
+  });
+}
 function toggleNight(){
   state.nightOff = !state.nightOff;
   try{ localStorage.setItem("wb_night", state.nightOff ? "1" : "0"); }catch(e){}
