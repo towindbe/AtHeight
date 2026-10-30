@@ -16,10 +16,10 @@ function upsertFav(){
 function renderFavs(){
   const favs = loadFavs(), cur = favs.find(isCurrent);
   $("favList").innerHTML = !favs.length
-    ? `<div class="fav-empty">${T("Noch keine Anlagen gespeichert.", "No sites saved yet.")}</div>`
+    ? `<div class="fav-empty">${T("Noch keine Baustellen gespeichert.", "No sites saved yet.")}</div>`
     : favs.map((f,k) => `<div class="fav-item ${isCurrent(f)?"cur":""}">
     <button type="button" class="fav-go" data-k="${k}"><span>${isCurrent(f)?"● ":""}${esc(f.name)}</span><small>${T("Arbeit", "Work")} ${f.site.work || f.site.hub} m${f.site.windkraft !== false ? ` · ${T("Nabe", "Hub")} ${f.site.hub} m` : ""} · ${fw(f.site.wind)}/${fwu(f.site.gust)}</small></button>
-    <button type="button" class="fav-del" data-k="${k}" title="${T("Anlage löschen", "Delete site")}" aria-label="${esc(f.name)} ${T("löschen", "delete")}">×</button></div>`).join("");
+    <button type="button" class="fav-del" data-k="${k}" title="${T("Baustelle löschen", "Delete site")}" aria-label="${esc(f.name)} ${T("löschen", "delete")}">×</button></div>`).join("");
   $("favSaved").hidden = !cur;
   if(cur) $("favSaved").textContent = T(`„${cur.name}“ ist gespeichert. Änderungen unter „Einstellungen“ werden automatisch übernommen.`, `“${cur.name}” is saved. Changes under “Settings” are applied automatically.`);
   $("favSaveRow").hidden = !!cur || !siteChosen;
@@ -32,7 +32,7 @@ function renderFavs(){
   });
   $("favList").querySelectorAll(".fav-del").forEach(b => b.onclick = () => {
     const f = loadFavs(), k = +b.dataset.k;
-    if(!f[k] || !confirm(T(`„${f[k].name}“ aus den gespeicherten Anlagen löschen?`, `Delete “${f[k].name}” from the saved sites?`))) return;
+    if(!f[k] || !confirm(T(`„${f[k].name}“ aus den gespeicherten Baustellen löschen?`, `Delete “${f[k].name}” from the saved sites?`))) return;
     f.splice(k, 1); saveFavs(f); renderFavs();
   });
 }

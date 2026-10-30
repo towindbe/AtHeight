@@ -57,7 +57,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       </div>
     </div>
     <div class="row">
-      <button id="favBtn" type="button" aria-expanded="false" aria-controls="favPanel"><i class="star" data-ico="star"></i> <span data-en="Sites">Anlagen</span></button>
+      <button id="favBtn" class="icon-btn" type="button" aria-expanded="false" aria-controls="favPanel" title="Baustellen" aria-label="Baustellen" data-en-title="Sites" data-en-aria="Sites"><i class="star" data-ico="star"></i></button>
       <button id="mapJumpBtn" class="icon-btn" type="button" title="Standort auf der Karte zeigen" aria-label="Standort auf der Karte zeigen" data-en-title="Show site on the map" data-en-aria="Show site on the map"><i data-ico="pin"></i></button>
       <button id="settingsBtn" class="settings-btn" type="button" aria-expanded="false" aria-controls="settings" aria-label="Einstellungen" data-en-aria="Settings"><i data-ico="gear"></i><span class="lbl" data-en=" Settings"> Einstellungen</span> <span class="chev" aria-hidden="true"></span></button>
       <button id="langBtn" class="icon-btn lang-btn" type="button" title="English" aria-label="Sprache: Englisch" data-en-title="Deutsch" data-en-aria="Language: German" data-en="DE">EN</button>
@@ -66,15 +66,15 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <button id="reloadBtn" class="icon-btn" type="button" title="Wetterdaten neu laden" aria-label="Wetterdaten neu laden" data-en-title="Reload weather data" data-en-aria="Reload weather data"><i data-ico="reload"></i></button>
     </div>
     <div class="fav-panel" id="favPanel" hidden>
-      <div class="eyebrow" data-en="Saved sites">Gespeicherte Anlagen</div>
+      <div class="eyebrow" data-en="Saved sites">Gespeicherte Baustellen</div>
       <div class="fav-list" id="favList"></div>
-      <button class="fav-new" id="favNew" type="button" data-en="+ Choose a new site on the map">+ Neue Anlage auf der Karte wählen</button>
+      <button class="fav-new" id="favNew" type="button" data-en="+ Choose a new site on the map">+ Neue Baustelle auf der Karte wählen</button>
       <p class="note fav-saved" id="favSaved" hidden></p>
       <div class="fav-save" id="favSaveRow">
-        <span class="note" data-en="Save current site:">Aktuelle Anlage speichern:</span>
+        <span class="note" data-en="Save current site:">Aktuelle Baustelle speichern:</span>
         <div class="fav-add">
-          <input type="text" id="favName" placeholder="Name der Anlage" maxlength="40" aria-label="Name der Anlage" data-en-ph="Site name" data-en-aria="Site name">
-          <button class="primary" id="favAdd" type="button" title="Aktuelle Anlage mit Höhen und Grenzwerten speichern" data-en-title="Save current site with heights and limits" data-en="Save">Speichern</button>
+          <input type="text" id="favName" placeholder="Name der Baustelle" maxlength="40" aria-label="Name der Baustelle" data-en-ph="Site name" data-en-aria="Site name">
+          <button class="primary" id="favAdd" type="button" title="Aktuelle Baustelle mit Höhen und Grenzwerten speichern" data-en-title="Save current site with heights and limits" data-en="Save">Speichern</button>
         </div>
       </div>
     </div>
@@ -284,7 +284,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
         <div class="pick-info"><b id="pickTitle" data-en="New location">Neuer Standort</b><span class="mono" id="pickText"></span></div>
         <div class="pick-form" id="pickForm">
           <label><span data-en="Site name">Name der Anlage</span><input id="pickName" type="text" maxlength="40" placeholder="z. B. WP Musterberg WEA 3" data-en-ph="e.g. Hill Wind Farm T3"></label>
-          <label class="check"><input id="pickFav" type="checkbox" checked><span data-en="Save in “Sites”">In „Anlagen“ speichern</span></label>
+          <label class="check"><input id="pickFav" type="checkbox" checked><span data-en="Save in “Sites”">In „Baustellen“ speichern</span></label>
           <p class="note" data-en="Heights and limits are kept. Change them under “Settings”.">Höhen und Grenzwerte werden übernommen. Ändern unter „Einstellungen“.</p>
         </div>
         <div class="row">
