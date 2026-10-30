@@ -7,9 +7,10 @@
 <title>So funktioniert der Windbericht</title>
 <script>/* Hell nur, wenn so gewählt (Standard dunkel); vor dem Zeichnen setzen, damit nichts aufblitzt */
 try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-30i">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-30j">
 <style>
   .info h2{margin-bottom:2px}
+  .info .ico{width:1.1em;height:1.1em;vertical-align:-3px}
   .info p,.info li{margin:0;font-size:15px;line-height:1.55}
   .info ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
   .info details summary{cursor:pointer;margin:8px 0 4px;font-size:15px}
@@ -80,7 +81,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
     <table>
       <tr><th>Stufe</th><th>Wann</th></tr>
       <tr><td><span class="tag stop">STOP</span></td><td>Median aller Modelle über der Wind- oder Böengrenze · Gewitter in mind. einem Drittel der Modelle (mind. 2) · Gewitterenergie CAPE ab 800 J/kg · Lufttemperatur in Arbeitshöhe unter eurer Mindesttemperatur (Einstellungen, Start 0 °C; genau 0 °C ist noch erlaubt) · nur im Beschichten-Modus und wenn in den Einstellungen gewählt: Grenze fürs Beschichten überschritten (im Überblick und Bericht als „Stop nur wegen Beschichtung“ getrennt genannt) · amtliche Unwetterwarnung bzw. Warnstufe rot</td></tr>
-      <tr><td><span class="tag warn">PRÜFEN</span></td><td>einzelne Modelle über einer Grenze · Gewittersignal in einem Modell · CAPE ab 300 J/kg · Regen ab 0,5 mm/h · „Zu windig“ in mind. 30 % der Szenarien · amtliche Warnung zu Wind, Gewitter, Glatteis, Schnee oder Regen</td></tr>
+      <tr><td><span class="tag warn">PRÜFEN</span></td><td>einzelne Modelle über einer Grenze · Gewittersignal <i data-ico="bolt"></i> in einem Modell · CAPE ab 300 J/kg · Regen ab 0,5 mm/h · „Zu windig“ in mind. 30 % der Szenarien · amtliche Warnung zu Wind, Gewitter, Glatteis, Schnee oder Regen</td></tr>
       <tr><td><span class="tag go">KLAR</span></td><td>keine der Regeln greift</td></tr>
     </table>
     <p><b>Hinweise</b> ohne Einfluss auf die Ampel: Nacht (außerhalb der bürgerlichen Dämmerung), Kälteschutz ab gefühlt −10 °C, Hitze ab gefühlt 32 °C, UV-Index ab 6, Beschichten (nur im Beschichten-Modus und ohne STOP-Häkchen: Luftfeuchte oder Taupunktabstand außerhalb eurer Grenzen), „Zu windig“ in 10–29 % der Szenarien, Warnungen zu Frost, Nebel, Hitze oder UV.</p>
@@ -110,7 +111,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
           <li><b>Aktualität:</b> läuft für jede Anlage automatisch im Hintergrund und wird nach 7 Tagen erneuert, von Hand über „Vergleich neu berechnen“. „Am besten bewertet“ unter dem Windverlauf blendet die als „gut“ eingestuften Modelle ein.</li>
         </ol>
         <b>Grenzen:</b> die Station misst in 10 m Höhe und steht oft einige Kilometer entfernt; über den Wind in Arbeitshöhe sagt der Vergleich deshalb nur begrenzt etwas. 30 Tage sind ein Kompromiss zwischen „passt zur aktuellen Wetterlage“ und „genug Daten“. Die Bewertung (Ampel, Median) nutzt unabhängig davon alle aktiven Modelle.</li>
-      <li><b>Ausblick 7 Tage:</b> Tage 1–3 aus der Detailprognose, ab Tag 4 grobe Tendenz aus vier Globalmodellen und den ECMWF-Szenarien. Nur zur Planung. Je Tag steht auch, wann der Taupunkt erreicht wird („Tau“), im Beschichten-Modus stattdessen, wann beschichtet werden darf („Beschichten“). Ab Tag 4 ist das nur grob, und es geht dort nicht in die Ampel ein.</li>
+      <li><b>Ausblick 7 Tage:</b> Tage 1–3 aus der Detailprognose, ab Tag 4 grobe Tendenz aus vier Globalmodellen und den ECMWF-Szenarien. Nur zur Planung. Je Tag steht auch, wann der Taupunkt erreicht wird („<i data-ico="drop"></i> Tau“), im Beschichten-Modus stattdessen, wann beschichtet werden darf („<i data-ico="brush"></i> Beschichten“). Ab Tag 4 ist das nur grob, und es geht dort nicht in die Ampel ein.</li>
     </ul>
   </section>
 
@@ -128,12 +129,12 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
   <section class="card" id="feuchte">
     <h2>Feuchte, Taupunkt und Wolken</h2>
     <ul>
-      <li><b>Taupunktabstand:</b> wie weit die Temperatur über dem Taupunkt liegt, in K (Kelvin; 1 K entspricht 1 °C Unterschied). Unter dem Temperatur-Diagramm steht er je Arbeitsstunde, ebenso in „Stunden im Detail“. <b>„Tau“</b> (gelb) heißt: Taupunkt erreicht, die Luft oben ist gesättigt, Nebel oder eine tiefe Wolke in Arbeitshöhe sind wahrscheinlich, Oberflächen und Seile werden nass und glatt. <b>Hellgelb</b>: Taupunktabstand höchstens 1 K, Kondenswasser möglich. Der Überblick oben fasst das einmal je Tag zusammen, z. B. „Kondenswasser: Taupunkt erreicht 06–09 Uhr“. Kein Einfluss auf die Ampel.</li>
+      <li><b>Taupunktabstand:</b> wie weit die Temperatur über dem Taupunkt liegt, in K (Kelvin; 1 K entspricht 1 °C Unterschied). Unter dem Temperatur-Diagramm steht er je Arbeitsstunde, ebenso in „Stunden im Detail“. <b>„<i data-ico="drop"></i> Tau“</b> (gelb) heißt: Taupunkt erreicht, die Luft oben ist gesättigt, Nebel oder eine tiefe Wolke in Arbeitshöhe sind wahrscheinlich, Oberflächen und Seile werden nass und glatt. <b>Hellgelb</b>: Taupunktabstand höchstens 1 K, Kondenswasser möglich. Der Überblick oben fasst das einmal je Tag zusammen, z. B. „Kondenswasser: Taupunkt erreicht 06–09 Uhr“. Kein Einfluss auf die Ampel.</li>
       <li><b>Mehr als 1 K Taupunktabstand</b> heißt nur: Die Prognose rechnet nicht mit Kondenswasser in der Luft. Trocken sind Oberflächen damit nicht sicher, siehe Oberflächentemperatur.</li>
       <li><b>Oberflächentemperatur:</b> Entscheidend für Kondenswasser ist die Temperatur der Oberfläche, nicht der Luft. Nach klaren Nächten sind Untergründe wie Stahl, Beton oder Glas oft kälter als die Luft. Das kennt kein Wettermodell: <b>vor Ort mit dem Oberflächenthermometer messen</b>.</li>
-      <li><b>Beschichten / Laminieren:</b> Viele Harze und Lacke dürfen nur bis zu einer bestimmten Luftfeuchte und mit ausreichendem Taupunktabstand verarbeitet werden. Die Grenzen stehen in den Einstellungen (Start: höchstens 80 % Feuchte, Taupunktabstand mind. 3 K, übliche Regel nach ISO 8502-4). <b>Eingeschaltet wird es im Überblick oben</b> mit „Beschichten-Modus“. Es gilt dann für alle Tage an diesem Standort, bis ihr es wieder ausschaltet, höchstens 7 Tage; danach ist es von selbst aus, damit es nicht versehentlich wochenlang an bleibt. Ist es an, steht oben gut sichtbar „Beschichten-Modus an“ mit den Grenzen und den Uhrzeiten, in denen nicht beschichtet werden darf. In der Taupunkt-Zeile kommt die Luftfeuchte dazu, im Diagramm die Feuchte-Grenze als gestrichelte Linie. Ohne das Häkchen „Ampel auf STOP“ in den Einstellungen sind das nur Hinweise (gelb). Mit Häkchen setzen überschrittene Grenzen die Ampel auf STOP (rot); Überblick und Tagesbericht nennen dann getrennt „Stop nur wegen Beschichtung, nicht wegen Wetter“. Maßgeblich bleibt das Datenblatt des Herstellers.</li>
+      <li><b><i data-ico="brush"></i> Beschichten / Laminieren:</b> Viele Harze und Lacke dürfen nur bis zu einer bestimmten Luftfeuchte und mit ausreichendem Taupunktabstand verarbeitet werden. Die Grenzen stehen in den Einstellungen (Start: höchstens 80 % Feuchte, Taupunktabstand mind. 3 K, übliche Regel nach ISO 8502-4). <b>Eingeschaltet wird es im Überblick oben</b> mit „<i data-ico="brush"></i> Beschichten-Modus“. Es gilt dann für alle Tage an diesem Standort, bis ihr es wieder ausschaltet, höchstens 7 Tage; danach ist es von selbst aus, damit es nicht versehentlich wochenlang an bleibt. Ist es an, steht oben gut sichtbar „Beschichten-Modus an“ mit den Grenzen und den Uhrzeiten, in denen nicht beschichtet werden darf. In der Taupunkt-Zeile kommt die Luftfeuchte dazu, im Diagramm die Feuchte-Grenze als gestrichelte Linie. Ohne das Häkchen „Ampel auf STOP“ in den Einstellungen sind das nur Hinweise (gelb). Mit Häkchen setzen überschrittene Grenzen die Ampel auf STOP (rot); Überblick und Tagesbericht nennen dann getrennt „Stop nur wegen Beschichtung, nicht wegen Wetter“. Maßgeblich bleibt das Datenblatt des Herstellers.</li>
       <li><b>Luftfeuchte:</b> relative Luftfeuchte in 2 m über dem Boden, je Modell und als Median. Die Modelle geben sie in der Höhe nicht aus. Ab etwa 95 % ist mit Nebel, Tau oder nassen Oberflächen zu rechnen.</li>
-      <li><b>Bewölkung:</b> Gesamtbedeckung des Himmels in %, als Symbol in Achteln wie im Wetterbericht: Sonne = klar (0–1/8), Sonne mit kleiner Wolke = heiter (2–3/8), Sonne hinter Wolke = wolkig (4–5/8), Wolke = stark bewölkt (6/8), zwei Wolken = bedeckt (7–8/8); nachts Mond statt Sonne. Wie hoch die Wolken hängen, sagt der Wert nicht. Nur Anzeige.</li>
+      <li><b>Bewölkung:</b> Gesamtbedeckung des Himmels in %, als Symbol in Achteln wie im Wetterbericht: <i data-ico="sun"></i> klar (0–1/8), <i data-ico="sunfew"></i> heiter (2–3/8), <i data-ico="cloudsun"></i> wolkig (4–5/8), <i data-ico="cloud"></i> stark bewölkt (6/8), <i data-ico="clouds"></i> bedeckt (7–8/8); nachts <i data-ico="moon"></i> statt Sonne. Wie hoch die Wolken hängen, sagt der Wert nicht. Nur Anzeige.</li>
       <li>Nicht jedes Modell liefert jeden Wert; fehlt einer, steht „·“.</li>
     </ul>
     <details>
@@ -180,7 +181,10 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 
   <footer class="foot"><p class="note">© 2026 Tobias Windberg · <a href="https://www.windberg-ropeaccess.com" target="_blank" rel="noopener">www.windberg-ropeaccess.com</a> · <a href="windbericht.html">Zurück zur App</a></p></footer>
 </div>
+<script src="js/hilfen.js?v=2026-10-30j"></script>
 <script>
+  // Symbol-Platzhalter füllen (wie in der App)
+  document.querySelectorAll("[data-ico]").forEach(e => { e.outerHTML = icon(e.dataset.ico); });
   // eingeblendet in der App: eigene Zurück-Knöpfe ausblenden (die App hat „Schließen“); Esc schließt
   if(window.self !== window.top){
     document.querySelectorAll('a[href="windbericht.html"]').forEach(a => { (a.closest(".row") || a).hidden = true; });
