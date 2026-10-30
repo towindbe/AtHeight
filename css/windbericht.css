@@ -579,7 +579,7 @@ table.t{font-size:14px} table.t td.why-cell{font-size:13px}
 header.top .row button{height:48px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 14px}
 header.top .row .icon-btn{width:48px;min-width:48px;padding:0;font-size:20px}
 @media (max-width:430px){ #settingsBtn{width:48px;min-width:48px;padding:0;font-size:20px} #settingsBtn .chev{display:none} }
-@media (max-width:400px){ header.top .row{gap:5px} header.top .row .icon-btn,header.top .row #settingsBtn{width:42px;min-width:42px} header.top .row #favBtn{padding:0 10px} }
+@media (max-width:400px){ header.top .row{gap:5px} header.top .row button{height:42px;min-height:42px} header.top .row .icon-btn,header.top .row #settingsBtn{width:42px;min-width:42px} header.top .row #favBtn{padding:0 10px} }
 
 /* ===== Neuer Überblick: ein Instrument statt vieler Kästen; Farbe nur mit Bedeutung; Linien-Symbole ===== */
 .ico{flex:none;display:inline-block;vertical-align:-4px}
