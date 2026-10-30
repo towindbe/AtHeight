@@ -179,9 +179,9 @@ function showQuick(q){
   if(q==="all") return setShown(u.map(r => r.m.id));
   if(q==="none") return setShown([]);
   if(q==="hi") return setShown(u.filter(r => r.m.hi).map(r => r.m.id), u.some(r => r.m.hi) ? null : T("Für diesen Standort liefert kein hochauflösendes Modell Daten.", "No high-resolution model provides data for this site."));
-  // am besten bewertet: aus dem Modellvergleich dieser Anlage
+  // am besten bewertet: aus dem Modellvergleich dieser Baustelle
   const rk = rankGroups();
-  if(!rk){ wantBest = true; renderChips(T("Noch kein Modellvergleich für diese Anlage: wird jetzt berechnet (unten bei „Welche Modelle treffen hier?“) …", "No model comparison for this site yet: calculating now (below under “Which models are accurate here?”) …")); computeRanking(); return; }
+  if(!rk){ wantBest = true; renderChips(T("Noch kein Modellvergleich für diese Baustelle: wird jetzt berechnet (unten bei „Welche Modelle treffen hier?“) …", "No model comparison for this site yet: calculating now (below under “Which models are accurate here?”) …")); computeRanking(); return; }
   if(rk.narrow) return setShown(u.filter(r => r.m.hi).map(r => r.m.id), T("Laut Modellvergleich treffen hier alle Modelle etwa gleich gut. Eingeblendet: die hochauflösenden.", "According to the model comparison all models are about equally accurate here. Shown: the high-resolution ones."));
   const ids = rk.good.filter(id => u.some(r => r.m.id===id));
   setShown(ids, T(`Am besten bewertet laut Modellvergleich (${ids.length}). Nur Anzeige, Ampel und Median nutzen weiter alle aktiven Modelle.`, `Best rated according to the model comparison (${ids.length}). Display only, traffic light and median still use all active models.`));

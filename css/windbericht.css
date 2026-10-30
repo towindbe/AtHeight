@@ -653,3 +653,9 @@ header.top .row .lang-btn{font:700 15px var(--f-body);letter-spacing:.04em}
 /* Markenzeile: AtHeight in Originalschreibweise; auf schmalen Handys enger, damit sie in eine Zeile passt */
 .eyebrow-brand .bn{text-transform:none;letter-spacing:.04em;font-size:1.2em;color:var(--fg)}
 @media (max-width:430px){ .eyebrow-brand{letter-spacing:.07em;font-size:10.5px} }
+
+/* Hinweis auf der Karte (nur Touch): blinkt, bis einmal gezoomt oder die Karte vergrößert wurde */
+.map-hint{position:absolute;left:0;right:0;bottom:34px;margin:0 auto;width:max-content;z-index:500;max-width:calc(100% - 24px);padding:7px 12px;border-radius:999px;background:rgba(0,0,0,.72);color:#fff;font-size:.82rem;text-align:center;pointer-events:none;animation:mapHintPulse 1.6s ease-in-out infinite}
+.map-hint[hidden],#mapCard.map-max .map-hint{display:none}
+@keyframes mapHintPulse{0%,100%{opacity:1}50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){ .map-hint{animation:none} }

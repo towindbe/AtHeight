@@ -1,7 +1,7 @@
-/* AtHeight · Gespeicherte Anlagen (Favoriten) */
+/* AtHeight · Gespeicherte Baustellen (Favoriten) */
 "use strict";
 
-/* ---------- Favoriten (gespeicherte Anlagen) ---------- */
+/* ---------- Favoriten (gespeicherte Baustellen) ---------- */
 function loadFavs(){ try{ const f = JSON.parse(localStorage.getItem("wb_favs")||"[]"); return Array.isArray(f) ? f.filter(x => x && x.site && typeof x.site.lat==="number") : []; }catch(e){ return []; } }
 function saveFavs(f){ try{ localStorage.setItem("wb_favs", JSON.stringify(f)); }catch(e){} }
 const sameSpot = (a, b) => Math.abs(a.lat-b.lat)<1e-4 && Math.abs(a.lon-b.lon)<1e-4;
@@ -16,10 +16,10 @@ function upsertFav(){
 function renderFavs(){
   const favs = loadFavs(), cur = favs.find(isCurrent);
   $("favList").innerHTML = !favs.length
-    ? `<div class="fav-empty">${T("Noch keine Anlagen gespeichert.", "No sites saved yet.")}</div>`
+    ? `<div class="fav-empty">${T("Noch keine Baustellen gespeichert.", "No sites saved yet.")}</div>`
     : favs.map((f,k) => `<div class="fav-item ${isCurrent(f)?"cur":""}">
     <button type="button" class="fav-go" data-k="${k}"><span>${isCurrent(f)?"● ":""}${esc(f.name)}</span><small>${T("Arbeit", "Work")} ${f.site.work || f.site.hub} m${f.site.windkraft !== false ? ` · ${T("Nabe", "Hub")} ${f.site.hub} m` : ""} · ${fw(f.site.wind)}/${fwu(f.site.gust)}</small></button>
-    <button type="button" class="fav-del" data-k="${k}" title="${T("Anlage löschen", "Delete site")}" aria-label="${esc(f.name)} ${T("löschen", "delete")}">×</button></div>`).join("");
+    <button type="button" class="fav-del" data-k="${k}" title="${T("Baustelle löschen", "Delete site")}" aria-label="${esc(f.name)} ${T("löschen", "delete")}">×</button></div>`).join("");
   $("favSaved").hidden = !cur;
   if(cur) $("favSaved").textContent = T(`„${cur.name}“ ist gespeichert. Änderungen unter „Einstellungen“ werden automatisch übernommen.`, `“${cur.name}” is saved. Changes under “Settings” are applied automatically.`);
   $("favSaveRow").hidden = !!cur || !siteChosen;
@@ -32,7 +32,7 @@ function renderFavs(){
   });
   $("favList").querySelectorAll(".fav-del").forEach(b => b.onclick = () => {
     const f = loadFavs(), k = +b.dataset.k;
-    if(!f[k] || !confirm(T(`„${f[k].name}“ aus den gespeicherten Anlagen löschen?`, `Delete “${f[k].name}” from the saved sites?`))) return;
+    if(!f[k] || !confirm(T(`„${f[k].name}“ aus den gespeicherten Baustellen löschen?`, `Delete “${f[k].name}” from the saved sites?`))) return;
     f.splice(k, 1); saveFavs(f); renderFavs();
   });
 }

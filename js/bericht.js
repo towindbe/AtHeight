@@ -85,7 +85,7 @@ async function buildReport(){
     </div>
 
     <div class="rp-sec rp-cols">
-      <div class="rp-box"><h3>Einsatz</h3>${kv([["Projekt", esc(b.projekt)], ["Anlage / Typ", esc(b.anlage)], ["Tätigkeit", esc(b.taetigkeit)], ["Team", esc(b.team)], ["Aufsicht", esc(b.aufsicht)]])}</div>
+      <div class="rp-box"><h3>Einsatz</h3>${kv([["Projekt", esc(b.projekt)], ...(isWind() ? [["Anlagentyp", esc(b.anlage)]] : []), ["Tätigkeit", esc(b.taetigkeit)], ["Team", esc(b.team)], ["Aufsicht", esc(b.aufsicht)]])}</div>
       <div class="rp-box"><h3>Standort &amp; Grenzwerte</h3>${kv([["Koordinaten", `${fmt(site.lat,4)}° N, ${fmt(site.lon,4)}° E`], ...(isWind() ? [["Nabe / Rotor", `${site.hub} m / ${site.rotor} m`]] : []),
         ["Arbeitsbereich", `${zoneTxt()} (${ACCESS_TXT[accessMode()]})`], ["Max. Windstärke", fwu(site.wind)], ["Max. Böe", fwu(site.gust)]])}</div>
     </div>
@@ -115,7 +115,7 @@ async function buildReport(){
       Ensemble-Vorhersage (Szenarien): ${(extras.ens||[]).filter(e => e.ok).map(e => `${e.name} (${e.members})`).join(", ") || "nicht verfügbar"}.
       Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle (mind. 2), CAPE ab ${CAPE_STOP} J/kg, Temperatur in Arbeitshöhe unter ${fmt(minTemp(),0)} °C${coatOn(state.day) && site.coatStop ? `, Beschichten: Luftfeuchte über ${coatRh()} % oder Taupunktabstand unter ${fmt(coatDew(), coatDew()%1 ? 1 : 0)} K (Taupunkt in 2 m)` : ""} oder Unwetterwarnung bzw. Warnstufe rot.
       Prüfen bei einzelnen Modellen über Grenzwert, Gewittersignal, CAPE ab ${CAPE_WARN} J/kg, Regen ab ${fmt(RAIN_WARN)} mm/h, mind. ${Math.round(ENS_WARN*100)} % der Szenarien über Grenze oder amtlicher Warnung. Nacht nur als Hinweis.
-      Wind als Stundenwert der Modelle; kurzzeitig (z. B. im 10-Minuten-Mittel der Anlage) kann der Wind darüber liegen. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0).
+      Wind als Stundenwert der Modelle; kurzzeitig (z. B. im 10-Minuten-Mittel der Baustelle) kann der Wind darüber liegen. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0).
       <b>Grenzen:</b> Die Prognosewerte sind Stundenmittel und können kurzzeitig überschritten werden. Lokale Effekte (Kuppen und Gelände, Nachlauf anderer Anlagen, Böenfronten, einzelne Gewitterzellen) bilden die Modelle nicht ab, Wind und Böen in der Höhe sind berechnet bzw. geschätzt, und die Prognose kann sich ändern. Wind vor Ort messen, bei Unsicherheit abbrechen.
       Entscheidungshilfe; die Freigabe trifft der Aufsichtführende. AtHeight-Version ${esc(snap.version)}.
     </div>

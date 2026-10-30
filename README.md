@@ -40,7 +40,7 @@ Kein Build-Schritt, läuft direkt auf GitHub Pages.
 |---|---|
 | `windbericht.html` | Seitenaufbau (`index.html` leitet dorthin weiter) |
 | `css/windbericht.css` | Gestaltung inkl. Druck des Tagesberichts |
-| `js/konfiguration.js` | Modelle, Schwellen, Standard-Anlage, App-Zustand |
+| `js/konfiguration.js` | Modelle, Schwellen, Standard-Baustelle, App-Zustand |
 | `js/hilfen.js` | Formatierung, Zeitzonen |
 | `js/physik.js` | Höhenrechnung, Böe, Temperatur, Windchill |
 | `js/daten.js` | Abruf: Modelle, Szenarien, UV, Warnungen |
@@ -55,7 +55,7 @@ Kein Build-Schritt, läuft direkt auf GitHub Pages.
 | `js/modellvergleich.js` | Vergleich mit Messstationen |
 | `js/karte.js`, `js/radar.js` | Karte, Standortwahl, Regenradar |
 | `js/bericht.js` | Tagesbericht, Prüfsumme, Export |
-| `js/anlagen.js`, `js/bedienung.js` | Gespeicherte Anlagen, Knöpfe, Einstellungen |
+| `js/anlagen.js`, `js/bedienung.js` | Gespeicherte Baustellen, Knöpfe, Einstellungen |
 | `js/start.js` | Start der App (zuletzt geladen) |
 | `sw.js`, `manifest.webmanifest`, `icons/` | Installierbare App: App-Dateien offline, Symbole |
 

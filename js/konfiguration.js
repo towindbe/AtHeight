@@ -1,4 +1,4 @@
-/* AtHeight · Modelle, Schwellen, Standard-Anlage und App-Zustand */
+/* AtHeight · Modelle, Schwellen, Standard-Baustelle und App-Zustand */
 "use strict";
 
 /* Sprache: Deutsch (Standard) oder Englisch, gemerkt im Browser. T("deutsch", "english") liefert den Text der gewählten Sprache.
@@ -48,7 +48,7 @@ const VARS = ["wind_speed_10m","wind_speed_80m","wind_speed_120m","wind_speed_18
   "relative_humidity_2m","cloud_cover"];
 const CHILL_INFO = -10, HEAT_INFO = 32, UV_INFO = 6;
 const DEW_INFO = 1;   // Temperatur in Arbeitshöhe höchstens so viele K über dem Taupunkt: Hinweis Kondenswasser
-// Beschichten / Laminieren (Grenzen je Anlage): max. Luftfeuchte und Mindestabstand zum Taupunkt (ISO 8502-4: 3 K)
+// Beschichten / Laminieren (Grenzen je Baustelle): max. Luftfeuchte und Mindestabstand zum Taupunkt (ISO 8502-4: 3 K)
 const coatRh = () => site.coatRh ?? 80, coatDew = () => site.coatDew ?? 3;
 /* Beschichten-Modus: im Überblick je Standort eingeschaltet, gilt für alle Tage bis zum Ausschalten,
    höchstens COAT_DAYS Tage ab dem Einschalten. Danach ist er von selbst aus:
@@ -93,6 +93,6 @@ function loadSite(){
   try{ const s = JSON.parse(localStorage.getItem("wb_site")||"null"); if(s && typeof s.lat==="number") return cleanSite({...DEFAULT_SITE, ...s}); }catch(e){}
   return {...DEFAULT_SITE};
 }
-// Felder aus früheren Versionen entfernen (coat: Beschichten war kurz je Anlage gespeichert, gilt jetzt im Überblick)
+// Felder aus früheren Versionen entfernen (coat: Beschichten war kurz je Baustelle gespeichert, gilt jetzt im Überblick)
 function cleanSite(s){ const {coat, ...r} = s; return r; }
 function saveSite(){ try{ localStorage.setItem("wb_site", JSON.stringify(site)); }catch(e){} }

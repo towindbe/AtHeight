@@ -105,7 +105,7 @@ async function computeRanking(){
     if(wantBest){ wantBest = false; showQuick("best"); }
   } finally { btn.disabled = false; if(wantBest){ wantBest = false; renderChips(T("Modellvergleich nicht möglich, Details unten bei „Welche Modelle treffen hier?“.", "Model comparison not possible, details below under “Which models are accurate here?”.")); } }
 }
-/* Modellvergleich automatisch im Hintergrund, wenn für die Anlage keiner vorliegt oder er älter als 7 Tage ist */
+/* Modellvergleich automatisch im Hintergrund, wenn für die Baustelle keiner vorliegt oder er älter als 7 Tage ist */
 const RANK_MAX_AGE = 7*864e5;
 function autoRank(){
   if(navigator.webdriver) return;   // im automatischen Test keine zusätzlichen Abrufe
