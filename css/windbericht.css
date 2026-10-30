@@ -625,3 +625,9 @@ header.top .row .icon-btn{width:48px;min-width:48px;padding:0;font-size:20px}
 @media print{.bottom-nav{display:none!important}}
 /* Helles Design: weiße Schrift auf den kräftigeren Ampelfarben (Kontrast) */
 :root[data-theme="light"] .lamp.go,:root[data-theme="light"] .lamp.warn,:root[data-theme="light"] .lamp.stop,:root[data-theme="light"] .ic{color:#fff}
+
+/* Modelltabelle: abgedeckte Höhen */
+.t td.hgt{white-space:nowrap}
+.hgt small{font-size:11.5px}
+.hgt-ok{color:var(--go)}
+.hgt-ext{color:var(--warn)}
