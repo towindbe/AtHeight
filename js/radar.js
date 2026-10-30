@@ -46,8 +46,8 @@ function radarShow(i){
   radar.idx = i; $("radarSlider").value = String(i);
   if(!radar.overlay) radar.overlay = L.imageOverlay(f.url, radar.bounds, {opacity:.75, interactive:false, attribution:"Radar © DWD"}).addTo(map);
   else { radar.overlay.setBounds(radar.bounds); radar.overlay.setUrl(f.url); }
-  const time = new Date(f.t).toLocaleTimeString("de-DE", {timeZone:state.tz || undefined, hour:"2-digit", minute:"2-digit"});
-  $("radarTime").innerHTML = `${time} Uhr <span class="${f.ahead ? "rt-fc" : "rt-obs"}">${f.ahead ? "Vorhersage" : "gemessen"}</span>`;
+  const time = new Date(f.t).toLocaleTimeString(LOC(), {timeZone:state.tz || undefined, hour:"2-digit", minute:"2-digit"});
+  $("radarTime").innerHTML = `${time}${T(" Uhr", "")} <span class="${f.ahead ? "rt-fc" : "rt-obs"}">${f.ahead ? T("Vorhersage", "forecast") : T("gemessen", "measured")}</span>`;
   // Windpfeil folgt der Radar-Uhrzeit (nächstliegende Prognosestunde), neu zeichnen nur beim Stundenwechsel
   const ah = typeof arrowHour === "function" ? arrowHour() : null;
   if(ah && ah.i !== radar.arrowI){ radar.arrowI = ah.i; if(typeof updateMap === "function") updateMap(); }
@@ -55,7 +55,7 @@ function radarShow(i){
 function radarPlay(on){
   radar.playing = on;
   $("radarPlay").textContent = on ? "⏸" : "▶";
-  $("radarPlay").setAttribute("aria-label", on ? "Animation anhalten" : "Animation abspielen");
+  $("radarPlay").setAttribute("aria-label", on ? T("Animation anhalten", "Pause animation") : T("Animation abspielen", "Play animation"));
   clearTimeout(radar.timer);
   if(!on) return;
   const step = () => {

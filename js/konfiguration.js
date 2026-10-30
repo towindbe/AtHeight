@@ -1,6 +1,25 @@
 /* Windbericht · Modelle, Schwellen, Standard-Anlage und App-Zustand */
 "use strict";
 
+/* Sprache: Deutsch (Standard) oder Englisch, gemerkt im Browser. T("deutsch", "english") liefert den Text der gewählten Sprache.
+   Feste Texte im HTML tragen data-en (Inhalt) bzw. data-en-title / data-en-aria / data-en-ph (Attribute), getauscht von applyStaticLang().
+   Tagesbericht und Infoseite bleiben vorerst deutsch (Schritt 2). */
+let LANG = (() => { try{ return localStorage.getItem("wb_lang")==="en" ? "en" : "de"; }catch(e){ return "de"; } })();
+const T = (de, en) => LANG === "en" ? en : de;   // nicht „L“: so heißt global die Kartenbibliothek Leaflet
+const LOC = () => LANG === "en" ? "en-GB" : "de-DE";
+const UHR = () => T(" Uhr", "h");   // Zeitangabe hinter Uhrzeiten: „06–19 Uhr“ bzw. „06–19h“
+function applyStaticLang(){
+  document.documentElement.lang = LANG;
+  const swap = (sel, get, set, key) => document.querySelectorAll(sel).forEach(e => {
+    if(e.dataset[key + "De"] == null) e.dataset[key + "De"] = get(e);
+    set(e, LANG === "en" ? e.dataset[key] : e.dataset[key + "De"]);
+  });
+  swap("[data-en]", e => e.innerHTML, (e, v) => { e.innerHTML = v; }, "en");
+  swap("[data-en-title]", e => e.title, (e, v) => { e.title = v; }, "enTitle");
+  swap("[data-en-aria]", e => e.getAttribute("aria-label") || "", (e, v) => e.setAttribute("aria-label", v), "enAria");
+  swap("[data-en-ph]", e => e.placeholder, (e, v) => { e.placeholder = v; }, "enPh");
+}
+
 const MODELS = [
   {id:"icon_d2", name:"ICON-D2", org:"DWD", res:"2 km", hi:true},
   {id:"meteoswiss_icon_ch1", name:"ICON-CH1", org:"MeteoSwiss", res:"1 km", hi:true},
@@ -51,7 +70,7 @@ const ENSEMBLES = [{id:"icon_d2_eps", name:"ICON-D2-EPS"}, {id:"ecmwf_ifs025_ens
 const DEFAULT_SITE = {name:"Hildesheim", lat:52.1508, lon:9.9511, windkraft:true, hub:125, rotor:149, work:null, path:true, access:"ground", wind:12, gust:15, nightWind:15, nightGust:20, minTemp:0, from:6, to:19};
 const CAPE_WARN = 300, CAPE_STOP = 800, RAIN_WARN = 0.5;
 const COLORS = ["#3b82f6","#14b8a6","#a855f7","#f59e0b","#ec4899","#22c55e","#06b6d4","#67e8f9","#64748b","#8b5cf6","#84cc16","#f97316","#0ea5e9","#d946ef","#10b981","#eab308"];
-const LAMP_TXT = {go:"KLAR", warn:"PRÜFEN", stop:"STOP", none:"–"};
+const LAMP_TXT = {get go(){ return T("KLAR", "CLEAR"); }, get warn(){ return T("PRÜFEN", "CHECK"); }, stop:"STOP", none:"–"};
 /* Symbole der Ampelkachel: Haken, Warndreieck, Achteck mit Balken */
 const LAMP_ICON = {
   go:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 7"/></svg>`,

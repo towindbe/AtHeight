@@ -5,7 +5,7 @@
 
 const AF_MAX_DAYS = 92, AF_CHUNK = 31;
 const addDays = (d, n) => isoDay(Date.parse(d+"T12:00:00Z") + n*864e5);
-const AF_TXT = {moeglich:"MÖGLICH", eingeschraenkt:"BEGRENZT", ausfall:"AUSFALL"}, AF_CLS = {moeglich:"go", eingeschraenkt:"warn", ausfall:"stop"};
+const AF_TXT = {get moeglich(){ return T("MÖGLICH", "POSSIBLE"); }, get eingeschraenkt(){ return T("BEGRENZT", "LIMITED"); }, get ausfall(){ return T("AUSFALL", "DOWNTIME"); }}, AF_CLS = {moeglich:"go", eingeschraenkt:"warn", ausfall:"stop"};
 let afData = null;
 /* Das Protokoll gilt nur für Standort, Arbeitsbereich, Arbeitszeit und Grenzwerte, mit denen es berechnet wurde */
 const afKey = () => JSON.stringify([site.lat, site.lon, site.work || site.hub, site.hub, accessMode(), site.wind, site.gust, site.from, site.to]);
@@ -34,7 +34,7 @@ async function afModel(start, end){
 async function afRechnen(von, bis){
   const start = addDays(von, -1);   // Puffer für den Zeitzonenversatz
   const [st, mh] = await Promise.all([afStation(start, bis), afModel(start, bis)]);
-  if(!mh) throw new Error("Die archivierten Modelldaten konnten nicht geladen werden.");
+  if(!mh) throw new Error(T("Die archivierten Modelldaten konnten nicht geladen werden.", "The archived model data could not be loaded."));
   const byDay = new Map();
   mh.time.forEach((t, i) => {
     const loc = toLocalStr(Date.parse(t+":00Z"), state.tz); if(!loc) return;
@@ -69,41 +69,45 @@ async function afRechnen(von, bis){
     modell:"Open-Meteo Historical Forecast (best match), 10-m-Wind der Station auf den Arbeitsbereich hochgerechnet", projekt:$("af_project").value, tage, summen};
 }
 
-const afDay = d => new Date(d+"T12:00:00").toLocaleDateString("de-DE", {weekday:"short", day:"2-digit", month:"2-digit", year:"2-digit"});
+const afDay = d => new Date(d+"T12:00:00").toLocaleDateString(LOC(), {weekday:"short", day:"2-digit", month:"2-digit", year:"2-digit"});
 function afRows(data){
   return data.tage.map(t => t.n ? `<tr><td class="l">${esc(afDay(t.tag))}</td><td class="l"><span class="rp-pill ${AF_CLS[t.status]}">${AF_TXT[t.status]}</span></td>
     <td class="${t.windMax > data.grenzwerte.wind ? "over" : ""}">${fw(t.windMax)}</td><td class="${t.boeMax!=null && t.boeMax > data.grenzwerte.boe ? "over" : ""}">${t.boeMax==null ? "–" : fw(t.boeMax)}</td>
     <td>${t.ueber} / ${t.n}</td><td>${t.fenster} h</td><td>${fw(t.modellWindMax)}</td><td>${t.luecken || "–"}</td></tr>`
-    : `<tr><td class="l">${esc(afDay(t.tag))}</td><td class="l" colspan="7">keine Daten</td></tr>`).join("");
+    : `<tr><td class="l">${esc(afDay(t.tag))}</td><td class="l" colspan="7">${T("keine Daten", "no data")}</td></tr>`).join("");
 }
-const afHead = () => `<thead><tr><th class="l">Tag</th><th class="l">Einstufung</th><th>Wind max (${WU()})</th><th>Böe max (${WU()})</th><th title="Arbeitsstunden mit Wind oder Böe über dem Grenzwert">Std. über Grenze</th>
-  <th title="Längste Folge von Stunden unter beiden Grenzwerten">Längstes Fenster</th><th title="Höchster Windwert der Modellrechnung als Gegenprobe">Modell Wind max</th><th title="Stunden ohne Messwert, dort gilt der Modellwert">Std. ohne Messwert</th></tr></thead>`;
+const afHead = () => `<thead><tr><th class="l">${T("Tag", "Day")}</th><th class="l">${T("Einstufung", "Rating")}</th><th>Wind max (${WU()})</th><th>${T("Böe max", "Gust max")} (${WU()})</th><th title="${T("Arbeitsstunden mit Wind oder Böe über dem Grenzwert", "Working hours with wind or gust above the limit")}">${T("Std. über Grenze", "Hrs above limit")}</th>
+  <th title="${T("Längste Folge von Stunden unter beiden Grenzwerten", "Longest run of hours below both limits")}">${T("Längstes Fenster", "Longest window")}</th><th title="${T("Höchster Windwert der Modellrechnung als Gegenprobe", "Highest wind value of the model run as a cross-check")}">${T("Modell Wind max", "Model wind max")}</th><th title="${T("Stunden ohne Messwert, dort gilt der Modellwert", "Hours without measurement, model value used there")}">${T("Std. ohne Messwert", "Hrs w/o measurement")}</th></tr></thead>`;
 function afSummary(d){
   const s = d.summen, st = d.station;
-  return `<b>${s.ausfalltage} von ${s.mitDaten} Tagen ohne Arbeitsmöglichkeit</b> (mehr als die Hälfte der Arbeitszeit über Grenzwert), ${s.begrenzt} Tage mit Einschränkung, ${s.moeglich} Tage ohne Überschreitung.
-    Insgesamt ${s.ausfallstunden} von ${s.arbeitsstunden} Arbeitsstunden über dem Grenzwert (${s.arbeitsstunden ? Math.round(100*s.ausfallstunden/s.arbeitsstunden) : 0} %).`;
+  return T(`<b>${s.ausfalltage} von ${s.mitDaten} Tagen ohne Arbeitsmöglichkeit</b> (mehr als die Hälfte der Arbeitszeit über Grenzwert), ${s.begrenzt} Tage mit Einschränkung, ${s.moeglich} Tage ohne Überschreitung.
+    Insgesamt ${s.ausfallstunden} von ${s.arbeitsstunden} Arbeitsstunden über dem Grenzwert (${s.arbeitsstunden ? Math.round(100*s.ausfallstunden/s.arbeitsstunden) : 0} %).`, `<b>${s.ausfalltage} of ${s.mitDaten} days without possibility to work</b> (more than half of working hours above limit), ${s.begrenzt} days with restrictions, ${s.moeglich} days without exceedance.
+    In total ${s.ausfallstunden} of ${s.arbeitsstunden} working hours above the limit (${s.arbeitsstunden ? Math.round(100*s.ausfallstunden/s.arbeitsstunden) : 0} %).`);
 }
-const afMethod = d => `${d.station ? `Messstation ${esc(d.station.name)} (${esc(d.station.quelle)}), ${fmt(d.station.entfernungKm,1)} km entfernt${d.station.hoehe!=null ? `, ${Math.round(d.station.hoehe)} m ü. NN` : ""}.` : "Keine Messstation im Umkreis gefunden, es gelten die Werte der Modellrechnung."}
+const afMethod = d => T(`${d.station ? `Messstation ${esc(d.station.name)} (${esc(d.station.quelle)}), ${fmt(d.station.entfernungKm,1)} km entfernt${d.station.hoehe!=null ? `, ${Math.round(d.station.hoehe)} m ü. NN` : ""}.` : "Keine Messstation im Umkreis gefunden, es gelten die Werte der Modellrechnung."}
   Die Station misst in 10 m Höhe. Ihr Wind ist mit dem Höhenverhältnis der archivierten Modellrechnung auf den Arbeitsbereich ${esc(d.bereich)} hochgerechnet (stärkster Wind im Bereich; Böe aus dem gemessenen Böenfaktor geschätzt).
   Eine Messstation in einiger Entfernung bildet die Lage an der Anlage nur angenähert ab. Stunden ohne Messwert sind mit dem Modellwert gefüllt und in der letzten Spalte ausgewiesen.
-  Gewertet werden nur Arbeitsstunden (${d.arbeitszeit.von}–${d.arbeitszeit.bis} Uhr) und nur Wind und Böe; Gewitter, Regen, Frost und amtliche Warnungen sind nicht enthalten.`;
+  Gewertet werden nur Arbeitsstunden (${d.arbeitszeit.von}–${d.arbeitszeit.bis} Uhr) und nur Wind und Böe; Gewitter, Regen, Frost und amtliche Warnungen sind nicht enthalten.`, `${d.station ? `Weather station ${esc(d.station.name)} (${esc(d.station.quelle)}), ${fmt(d.station.entfernungKm,1)} km away${d.station.hoehe!=null ? `, ${Math.round(d.station.hoehe)} m a.s.l.` : ""}.` : "No weather station found nearby; the model values apply."}
+  The station measures at 10 m height. Its wind is extrapolated to the working zone ${esc(d.bereich)} using the height ratio of the archived model run (strongest wind in the zone; gust estimated from the measured gust factor).
+  A station some distance away only approximates the conditions at the site. Hours without a measurement are filled with the model value and shown in the last column.
+  Only working hours (${d.arbeitszeit.von}–${d.arbeitszeit.bis}h) and only wind and gust are assessed; thunderstorms, rain, frost and official warnings are not included.`);
 
 async function afShow(){
   const out = $("afOut"), von = $("af_von").value, bis = $("af_bis").value, yesterday = addDays(isoDay(Date.now()), -1);
   const err = m => { out.innerHTML = `<p class="note err">${esc(m)}</p>`; $("afPrint").hidden = $("afJson").hidden = true; };
-  if(!state.fetchedAt) return err("Bitte zuerst die Wetterdaten laden.");
-  if(!site.checked) return err("Bitte zuerst unter Einstellungen die Höhen und Grenzwerte dieser Anlage prüfen und „Übernehmen“ antippen.");
-  if(!von || !bis || von > bis) return err("Bitte einen gültigen Zeitraum wählen (von ≤ bis).");
-  if(bis > yesterday) return err("Der Zeitraum darf höchstens bis gestern reichen, für heute liegen noch keine vollständigen Messwerte vor.");
-  if((Date.parse(bis) - Date.parse(von))/864e5 + 1 > AF_MAX_DAYS) return err(`Der Zeitraum darf höchstens ${AF_MAX_DAYS} Tage umfassen.`);
-  $("afBtn").disabled = true; out.innerHTML = `<p class="note">Lade Messwerte und Modelldaten für ${esc(afDay(von))} bis ${esc(afDay(bis))} …</p>`;
+  if(!state.fetchedAt) return err(T("Bitte zuerst die Wetterdaten laden.", "Please load the weather data first."));
+  if(!site.checked) return err(T("Bitte zuerst unter Einstellungen die Höhen und Grenzwerte dieser Anlage prüfen und „Übernehmen“ antippen.", "Please first check the heights and limits of this site under Settings and tap “Apply”."));
+  if(!von || !bis || von > bis) return err(T("Bitte einen gültigen Zeitraum wählen (von ≤ bis).", "Please choose a valid period (from ≤ to)."));
+  if(bis > yesterday) return err(T("Der Zeitraum darf höchstens bis gestern reichen, für heute liegen noch keine vollständigen Messwerte vor.", "The period may only go up to yesterday; complete measurements for today are not yet available."));
+  if((Date.parse(bis) - Date.parse(von))/864e5 + 1 > AF_MAX_DAYS) return err(T(`Der Zeitraum darf höchstens ${AF_MAX_DAYS} Tage umfassen.`, `The period may cover at most ${AF_MAX_DAYS} days.`));
+  $("afBtn").disabled = true; out.innerHTML = `<p class="note">${T("Lade Messwerte und Modelldaten für", "Loading measurements and model data for")} ${esc(afDay(von))} ${T("bis", "to")} ${esc(afDay(bis))} …</p>`;
   try{
     const key = afKey(), data = await afRechnen(von, bis);
     afData = {data, hash: await sha256(JSON.stringify(data)), key};
     out.innerHTML = `<p class="af-sum">${afSummary(data)}</p><div class="af-scroll"><table class="af-t">${afHead()}<tbody>${afRows(data)}</tbody></table></div>
-      <p class="note">${afMethod(data)}</p><p class="note mono">Prüfsumme (SHA-256): ${afData.hash}</p>`;
+      <p class="note">${afMethod(data)}</p><p class="note mono">${T("Prüfsumme", "Checksum")} (SHA-256): ${afData.hash}</p>`;
     $("afPrint").hidden = $("afJson").hidden = false;
-  }catch(e){ err(e.message || "Berechnung nicht möglich."); }
+  }catch(e){ err(e.message || T("Berechnung nicht möglich.", "Calculation not possible.")); }
   finally{ $("afBtn").disabled = false; }
 }
 function afPrint(){

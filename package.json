@@ -3,8 +3,8 @@
   "private": true,
   "description": "Tests für den Windbericht (die App selbst braucht keinen Build).",
   "scripts": {
-    "test": "node tests/run.mjs",
-    "test:accept": "node tests/run.mjs --accept",
+    "test": "node tests/run.mjs && node tests/run.mjs --lang=en",
+    "test:accept": "node tests/run.mjs --accept && node tests/run.mjs --lang=en --accept",
     "test:record": "node tests/run.mjs --record"
   },
   "devDependencies": {

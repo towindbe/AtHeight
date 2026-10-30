@@ -120,27 +120,27 @@ function warnState(day){
   const ws = allWarnings().filter(w => w.start < d1 && w.end > d0).sort((a,b) => b.lvl-a.lvl);
   const srcs = [["DWD", extras.dwd], ["GeoSphere Austria", extras.geo]];
   const failed = srcs.filter(([,x]) => x && !x.ok).map(([n]) => n);
-  const covering = srcs.filter(([,x]) => x?.ok && !x.outside).map(([n,x]) => `${x.area || "Standort"} (${n})`);
+  const covering = srcs.filter(([,x]) => x?.ok && !x.outside).map(([n,x]) => `${x.area || T("Standort", "Site")} (${n})`);
   let kind, note;
   if(ws.length) kind = "list";
-  else if(failed.length) { kind = "na"; note = `Amtliche Warnungen nicht abrufbar (${failed.join(", ")}). Bitte selbst prüfen.`; }
-  else if(covering.length) { kind = "ok"; note = `Keine amtlichen Warnungen für ${covering.join(" und ")} am gewählten Tag.`; }
-  else { kind = "na"; note = "Für diesen Standort sind keine amtlichen Warnungen eingebunden (nur DWD und GeoSphere Austria). Bitte beim zuständigen Wetterdienst selbst prüfen."; }
-  if(ws.length && failed.length) note = `Nicht abrufbar: ${failed.join(", ")}.`;
+  else if(failed.length) { kind = "na"; note = T(`Amtliche Warnungen nicht abrufbar (${failed.join(", ")}). Bitte selbst prüfen.`, `Official warnings unavailable (${failed.join(", ")}). Please check yourself.`); }
+  else if(covering.length) { kind = "ok"; note = T(`Keine amtlichen Warnungen für ${covering.join(" und ")} am gewählten Tag.`, `No official warnings for ${covering.join(" and ")} on the selected day.`); }
+  else { kind = "na"; note = T("Für diesen Standort sind keine amtlichen Warnungen eingebunden (nur DWD und GeoSphere Austria). Bitte beim zuständigen Wetterdienst selbst prüfen.", "No official warnings are included for this site (only DWD and GeoSphere Austria). Please check with the responsible weather service."); }
+  if(ws.length && failed.length) note = `${T("Nicht abrufbar", "Unavailable")}: ${failed.join(", ")}.`;
   return {ws, kind, note};
 }
 const allWarnings = () => [...(extras.dwd?.list||[]), ...(extras.geo?.list||[])];
-const fmtWhen = ms => !isFinite(ms) ? "offen" : new Date(ms).toLocaleString("de-DE", {timeZone:state.tz, weekday:"short", day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"});
+const fmtWhen = ms => !isFinite(ms) ? T("offen", "open") : new Date(ms).toLocaleString(LOC(), {timeZone:state.tz, weekday:"short", day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"});
 async function load(){
   if(typeof afCheck==="function") afCheck();   // Ausfallprotokoll gilt nur für die Anlage, für die es berechnet wurde
   $("errorBox").hidden = true;
-  $("headline").textContent = "Lade Wettermodelle…"; $("summary").textContent = ""; $("lamp").className="lamp"; $("lamp").textContent="…";
+  $("headline").textContent = T("Lade Wettermodelle…", "Loading weather models…"); $("summary").textContent = ""; $("lamp").className="lamp"; $("lamp").textContent="…";
   $("reloadBtn").disabled = true;
   // Ladebalken: ein Schritt je Wettermodell plus Zusatzdaten (Szenarien, Warnungen, UV)
   const total = MODELS.length + 1; let done = 0;
   const tick = () => { done++; $("loadFill").style.width = Math.round(100*done/total) + "%";
-    $("loadText").textContent = done <= MODELS.length ? `${Math.min(done, MODELS.length)} von ${MODELS.length} Modellen` : "Szenarien und Warnungen"; };
-  $("loadFill").style.width = "0%"; $("loadText").textContent = `0 von ${MODELS.length} Modellen`; $("loadBar").hidden = false;
+    $("loadText").textContent = done <= MODELS.length ? `${Math.min(done, MODELS.length)} ${T("von", "of")} ${MODELS.length} ${T("Modellen", "models")}` : T("Szenarien und Warnungen", "Scenarios and warnings"); };
+  $("loadFill").style.width = "0%"; $("loadText").textContent = `0 ${T("von", "of")} ${MODELS.length} ${T("Modellen", "models")}`; $("loadBar").hidden = false;
   let [raw, ex] = await Promise.all([Promise.all(MODELS.map(m => fetchModel(m).then(r => (tick(), r)))), loadExtras().then(r => (tick(), r))]);
   $("loadBar").hidden = true;
   $("reloadBtn").disabled = false;
@@ -156,16 +156,16 @@ async function load(){
     // Grund benennen: Limit bei Open-Meteo, keine Verbindung oder sonstiger Fehler
     const reasons = raw.map(r => r.reason || "");
     const msg = reasons.some(x => /429|too many|limit/i.test(x))
-      ? "Open-Meteo meldet zu viele Anfragen (Nutzungsgrenze). Bitte in ein paar Minuten erneut versuchen."
+      ? T("Open-Meteo meldet zu viele Anfragen (Nutzungsgrenze). Bitte in ein paar Minuten erneut versuchen.", "Open-Meteo reports too many requests (usage limit). Please try again in a few minutes.")
       : reasons.every(x => x==="Zeitüberschreitung" || x==="Keine Verbindung") && reasons.includes("Zeitüberschreitung")
-        ? "Die Wetterdienste antworten nicht (Zeitüberschreitung). Bitte in einem Moment erneut versuchen."
+        ? T("Die Wetterdienste antworten nicht (Zeitüberschreitung). Bitte in einem Moment erneut versuchen.", "The weather services do not respond (timeout). Please try again in a moment.")
       : reasons.every(x => x==="Keine Verbindung")
-        ? "Keine Verbindung zu Open-Meteo. Bitte Internetverbindung prüfen."
-        : `Wetterdaten konnten nicht geladen werden (${reasons.find(Boolean) || "unbekannter Fehler"}).`;
+        ? T("Keine Verbindung zu Open-Meteo. Bitte Internetverbindung prüfen.", "No connection to Open-Meteo. Please check your internet connection.")
+        : T(`Wetterdaten konnten nicht geladen werden (${reasons.find(Boolean) || "unbekannter Fehler"}).`, `Weather data could not be loaded (${reasons.find(Boolean) || "unknown error"}).`);
     $("errorBox").hidden = false;
-    $("errorBox").innerHTML = `${esc(msg)} <button class="link" id="retryBtn" type="button">Erneut versuchen</button>`;
+    $("errorBox").innerHTML = `${esc(msg)} <button class="link" id="retryBtn" type="button">${T("Erneut versuchen", "Try again")}</button>`;
     $("retryBtn").onclick = load;
-    $("headline").textContent = "Keine Daten"; return;
+    $("headline").textContent = T("Keine Daten", "No data"); return;
   }
   const times = [...new Set(okAny.hourly.time)];
   const results = raw.map(r => {

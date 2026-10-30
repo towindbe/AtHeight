@@ -633,3 +633,5 @@ header.top .row .icon-btn{width:48px;min-width:48px;padding:0;font-size:20px}
 @media print{.bottom-nav{display:none!important}}
 /* Helles Design: weiße Schrift auf den kräftigeren Ampelfarben (Kontrast) */
 :root[data-theme="light"] .lamp.go,:root[data-theme="light"] .lamp.warn,:root[data-theme="light"] .lamp.stop,:root[data-theme="light"] .ic{color:#fff}
+/* Sprachknopf: Kürzel statt Symbol, gleiche Größe wie die anderen */
+header.top .row .lang-btn{font:700 15px var(--f-body);letter-spacing:.04em}

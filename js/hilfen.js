@@ -23,7 +23,7 @@ const ICON_PATHS = {
 const showHelp = el => { if(el) setTimeout(() => el.scrollIntoView({behavior:"smooth", block:"center"}), 30); };
 const icon = (name, size = 20) => `<svg class="ico" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON_PATHS[name] || ""}</svg>`;
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const fmt = (v, d=1) => v==null || isNaN(v) ? "–" : v.toFixed(d).replace(".", ",");
+const fmt = (v, d=1) => v==null || isNaN(v) ? "–" : LANG === "en" ? v.toFixed(d) : v.toFixed(d).replace(".", ",");
 /* Einheit der Windangaben (nur Anzeige; gerechnet und gespeichert wird immer in m/s) */
 const UNITS = {ms:{f:1, l:"m/s", d:1, step:0.5}, kmh:{f:3.6, l:"km/h", d:0, step:1}, kn:{f:1.943844, l:"kn", d:0, step:1}};
 let windUnit = (() => { try{ return localStorage.getItem("wb_unit"); }catch(e){ return null; } })();
@@ -39,7 +39,8 @@ const hh = t => t.slice(11,13);
 const hourOf = t => parseInt(t.slice(11,13),10);
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const DIRS = ["N","NNO","NO","ONO","O","OSO","SO","SSO","S","SSW","SW","WSW","W","WNW","NW","NNW"];
-const dirName = d => d==null ? "–" : DIRS[Math.round(((d%360)+360)%360/22.5)%16];
+const DIRS_EN = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+const dirName = d => d==null ? "–" : (LANG === "en" ? DIRS_EN : DIRS)[Math.round(((d%360)+360)%360/22.5)%16];
 /* Mittlere Richtung auf dem Kreis; ws (optional) gewichtet, z. B. nach Windstärke */
 function circMean(ds, ws){
   if(!ds.length) return {mean:null, spread:null};
@@ -71,7 +72,7 @@ function riskTen(p){
 function riskHtml(p, n){
   if(p==null) return "–";
   const lvl = p >= 0.3 ? "stop" : p >= 0.1 ? "warn" : "go";
-  const tip = n ? `${Math.round(p*n)} von ${n} Szenarien zu windig` : "";
+  const tip = n ? T(`${Math.round(p*n)} von ${n} Szenarien zu windig`, `${Math.round(p*n)} of ${n} scenarios too windy`) : "";
   return `<span class="risk" title="${tip}"><span class="risk-bar"><span class="risk-fill r-${lvl}" style="width:${Math.max(4, Math.round(p*100))}%"></span></span>${riskTen(p)}</span>`;
 }
 function toLocalStr(ms, tz){

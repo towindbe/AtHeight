@@ -37,7 +37,7 @@ $("saveBtn").onclick = () => {
   if(k >= 0){ favs[k] = {name:site.name, site:{...site}}; saveFavs(favs); }
   siteReady(); saveSite(); toggleSettings(false);
   if(map) map.setView([site.lat, site.lon], Math.max(map.getZoom(), 13));
-  $("mapNote").textContent = "Ort suchen oder direkt auf die Anlage tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Regenradar: DWD, nur Deutschland und Grenzgebiete.";
+  $("mapNote").textContent = T("Ort suchen oder direkt auf die Anlage tippen. Der Marker lässt sich verschieben. Pfeil: Windrichtung zur gewählten Stunde. Regenradar: DWD, nur Deutschland und Grenzgebiete.", "Search for a place or tap the site directly. The marker can be dragged. Arrow: wind direction at the selected hour. Rain radar: DWD, Germany and border areas only.");
   load();
 };
 $("s_windkraft").onchange = applyEinsatzUI;
@@ -49,7 +49,7 @@ function setDetails(on){
   try{ localStorage.setItem("wb_details", on ? "1" : "0"); }catch(e){}
   document.body.classList.toggle("simple", !on);
   $("detailsBtn").setAttribute("aria-expanded", String(on));
-  $("detailsLbl").textContent = on ? "Details für Fachleute ausblenden" : "Details für Fachleute einblenden";
+  $("detailsLbl").textContent = on ? T("Details für Fachleute ausblenden", "Hide details for specialists") : T("Details für Fachleute einblenden", "Show details for specialists");
   if(on && state.hours.length) render();   // Diagramme in vorher ausgeblendeten Abschnitten neu zeichnen
 }
 setDetails(detailsOn);
@@ -60,7 +60,7 @@ document.querySelectorAll(".card").forEach(card => {
   if(!h || !card.querySelector(".help") || h.querySelector(".info-btn")) return;
   const b = document.createElement("button");
   b.type = "button"; b.className = "info-btn help-btn"; b.textContent = "?";
-  b.title = "Erklärung ein- oder ausblenden"; b.setAttribute("aria-expanded", "false");
+  b.title = T("Erklärung ein- oder ausblenden", "Show or hide explanation"); b.setAttribute("aria-expanded", "false");
   b.onclick = () => { const on = card.classList.toggle("show-help"); b.setAttribute("aria-expanded", String(on));
     if(on) showHelp([...card.querySelectorAll(".help")].find(n => n.offsetParent !== null)); };
   // neben die Überschrift (manche Überschriften werden per Text neu gesetzt); steht sie allein, eine Kopfzeile darum bauen
@@ -69,11 +69,22 @@ document.querySelectorAll(".card").forEach(card => {
 });
 // Symbol-Platzhalter füllen (vor allem anderen, damit Knöpfe ihre Symbole haben)
 document.querySelectorAll("[data-ico]").forEach(e => { e.outerHTML = icon(e.dataset.ico); });
+applyStaticLang();   // gespeicherte Sprache sofort anwenden (Standard Deutsch: ändert nichts)
+/* Sprache umschalten: feste Texte tauschen, Gründe neu berechnen (sie entstehen in der Bewertung), alles neu zeichnen */
+function setLang(l){
+  LANG = l;
+  try{ localStorage.setItem("wb_lang", l); }catch(e){}
+  applyStaticLang();
+  if(typeof initStickyNav === "function") initStickyNav();
+  setDetails(detailsOn);
+  if(state.results.length){ state.hours = computeHours(state.results, state.times); render(); }
+}
+$("langBtn").onclick = () => setLang(LANG === "en" ? "de" : "en");
 /* Design: Standard dunkel auf allen Geräten, per Knopf hell (für draußen). Diagramme lesen ihre Farben beim Zeichnen, deshalb neu zeichnen */
 function applyTheme(t){
   if(t==="light") document.documentElement.dataset.theme = "light"; else delete document.documentElement.dataset.theme;
   $("themeBtn").innerHTML = icon(t==="light" ? "moon" : "sun");
-  $("themeBtn").title = t==="light" ? "Dunkles Design" : "Helles Design (für draußen)";
+  $("themeBtn").title = t==="light" ? T("Dunkles Design", "Dark theme") : T("Helles Design (für draußen)", "Light theme (for outdoors)");
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", t==="light" ? "#eef1f4" : "#0d1217");
 }
 let theme = (() => { try{ return localStorage.getItem("wb_theme")==="light" ? "light" : "dark"; }catch(e){ return "dark"; } })();
@@ -93,9 +104,9 @@ $("coatGear").onclick = () => {
   }, 350);
 };
 $("gpsBtn").onclick = () => {
-  if(!navigator.geolocation){ $("gpsBtn").textContent = "GPS nicht verfügbar"; return; }
+  if(!navigator.geolocation){ $("gpsBtn").textContent = T("GPS nicht verfügbar", "GPS not available"); return; }
   navigator.geolocation.getCurrentPosition(p => { if(marker){ toggleSettings(false); pointToMap(); setPos(L.latLng(p.coords.latitude, p.coords.longitude)); } else { $("s_lat").value=p.coords.latitude.toFixed(4); $("s_lon").value=p.coords.longitude.toFixed(4);} if(map) map.setView([p.coords.latitude,p.coords.longitude],15); },
-    () => { $("gpsBtn").textContent = "Standortfreigabe abgelehnt"; });
+    () => { $("gpsBtn").textContent = T("Standortfreigabe abgelehnt", "Location access denied"); });
 };
 $("reloadBtn").onclick = load;
 $("rankBtn").onclick = computeRanking;
@@ -136,7 +147,7 @@ $("s_unit").onchange = () => {
   renderRanking();
 };
 applyUnitLabels();
-const needConfirm = () => { if(site.checked) return false; alert("Bitte zuerst unter Einstellungen die Höhen und Grenzwerte dieser Anlage prüfen und „Übernehmen“ antippen."); return true; };
+const needConfirm = () => { if(site.checked) return false; alert(T("Bitte zuerst unter Einstellungen die Höhen und Grenzwerte dieser Anlage prüfen und „Übernehmen“ antippen.", "Please first check the heights and limits of this site under Settings and tap “Apply”.")); return true; };
 $("printBtn").onclick = async () => { if(!state.fetchedAt || needConfirm()) return; await buildReport(); window.print(); };
 const appTitle = document.title;
 window.addEventListener("beforeprint", () => { if(state.fetchedAt) document.title = `Tagesbericht ${site.name} ${state.day}`; });
@@ -166,7 +177,7 @@ function chartMax(on){
   $("chartCard").classList.toggle("chart-max", on);
   document.body.classList.toggle("map-open", on);
   $("chartMaxBtn").setAttribute("aria-pressed", String(on));
-  $("chartMaxBtn").textContent = on ? "✕ Schließen" : "⤢ Vergrößern";
+  $("chartMaxBtn").textContent = on ? T("✕ Schließen", "✕ Close") : T("⤢ Vergrößern", "⤢ Enlarge");
   if(!on) setTimeout(() => $("chartCard").scrollIntoView({block:"start"}), 60);
 }
 $("tempLegend").addEventListener("click", e => { const b = e.target.closest("button[data-s]"); if(b) toggleLine(b.dataset.s); });

@@ -7,6 +7,7 @@
 //
 //   node tests/run.mjs            Test (vergleicht mit expected.json)
 //   node tests/run.mjs --accept   gewollte Änderung: aktuelles Ergebnis als Referenz übernehmen
+//   node tests/run.mjs --lang=en  dasselbe für die englische Oberfläche (Referenz tests/expected.en.json)
 //   node tests/run.mjs --record   neue Aufzeichnung + neue Referenz (nur bewusst ausführen!)
 //
 // Lokal wird Microsoft Edge verwendet (anderer Browser: WB_BROWSER=chrome node tests/run.mjs), auf GitHub Actions Chromium.
@@ -19,7 +20,9 @@ import crypto from "node:crypto";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FIX = path.join(ROOT, "tests", "fixtures", "api.json");
-const EXP = path.join(ROOT, "tests", "expected.json");
+// Sprache: --lang=en prüft die englische Oberfläche gegen eine eigene Referenz (expected.en.json)
+const LANG = process.argv.find(a => a.startsWith("--lang="))?.slice(7) === "en" ? "en" : "de";
+const EXP = path.join(ROOT, "tests", LANG === "en" ? "expected.en.json" : "expected.json");
 const RECORD = process.argv.includes("--record");
 const ACCEPT = process.argv.includes("--accept");
 const RECORD_MISSING = process.argv.includes("--record-missing");   // neue Datenquellen nachzeichnen, Rest bleibt   // gewollte Änderung: Ergebnis als neue Referenz übernehmen
@@ -58,7 +61,7 @@ await page.addInitScript(fixed => {
 }, fixture.fixed);
 
 // Test prüft alle Abschnitte: Ansicht „Details für Fachleute“ einschalten (Standard ist die einfache Ansicht)
-await page.addInitScript(() => { try{ localStorage.setItem("wb_details", "1"); }catch(e){} });
+await page.addInitScript(lang => { try{ localStorage.setItem("wb_details", "1"); if(lang === "en") localStorage.setItem("wb_lang", "en"); }catch(e){} }, LANG);
 
 await page.route(TILES, r => r.fulfill({status: 204, body: ""}));
 await page.route(API, async route => {
@@ -144,7 +147,7 @@ if(OUT) fs.writeFileSync(OUT, JSON.stringify(result, null, 1));
 if(ACCEPT){
   if(errors.length || missing.length){ console.log("Nicht übernommen, es gibt Fehler: " + [...errors, ...missing].join(" | ")); process.exit(1); }
   fs.writeFileSync(EXP, JSON.stringify(result, null, 1));
-  console.log("Neue Referenz übernommen (tests/expected.json). Änderungen vor dem Commit mit git diff prüfen.");
+  console.log(`Neue Referenz übernommen (${path.relative(ROOT, EXP)}). Änderungen vor dem Commit mit git diff prüfen.`);
   process.exit(0);
 }
 

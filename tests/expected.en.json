@@ -1,0 +1,3990 @@
+{
+ "erststart": "No site chosen yet.",
+ "modelle": [
+  "icon_d2:ok",
+  "meteoswiss_icon_ch1:extrap",
+  "meteoswiss_icon_ch2:extrap",
+  "geosphere_arome_austria:extrap",
+  "meteofrance_arome_france_hd:extrap",
+  "knmi_harmonie_arome_europe:ok",
+  "dmi_harmonie_arome_europe:extrap",
+  "ukmo_uk_deterministic_2km:ok",
+  "icon_eu:ok",
+  "meteofrance_arpege_europe:ok",
+  "ecmwf_ifs:ok",
+  "ecmwf_aifs025_single:ok",
+  "ukmo_global_deterministic_10km:extrap",
+  "icon_global:ok",
+  "gfs_global:ok",
+  "gem_global:ok"
+ ],
+ "stunden": [
+  {
+   "t": "2026-10-21T00:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 2.228970326661141,
+   "min": 1.0351732070079562,
+   "max": 4.048278428103719,
+   "gMed": 3.9674014587559645,
+   "over": 0,
+   "pEns": 0,
+   "tW": 7,
+   "chill": 5.477558867293423,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 354.00929116536736,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T01:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 1.2138235297550346,
+   "min": 0.46836828550208265,
+   "max": 3.27,
+   "gMed": 2.071,
+   "over": 0,
+   "pEns": 0,
+   "tW": 7.0465,
+   "chill": 7.0465,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 316.8485157860864,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T02:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 1.6206996089482808,
+   "min": 0.61,
+   "max": 2.935,
+   "gMed": 1.9634666666666667,
+   "over": 0,
+   "pEns": 0,
+   "tW": 7.1930000000000005,
+   "chill": 6.2951645604656505,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 262.63790615353287,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T03:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 2.41125,
+   "min": 1.1558333333333333,
+   "max": 4.308790222541983,
+   "gMed": 3.8612732179022737,
+   "over": 0,
+   "pEns": 0,
+   "tW": 7.1465,
+   "chill": 5.498904262015838,
+   "dark": true,
+   "rain": 0.05,
+   "cape": 0,
+   "dir": 236.73535189678321,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T04:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 3.0216683074670536,
+   "min": 2.1241666666666665,
+   "max": 5.3872530584789615,
+   "gMed": 4.4544774212442615,
+   "over": 0,
+   "pEns": 0,
+   "tW": 7.346500000000001,
+   "chill": 5.295886817565785,
+   "dark": true,
+   "rain": 0.1,
+   "cape": 0,
+   "dir": 228.54014274330282,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T05:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 3.557949709536993,
+   "min": 2.3201178121379904,
+   "max": 5.469554973708919,
+   "gMed": 5.335874999999999,
+   "over": 0,
+   "pEns": 0,
+   "tW": 7.6965,
+   "chill": 5.393962096335188,
+   "dark": true,
+   "rain": 0.15000000000000002,
+   "cape": 0,
+   "dir": 226.44225923656833,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T06:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 3.421810342003327,
+   "min": 0.8286135043349967,
+   "max": 5.235833333333334,
+   "gMed": 4.9053919456631805,
+   "over": 0,
+   "pEns": 0,
+   "tW": 7.9965,
+   "chill": 5.8360251264375895,
+   "dark": true,
+   "rain": 0.25,
+   "cape": 0,
+   "dir": 220.7179869283951,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T07:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 2.987774858602373,
+   "min": 1.63,
+   "max": 4.980667921989984,
+   "gMed": 4.308790222541983,
+   "over": 0,
+   "pEns": 0,
+   "tW": 8.0465,
+   "chill": 6.159165556597221,
+   "dark": true,
+   "rain": 0.25,
+   "cape": 0,
+   "dir": 220.15694491679295,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T08:00",
+   "lamp": "go",
+   "why": [],
+   "n": 16,
+   "med": 2.5745000396316753,
+   "min": 1.0808333333333333,
+   "max": 4.472436501378762,
+   "gMed": 3.7784775797675842,
+   "over": 0,
+   "pEns": 0,
+   "tW": 8.2,
+   "chill": 6.6230351274876655,
+   "dark": false,
+   "rain": 0.4,
+   "cape": 0,
+   "dir": 235.46923585857854,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T09:00",
+   "lamp": "go",
+   "why": [],
+   "n": 16,
+   "med": 2.134691390376981,
+   "min": 0.6960353436413972,
+   "max": 3.57,
+   "gMed": 2.756033333333333,
+   "over": 0,
+   "pEns": 0,
+   "tW": 8.4,
+   "chill": 7.199562055013041,
+   "dark": false,
+   "rain": 0.2,
+   "cape": 0,
+   "dir": 254.1697543237787,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T10:00",
+   "lamp": "go",
+   "why": [],
+   "n": 16,
+   "med": 1.875,
+   "min": 0.9475,
+   "max": 3.435478029573474,
+   "gMed": 2.48,
+   "over": 0,
+   "pEns": 0,
+   "tW": 8.693,
+   "chill": 7.7681896900996295,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 258.69733476370084,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T11:00",
+   "lamp": "go",
+   "why": [],
+   "n": 16,
+   "med": 1.9397528718686625,
+   "min": 0.6975,
+   "max": 4.629166666666666,
+   "gMed": 2.964,
+   "over": 0,
+   "pEns": 0,
+   "tW": 8.95,
+   "chill": 8.008401436063634,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 269.2865258834917,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T12:00",
+   "lamp": "go",
+   "why": [],
+   "n": 16,
+   "med": 2.607920256502495,
+   "min": 0.5535261555933704,
+   "max": 5.003764580323105,
+   "gMed": 3.5117546012269942,
+   "over": 0,
+   "pEns": 0,
+   "tW": 9.3,
+   "chill": 7.9068321245839535,
+   "dark": false,
+   "rain": 0.1,
+   "cape": 0,
+   "dir": 269.53428376253237,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T13:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Rain 0.5 mm/h"
+   ],
+   "n": 16,
+   "med": 3.4991666666666665,
+   "min": 1.6841666666666666,
+   "max": 5.8068458244193915,
+   "gMed": 4.499984477564005,
+   "over": 0,
+   "pEns": 0,
+   "tW": 9.45,
+   "chill": 7.559839876670928,
+   "dark": false,
+   "rain": 0.5,
+   "cape": 0,
+   "dir": 266.63509991731223,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T14:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Rain 0.8 mm/h"
+   ],
+   "n": 16,
+   "med": 4.60761781213799,
+   "min": 3.099014506212888,
+   "max": 6.426342550946838,
+   "gMed": 7.174740000000001,
+   "over": 0,
+   "pEns": 0,
+   "tW": 9.5,
+   "chill": 7.107333330416639,
+   "dark": false,
+   "rain": 0.8,
+   "cape": 5,
+   "dir": 256.8603868397626,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T15:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "warn:Rain 1.6 mm/h"
+   ],
+   "n": 16,
+   "med": 6.796839954210795,
+   "min": 3.4801767182069865,
+   "max": 11.761823159674005,
+   "gMed": 10.367612166239478,
+   "over": 2,
+   "pEns": 0,
+   "tW": 9.2965,
+   "chill": 6.081513105861358,
+   "dark": false,
+   "rain": 1.6,
+   "cape": 10,
+   "dir": 246.95164089725563,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T16:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models above wind limit",
+    "warn:Single models with gust above limit",
+    "warn:Rain 1.4 mm/h",
+    "info:Too windy in 20 % of scenarios"
+   ],
+   "n": 16,
+   "med": 8.720833333333333,
+   "min": 6.794630735546972,
+   "max": 12.028238180589659,
+   "gMed": 14.517451865222624,
+   "over": 7,
+   "pEns": 0.2,
+   "tW": 8.8,
+   "chill": 4.909770546763441,
+   "dark": false,
+   "rain": 1.45,
+   "cape": 20,
+   "dir": 251.25289001358954,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T17:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "warn:Rain 1.1 mm/h",
+    "info:Too windy in 14 % of scenarios"
+   ],
+   "n": 16,
+   "med": 7.748898537097774,
+   "min": 5.1049999999999995,
+   "max": 9.784424922138376,
+   "gMed": 13.185999999999998,
+   "over": 2,
+   "pEns": 0.14362745098039215,
+   "tW": 8.243,
+   "chill": 4.443621434972764,
+   "dark": false,
+   "rain": 1.05,
+   "cape": 0,
+   "dir": 242.04764199418338,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T18:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "warn:Rain 0.6 mm/h",
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 7.648333333333334,
+   "min": 4.2425011421951835,
+   "max": 10.245833333333334,
+   "gMed": 11.19890946973516,
+   "over": 3,
+   "pEns": 0.08823529411764706,
+   "tW": 7.3965000000000005,
+   "chill": 3.3758417250909885,
+   "dark": true,
+   "rain": 0.6499999999999999,
+   "cape": 0,
+   "dir": 222.6733076958837,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T19:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "warn:Rain 0.8 mm/h",
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 7.84008461394304,
+   "min": 5.634571829477977,
+   "max": 11.108333333333334,
+   "gMed": 10.78725,
+   "over": 2,
+   "pEns": 0.029411764705882353,
+   "tW": 7.2965,
+   "chill": 3.189099401729325,
+   "dark": true,
+   "rain": 0.75,
+   "cape": 10,
+   "dir": 222.73622313644958,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T20:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "warn:Rain 0.7 mm/h",
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 7.98276148747465,
+   "min": 4.8059583251429805,
+   "max": 11.535111523765243,
+   "gMed": 12.89522480620155,
+   "over": 3,
+   "pEns": 0.029411764705882353,
+   "tW": 7.4465,
+   "chill": 3.3423083236253017,
+   "dark": true,
+   "rain": 0.7,
+   "cape": 10,
+   "dir": 225.52032418184976,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T21:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 8.858248720140727,
+   "min": 5.866583610691777,
+   "max": 10.930833333333334,
+   "gMed": 13.070192721257236,
+   "over": 5,
+   "pEns": 0.0392156862745098,
+   "tW": 7.5465,
+   "chill": 3.231587060742024,
+   "dark": true,
+   "rain": 0.2,
+   "cape": 10,
+   "dir": 227.7870544585117,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T22:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 9.16491657831082,
+   "min": 5.966017231211977,
+   "max": 11.131666666666668,
+   "gMed": 14.380882352941176,
+   "over": 5,
+   "pEns": 0.0196078431372549,
+   "tW": 7.2965,
+   "chill": 2.8231763758772486,
+   "dark": true,
+   "rain": 0.1,
+   "cape": 10,
+   "dir": 230.81375058524668,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-21T23:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "info:Night",
+    "info:Too windy in 12 % of scenarios"
+   ],
+   "n": 16,
+   "med": 9.144393887246212,
+   "min": 5.800294530344977,
+   "max": 11.1075,
+   "gMed": 13.663566820276499,
+   "over": 4,
+   "pEns": 0.12941176470588237,
+   "tW": 7.293,
+   "chill": 2.823892841127357,
+   "dark": true,
+   "rain": 0.1,
+   "cape": 20,
+   "dir": 238.38593823707248,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T00:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 9.131163019883893,
+   "min": 6.131739932078976,
+   "max": 10.754867152821792,
+   "gMed": 14.433112338858196,
+   "over": 6,
+   "pEns": 0.00980392156862745,
+   "tW": 7.15,
+   "chill": 2.6393080680432996,
+   "dark": true,
+   "rain": 0.05,
+   "cape": 20,
+   "dir": 245.79675380884717,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T01:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 8.040422723743381,
+   "min": 4.97168102600998,
+   "max": 11.024445082396323,
+   "gMed": 12.770205519803225,
+   "over": 4,
+   "pEns": 0.0196078431372549,
+   "tW": 6.7,
+   "chill": 2.3546221349322067,
+   "dark": true,
+   "rain": 0,
+   "cape": 20,
+   "dir": 240.4326651211613,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T02:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 8.427344820807983,
+   "min": 3.977344820807984,
+   "max": 11.024445082396323,
+   "gMed": 13.283726415094339,
+   "over": 3,
+   "pEns": 0.0446078431372549,
+   "tW": 6.2465,
+   "chill": 1.6496665199736098,
+   "dark": true,
+   "rain": 0,
+   "cape": 10,
+   "dir": 237.74064787195817,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T03:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 8.860235906228219,
+   "min": 5.6179995593912775,
+   "max": 10.463333333333333,
+   "gMed": 12.908719298245613,
+   "over": 5,
+   "pEns": 0.0196078431372549,
+   "tW": 5.7465,
+   "chill": 0.8703817237969478,
+   "dark": true,
+   "rain": 0,
+   "cape": 10,
+   "dir": 235.89860052500006,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T04:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 8.551066853226962,
+   "min": 5.966017231211977,
+   "max": 11.494780237773341,
+   "gMed": 13.49931794871795,
+   "over": 5,
+   "pEns": 0,
+   "tW": 5.3965000000000005,
+   "chill": 0.5023812528234237,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 235.25347789810326,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T05:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 8.32375,
+   "min": 4.839102865316381,
+   "max": 10.726707634173707,
+   "gMed": 13.531,
+   "over": 5,
+   "pEns": 0,
+   "tW": 4.9965,
+   "chill": 0.04923337747439005,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 232.19237247212172,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T06:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 8.047019424791488,
+   "min": 4.010489360981384,
+   "max": 9.7975,
+   "gMed": 13.49483333333333,
+   "over": 3,
+   "pEns": 0,
+   "tW": 4.6930000000000005,
+   "chill": -0.25833012513385833,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 226.25211461732846,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T07:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "info:Night"
+   ],
+   "n": 16,
+   "med": 7.526666666666667,
+   "min": 3.7784775797675847,
+   "max": 9.595674088919797,
+   "gMed": 11.548724196277496,
+   "over": 3,
+   "pEns": 0,
+   "tW": 4.6465,
+   "chill": -0.14512632275844473,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 221.99769989988886,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T08:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit"
+   ],
+   "n": 16,
+   "med": 7.813653529734834,
+   "min": 3.728760769507485,
+   "max": 9.585006826078082,
+   "gMed": 11.215541666666667,
+   "over": 1,
+   "pEns": 0,
+   "tW": 4.4465,
+   "chill": -0.5016785216904602,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 218.12641537659673,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T09:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit"
+   ],
+   "n": 16,
+   "med": 7.37,
+   "min": 4.557374273842482,
+   "max": 9.743333333333334,
+   "gMed": 11.456585087489458,
+   "over": 2,
+   "pEns": 0,
+   "tW": 4.6930000000000005,
+   "chill": -0.03080182805614129,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 216.49036129838143,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T10:00",
+   "lamp": "go",
+   "why": [],
+   "n": 16,
+   "med": 7.0212264075575295,
+   "min": 5.77,
+   "max": 9.284649736491192,
+   "gMed": 11.514467032967032,
+   "over": 0,
+   "pEns": 0.0392156862745098,
+   "tW": 6.0465,
+   "chill": 1.83432733914111,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 217.33000437624912,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T11:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit"
+   ],
+   "n": 16,
+   "med": 7.72875,
+   "min": 6.5441666666666665,
+   "max": 9.962512221056718,
+   "gMed": 11.721044318840903,
+   "over": 2,
+   "pEns": 0.06862745098039216,
+   "tW": 7.2965,
+   "chill": 3.222164770712534,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 223.14763770875686,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T12:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit"
+   ],
+   "n": 16,
+   "med": 8.470396330166565,
+   "min": 7.0775,
+   "max": 10.8575,
+   "gMed": 12.717332728372655,
+   "over": 4,
+   "pEns": 0.08823529411764706,
+   "tW": 8.2,
+   "chill": 4.189471376095854,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 229.04777095393266,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T13:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit"
+   ],
+   "n": 16,
+   "med": 8.619200701108445,
+   "min": 7.701666666666667,
+   "max": 10.10908475288696,
+   "gMed": 13.464483071725814,
+   "over": 2,
+   "pEns": 0.07401960784313726,
+   "tW": 8.9,
+   "chill": 5.066248704967825,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 233.70334421548574,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T14:00",
+   "lamp": "go",
+   "why": [],
+   "n": 16,
+   "med": 8.133461494979493,
+   "min": 7.179166666666666,
+   "max": 9.45187058008482,
+   "gMed": 13.23017857142857,
+   "over": 0,
+   "pEns": 0.054411764705882354,
+   "tW": 9.55,
+   "chill": 6.03811645907359,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 233.979687002102,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T15:00",
+   "lamp": "go",
+   "why": [],
+   "n": 16,
+   "med": 7.9991666666666665,
+   "min": 5.954166666666667,
+   "max": 9.231666666666666,
+   "gMed": 12.575277108433733,
+   "over": 0,
+   "pEns": 0.029411764705882353,
+   "tW": 9.95,
+   "chill": 6.59286462918038,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 232.51023625149696,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T16:00",
+   "lamp": "go",
+   "why": [],
+   "n": 16,
+   "med": 7.729625065244434,
+   "min": 5.954166666666667,
+   "max": 8.783303145950965,
+   "gMed": 11.673237288135594,
+   "over": 0,
+   "pEns": 0,
+   "tW": 10.2,
+   "chill": 6.986531025019897,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 229.74031878504817,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T17:00",
+   "lamp": "go",
+   "why": [],
+   "n": 16,
+   "med": 6.492916666666667,
+   "min": 5.754166666666666,
+   "max": 8.163005768695689,
+   "gMed": 10.932916666666666,
+   "over": 0,
+   "pEns": 0,
+   "tW": 10.093,
+   "chill": 7.192913084931487,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 224.66649788787979,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T18:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 15,
+   "med": 6.1875,
+   "min": 4.1430675216749835,
+   "max": 8.185249446318057,
+   "gMed": 10.77976092896175,
+   "over": 0,
+   "pEns": 0,
+   "tW": 9.5,
+   "chill": 6.531728525826469,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 218.03244481184203,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T19:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 15,
+   "med": 6.529937126859104,
+   "min": 2.8172859147389886,
+   "max": 7.919166666666667,
+   "gMed": 9.929323426573427,
+   "over": 0,
+   "pEns": 0,
+   "tW": 9.4,
+   "chill": 6.295734455616973,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 213.6936250104142,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T20:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 15,
+   "med": 5.966666666666667,
+   "min": 1.6572270086699934,
+   "max": 8.085,
+   "gMed": 9.295258208247088,
+   "over": 0,
+   "pEns": 0,
+   "tW": 8.693,
+   "chill": 5.579921539121787,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 210.59276027525627,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T21:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 15,
+   "med": 5.746853076131069,
+   "min": 1.4915043078029941,
+   "max": 7.797499999999999,
+   "gMed": 7.595609040832197,
+   "over": 0,
+   "pEns": 0,
+   "tW": 8.293000000000001,
+   "chill": 5.151294233193321,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 209.78373421327592,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T22:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 15,
+   "med": 5.323726692849898,
+   "min": 0.8286135043349967,
+   "max": 7.3175,
+   "gMed": 6.184122746954937,
+   "over": 0,
+   "pEns": 0,
+   "tW": 7.793000000000001,
+   "chill": 4.682152543234698,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 205.9954323686794,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-22T23:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 15,
+   "med": 4.474512923408983,
+   "min": 0.6628908034679974,
+   "max": 6.638333333333334,
+   "gMed": 5.813638392006095,
+   "over": 0,
+   "pEns": 0,
+   "tW": 7.993,
+   "chill": 5.294347681326359,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 202.30655472090064,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T00:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 15,
+   "med": 3.8116221199409845,
+   "min": 0.16572270086699936,
+   "max": 5.9971307632124295,
+   "gMed": 4.9319075778019,
+   "over": 0,
+   "pEns": 0,
+   "tW": 7.200000000000001,
+   "chill": 4.64745182088978,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 197.9954922494487,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T01:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 15,
+   "med": 3.5416666666666665,
+   "min": 0.3314454017339987,
+   "max": 5.553333333333333,
+   "gMed": 4.6568078943626805,
+   "over": 0,
+   "pEns": 0,
+   "tW": 6.8,
+   "chill": 4.311800328669022,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 193.79757798822519,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T02:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 15,
+   "med": 3.415,
+   "min": 0.8286135043349967,
+   "max": 5.064766839384496,
+   "gMed": 4.284676360562898,
+   "over": 0,
+   "pEns": 0,
+   "tW": 6.5,
+   "chill": 4.0233719439853886,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 181.6543550163195,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T03:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 15,
+   "med": 3.234166666666667,
+   "min": 0.3645899419073986,
+   "max": 4.879021637867739,
+   "gMed": 3.637975,
+   "over": 0,
+   "pEns": 0,
+   "tW": 6.3,
+   "chill": 3.895480284349268,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 167.81495304846567,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T04:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 15,
+   "med": 3.07,
+   "min": 1.0606252855487959,
+   "max": 4.879021637867739,
+   "gMed": 3.395368504800218,
+   "over": 0,
+   "pEns": 0,
+   "tW": 6,
+   "chill": 3.6433878497697374,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 156.44033518856406,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T05:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 15,
+   "med": 3.3054933848612684,
+   "min": 1.5743656582364935,
+   "max": 5.488899342601207,
+   "gMed": 3.7149897184660765,
+   "over": 0,
+   "pEns": 0,
+   "tW": 6,
+   "chill": 3.486300424609444,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 145.38369957112485,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T06:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 15,
+   "med": 3.4154803130344624,
+   "min": 1.723516089016793,
+   "max": 6.403715899701408,
+   "gMed": 3.932016891891892,
+   "over": 0,
+   "pEns": 0,
+   "tW": 6.2,
+   "chill": 3.658910916326575,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 144.32291339243113,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T07:00",
+   "lamp": "go",
+   "why": [
+    "info:Night"
+   ],
+   "n": 15,
+   "med": 3.314454017339987,
+   "min": 1.1958333333333335,
+   "max": 6.403715899701408,
+   "gMed": 4.382345685644724,
+   "over": 0,
+   "pEns": 0,
+   "tW": 6.393000000000001,
+   "chill": 3.956452149208395,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 139.73835187456348,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T08:00",
+   "lamp": "go",
+   "why": [],
+   "n": 15,
+   "med": 3.64,
+   "min": 1.3800000000000001,
+   "max": 7.86,
+   "gMed": 5.073414285714286,
+   "over": 0,
+   "pEns": 0,
+   "tW": 6.6,
+   "chill": 4.010570886362594,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 130.12388723260824,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T09:00",
+   "lamp": "go",
+   "why": [],
+   "n": 13,
+   "med": 2.943333333333333,
+   "min": 1.9441666666666668,
+   "max": 6.403715899701408,
+   "gMed": 6.340596627103228,
+   "over": 0,
+   "pEns": 0,
+   "tW": 7,
+   "chill": 4.932065145031103,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 147.45013161594602,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T10:00",
+   "lamp": "go",
+   "why": [],
+   "n": 13,
+   "med": 3.34,
+   "min": 0.5966017231211976,
+   "max": 7.776666666666666,
+   "gMed": 5.838039482756834,
+   "over": 0,
+   "pEns": 0,
+   "tW": 8,
+   "chill": 5.887619233899742,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 176.86137923415822,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T11:00",
+   "lamp": "go",
+   "why": [],
+   "n": 13,
+   "med": 3.5983333333333336,
+   "min": 2.01,
+   "max": 8.589166666666667,
+   "gMed": 5.465594298245614,
+   "over": 0,
+   "pEns": 0,
+   "tW": 8.4,
+   "chill": 6.2288120045685975,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 199.37852516644557,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T12:00",
+   "lamp": "go",
+   "why": [],
+   "n": 12,
+   "med": 4.275713803154495,
+   "min": 2.065,
+   "max": 7.3341666666666665,
+   "gMed": 7.416333333333333,
+   "over": 0,
+   "pEns": 0.0196078431372549,
+   "tW": 9.893,
+   "chill": 7.73460570607171,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 198.93025521429917,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T13:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models with gust above limit",
+    "info:Too windy in 11 % of scenarios"
+   ],
+   "n": 12,
+   "med": 4.643222436544454,
+   "min": 3.089166666666667,
+   "max": 11.03,
+   "gMed": 7.208541666666667,
+   "over": 1,
+   "pEns": 0.11764705882352941,
+   "tW": 11.193,
+   "chill": 9.19826206697663,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 224.3165217926224,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T14:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models above wind limit",
+    "warn:Single models with gust above limit",
+    "info:Too windy in 25 % of scenarios"
+   ],
+   "n": 12,
+   "med": 6.547297963090303,
+   "min": 3.8208333333333333,
+   "max": 14.48203449832816,
+   "gMed": 10.771975556354956,
+   "over": 3,
+   "pEns": 0.2549019607843137,
+   "tW": 11.693000000000001,
+   "chill": 9.222841726161661,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 230.4249619201607,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T15:00",
+   "lamp": "stop",
+   "why": [
+    "warn:Single models above wind limit",
+    "stop:Gust 16.3 m/s above 15.0",
+    "warn:Too windy in 33 % of scenarios"
+   ],
+   "n": 12,
+   "med": 9.513551212353828,
+   "min": 4.320668723374267,
+   "max": 13.82431058489867,
+   "gMed": 16.283,
+   "over": 7,
+   "pEns": 0.3333333333333333,
+   "tW": 11.3965,
+   "chill": 8.143809832533755,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 241.158400141016,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T16:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models above wind limit",
+    "warn:Single models with gust above limit",
+    "warn:Too windy in 58 % of scenarios"
+   ],
+   "n": 12,
+   "med": 8.236857194257144,
+   "min": 5.33118372523688,
+   "max": 15.66504030397281,
+   "gMed": 14.2595,
+   "over": 5,
+   "pEns": 0.5882352941176471,
+   "tW": 10.6965,
+   "chill": 7.506223026445841,
+   "dark": false,
+   "rain": 0.05,
+   "cape": 0,
+   "dir": 226.0805472233487,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T17:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models above wind limit",
+    "warn:Single models with gust above limit",
+    "warn:Too windy in 72 % of scenarios"
+   ],
+   "n": 12,
+   "med": 8.885660460335227,
+   "min": 5.841878260377117,
+   "max": 13.965357681217599,
+   "gMed": 14.252152274561942,
+   "over": 5,
+   "pEns": 0.7254901960784313,
+   "tW": 10.5,
+   "chill": 7.0987987344083505,
+   "dark": false,
+   "rain": 0,
+   "cape": 0,
+   "dir": 215.6026005511171,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T18:00",
+   "lamp": "warn",
+   "why": [
+    "warn:Single models above wind limit",
+    "warn:Single models with gust above limit",
+    "info:Night",
+    "warn:Too windy in 74 % of scenarios"
+   ],
+   "n": 11,
+   "med": 9.283378046057882,
+   "min": 6.565833333333333,
+   "max": 13.006666666666666,
+   "gMed": 14.928052556424921,
+   "over": 5,
+   "pEns": 0.7450980392156863,
+   "tW": 10.1,
+   "chill": 6.48392390014692,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 217.26875725054276,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T19:00",
+   "lamp": "stop",
+   "why": [
+    "warn:Single models above wind limit",
+    "stop:Gust 16.3 m/s above 15.0",
+    "info:Night",
+    "warn:Too windy in 76 % of scenarios"
+   ],
+   "n": 11,
+   "med": 10.60625285548796,
+   "min": 3.8613389302010845,
+   "max": 12.122499999999999,
+   "gMed": 16.273400796354654,
+   "over": 6,
+   "pEns": 0.7647058823529411,
+   "tW": 9.793000000000001,
+   "chill": 5.796912970993968,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 223.80836162754608,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T20:00",
+   "lamp": "stop",
+   "why": [
+    "stop:Wind 13.2 m/s above 12.0",
+    "stop:Gust 20.1 m/s above 15.0",
+    "info:Night",
+    "warn:Too windy in 74 % of scenarios"
+   ],
+   "n": 10,
+   "med": 13.220086828138314,
+   "min": 10.528525231088901,
+   "max": 17.927138262924668,
+   "gMed": 20.09202222761713,
+   "over": 8,
+   "pEns": 0.7450980392156863,
+   "tW": 9.1965,
+   "chill": 4.506324777113657,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 228.14252661211933,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T21:00",
+   "lamp": "stop",
+   "why": [
+    "stop:Wind 14.0 m/s above 12.0",
+    "stop:Gust 23.3 m/s above 15.0",
+    "info:Night",
+    "warn:Too windy in 82 % of scenarios"
+   ],
+   "n": 10,
+   "med": 13.967083333333333,
+   "min": 11.020584922926387,
+   "max": 18.669141113549834,
+   "gMed": 23.29847208217121,
+   "over": 9,
+   "pEns": 0.8235294117647058,
+   "tW": 8.546500000000002,
+   "chill": 3.493402440341379,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 227.7816603532344,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T22:00",
+   "lamp": "stop",
+   "why": [
+    "stop:Wind 13.4 m/s above 12.0",
+    "stop:Gust 23.1 m/s above 15.0",
+    "info:Night",
+    "warn:Too windy in 90 % of scenarios"
+   ],
+   "n": 9,
+   "med": 13.370833333333334,
+   "min": 11.53370128298261,
+   "max": 17.225130654996295,
+   "gMed": 23.13388243383416,
+   "over": 8,
+   "pEns": 0.9019607843137255,
+   "tW": 8.293000000000001,
+   "chill": 3.2529480374799586,
+   "dark": true,
+   "rain": 0,
+   "cape": 5,
+   "dir": 231.98543044463412,
+   "warns": 0
+  },
+  {
+   "t": "2026-10-23T23:00",
+   "lamp": "stop",
+   "why": [
+    "stop:Wind 13.5 m/s above 12.0",
+    "stop:Gust 21.9 m/s above 15.0",
+    "info:Night",
+    "warn:Too windy in 92 % of scenarios"
+   ],
+   "n": 9,
+   "med": 13.456683310400345,
+   "min": 11.68,
+   "max": 16.41506559713325,
+   "gMed": 21.93452162061368,
+   "over": 8,
+   "pEns": 0.9215686274509803,
+   "tW": 7.893000000000001,
+   "chill": 2.6938768161999844,
+   "dark": true,
+   "rain": 0,
+   "cape": 0,
+   "dir": 232.75515236565218,
+   "warns": 0
+  }
+ ],
+ "ansicht": {
+  "kopf": "WIND REPORT FOR WORK AT HEIGHT\nTestanlage\nWork 80–125 m\nLimit 12.0 · Gust 15.0 m/s\n6–19h\nSites\nSettings\nDE",
+  "entscheidung": "Clear only 06–13h (7 h), check the other hours.",
+  "zusammenfassung": "Strongest wind around 16h: 8.7 m/s (spread 6.8–12.0), gusts approx. 14.5 m/s. Models spread moderately.",
+  "tag": "WED 21/10 · WORKING HOURS 6–19H · DAYLIGHT 07:20–18:55",
+  "warnungen": "No official warnings\nStadt Aulendorf (DWD) on the selected day",
+  "kacheln": "Wind 80–125 m\n1.9\nm/s Median\nGust 80–125 m\n3.0\nm/s estimated\nDirection\nW\n269° · 80 m\nModels\n0/16\nabove limit\nToo windy ?\n0 %\nof 71 scenarios\nTemperature 80 m\n9 °C\nfeels like 8 °C",
+  "gruende": "All values below your limits",
+  "zeitleiste": 72,
+  "matrix": "06 07 08 09 10 11 12 13 14 15 16 17 18 19\nICON-D2 DWD · 2 km 3.0 1.9 2.0 1.5 0.9 0.7 1.1 2.7 5.3 7.1 11.3 5.1 7.9 8.5\nICON-CH1 MeteoSwiss · 1 km 2.5 2.2 1.8 1.1 1.7 1.5 2.2 2.9 3.1 7.3 8.2 6.9 4.2 5.8\nICON-CH2 MeteoSwiss · 2 km 1.5 2.0 2.0 0.7 1.5 1.7 1.9 3.0 3.2 7.4 8.2 7.0 6.5 5.9\nAROME AT GeoSphere · 2,5 km 0.8 2.8 2.0 1.7 2.7 2.0 2.5 2.2 3.3 3.5 7.0 6.3 6.1 5.6\nAROME HD Météo-France · 1,5 km 3.3 3.2 4.0 2.3 1.5 1.3 0.6 2.1 3.2 3.7 7.2 9.3 8.4 7.8\nHARMONIE KNMI · 5,5 km 3.7 3.2 3.3 3.5 1.2 1.5 4.0 4.5 6.0 5.6 8.5 7.6 7.1 5.7\nHARMONIE DMI · 2 km 3.5 1.6 3.1 3.6 2.4 1.9 1.4 3.5 4.6 4.8 7.8 6.4 6.4 6.0\nUKV Met Office · 2 km 4.0 4.0 3.3 1.6 1.7 2.4 3.7 3.5 4.6 4.4 9.0 9.6 7.4 9.1\nICON-EU DWD · 7 km 2.3 1.7 1.1 1.4 1.2 1.5 1.8 1.7 4.5 7.4 10.0 7.3 8.8 8.2\nARPEGE Météo-France · 11 km 5.2 3.9 3.7 3.1 3.4 4.6 4.0 4.4 5.4 11.0 10.7 8.0 8.7 9.5\nIFS HRES ECMWF · 9 km 3.8 3.9 3.3 2.7 2.2 1.5 2.1 4.0 5.0 8.1 9.6 6.9 6.9 7.2\nAIFS (KI) ECMWF · 25 km 2.3 2.1 2.4 2.8 3.4 4.2 5.0 5.8 6.4 7.0 7.5 7.9 8.3 8.6\nUKMO Global Met Office · 10 km 3.3 2.5 2.3 2.7 2.2 2.8 3.5 4.1 4.6 5.1 6.8 8.1 6.3 6.8\nICON Global DWD · 13 km 3.9 3.2 2.0 2.0 2.0 2.3 2.7 2.7 4.0 5.9 9.4 8.7 10.2 11.1\nGFS NOAA · 13 km 4.8 3.3 2.8 1.8 1.7 3.4 4.5 5.4 6.4 11.8 12.03 7.9 8.8 10.4\nGEM Kanada · 15 km 4.7 5.0 4.5 3.4 3.0 3.0 3.2 3.8 4.9 6.6 11.2 9.8 8.2 7.9\nMedian all models 3.4 3.0 2.6 2.1 1.9 1.9 2.6 3.5 4.6 6.8 8.7 7.7 7.6 7.8",
+  "stundentabelle": "TIME WIND M/S SPREAD GUST DIRECTION MODELS ABOVE LIMIT TOO WINDY RAIN CAPE °C WORK FEELS LIKE HUMIDITY % DEW PT SPREAD K REASONS\n 06:00 3.4 0.8–5.2 4.9 SW 0/16 0 % 0.3 0 8 6 – – Night\n 07:00 3.0 1.6–5.0 4.3 SW 0/16 0 % 0.3 0 8 6 – – Night\n 08:00 2.6 1.1–4.5 3.8 SW 0/16 0 % 0.4 0 8 7 – – –\n 09:00 2.1 0.7–3.6 2.8 WSW 0/16 0 % 0.2 0 8 7 – – –\n 10:00 1.9 0.9–3.4 2.5 WSW 0/16 0 % 0.0 0 9 8 – – –\n 11:00 1.9 0.7–4.6 3.0 W 0/16 0 % 0.0 0 9 8 – – –\n 12:00 2.6 0.6–5.0 3.5 W 0/16 0 % 0.1 0 9 8 – – –\n 13:00 3.5 1.7–5.8 4.5 W 0/16 0 % 0.5 0 9 8 – – Rain 0.5 mm/h\n 14:00 4.6 3.1–6.4 7.2 WSW 0/16 0 % 0.8 5 10 7 – – Rain 0.8 mm/h\n 15:00 6.8 3.5–11.8 10.4 WSW 2/16 0 % 1.6 10 9 6 – – Single models with gust above limit · Rain 1.6 mm/h\n 16:00 8.7 6.8–12.0 14.5 WSW 7/16 20 % 1.4 20 9 5 – – Single models above wind limit · Single models with gust above limit · Rain 1.4 mm/h · Too windy in 20 % of scenarios\n 17:00 7.7 5.1–9.8 13.2 WSW 2/16 14 % 1.1 0 8 4 – – Single models with gust above limit · Rain 1.1 mm/h · Too windy in 14 % of scenarios\n 18:00 7.6 4.2–10.2 11.2 SW 3/16 8 % 0.6 0 7 3 – – Single models with gust above limit · Rain 0.6 mm/h · Night\n 19:00 7.8 5.6–11.1 10.8 SW 2/16 2 % 0.8 10 7 3 – – Single models with gust above limit · Rain 0.8 mm/h · Night",
+  "modelltabelle": "USE MODEL RESOLUTION POSITION IN CELL STATUS MAX. WIND ABOVE LIMIT FROM RAW DATA\n ICON-D2 · DWD 2 km centre Active 11.3 16h JSON · CSV\n HARMONIE · KNMI 5,5 km centre Active 8.5 16h JSON · CSV\n UKV · Met Office 2 km edge (NE) Active 9.6 never JSON · CSV\n ICON-EU · DWD 7 km centre Active 10.0 16h JSON · CSV\n ARPEGE · Météo-France 11 km edge (SSE) Active 11.0 15h JSON · CSV\n IFS HRES · ECMWF 9 km edge (ESE) Active 9.6 never JSON · CSV\n AIFS (KI) · ECMWF 25 km centre Active 8.6 never JSON · CSV\n ICON Global · DWD 13 km centre Active 11.1 16h JSON · CSV\n GFS · NOAA 13 km centre Active 12.0 15h JSON · CSV\n GEM · Kanada 15 km centre Active 11.2 16h JSON · CSV\n ICON-CH1 · MeteoSwiss 1 km edge (SSW) Extrapolated 8.2 never JSON · CSV\n ICON-CH2 · MeteoSwiss 2 km centre Extrapolated 8.2 never JSON · CSV\n AROME AT · GeoSphere 2,5 km centre Extrapolated 7.0 never JSON · CSV\n AROME HD · Météo-France 1,5 km centre Extrapolated 9.3 17h JSON · CSV\n HARMONIE · DMI 2 km centre Extrapolated 7.8 never JSON · CSV\n UKMO Global · Met Office 10 km edge (SW) Extrapolated 8.1 never JSON · CSV"
+ },
+ "andereStunde": {
+  "label": "Today, 15h",
+  "kacheln": "Wind 80–125 m\n6.8\nm/s Median\nGust 80–125 m\n10.4\nm/s estimated\nDirection\nWSW\n247° · 80 m\nModels\n2/16\nabove limit\nToo windy ?\n0 %\nof 71 scenarios\nTemperature 80 m\n9 °C\nfeels like 6 °C",
+  "gruende": "Single models with gust above limit\nRain 1.6 mm/h",
+  "profil": "TODAY · 15H",
+  "richtung": "Wind from\nWSW · 247°\nBlows to\nENE\nSpread\n±17° (agree)\nStrength\n6.8 m/s · Gust 10.4\nModels\n16"
+ },
+ "morgen": {
+  "entscheidung": "Clear only 14–20h (6 h), check the other hours.",
+  "zusammenfassung": "Strongest wind around 13h: 8.6 m/s (spread 7.7–10.1), gusts approx. 13.5 m/s. Models spread moderately.",
+  "tage": "Today\nTomorrow\nDay after"
+ },
+ "modellvergleich": "All models are about equally accurate here (pattern error 0.66–0.83 m/s). No recommendation for or against single models can be derived.\n\nRATING MODEL PATTERN ERROR WINDY HITS TOTAL ERROR BIAS GUST ERROR HOURS\nequivalent AIFS (KI) (ECMWF) 0.67 m/s 63 % 0.69 m/s −0.3 – 420\nequivalent AROME AT (GeoSphere) 0.66 m/s 52 % 0.79 m/s −0.6 too low 1.1 m/s 420\nequivalent AROME HD (Météo-France) 0.77 m/s 51 % 0.78 m/s −0.0 1.3 m/s 420\nequivalent ARPEGE (Météo-France) 0.75 m/s 52 % 0.75 m/s −0.1 1.1 m/s 420\nequivalent GEM (Kanada) 0.74 m/s 56 % 0.75 m/s +0.2 1.4 m/s 420\nequivalent GFS (NOAA) 0.72 m/s 57 % 0.76 m/s +0.3 1.8 m/s 420\nequivalent HARMONIE (DMI) 0.83 m/s 44 % 0.84 m/s −0.2 1.2 m/s 420\nequivalent HARMONIE (KNMI) 0.83 m/s 41 % 0.87 m/s −0.4 too low 1.2 m/s 420\nequivalent ICON Global (DWD) 0.74 m/s 52 % 0.75 m/s −0.2 1.3 m/s 420\nequivalent ICON-CH2 (MeteoSwiss) 0.66 m/s 50 % 0.68 m/s −0.3 1.2 m/s 420\nequivalent ICON-D2 (DWD) 0.70 m/s 48 % 0.74 m/s −0.4 too low 1.2 m/s 420\nequivalent ICON-EU (DWD) 0.72 m/s 51 % 0.76 m/s −0.3 too low 1.3 m/s 420\nequivalent IFS HRES (ECMWF) 0.74 m/s 52 % 0.74 m/s +0.0 – 420\nequivalent UKMO Global (Met Office) 0.70 m/s 55 % 0.70 m/s −0.0 1.1 m/s 420\nequivalent UKV (Met Office) 0.76 m/s 50 % 0.77 m/s +0.1 1.3 m/s 420\n\nNo comparison data (no archived previous-day forecasts): ICON-CH1 (MeteoSwiss).\n\nHow it is calculated: for the last 30 days (21/09/2026–20/10/2026, working hours only, up to 420 hours per model) each model’s previous-day forecast for 10 m height against the measurements of station Aulendorf-Blönried (DWD, 4.8 km away, 567 m a.s.l.). Pattern error: mean error after the model’s bias is removed, so smooth, coarse models are not favoured. Windy hits: share of the windiest 25 % of hours the model detected correctly. good: at most 15 % more pattern error than the best model and at least 85 % of its hit rate; clearly worse: at least 40 % and 0.5 m/s more error or at most 60 % of the best hit rate. If all differ by less than 30 %, they count as equivalent. Applies to near-ground wind in the region, not to hub height. Calculated 21/10/2026, 11:47.",
+ "bericht": {
+  "text": "Tagesbericht WetterTestanlage Mittwoch, 21. Oktober 2026 · Arbeitszeit 6–19 Uhr · hell 07:20–18:55 CHECKClear only 06–13h (7 h), check the other hours. Strongest wind around 16h: 8.7 m/s (spread 6.8–12.0), gusts approx. 14.5 m/s. Models spread moderately. Rain trend: rain 06–10h, showers possible 10–12h, rain 12–20h. About 8.0 mm in total during working hours, heaviest around 15h (1.6 mm/h, 16 of 16 models). Entscheidung AufsichtführenderEingeschränkt freigegebenPrüfung vor Ort nicht bestätigt Arbeitsfenster 0607080910111213141516171819 KlarPrüfenStopNacht EinsatzProjektTestprojektAnlage / TypTesttyp, WEA 1TätigkeitTurmreparaturTeamA. TestAufsichtB. Test Standort & GrenzwerteKoordinaten47.9550° N, 9.6400° ENabe / Rotor125 m / 149 mArbeitsbereich80–125 m (descent from the nacelle)Max. Windstärke12.0 m/sMax. Böe15.0 m/s Amtliche Warnungen (DWD, GeoSphere Austria) ✓ No official warnings for Stadt Aulendorf (DWD) on the selected day. Seile und Bühne über Nacht✓ Ropes and platform overnight: low risk of damage. 20–06h: gusts up to 14.4 m/s, wind up to 9.2 m/s · Limit 15.0 / 20.0 m/s (wind / gust, 10 m to hub) Prognose je Stunde · Wind und Böe im Bereich 80–125 m (m/s) UhrWindSpanneBöeRi.Modelle über GrenzeZu windigRegenCAPE°C 80 mGefühltGründe CLEAR06:00 3.4 0.8–5.2 4.9 SW 0/16 0 % 0.3 0 8 6 Night CLEAR07:00 3.0 1.6–5.0 4.3 SW 0/16 0 % 0.3 0 8 6 Night CLEAR08:00 2.6 1.1–4.5 3.8 SW 0/16 0 % 0.4 0 8 7 – CLEAR09:00 2.1 0.7–3.6 2.8 WSW 0/16 0 % 0.2 0 8 7 – CLEAR10:00 1.9 0.9–3.4 2.5 WSW 0/16 0 % 0.0 0 9 8 – CLEAR11:00 1.9 0.7–4.6 3.0 W 0/16 0 % 0.0 0 9 8 – CLEAR12:00 2.6 0.6–5.0 3.5 W 0/16 0 % 0.1 0 9 8 – CHECK13:00 3.5 1.7–5.8 4.5 W 0/16 0 % 0.5 0 9 8 Rain 0.5 mm/h CHECK14:00 4.6 3.1–6.4 7.2 WSW 0/16 0 % 0.8 5 10 7 Rain 0.8 mm/h CHECK15:00 6.8 3.5–11.8 10.4 WSW 2/16 0 % 1.6 10 9 6 Single models with gust above limit · Rain 1.6 mm/h CHECK16:00 8.7 6.8–12.0 14.5 WSW 7/16 20 % 1.4 20 9 5 Single models above wind limit · Single models with gust above limit · Rain 1.4 mm/h · Too windy in 20 % of scenarios CHECK17:00 7.7 5.1–9.8 13.2 WSW 2/16 14 % 1.1 0 8 4 Single models with gust above limit · Rain 1.1 mm/h · Too windy in 14 % of scenarios CHECK18:00 7.6 4.2–10.2 11.2 SW 3/16 8 % 0.6 0 7 3 Single models with gust above limit · Rain 0.6 mm/h · Night CHECK19:00 7.8 5.6–11.1 10.8 SW 2/16 2 % 0.8 10 7 3 Single models with gust above limit · Rain 0.8 mm/h · Night Gelb: ab 75 % des Grenzwerts bzw. Hinweis · Rot: über Grenzwert · Schraffiert: Nacht Bemerkungen / TagesverlaufBemerkungzweite Zeile Grundlagen. Abgerufen 21.10.2026, 11:47:44, Bericht erstellt 21.10.2026, 11:47:44. Ausgewertete Modelle (16): ICON-D2 (DWD), ICON-CH1 (MeteoSwiss), ICON-CH2 (MeteoSwiss), AROME AT (GeoSphere), AROME HD (Météo-France), HARMONIE (KNMI), HARMONIE (DMI), UKV (Met Office), ICON-EU (DWD), ARPEGE (Météo-France), IFS HRES (ECMWF), AIFS (KI) (ECMWF), UKMO Global (Met Office), ICON Global (DWD), GFS (NOAA), GEM (Kanada). Ensemble-Vorhersage (Szenarien): ICON-D2-EPS (20), ECMWF-ENS (51). Regeln: Stop bei Median über Grenzwert, Gewitter in mind. einem Drittel der Modelle (mind. 2), CAPE ab 800 J/kg, Temperatur in Arbeitshöhe unter 0 °C oder Unwetterwarnung bzw. Warnstufe rot. Prüfen bei einzelnen Modellen über Grenzwert, Gewittersignal, CAPE ab 300 J/kg, Regen ab 0.5 mm/h, mind. 30 % der Szenarien über Grenze oder amtlicher Warnung. Nacht nur als Hinweis. Wind als Stundenwert der Modelle; kurzzeitig (z. B. im 10-Minuten-Mittel der Anlage) kann der Wind darüber liegen. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0). Grenzen: Die Prognosewerte sind Stundenmittel und können kurzzeitig überschritten werden. Lokale Effekte (Kuppen und Gelände, Nachlauf anderer Anlagen, Böenfronten, einzelne Gewitterzellen) bilden die Modelle nicht ab, Wind und Böen in der Höhe sind berechnet bzw. geschätzt, und die Prognose kann sich ändern. Wind vor Ort messen, bei Unsicherheit abbrechen. Entscheidungshilfe; die Freigabe trifft der Aufsichtführende. Windbericht-Version 2026-10-30a. Datum, Unterschrift AufsichtführenderDatum, Unterschrift Auftraggeber (optional) Prüfsumme (SHA-256) der Berichtsdaten: 528a69e30f60231a5d1175dfb7cebfd2f28a860cd150851eaccb7d09f765aee8 · dieselbe Zahl steht in der zugehörigen JSON-Datei (prüfbar mit tools/pruefen.py).",
+  "pruefsumme": "528a69e30f60231a5d1175dfb7cebfd2f28a860cd150851eaccb7d09f765aee8"
+ },
+ "export": {
+  "erstellt": "2026-10-21T09:47:44.066Z",
+  "abgerufen": "2026-10-21T09:47:44.066Z",
+  "standort": {
+   "name": "Testanlage",
+   "lat": 47.955,
+   "lon": 9.64,
+   "windkraft": true,
+   "hub": 125,
+   "rotor": 149,
+   "work": 80,
+   "path": true,
+   "access": "nacelle",
+   "wind": 12,
+   "gust": 15,
+   "nightWind": 15,
+   "nightGust": 20,
+   "minTemp": 0,
+   "from": 6,
+   "to": 19,
+   "checked": true
+  },
+  "tag": "2026-10-21",
+  "bericht": {
+   "projekt": "Testprojekt",
+   "anlage": "Testtyp, WEA 1",
+   "team": "A. Test",
+   "aufsicht": "B. Test",
+   "taetigkeit": "Turmreparatur",
+   "entscheidung": "Eingeschränkt freigegeben",
+   "bemerkungen": "Bemerkung\nzweite Zeile",
+   "vorOrtGeprueft": false
+  },
+  "version": "2026-10-30a",
+  "warnlage": "No official warnings for Stadt Aulendorf (DWD) on the selected day.",
+  "warnungen": [],
+  "fazit": {
+   "ampel": "warn",
+   "text": "Clear only 06–13h (7 h), check the other hours. Strongest wind around 16h: 8.7 m/s (spread 6.8–12.0), gusts approx. 14.5 m/s. Models spread moderately.",
+   "regen": "Rain trend: rain 06–10h, showers possible 10–12h, rain 12–20h. About 8.0 mm in total during working hours, heaviest around 15h (1.6 mm/h, 16 of 16 models)."
+  },
+  "nacht": {
+   "status": "go",
+   "von": "2026-10-21T20:00",
+   "bis": "2026-10-22T05:00",
+   "vollstaendig": true,
+   "grenzeWind": 15,
+   "grenzeBoe": 20,
+   "maxWind": 9.16491657831082,
+   "maxBoe": 14.433112338858196,
+   "maxBoeEinzelmodell": 18.528322869955154
+  },
+  "einheit": {
+   "daten": "m/s",
+   "anzeige": "m/s"
+  },
+  "bereich": {
+   "arbeitshoehe": 80,
+   "von": 80,
+   "bis": 125,
+   "zugang": "nacelle",
+   "text": "80–125 m"
+  },
+  "modelle": [
+   {
+    "id": "icon_d2",
+    "name": "ICON-D2",
+    "anbieter": "DWD",
+    "status": "ok",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=icon_d2&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 2.9575,
+      "boe": 5.61925,
+      "richtung": 252,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 1.9033333333333333,
+      "boe": 2.702733333333333,
+      "richtung": 225,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 1.97,
+      "boe": 2.758,
+      "richtung": 193,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 1.5483333333333333,
+      "boe": 2.756033333333333,
+      "richtung": 222,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 0.9475,
+      "boe": 1.2886000000000002,
+      "richtung": 270,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 0.6975,
+      "boe": 0.7811999999999999,
+      "richtung": 207,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 1.0791666666666666,
+      "boe": 1.5971666666666666,
+      "richtung": 246,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 2.6641666666666666,
+      "boe": 3.9201309523809527,
+      "richtung": 275,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 5.2508333333333335,
+      "boe": 7.757921361502348,
+      "richtung": 266,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 7.071666666666666,
+      "boe": 10.84322222222222,
+      "richtung": 273,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 11.32,
+      "boe": 16.18151819757366,
+      "richtung": 245,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 5.1049999999999995,
+      "boe": 9.699499999999999,
+      "richtung": 187,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 7.936666666666667,
+      "boe": 11.856060768543344,
+      "richtung": 201,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 8.538333333333332,
+      "boe": 12.9800136402387,
+      "richtung": 195,
+      "hochgerechnet": false
+     }
+    ]
+   },
+   {
+    "id": "meteoswiss_icon_ch1",
+    "name": "ICON-CH1",
+    "anbieter": "MeteoSwiss",
+    "status": "extrap",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=meteoswiss_icon_ch1&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 2.5024127830916902,
+      "boe": 4.182840969883064,
+      "richtung": 188,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 2.1543951112709916,
+      "boe": 3.6458994190739853,
+      "richtung": 212,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 1.7566606291901932,
+      "boe": 2.5919030415598696,
+      "richtung": 221,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 1.0606252855487959,
+      "boe": 1.569725422612218,
+      "richtung": 219,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 1.6572270086699934,
+      "boe": 2.65156321387199,
+      "richtung": 174,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 1.524648847976394,
+      "boe": 2.256480295005063,
+      "richtung": 257,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 2.204111921531091,
+      "boe": 3.3674852816174266,
+      "richtung": 257,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 2.8670027249990886,
+      "boe": 4.229243326125823,
+      "richtung": 280,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 3.099014506212888,
+      "boe": 4.719782520692141,
+      "richtung": 254,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 7.275226568061271,
+      "boe": 10.367612166239478,
+      "richtung": 221,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 8.153556882656368,
+      "boe": 11.713280497279513,
+      "richtung": 243,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 6.910636626153872,
+      "boe": 12.608183081961311,
+      "richtung": 240,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 4.2425011421951835,
+      "boe": 8.060752170170849,
+      "richtung": 201,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 5.783722260258277,
+      "boe": 8.279506135315286,
+      "richtung": 204,
+      "hochgerechnet": true
+     }
+    ]
+   },
+   {
+    "id": "meteoswiss_icon_ch2",
+    "name": "ICON-CH2",
+    "anbieter": "MeteoSwiss",
+    "status": "extrap",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=meteoswiss_icon_ch2&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 1.4915043078029941,
+      "boe": 2.8338581848256887,
+      "richtung": 180,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 2.0218169505773917,
+      "boe": 3.294567293235946,
+      "richtung": 171,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 1.988672410403992,
+      "boe": 2.8835749950857887,
+      "richtung": 228,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 0.6960353436413972,
+      "boe": 1.1554186704447194,
+      "richtung": 225,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 1.508076577889694,
+      "boe": 2.3224379299501288,
+      "richtung": 186,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 1.6903715488433932,
+      "boe": 2.5653874094211497,
+      "richtung": 259,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 1.8892387898837923,
+      "boe": 2.843801546877709,
+      "richtung": 255,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 2.9830086156059883,
+      "boe": 4.375079302888783,
+      "richtung": 273,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 3.2150203968197872,
+      "boe": 5.0644857384955,
+      "richtung": 235,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 7.424376998841571,
+      "boe": 10.626139579591998,
+      "richtung": 219,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 8.219845963003166,
+      "boe": 11.839229749938433,
+      "richtung": 242,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 6.960353436413973,
+      "boe": 12.031468082944153,
+      "richtung": 245,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 6.496329873986374,
+      "boe": 9.757752627048921,
+      "richtung": 186,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 5.949444961125276,
+      "boe": 9.041830559303483,
+      "richtung": 193,
+      "hochgerechnet": true
+     }
+    ]
+   },
+   {
+    "id": "geosphere_arome_austria",
+    "name": "AROME AT",
+    "anbieter": "GeoSphere",
+    "status": "extrap",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=geosphere_arome_austria&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 0.8286135043349967,
+      "boe": 1.5743656582364935,
+      "richtung": 281,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 2.8172859147389886,
+      "boe": 4.308790222541983,
+      "richtung": 197,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 1.988672410403992,
+      "boe": 3.7784775797675842,
+      "richtung": 226,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 1.6572270086699934,
+      "boe": 2.7509968343921893,
+      "richtung": 244,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 2.65156321387199,
+      "boe": 3.8447666601143844,
+      "richtung": 270,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 1.988672410403992,
+      "boe": 3.7784775797675842,
+      "richtung": 268,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 2.48584051300499,
+      "boe": 3.480176718206986,
+      "richtung": 241,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 2.1543951112709916,
+      "boe": 3.4470321780335866,
+      "richtung": 222,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 3.314454017339987,
+      "boe": 4.706524704622781,
+      "richtung": 204,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 3.4801767182069865,
+      "boe": 4.97168102600998,
+      "richtung": 202,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 6.960353436413973,
+      "boe": 10.440530154620959,
+      "richtung": 244,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 6.297462632945974,
+      "boe": 11.96517900259735,
+      "richtung": 252,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 6.131739932078976,
+      "boe": 9.313615788725365,
+      "richtung": 197,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 5.634571829477977,
+      "boe": 9.214182168205163,
+      "richtung": 203,
+      "hochgerechnet": true
+     }
+    ]
+   },
+   {
+    "id": "meteofrance_arome_france_hd",
+    "name": "AROME HD",
+    "anbieter": "Météo-France",
+    "status": "extrap",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=meteofrance_arome_france_hd&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 3.2635529055335013,
+      "boe": 6.200750520513652,
+      "richtung": 178,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 3.1582638024657577,
+      "boe": 4.826474939152799,
+      "richtung": 197,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 3.9797347649870507,
+      "boe": 5.907268952366321,
+      "richtung": 211,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 2.2593827807539624,
+      "boe": 4.292827283432528,
+      "richtung": 282,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 1.5434863954045905,
+      "boe": 2.1917506814745185,
+      "richtung": 312,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 1.2986575188921383,
+      "boe": 1.4544964211591949,
+      "richtung": 331,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 0.5535261555933704,
+      "boe": 0.653160863600177,
+      "richtung": 248,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 2.0839993490998054,
+      "boe": 3.5043561870299635,
+      "richtung": 302,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 3.16434403938606,
+      "boe": 5.381597694955873,
+      "richtung": 297,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 3.6792737464751633,
+      "boe": 6.065484812108189,
+      "richtung": 267,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 7.167355797554451,
+      "boe": 11.515818588696424,
+      "richtung": 247,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 9.26242738369694,
+      "boe": 15.463509057503842,
+      "richtung": 244,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 8.425478862489403,
+      "boe": 15.196185012654407,
+      "richtung": 235,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 7.794724541452886,
+      "boe": 13.422779888332427,
+      "richtung": 230,
+      "hochgerechnet": true
+     }
+    ]
+   },
+   {
+    "id": "knmi_harmonie_arome_europe",
+    "name": "HARMONIE",
+    "anbieter": "KNMI",
+    "status": "ok",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=knmi_harmonie_arome_europe&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 3.6599999999999997,
+      "boe": 4.209,
+      "richtung": 237,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 3.2016666666666667,
+      "boe": 3.9700666666666664,
+      "richtung": 248,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 3.27,
+      "boe": 4.577999999999999,
+      "richtung": 237,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 3.47,
+      "boe": 5.343800000000001,
+      "richtung": 266,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 1.22,
+      "boe": 1.8788,
+      "richtung": 208,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 1.53,
+      "boe": 2.3562000000000003,
+      "richtung": 307,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 3.98,
+      "boe": 5.572,
+      "richtung": 328,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 4.49,
+      "boe": 6.5105,
+      "richtung": 300,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 6.02,
+      "boe": 7.687076923076922,
+      "richtung": 279,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 5.644166666666666,
+      "boe": 9.030666666666667,
+      "richtung": 256,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 8.471666666666666,
+      "boe": 15.654166666666665,
+      "richtung": 256,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 7.611666666666667,
+      "boe": 14.462166666666667,
+      "richtung": 249,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 7.104166666666667,
+      "boe": 10.119105691056912,
+      "richtung": 227,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 5.6775,
+      "boe": 10.78725,
+      "richtung": 222,
+      "hochgerechnet": false
+     }
+    ]
+   },
+   {
+    "id": "dmi_harmonie_arome_europe",
+    "name": "HARMONIE",
+    "anbieter": "DMI",
+    "status": "extrap",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=dmi_harmonie_arome_europe&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 3.529166666666667,
+      "boe": 4.376166666666667,
+      "richtung": 275,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 1.63,
+      "boe": 2.3203529411764703,
+      "richtung": 207,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 3.06,
+      "boe": 3.9168000000000003,
+      "richtung": 198,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 3.57,
+      "boe": 5.444249999999999,
+      "richtung": 244,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 2.35,
+      "boe": 4.465,
+      "richtung": 252,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 1.8908333333333334,
+      "boe": 3.5925833333333332,
+      "richtung": 281,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 1.4483333333333335,
+      "boe": 2.0566333333333335,
+      "richtung": 304,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 3.4633333333333334,
+      "boe": 5.021833333333334,
+      "richtung": 293,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 4.575,
+      "boe": 7.175526315789474,
+      "richtung": 289,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 4.7675,
+      "boe": 7.341950000000001,
+      "richtung": 267,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 7.8275,
+      "boe": 12.414779069767443,
+      "richtung": 270,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 6.3975,
+      "boe": 12.155249999999999,
+      "richtung": 265,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 6.389166666666667,
+      "boe": 9.903208333333334,
+      "richtung": 212,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 6.004166666666666,
+      "boe": 10.303924731182793,
+      "richtung": 199,
+      "hochgerechnet": false
+     }
+    ]
+   },
+   {
+    "id": "ukmo_uk_deterministic_2km",
+    "name": "UKV",
+    "anbieter": "Met Office",
+    "status": "ok",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=ukmo_uk_deterministic_2km&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 3.98,
+      "boe": 6.517249999999999,
+      "richtung": 176,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 3.98,
+      "boe": 6.102666666666666,
+      "richtung": 206,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 3.335,
+      "boe": 5.154090909090909,
+      "richtung": 240,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 1.5741666666666667,
+      "boe": 1.9519666666666666,
+      "richtung": 246,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 1.7499999999999998,
+      "boe": 2.38,
+      "richtung": 274,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 2.42,
+      "boe": 3.872,
+      "richtung": 282,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 3.73,
+      "boe": 6.2877142857142845,
+      "richtung": 302,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 3.535,
+      "boe": 5.555,
+      "richtung": 280,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 4.5525,
+      "boe": 7.174740000000001,
+      "richtung": 264,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 4.43,
+      "boe": 7.550260869565218,
+      "richtung": 252,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 8.97,
+      "boe": 14.23748936170213,
+      "richtung": 266,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 9.59,
+      "boe": 12.586875,
+      "richtung": 244,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 7.360000000000001,
+      "boe": 12.533028571428574,
+      "richtung": 232,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 9.08,
+      "boe": 10.856521739130434,
+      "richtung": 252,
+      "hochgerechnet": false
+     }
+    ]
+   },
+   {
+    "id": "icon_eu",
+    "name": "ICON-EU",
+    "anbieter": "DWD",
+    "status": "ok",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=icon_eu&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 2.311666666666667,
+      "boe": 3.282566666666667,
+      "richtung": 200,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 1.6983333333333333,
+      "boe": 2.3097333333333334,
+      "richtung": 194,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 1.0808333333333333,
+      "boe": 1.0808333333333333,
+      "richtung": 243,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 1.3683333333333334,
+      "boe": 1.6146333333333334,
+      "richtung": 310,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 1.2066666666666666,
+      "boe": 1.3514666666666664,
+      "richtung": 315,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 1.5125,
+      "boe": 1.8755,
+      "richtung": 261,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 1.7558333333333331,
+      "boe": 2.3879333333333332,
+      "richtung": 236,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 1.6841666666666666,
+      "boe": 2.9192222222222215,
+      "richtung": 220,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 4.5225,
+      "boe": 7.236000000000001,
+      "richtung": 255,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 7.42,
+      "boe": 11.872,
+      "richtung": 256,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 10.000833333333333,
+      "boe": 16.86822272385252,
+      "richtung": 251,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 7.336666666666667,
+      "boe": 13.939666666666666,
+      "richtung": 216,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 8.7725,
+      "boe": 14.497234536082475,
+      "richtung": 219,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 8.216666666666667,
+      "boe": 14.663589743589744,
+      "richtung": 217,
+      "hochgerechnet": false
+     }
+    ]
+   },
+   {
+    "id": "meteofrance_arpege_europe",
+    "name": "ARPEGE",
+    "anbieter": "Météo-France",
+    "status": "ok",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=meteofrance_arpege_europe&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 5.235833333333334,
+      "boe": 8.150236947791166,
+      "richtung": 220,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 3.8891666666666667,
+      "boe": 7.3894166666666665,
+      "richtung": 226,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 3.725,
+      "boe": 5.289499999999999,
+      "richtung": 261,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 3.14,
+      "boe": 3.3284000000000002,
+      "richtung": 262,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 3.35,
+      "boe": 4.480625,
+      "richtung": 249,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 4.629166666666666,
+      "boe": 6.647350119904077,
+      "richtung": 260,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 3.9691666666666667,
+      "boe": 5.5568333333333335,
+      "richtung": 249,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 4.398333333333333,
+      "boe": 6.157666666666667,
+      "richtung": 239,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 5.369999999999999,
+      "boe": 7.46263917525773,
+      "richtung": 224,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 10.964166666666666,
+      "boe": 15.930716335540836,
+      "richtung": 244,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 10.685833333333333,
+      "boe": 15.93160606060606,
+      "richtung": 244,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 7.965,
+      "boe": 14.26179399141631,
+      "richtung": 243,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 8.695833333333335,
+      "boe": 12.361576867816094,
+      "richtung": 236,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 9.459166666666667,
+      "boe": 13.498486486486486,
+      "richtung": 239,
+      "hochgerechnet": false
+     }
+    ]
+   },
+   {
+    "id": "ecmwf_ifs",
+    "name": "IFS HRES",
+    "anbieter": "ECMWF",
+    "status": "ok",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=ecmwf_ifs&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 3.8116666666666665,
+      "boe": 5.183866666666666,
+      "richtung": 216,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 3.910833333333333,
+      "boe": 7.430583333333333,
+      "richtung": 235,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 3.3,
+      "boe": 5.505365853658536,
+      "richtung": 265,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 2.674166666666667,
+      "boe": 4.189527777777778,
+      "richtung": 280,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 2.2075,
+      "boe": 3.902080882352941,
+      "richtung": 298,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 1.5425,
+      "boe": 2.9307499999999997,
+      "richtung": 304,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 2.08,
+      "boe": 3.5117546012269942,
+      "richtung": 292,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 4.0175,
+      "boe": 6.156939759036144,
+      "richtung": 282,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 4.9575,
+      "boe": 7.363494880546074,
+      "richtung": 252,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 8.08,
+      "boe": 12.504681912681912,
+      "richtung": 244,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 9.579166666666666,
+      "boe": 14.517451865222624,
+      "richtung": 256,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 6.9399999999999995,
+      "boe": 13.185999999999998,
+      "richtung": 257,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 6.900833333333333,
+      "boe": 10.387570175438597,
+      "richtung": 242,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 7.164166666666667,
+      "boe": 10.66028,
+      "richtung": 231,
+      "hochgerechnet": false
+     }
+    ]
+   },
+   {
+    "id": "ecmwf_aifs025_single",
+    "name": "AIFS (KI)",
+    "anbieter": "ECMWF",
+    "status": "ok",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=ecmwf_aifs025_single&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 2.2603221377690437,
+      "boe": null,
+      "richtung": 267,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 2.1492772544034935,
+      "boe": null,
+      "richtung": 270,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 2.361369732315812,
+      "boe": null,
+      "richtung": 268,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 2.7823786140598825,
+      "boe": null,
+      "richtung": 264,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 3.435478029573474,
+      "boe": null,
+      "richtung": 260,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 4.198565172444309,
+      "boe": null,
+      "richtung": 257,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 5.003764580323105,
+      "boe": null,
+      "richtung": 255,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 5.8068458244193915,
+      "boe": null,
+      "richtung": 253,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 6.4199502882500195,
+      "boe": null,
+      "richtung": 250,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 6.952005094383778,
+      "boe": null,
+      "richtung": 248,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 7.474061308829797,
+      "boe": null,
+      "richtung": 245,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 7.8861304075288805,
+      "boe": null,
+      "richtung": 242,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 8.318197187548343,
+      "boe": null,
+      "richtung": 240,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 8.620279614196605,
+      "boe": null,
+      "richtung": 238,
+      "hochgerechnet": false
+     }
+    ]
+   },
+   {
+    "id": "ukmo_global_deterministic_10km",
+    "name": "UKMO Global",
+    "anbieter": "Met Office",
+    "status": "extrap",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=ukmo_global_deterministic_10km&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 3.314454017339987,
+      "boe": 4.9053919456631805,
+      "richtung": 224,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 2.48584051300499,
+      "boe": 3.778477579767585,
+      "richtung": 197,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 2.3201178121379904,
+      "boe": 3.712188499420785,
+      "richtung": 211,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 2.65156321387199,
+      "boe": 4.143067521674984,
+      "richtung": 198,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 2.1543951112709916,
+      "boe": 3.4470321780335866,
+      "richtung": 256,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 2.8172859147389886,
+      "boe": 4.507657463582382,
+      "richtung": 243,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 3.4801767182069865,
+      "boe": 5.667716369651378,
+      "richtung": 253,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 4.1430675216749835,
+      "boe": 6.5294744141597745,
+      "richtung": 267,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 4.640235624275981,
+      "boe": 7.126076137280971,
+      "richtung": 275,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 5.13740372687698,
+      "boe": 7.921545101442569,
+      "richtung": 268,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 6.794630735546972,
+      "boe": 10.473674694794358,
+      "richtung": 265,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 8.120412342482968,
+      "boe": 12.495491645371752,
+      "richtung": 259,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 6.297462632945974,
+      "boe": 9.479338489592363,
+      "richtung": 242,
+      "hochgerechnet": true
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 6.794630735546972,
+      "boe": 10.274807453753958,
+      "richtung": 229,
+      "hochgerechnet": true
+     }
+    ]
+   },
+   {
+    "id": "icon_global",
+    "name": "ICON Global",
+    "anbieter": "DWD",
+    "status": "ok",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=icon_global&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 3.8641666666666667,
+      "boe": 7.341916666666666,
+      "richtung": 227,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 3.2241666666666666,
+      "boe": 5.158666666666667,
+      "richtung": 231,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 1.9925,
+      "boe": 2.82935,
+      "richtung": 228,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 2.01,
+      "boe": 2.01,
+      "richtung": 255,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 2,
+      "boe": 2.48,
+      "richtung": 249,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 2.28,
+      "boe": 2.964,
+      "richtung": 283,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 2.73,
+      "boe": 4.070181818181818,
+      "richtung": 266,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 2.709166666666667,
+      "boe": 4.26646386946387,
+      "richtung": 257,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 4.005833333333333,
+      "boe": 6.498351851851852,
+      "richtung": 257,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 5.885000000000001,
+      "boe": 10.379000000000001,
+      "richtung": 254,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 9.354999999999999,
+      "boe": 17.022758928571427,
+      "richtung": 253,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 8.738333333333333,
+      "boe": 15.463050724637682,
+      "richtung": 234,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 10.245833333333334,
+      "boe": 16.15739516702203,
+      "richtung": 219,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 11.108333333333334,
+      "boe": 17.89288490284006,
+      "richtung": 221,
+      "hochgerechnet": false
+     }
+    ]
+   },
+   {
+    "id": "gfs_global",
+    "name": "GFS",
+    "anbieter": "NOAA",
+    "status": "ok",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=gfs_global&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 4.826698897710205,
+      "boe": 8.291095863543326,
+      "richtung": 232,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 3.3151856530609356,
+      "boe": 5.096285396077987,
+      "richtung": 238,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 2.787630346947539,
+      "boe": 2.787630346947539,
+      "richtung": 272,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 1.823633227811805,
+      "boe": 2.1300036100841884,
+      "richtung": 253,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 1.6540818354616333,
+      "boe": 1.9021941107808782,
+      "richtung": 240,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 3.3640785460420743,
+      "boe": 5.222874488431423,
+      "richtung": 237,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 4.473563612136112,
+      "boe": 6.9224386731221745,
+      "richtung": 247,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 5.4200955530669335,
+      "boe": 8.780554795968431,
+      "richtung": 242,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 6.426342550946838,
+      "boe": 10.000995594911016,
+      "richtung": 243,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 11.761823159674005,
+      "boe": 15.59585284208719,
+      "richtung": 243,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 12.028238180589659,
+      "boe": 20.197671015934308,
+      "richtung": 253,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 7.927864101189311,
+      "boe": 13.573512055555137,
+      "richtung": 233,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 8.755229176939723,
+      "boe": 15.96716371930024,
+      "richtung": 220,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 10.406504009520956,
+      "boe": 15.461091671288278,
+      "richtung": 231,
+      "hochgerechnet": false
+     }
+    ]
+   },
+   {
+    "id": "gem_global",
+    "name": "GEM",
+    "anbieter": "Kanada",
+    "status": "ok",
+    "abfrage": "https://api.open-meteo.com/v1/forecast?latitude=47.955&longitude=9.64&hourly=wind_speed_10m%2Cwind_speed_80m%2Cwind_speed_120m%2Cwind_speed_180m%2Cwind_direction_10m%2Cwind_direction_80m%2Cwind_direction_120m%2Cwind_direction_180m%2Cwind_gusts_10m%2Cprecipitation%2Ccape%2Cweather_code%2Ctemperature_2m%2Ctemperature_80m%2Ctemperature_120m%2Ctemperature_180m%2Capparent_temperature%2Crelative_humidity_2m%2Ccloud_cover&models=gem_global&wind_speed_unit=ms&timezone=auto&forecast_days=3",
+    "werte": [
+     {
+      "zeit": "2026-10-21T06:00",
+      "utc": "2026-10-21T04:00",
+      "wind": 4.742278377545441,
+      "boe": 4.742278377545441,
+      "richtung": 211,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T07:00",
+      "utc": "2026-10-21T05:00",
+      "wind": 4.980667921989984,
+      "boe": 4.980667921989984,
+      "richtung": 231,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T08:00",
+      "utc": "2026-10-21T06:00",
+      "wind": 4.472436501378762,
+      "boe": 4.472436501378762,
+      "richtung": 241,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T09:00",
+      "utc": "2026-10-21T07:00",
+      "wind": 3.3543273760340706,
+      "boe": 3.3543273760340706,
+      "richtung": 257,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T10:00",
+      "utc": "2026-10-21T08:00",
+      "wind": 3.043534789154289,
+      "boe": 3.6522417469851476,
+      "richtung": 277,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T11:00",
+      "utc": "2026-10-21T09:00",
+      "wind": 3.043534789154289,
+      "boe": 3.9028857884449124,
+      "richtung": 305,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T12:00",
+      "utc": "2026-10-21T10:00",
+      "wind": 3.220860342874335,
+      "boe": 3.9570569926741834,
+      "richtung": 314,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T13:00",
+      "utc": "2026-10-21T11:00",
+      "wind": 3.8207415375543436,
+      "boe": 4.499984477564005,
+      "richtung": 272,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T14:00",
+      "utc": "2026-10-21T12:00",
+      "wind": 4.931267333778777,
+      "boe": 6.455477236946763,
+      "richtung": 259,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T15:00",
+      "utc": "2026-10-21T13:00",
+      "wind": 6.641674814037812,
+      "boe": 10.043508255374253,
+      "richtung": 245,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T16:00",
+      "utc": "2026-10-21T14:00",
+      "wind": 11.173035109347103,
+      "boe": 16.792414531989323,
+      "richtung": 245,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T17:00",
+      "utc": "2026-10-21T15:00",
+      "wind": 9.784424922138376,
+      "boe": 14.136807042675791,
+      "richtung": 244,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T18:00",
+      "utc": "2026-10-21T16:00",
+      "wind": 8.185249446318057,
+      "boe": 11.19890946973516,
+      "richtung": 233,
+      "hochgerechnet": false
+     },
+     {
+      "zeit": "2026-10-21T19:00",
+      "utc": "2026-10-21T17:00",
+      "wind": 7.885444686433193,
+      "boe": 10.554364426456734,
+      "richtung": 228,
+      "hochgerechnet": false
+     }
+    ]
+   }
+  ],
+  "stunden": [
+   {
+    "zeit": "2026-10-21T06:00",
+    "utc": "2026-10-21T04:00",
+    "ampel": "go",
+    "median": 3.421810342003327,
+    "min": 0.8286135043349967,
+    "max": 5.235833333333334,
+    "boe": 4.9053919456631805,
+    "richtung": 220.7179869283951,
+    "modelle": 16,
+    "ueberGrenze": 0,
+    "regen": 0.25,
+    "cape": 0,
+    "tempArbeit": 7.9965,
+    "gefuehlt": 5.8360251264375895,
+    "uv": 0,
+    "ensembleUeberGrenze": 0,
+    "ensembleLaeufe": 71,
+    "gruende": [
+     "Night"
+    ]
+   },
+   {
+    "zeit": "2026-10-21T07:00",
+    "utc": "2026-10-21T05:00",
+    "ampel": "go",
+    "median": 2.987774858602373,
+    "min": 1.63,
+    "max": 4.980667921989984,
+    "boe": 4.308790222541983,
+    "richtung": 220.15694491679295,
+    "modelle": 16,
+    "ueberGrenze": 0,
+    "regen": 0.25,
+    "cape": 0,
+    "tempArbeit": 8.0465,
+    "gefuehlt": 6.159165556597221,
+    "uv": 0,
+    "ensembleUeberGrenze": 0,
+    "ensembleLaeufe": 71,
+    "gruende": [
+     "Night"
+    ]
+   },
+   {
+    "zeit": "2026-10-21T08:00",
+    "utc": "2026-10-21T06:00",
+    "ampel": "go",
+    "median": 2.5745000396316753,
+    "min": 1.0808333333333333,
+    "max": 4.472436501378762,
+    "boe": 3.7784775797675842,
+    "richtung": 235.46923585857854,
+    "modelle": 16,
+    "ueberGrenze": 0,
+    "regen": 0.4,
+    "cape": 0,
+    "tempArbeit": 8.2,
+    "gefuehlt": 6.6230351274876655,
+    "uv": 0,
+    "ensembleUeberGrenze": 0,
+    "ensembleLaeufe": 71,
+    "gruende": []
+   },
+   {
+    "zeit": "2026-10-21T09:00",
+    "utc": "2026-10-21T07:00",
+    "ampel": "go",
+    "median": 2.134691390376981,
+    "min": 0.6960353436413972,
+    "max": 3.57,
+    "boe": 2.756033333333333,
+    "richtung": 254.1697543237787,
+    "modelle": 16,
+    "ueberGrenze": 0,
+    "regen": 0.2,
+    "cape": 0,
+    "tempArbeit": 8.4,
+    "gefuehlt": 7.199562055013041,
+    "uv": 0.05,
+    "ensembleUeberGrenze": 0,
+    "ensembleLaeufe": 71,
+    "gruende": []
+   },
+   {
+    "zeit": "2026-10-21T10:00",
+    "utc": "2026-10-21T08:00",
+    "ampel": "go",
+    "median": 1.875,
+    "min": 0.9475,
+    "max": 3.435478029573474,
+    "boe": 2.48,
+    "richtung": 258.69733476370084,
+    "modelle": 16,
+    "ueberGrenze": 0,
+    "regen": 0,
+    "cape": 0,
+    "tempArbeit": 8.693,
+    "gefuehlt": 7.7681896900996295,
+    "uv": 0.15,
+    "ensembleUeberGrenze": 0,
+    "ensembleLaeufe": 71,
+    "gruende": []
+   },
+   {
+    "zeit": "2026-10-21T11:00",
+    "utc": "2026-10-21T09:00",
+    "ampel": "go",
+    "median": 1.9397528718686625,
+    "min": 0.6975,
+    "max": 4.629166666666666,
+    "boe": 2.964,
+    "richtung": 269.2865258834917,
+    "modelle": 16,
+    "ueberGrenze": 0,
+    "regen": 0,
+    "cape": 0,
+    "tempArbeit": 8.95,
+    "gefuehlt": 8.008401436063634,
+    "uv": 0.15,
+    "ensembleUeberGrenze": 0,
+    "ensembleLaeufe": 71,
+    "gruende": []
+   },
+   {
+    "zeit": "2026-10-21T12:00",
+    "utc": "2026-10-21T10:00",
+    "ampel": "go",
+    "median": 2.607920256502495,
+    "min": 0.5535261555933704,
+    "max": 5.003764580323105,
+    "boe": 3.5117546012269942,
+    "richtung": 269.53428376253237,
+    "modelle": 16,
+    "ueberGrenze": 0,
+    "regen": 0.1,
+    "cape": 0,
+    "tempArbeit": 9.3,
+    "gefuehlt": 7.9068321245839535,
+    "uv": 0.1,
+    "ensembleUeberGrenze": 0,
+    "ensembleLaeufe": 71,
+    "gruende": []
+   },
+   {
+    "zeit": "2026-10-21T13:00",
+    "utc": "2026-10-21T11:00",
+    "ampel": "warn",
+    "median": 3.4991666666666665,
+    "min": 1.6841666666666666,
+    "max": 5.8068458244193915,
+    "boe": 4.499984477564005,
+    "richtung": 266.63509991731223,
+    "modelle": 16,
+    "ueberGrenze": 0,
+    "regen": 0.5,
+    "cape": 0,
+    "tempArbeit": 9.45,
+    "gefuehlt": 7.559839876670928,
+    "uv": 0.2,
+    "ensembleUeberGrenze": 0,
+    "ensembleLaeufe": 71,
+    "gruende": [
+     "Rain 0.5 mm/h"
+    ]
+   },
+   {
+    "zeit": "2026-10-21T14:00",
+    "utc": "2026-10-21T12:00",
+    "ampel": "warn",
+    "median": 4.60761781213799,
+    "min": 3.099014506212888,
+    "max": 6.426342550946838,
+    "boe": 7.174740000000001,
+    "richtung": 256.8603868397626,
+    "modelle": 16,
+    "ueberGrenze": 0,
+    "regen": 0.8,
+    "cape": 5,
+    "tempArbeit": 9.5,
+    "gefuehlt": 7.107333330416639,
+    "uv": 0.15,
+    "ensembleUeberGrenze": 0,
+    "ensembleLaeufe": 71,
+    "gruende": [
+     "Rain 0.8 mm/h"
+    ]
+   },
+   {
+    "zeit": "2026-10-21T15:00",
+    "utc": "2026-10-21T13:00",
+    "ampel": "warn",
+    "median": 6.796839954210795,
+    "min": 3.4801767182069865,
+    "max": 11.761823159674005,
+    "boe": 10.367612166239478,
+    "richtung": 246.95164089725563,
+    "modelle": 16,
+    "ueberGrenze": 2,
+    "regen": 1.6,
+    "cape": 10,
+    "tempArbeit": 9.2965,
+    "gefuehlt": 6.081513105861358,
+    "uv": 0.1,
+    "ensembleUeberGrenze": 0,
+    "ensembleLaeufe": 71,
+    "gruende": [
+     "Single models with gust above limit",
+     "Rain 1.6 mm/h"
+    ]
+   },
+   {
+    "zeit": "2026-10-21T16:00",
+    "utc": "2026-10-21T14:00",
+    "ampel": "warn",
+    "median": 8.720833333333333,
+    "min": 6.794630735546972,
+    "max": 12.028238180589659,
+    "boe": 14.517451865222624,
+    "richtung": 251.25289001358954,
+    "modelle": 16,
+    "ueberGrenze": 7,
+    "regen": 1.45,
+    "cape": 20,
+    "tempArbeit": 8.8,
+    "gefuehlt": 4.909770546763441,
+    "uv": 0.15,
+    "ensembleUeberGrenze": 0.2,
+    "ensembleLaeufe": 71,
+    "gruende": [
+     "Single models above wind limit",
+     "Single models with gust above limit",
+     "Rain 1.4 mm/h",
+     "Too windy in 20 % of scenarios"
+    ]
+   },
+   {
+    "zeit": "2026-10-21T17:00",
+    "utc": "2026-10-21T15:00",
+    "ampel": "warn",
+    "median": 7.748898537097774,
+    "min": 5.1049999999999995,
+    "max": 9.784424922138376,
+    "boe": 13.185999999999998,
+    "richtung": 242.04764199418338,
+    "modelle": 16,
+    "ueberGrenze": 2,
+    "regen": 1.05,
+    "cape": 0,
+    "tempArbeit": 8.243,
+    "gefuehlt": 4.443621434972764,
+    "uv": 0.5,
+    "ensembleUeberGrenze": 0.14362745098039215,
+    "ensembleLaeufe": 71,
+    "gruende": [
+     "Single models with gust above limit",
+     "Rain 1.1 mm/h",
+     "Too windy in 14 % of scenarios"
+    ]
+   },
+   {
+    "zeit": "2026-10-21T18:00",
+    "utc": "2026-10-21T16:00",
+    "ampel": "warn",
+    "median": 7.648333333333334,
+    "min": 4.2425011421951835,
+    "max": 10.245833333333334,
+    "boe": 11.19890946973516,
+    "richtung": 222.6733076958837,
+    "modelle": 16,
+    "ueberGrenze": 3,
+    "regen": 0.6499999999999999,
+    "cape": 0,
+    "tempArbeit": 7.3965000000000005,
+    "gefuehlt": 3.3758417250909885,
+    "uv": 0.2,
+    "ensembleUeberGrenze": 0.08823529411764706,
+    "ensembleLaeufe": 71,
+    "gruende": [
+     "Single models with gust above limit",
+     "Rain 0.6 mm/h",
+     "Night"
+    ]
+   },
+   {
+    "zeit": "2026-10-21T19:00",
+    "utc": "2026-10-21T17:00",
+    "ampel": "warn",
+    "median": 7.84008461394304,
+    "min": 5.634571829477977,
+    "max": 11.108333333333334,
+    "boe": 10.78725,
+    "richtung": 222.73622313644958,
+    "modelle": 16,
+    "ueberGrenze": 2,
+    "regen": 0.75,
+    "cape": 10,
+    "tempArbeit": 7.2965,
+    "gefuehlt": 3.189099401729325,
+    "uv": 0,
+    "ensembleUeberGrenze": 0.029411764705882353,
+    "ensembleLaeufe": 71,
+    "gruende": [
+     "Single models with gust above limit",
+     "Rain 0.8 mm/h",
+     "Night"
+    ]
+   }
+  ]
+ },
+ "ausblick": "Today 21/10\nCHECK\nDETAIL ABOVE\nWind max\n9 m/s\nSpread\n7–12\nGust max\n15 m/s\nToo windy\n23 %\nRain\n8.0 mm\n°C\n7 … 10\nDew\n–\nTomorrow 22/10\nCHECK\nDETAIL ABOVE\nWind max\n9 m/s\nSpread\n8–11\nGust max\n13 m/s\nToo windy\n13 %\nRain\n0.0 mm\n°C\n4 … 10\nDew\n–\nDay after 23/10\nCHECK\nDETAIL ABOVE\nWind max\n12 m/s\nSpread\n10–16\nGust max\n16 m/s\nToo windy\n82 %\nRain\n0.1 mm\n°C\n6 … 12\nDew\n–\nSat 24/10\nSTOP\nTREND\nWind max\n14 m/s\nSpread\n12–14\nGust max\n21 m/s\nToo windy\n96 %\nRain\n0.2 mm\n°C\n4 … 8\nDew\n–\nSun 25/10\nSTOP\nTREND\nWind max\n16 m/s\nSpread\n13–16\nGust max\n25 m/s\nToo windy\n100 %\nRain\n13.8 mm\n°C\n4 … 10\nDew\n–\nMon 26/10\nCLEAR\nTREND\nWind max\n5 m/s\nSpread\n5–9\nGust max\n10 m/s\nToo windy\n27 %\nRain\n0.0 mm\n°C\n4 … 10\nDew\n–\nTue 27/10\nCHECK\nTREND\nWind max\n6 m/s\nSpread\n4–6\nGust max\n8 m/s\nToo windy\n35 %\nRain\n0.0 mm\n°C\n5 … 13\nDew\n–\n\nRough trend for your working hours and working zone 80–125 m: highest wind and gust of the day (median of ECMWF IFS, ICON Global, GFS, GEM), rain total, temperature from–to. Too windy: share of the 51 ECMWF ensemble scenarios in which at least one working hour that day is above your limit. From day 4 for planning only; release is based on the detailed forecast.",
+ "vomBoden": {
+  "bereich": "up to 80 m",
+  "stunden": [
+   "go 2.229",
+   "go 3.422",
+   "go 2.608",
+   "warn 7.648",
+   "warn 9.131",
+   "warn 8.047",
+   "warn 8.470",
+   "go 6.188",
+   "go 3.812",
+   "go 3.415",
+   "go 4.276",
+   "warn 9.283"
+  ]
+ },
+ "ohneGFS": [
+  "go 2.370",
+  "go 1.265",
+  "go 1.554",
+  "go 2.299",
+  "go 2.983",
+  "go 3.470",
+  "go 3.314",
+  "go 2.817",
+  "go 2.361",
+  "go 2.259",
+  "go 2.000",
+  "go 1.891",
+  "go 2.486",
+  "warn 3.463",
+  "warn 4.575",
+  "warn 6.642",
+  "warn 8.472",
+  "warn 7.612",
+  "warn 7.360",
+  "warn 7.795",
+  "warn 7.955",
+  "warn 8.534",
+  "warn 9.162",
+  "warn 9.056",
+  "warn 9.040",
+  "warn 7.496",
+  "warn 7.955",
+  "warn 8.819",
+  "warn 8.452",
+  "warn 8.287",
+  "warn 7.846",
+  "warn 7.273",
+  "go 7.570",
+  "warn 7.250",
+  "go 6.863",
+  "warn 7.714",
+  "warn 8.452",
+  "warn 8.499",
+  "go 8.068",
+  "go 7.958",
+  "go 7.720",
+  "go 6.440",
+  "go 6.181",
+  "go 6.564",
+  "go 6.053",
+  "go 5.606",
+  "go 4.982",
+  "go 4.689",
+  "go 4.142",
+  "go 3.677",
+  "go 3.448",
+  "go 3.315",
+  "go 3.187",
+  "go 3.320",
+  "go 3.448",
+  "go 3.365",
+  "go 3.695",
+  "go 4.197",
+  "go 3.250",
+  "go 3.291",
+  "go 3.977",
+  "warn 4.466",
+  "warn 6.300",
+  "stop 8.570",
+  "warn 7.856",
+  "warn 8.590",
+  "stop 8.806",
+  "stop 10.555",
+  "stop 13.102",
+  "stop 13.182",
+  "stop 13.279",
+  "stop 12.915"
+ ]
+}

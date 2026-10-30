@@ -24,7 +24,7 @@ function mapMax(on, stay){
   $("mapCard").classList.toggle("map-max", on);
   document.body.classList.toggle("map-open", on);
   $("mapMaxBtn").setAttribute("aria-pressed", String(on));
-  $("mapMaxBtn").textContent = on ? "✕ Schließen" : "⤢ Vergrößern";
+  $("mapMaxBtn").textContent = on ? T("✕ Schließen", "✕ Close") : T("⤢ Vergrößern", "⤢ Enlarge");
   setTimeout(() => { map.invalidateSize(); if(!on && !stay) $("mapCard").scrollIntoView({block:"start"}); }, 60);
   if(on && matchMedia("(pointer:fine)").matches) $("searchInput").focus({preventScroll:true});   // am Handy keine Tastatur aufklappen
 }
@@ -39,7 +39,7 @@ function setPos(ll, fromDrag){
   showMarker(true); stopPulse();
   marker.setLatLng(ll); rotorCircle.setLatLng(ll);
   if(arrowMarker){ map.removeLayer(arrowMarker); arrowMarker=null; }
-  $("pickTitle").textContent = fromDrag ? "Standort verschoben" : "Neuer Standort";
+  $("pickTitle").textContent = fromDrag ? T("Standort verschoben", "Location moved") : T("Neuer Standort", "New location");
   $("pickText").textContent = `${ll.lat.toFixed(5)}° N, ${ll.lng.toFixed(5)}° E`;
   $("pickName").value = pendingName || (fromDrag && siteChosen ? site.name : "");
   $("pickForm").hidden = false;
@@ -54,7 +54,7 @@ function siteReady(){
 function applyPending(){
   if(!pending) return;
   const lat = +pending.lat.toFixed(5), lon = +pending.lng.toFixed(5);
-  const name = $("pickName").value.trim() || pendingName || `Standort ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+  const name = $("pickName").value.trim() || pendingName || `${T("Standort", "Location")} ${lat.toFixed(3)}, ${lon.toFixed(3)}`;
   site = {...site, lat, lon, name, checked: pendingDrag ? site.checked : false, excluded: pendingDrag ? site.excluded : []};
   if($("pickFav").checked) upsertFav();
   pending = null; pendingName = null;
@@ -84,15 +84,15 @@ function pointToMap(ms){
 function startFirstRun(){
   document.body.classList.add("no-site");
   $("lamp").className = "lamp"; $("lamp").textContent = "–";
-  $("headline").textContent = "Noch keine Anlage gewählt.";
-  $("summary").textContent = "Ort suchen und die Anlage auf der Karte antippen. Danach erscheint hier die Bewertung für euren Arbeitstag.";
-  $("siteTitle").textContent = "Anlage wählen"; $("siteMeta").innerHTML = "";
+  $("headline").textContent = T("Noch keine Anlage gewählt.", "No site chosen yet.");
+  $("summary").textContent = T("Ort suchen und die Anlage auf der Karte antippen. Danach erscheint hier die Bewertung für euren Arbeitstag.", "Search for the place and tap the site on the map. The assessment for your working day then appears here.");
+  $("siteTitle").textContent = T("Anlage wählen", "Choose a site"); $("siteMeta").innerHTML = "";
   if(map){ showMarker(false); map.setView([48.4, 11.3], 6); }
   setTimeout(() => pointToMap(), 300);
 }
 async function search(q){
   const box = $("searchResults");
-  box.hidden = false; box.innerHTML = `<li><button type="button" disabled>Suche…</button></li>`;
+  box.hidden = false; box.innerHTML = `<li><button type="button" disabled>${T("Suche…", "Searching…")}</button></li>`;
   let items = [];
   try{
     const r = await fetch("https://nominatim.openstreetmap.org/search?" + new URLSearchParams({q, format:"jsonv2", limit:"6", "accept-language":"de", addressdetails:"1"}));
@@ -106,7 +106,7 @@ async function search(q){
       items = (j.results||[]).map(x => ({name:x.name, detail:[x.admin2, x.admin1, x.country].filter(Boolean).join(", "), lat:x.latitude, lon:x.longitude}));
     }catch(e){}
   }
-  if(!items.length){ box.innerHTML = `<li><button type="button" disabled>Nichts gefunden. Versuch es mit Ortsname oder Postleitzahl.</button></li>`; return; }
+  if(!items.length){ box.innerHTML = `<li><button type="button" disabled>${T("Nichts gefunden. Versuch es mit Ortsname oder Postleitzahl.", "Nothing found. Try a place name or postcode.")}</button></li>`; return; }
   box.innerHTML = items.map((x,k) => `<li><button type="button" data-k="${k}">${esc(x.name)}<small>${esc(x.detail)}</small></button></li>`).join("");
   box.querySelectorAll("button[data-k]").forEach(b => b.onclick = () => {
     const x = items[+b.dataset.k];
@@ -115,7 +115,7 @@ async function search(q){
     map.setView([x.lat, x.lon], 15);
     map.getContainer().classList.add("picking");
     $("pickTitle").textContent = x.name;
-    $("pickText").textContent = "Jetzt die Anlage auf der Karte antippen.";
+    $("pickText").textContent = T("Jetzt die Anlage auf der Karte antippen.", "Now tap the site on the map.");
     $("pickForm").hidden = true;
     $("pickBar").hidden = false; pending = null; $("pickApply").disabled = true;
     startPulse(8000);
@@ -137,6 +137,6 @@ function updateMap(){
     const col = {go:"#46c27b", warn:"#e6b04c", stop:"#e5484d", none:"#999"}[h.lamp];
     const svg = `<svg width="120" height="120" viewBox="0 0 120 120" style="transform:rotate(${h.dir.mean}deg)"><line x1="60" y1="18" x2="60" y2="96" stroke="#000" stroke-opacity=".45" stroke-width="9" stroke-linecap="round"/><line x1="60" y1="18" x2="60" y2="94" stroke="${col}" stroke-width="5" stroke-linecap="round"/><polygon points="60,110 48,88 72,88" fill="${col}" stroke="#000" stroke-opacity=".45"/></svg>`;
     arrowMarker = L.marker(ll, {icon:L.divIcon({className:"wind-arrow", html:svg, iconSize:[120,120], iconAnchor:[60,60]}), interactive:false, keyboard:false}).addTo(map);
-    marker.bindTooltip(`${radar.on ? "Prognose " : ""}${hh(h.t)} Uhr · ${fwu(h.med)} aus ${dirName(h.dir.mean)}`, {direction:"top", offset:[0,-36]});
+    marker.bindTooltip(`${radar.on ? T("Prognose ", "Forecast ") : ""}${hh(h.t)}${UHR()} · ${fwu(h.med)} ${T("aus", "from")} ${dirName(h.dir.mean)}`, {direction:"top", offset:[0,-36]});
   }
 }

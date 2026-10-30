@@ -58,19 +58,19 @@ const LAMP_RANK = {go:0, warn:1, stop:2};
 function changeText(day){
   const p = state.snapPrev?.days?.[day], c = state.hours.length ? snapNow().days[day] : null;
   if(!p || !c) return null;
-  const when = new Date(state.snapPrev.at).toLocaleString("de-DE", {weekday:"short", hour:"2-digit", minute:"2-digit"});
+  const when = new Date(state.snapPrev.at).toLocaleString(LOC(), {weekday:"short", hour:"2-digit", minute:"2-digit"});
   const dv = c.peak!=null && p.peak!=null ? c.peak - p.peak : 0, big = Math.abs(dv) >= 0.5;
-  const peak = c.peak==null ? "" : big ? `stärkster Wind ${fw(p.peak)} → ${fwu(c.peak)}` : `stärkster Wind unverändert ${fwu(c.peak)}`;
+  const peak = c.peak==null ? "" : big ? `${T("stärkster Wind", "strongest wind")} ${fw(p.peak)} → ${fwu(c.peak)}` : `${T("stärkster Wind unverändert", "strongest wind unchanged")} ${fwu(c.peak)}`;
   const l = LAMP_TXT[p.lamp] + " → " + LAMP_TXT[c.lamp];
   let lvl, head;
   if(c.lamp !== p.lamp && LAMP_RANK[c.lamp] != null && LAMP_RANK[p.lamp] != null){
-    lvl = LAMP_RANK[c.lamp] > LAMP_RANK[p.lamp] ? "worse" : "better"; head = (lvl==="worse" ? "Verschlechtert" : "Verbessert") + ": " + l;
-  }else if(dv >= 1){ lvl = "worse"; head = `Ampel gleich (${LAMP_TXT[c.lamp]}), Wind aber stärker`; }
-  else if(dv <= -1){ lvl = "better"; head = `Ampel gleich (${LAMP_TXT[c.lamp]}), Wind aber schwächer`; }
-  else{ lvl = "same"; head = `Unverändert: ${LAMP_TXT[c.lamp]}`; }
-  const stops = c.stop !== p.stop ? `Stop-Stunden ${p.stop} → ${c.stop}` : "";
+    lvl = LAMP_RANK[c.lamp] > LAMP_RANK[p.lamp] ? "worse" : "better"; head = (lvl==="worse" ? T("Verschlechtert", "Worse") : T("Verbessert", "Better")) + ": " + l;
+  }else if(dv >= 1){ lvl = "worse"; head = T(`Ampel gleich (${LAMP_TXT[c.lamp]}), Wind aber stärker`, `Traffic light unchanged (${LAMP_TXT[c.lamp]}), but wind stronger`); }
+  else if(dv <= -1){ lvl = "better"; head = T(`Ampel gleich (${LAMP_TXT[c.lamp]}), Wind aber schwächer`, `Traffic light unchanged (${LAMP_TXT[c.lamp]}), but wind weaker`); }
+  else{ lvl = "same"; head = `${T("Unverändert", "Unchanged")}: ${LAMP_TXT[c.lamp]}`; }
+  const stops = c.stop !== p.stop ? `${T("Stop-Stunden", "Stop hours")} ${p.stop} → ${c.stop}` : "";
   const rest = [peak, stops].filter(Boolean).join(" · ");
-  return {lvl, html:`<b>Seit ${esc(when)} Uhr: ${esc(head)}</b>${rest ? " · " + esc(rest) : ""}`};
+  return {lvl, html:`<b>${T("Seit", "Since")} ${esc(when)}${UHR()}: ${esc(head)}</b>${rest ? " · " + esc(rest) : ""}`};
 }
 function renderChange(){
   const box = $("changeNote"); if(!box) return;
@@ -91,10 +91,10 @@ function installClose(snooze){
 function installShow(ios){
   if($("installBox") || isStandalone() || installSnoozed()) return;
   const box = document.createElement("div");
-  box.id = "installBox"; box.className = "install-box"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", "App installieren");
+  box.id = "installBox"; box.className = "install-box"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", T("App installieren", "Install app"));
   box.innerHTML = `<img src="icons/icon-192.png" alt="" width="44" height="44">
-    <div><b>Windbericht als App installieren</b><span>${ios ? "Teilen-Symbol antippen, dann „Zum Home-Bildschirm“. Danach ohne Browserleiste und mit gespeichertem Stand ohne Netz." : "Startet ohne Browserleiste, mit Symbol auf dem Startbildschirm und gespeichertem Stand ohne Netz."}</span></div>
-    <div class="ib-btns">${ios ? "" : `<button type="button" class="primary" id="installGo">Installieren</button>`}<button type="button" class="ghost" id="installLater">Später</button></div>`;
+    <div><b>${T("Windbericht als App installieren", "Install the wind report as an app")}</b><span>${ios ? T("Teilen-Symbol antippen, dann „Zum Home-Bildschirm“. Danach ohne Browserleiste und mit gespeichertem Stand ohne Netz.", "Tap the share icon, then “Add to Home Screen”. It then runs without the browser bar and with saved data offline.") : T("Startet ohne Browserleiste, mit Symbol auf dem Startbildschirm und gespeichertem Stand ohne Netz.", "Starts without the browser bar, with an icon on the home screen and saved data offline.")}</span></div>
+    <div class="ib-btns">${ios ? "" : `<button type="button" class="primary" id="installGo">${T("Installieren", "Install")}</button>`}<button type="button" class="ghost" id="installLater">${T("Später", "Later")}</button></div>`;
   document.body.appendChild(box);
   $("installLater").onclick = () => installClose(true);
   if($("installGo")) $("installGo").onclick = async () => {
@@ -127,8 +127,8 @@ function updateShow(){
   if(updateShown) return; updateShown = true;
   const box = document.createElement("div");
   box.id = "updateBox"; box.className = "install-box update-box"; box.setAttribute("role", "alert");
-  box.innerHTML = `<div><b>Neue Version verfügbar</b><span>Vorher den Tagesbericht speichern oder drucken: Eingaben im Bericht gehen beim Neuladen verloren.</span></div>
-    <div class="ib-btns"><button type="button" class="primary" id="updateGo">Jetzt neu laden</button><button type="button" class="ghost" id="updateLater">Später</button></div>`;
+  box.innerHTML = `<div><b>${T("Neue Version verfügbar", "New version available")}</b><span>${T("Vorher den Tagesbericht speichern oder drucken: Eingaben im Bericht gehen beim Neuladen verloren.", "Save or print the daily report first: entries in the report are lost on reload.")}</span></div>
+    <div class="ib-btns"><button type="button" class="primary" id="updateGo">${T("Jetzt neu laden", "Reload now")}</button><button type="button" class="ghost" id="updateLater">${T("Später", "Later")}</button></div>`;
   document.body.appendChild(box);
   $("updateGo").onclick = () => location.reload();
   $("updateLater").onclick = () => { box.remove(); setTimeout(() => { updateShown = false; }, 30*6e4); };

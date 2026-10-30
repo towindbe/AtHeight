@@ -10,13 +10,13 @@ const RH_MID = 85, RH_HI = 95;
 const rhCls = v => v==null ? "m-none" : v >= RH_HI ? "f-3" : v >= RH_MID ? "f-2" : v >= 60 ? "f-1" : "f-0";
 // Bewölkung in Achteln wie im Wetterbericht: klar, heiter, wolkig, stark bewölkt, bedeckt; nachts Mond statt Sonne
 function cloudSym(cc, dark){
-  if(cc==null) return ["·", "keine Angabe"];
+  if(cc==null) return ["·", T("keine Angabe", "no data")];
   const o = Math.round(cc/12.5);
-  if(o <= 1) return [dark ? "🌙" : "☀️", "klar"];
-  if(o <= 3) return [dark ? "🌙" : "🌤️", "heiter"];
-  if(o <= 5) return [dark ? "☁️" : "⛅", "wolkig"];
-  if(o <= 6) return [dark ? "☁️" : "🌥️", "stark bewölkt"];
-  return ["☁️", "bedeckt"];
+  if(o <= 1) return [dark ? "🌙" : "☀️", T("klar", "clear")];
+  if(o <= 3) return [dark ? "🌙" : "🌤️", T("heiter", "mostly sunny")];
+  if(o <= 5) return [dark ? "☁️" : "⛅", T("wolkig", "partly cloudy")];
+  if(o <= 6) return [dark ? "☁️" : "🌥️", T("stark bewölkt", "mostly cloudy")];
+  return ["☁️", T("bedeckt", "overcast")];
 }
 function renderMatrix(){
   const idxs = dayIdx().filter(i => isWork(state.times[i]));
@@ -33,28 +33,28 @@ function renderMatrix(){
   const ccTd = (v, i, tip) => { const [sym, txt] = cloudSym(v, isDark(state.times[i]));
     return `<td class="cl" data-i="${i}" title="${tip}: ${txt}${v==null ? "" : " (" + Math.round(v) + " %)"}" style="--cc:${v==null ? 0 : (v/100).toFixed(2)}">${sym}</td>`; };
   const cellOf = (s, i, r) => {
-    if(feu) return rhTd(s?.rh, i, `${esc(r.m.name)} ${hh(state.times[i])} Uhr: Luftfeuchte ${s?.rh==null ? "–" : Math.round(s.rh)+" %"}`);
-    if(wol) return ccTd(s?.cc, i, `${esc(r.m.name)} ${hh(state.times[i])} Uhr`);
-    if(rain) return `<td class="${rcls(s?.rain)}${s?.rain!=null && s.rain >= RAIN_WARN ? " r-w" : ""}" data-i="${i}" title="${esc(r.m.name)} ${hh(state.times[i])} Uhr: Regen ${s?.rain==null ? "–" : fmt(s.rain,1)} mm/h${s?.wc>=95 ? ", Gewittersignal" : ""}">${rtxt(s?.rain, s?.wc>=95)}</td>`;
+    if(feu) return rhTd(s?.rh, i, `${esc(r.m.name)} ${hh(state.times[i])}${UHR()}: ${T("Luftfeuchte", "humidity")} ${s?.rh==null ? "–" : Math.round(s.rh)+" %"}`);
+    if(wol) return ccTd(s?.cc, i, `${esc(r.m.name)} ${hh(state.times[i])}${UHR()}`);
+    if(rain) return `<td class="${rcls(s?.rain)}${s?.rain!=null && s.rain >= RAIN_WARN ? " r-w" : ""}" data-i="${i}" title="${esc(r.m.name)} ${hh(state.times[i])}${UHR()}: ${T("Regen", "rain")} ${s?.rain==null ? "–" : fmt(s.rain,1)} mm/h${s?.wc>=95 ? T(", Gewittersignal", ", thunderstorm signal") : ""}">${rtxt(s?.rain, s?.wc>=95)}</td>`;
     const v = mxMode === "boe" ? s?.g : s?.v;
-    return `<td class="${cls(v)}" data-i="${i}" title="${esc(r.m.name)} ${hh(state.times[i])} Uhr: Wind ${fwu(s?.v)}, Böe ${fwu(s?.g)}">${v!=null ? num(v) : "·"}</td>`;
+    return `<td class="${cls(v)}" data-i="${i}" title="${esc(r.m.name)} ${hh(state.times[i])}${UHR()}: Wind ${fwu(s?.v)}, ${T("Böe", "gust")} ${fwu(s?.g)}">${v!=null ? num(v) : "·"}</td>`;
   };
   const rows = u.map(r => `<tr><th class="mname">${esc(r.m.name)} <small>${esc(r.m.org)} · ${esc(r.m.res)}</small></th>${idxs.map(i => cellOf(r.series[i], i, r)).join("")}</tr>`).join("");
-  const med = `<tr class="medrow"><th class="mname">Median <small>alle Modelle</small></th>${idxs.map(i => { const h = state.hours[i];
-    if(feu) return rhTd(h.rh, i, `Median ${hh(state.times[i])} Uhr: Luftfeuchte ${h.rh==null ? "–" : Math.round(h.rh)+" %"}`, true);
-    if(wol) return ccTd(h.cc, i, `Median ${hh(state.times[i])} Uhr`);
+  const med = `<tr class="medrow"><th class="mname">Median <small>${T("alle Modelle", "all models")}</small></th>${idxs.map(i => { const h = state.hours[i];
+    if(feu) return rhTd(h.rh, i, `Median ${hh(state.times[i])}${UHR()}: ${T("Luftfeuchte", "humidity")} ${h.rh==null ? "–" : Math.round(h.rh)+" %"}`, true);
+    if(wol) return ccTd(h.cc, i, `Median ${hh(state.times[i])}${UHR()}`);
     if(rain) return `<td class="${rcls(h.rain)}${h.rain!=null && h.rain >= RAIN_WARN ? " r-w" : ""}" data-i="${i}" style="font-weight:700">${rtxt(h.rain, h.storms > 0)}</td>`;
     const v = mxMode === "boe" ? h.gMed : h.med; return `<td class="${cls(v)}" data-i="${i}" style="font-weight:700">${v==null?"·":num(v)}</td>`; }).join("")}</tr>`;
   $("matrix").innerHTML = `<table>${head}${rows}${med}</table>`;
   $("matrix").querySelectorAll("td[data-i]").forEach(td => td.onclick = () => selectHour(+td.dataset.i));
   $("mxDay").textContent = dayLabel(state.day);
   $("mxNote").hidden = rain || feu || wol;
-  $("mxNote").innerHTML = mxMode === "boe" ? `Böe je Modell und Stunde in <span class="wu">${WU()}</span>. Gelb ab 75 % des Grenzwerts für die Böe, rot darüber. Zeigt, ob nur ein Ausreißer warnt oder fast alle.`
-    : `Wind je Modell und Stunde in <span class="wu">${WU()}</span>. Gelb ab 75 % des Grenzwerts, rot über dem Grenzwert. Mit der Maus über ein Feld fahren zeigt auch die Böe. Zeigt, ob nur ein Ausreißer warnt oder fast alle.`;
+  $("mxNote").innerHTML = mxMode === "boe" ? T(`Böe je Modell und Stunde in <span class="wu">${WU()}</span>. Gelb ab 75 % des Grenzwerts für die Böe, rot darüber. Zeigt, ob nur ein Ausreißer warnt oder fast alle.`, `Gust per model and hour in <span class="wu">${WU()}</span>. Yellow from 75 % of the gust limit, red above. Shows whether only one outlier warns or almost all.`)
+    : T(`Wind je Modell und Stunde in <span class="wu">${WU()}</span>. Gelb ab 75 % des Grenzwerts, rot über dem Grenzwert. Mit der Maus über ein Feld fahren zeigt auch die Böe. Zeigt, ob nur ein Ausreißer warnt oder fast alle.`, `Wind per model and hour in <span class="wu">${WU()}</span>. Yellow from 75 % of the limit, red above the limit. Hovering over a cell also shows the gust. Shows whether only one outlier warns or almost all.`);
   $("mxLegend").hidden = !(rain || feu || wol);
-  $("mxLegend").textContent = feu ? `Relative Luftfeuchte in % (2 m über Boden). Grün ab 60 %, kräftiger ab ${RH_MID} %, dunkel ab ${RH_HI} %: Nebel, Tau oder nasse Oberflächen wahrscheinlich.${coatOn(state.day) ? ` Gelber Rand: über ${coatRh()} % (Grenze Beschichten).` : ""} Nur Anzeige, die Ampel ändert sich dadurch nicht.`
-    : wol ? `Bewölkung gesamt: ☀️ klar · 🌤️ heiter · ⛅ wolkig · 🌥️ stark bewölkt · ☁️ bedeckt, nachts 🌙 bei klarem Himmel. Je kräftiger das Grau hinter dem Symbol, desto dichter die Wolken. Mit der Maus über ein Feld fahren zeigt den Wert in %. Nur Anzeige.`
-    : rain ? `Regen in mm/h. Hellblau: leicht (bis ${fmt(RAIN_LIGHT,1)}), mittelblau: mäßig (bis ${fmt(RAIN_MOD,1)}), dunkelblau: stark. Gelber Rand: ab ${fmt(RAIN_WARN,1)} mm/h (Prüfen in der Ampel). ⚡ Gewittersignal. Nur Anzeige, die Ampel ändert sich dadurch nicht.` : "";
+  $("mxLegend").textContent = feu ? T(`Relative Luftfeuchte in % (2 m über Boden). Grün ab 60 %, kräftiger ab ${RH_MID} %, dunkel ab ${RH_HI} %: Nebel, Tau oder nasse Oberflächen wahrscheinlich.${coatOn(state.day) ? ` Gelber Rand: über ${coatRh()} % (Grenze Beschichten).` : ""} Nur Anzeige, die Ampel ändert sich dadurch nicht.`, `Relative humidity in % (2 m above ground). Green from 60 %, stronger from ${RH_MID} %, dark from ${RH_HI} %: fog, dew or wet surfaces likely.${coatOn(state.day) ? ` Yellow border: above ${coatRh()} % (coating limit).` : ""} Display only, the traffic light does not change.`)
+    : wol ? T(`Bewölkung gesamt: ☀️ klar · 🌤️ heiter · ⛅ wolkig · 🌥️ stark bewölkt · ☁️ bedeckt, nachts 🌙 bei klarem Himmel. Je kräftiger das Grau hinter dem Symbol, desto dichter die Wolken. Mit der Maus über ein Feld fahren zeigt den Wert in %. Nur Anzeige.`, `Total cloud cover: ☀️ clear · 🌤️ mostly sunny · ⛅ partly cloudy · 🌥️ mostly cloudy · ☁️ overcast, at night 🌙 for a clear sky. The stronger the grey behind the symbol, the denser the clouds. Hovering over a cell shows the value in %. Display only.`)
+    : rain ? T(`Regen in mm/h. Hellblau: leicht (bis ${fmt(RAIN_LIGHT,1)}), mittelblau: mäßig (bis ${fmt(RAIN_MOD,1)}), dunkelblau: stark. Gelber Rand: ab ${fmt(RAIN_WARN,1)} mm/h (Prüfen in der Ampel). ⚡ Gewittersignal. Nur Anzeige, die Ampel ändert sich dadurch nicht.`, `Rain in mm/h. Light blue: light (up to ${fmt(RAIN_LIGHT,1)}), mid blue: moderate (up to ${fmt(RAIN_MOD,1)}), dark blue: heavy. Yellow border: from ${fmt(RAIN_WARN,1)} mm/h (check in the traffic light). ⚡ thunderstorm signal. Display only, the traffic light does not change.`) : "";
   document.querySelectorAll("#mxSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === mxMode)));
   highlightSel();
 }
@@ -91,35 +91,35 @@ function hourRows(hs, dots){
     <td class="num ${c.temp}">${fmt(h.tW,0)}</td>
     <td class="num">${fmt(h.chill,0)}</td>
     <td class="num ${c.rh}">${h.rh==null ? "–" : Math.round(h.rh)}</td>
-    <td class="num ${c.dew}" title="${h.dew==null ? "" : h.dew <= 0 ? "Taupunkt erreicht: Nebel oder Wolke in Arbeitshöhe, alles nass" : h.dew <= DEW_INFO ? "Kondenswasser möglich" : ""}">${h.dew==null ? "–" : h.dew <= 0 ? "Tau" : fmt(h.dew,1)}</td>
+    <td class="num ${c.dew}" title="${h.dew==null ? "" : h.dew <= 0 ? T("Taupunkt erreicht: Nebel oder Wolke in Arbeitshöhe, alles nass", "Dew point reached: fog or cloud at working height, everything wet") : h.dew <= DEW_INFO ? T("Kondenswasser möglich", "Condensation possible") : ""}">${h.dew==null ? "–" : h.dew <= 0 ? T("Tau", "Dew") : fmt(h.dew,1)}</td>
     <td class="why-cell">${esc(h.why.filter(w=>w.l!=="go").map(w=>shortWhy(w.t)).join(" · ")) || "–"}</td></tr>`; }).join("");
 }
 
-const HOUR_HEAD = `<thead><tr><th>Uhr</th><th>Wind <span class="wu">m/s</span></th><th>Spanne</th><th>Böe</th><th>Richtung</th><th title="Anzahl der Modelle mit Wind oder Böe über euren Grenzwerten">Modelle über Grenze</th><th title="Anteil der Szenarien, in denen Wind oder Böe über Grenze liegen">Zu windig</th><th>Regen</th><th>CAPE</th><th>°C Arbeit</th><th>Gefühlt</th><th title="Relative Luftfeuchte in 2 m">Feuchte %</th><th title="Taupunktabstand: wie weit die Temperatur in Arbeitshöhe über dem Taupunkt (2 m) liegt; Tau = Taupunkt erreicht">Taupunktabstand K</th><th>Gründe</th></tr></thead>`;
-function renderHourTable(){ $("hourTable").innerHTML = HOUR_HEAD + "<tbody>" + hourRows(dayHours(state.day), true) + "</tbody>"; $("hourDay").textContent = dayLabel(state.day); }
+const HOUR_HEAD = () => `<thead><tr><th>${T("Uhr", "Time")}</th><th>Wind <span class="wu">${WU()}</span></th><th>${T("Spanne", "Spread")}</th><th>${T("Böe", "Gust")}</th><th>${T("Richtung", "Direction")}</th><th title="${T("Anzahl der Modelle mit Wind oder Böe über euren Grenzwerten", "Number of models with wind or gust above your limits")}">${T("Modelle über Grenze", "Models above limit")}</th><th title="${T("Anteil der Szenarien, in denen Wind oder Böe über Grenze liegen", "Share of scenarios with wind or gust above the limit")}">${T("Zu windig", "Too windy")}</th><th>${T("Regen", "Rain")}</th><th>CAPE</th><th>${T("°C Arbeit", "°C work")}</th><th>${T("Gefühlt", "Feels like")}</th><th title="${T("Relative Luftfeuchte in 2 m", "Relative humidity at 2 m")}">${T("Feuchte %", "Humidity %")}</th><th title="${T("Taupunktabstand: wie weit die Temperatur in Arbeitshöhe über dem Taupunkt (2 m) liegt; Tau = Taupunkt erreicht", "Dew point spread: how far the temperature at working height is above the dew point (2 m); Dew = dew point reached")}">${T("Taupunktabstand K", "Dew pt spread K")}</th><th>${T("Gründe", "Reasons")}</th></tr></thead>`;
+function renderHourTable(){ $("hourTable").innerHTML = HOUR_HEAD() + "<tbody>" + hourRows(dayHours(state.day), true) + "</tbody>"; $("hourDay").textContent = dayLabel(state.day); }
 
 function renderModelTable(){
   $("modelDay").textContent = dayLabel(state.day);
   const idxs = dayIdx().filter(i => isWork(state.times[i]));
-  const label = {ok:["Aktiv","b-ok"], extrap:["Hochgerechnet","b-ext"], outside:["Deckt Standort nicht ab","b-out"], error:["Nicht abrufbar","b-err"]};
+  const label = {ok:[T("Aktiv","Active"),"b-ok"], extrap:[T("Hochgerechnet","Extrapolated"),"b-ext"], outside:[T("Deckt Standort nicht ab","Does not cover site"),"b-out"], error:[T("Nicht abrufbar","Unavailable"),"b-err"]};
   const order = {ok:0, extrap:1, outside:2, error:3};
   const rows = [...state.results].sort((a,b)=> order[a.status]-order[b.status] || (b.m.hi-a.m.hi)).map(r => {
     const can = r.status==="ok" || r.status==="extrap", off = can && isExcluded(r);
-    const [txt, cls] = off ? ["Ausgeschlossen","b-out"] : label[r.status];
+    const [txt, cls] = off ? [T("Ausgeschlossen","Excluded"),"b-out"] : label[r.status];
     let mx="–", first="–";
     if(r.series){
       const pts = idxs.map(i=>r.series[i] ? {t:state.times[i], ...r.series[i]} : null).filter(Boolean);
-      if(pts.length){ mx = fmt(Math.max(...pts.map(p=>p.v))); const f = pts.find(p=>p.v>site.wind || (p.g!=null && p.g>site.gust)); first = f ? hh(f.t)+" Uhr" : "nie"; }
+      if(pts.length){ mx = fmt(Math.max(...pts.map(p=>p.v))); const f = pts.find(p=>p.v>site.wind || (p.g!=null && p.g>site.gust)); first = f ? hh(f.t)+UHR() : T("nie", "never"); }
     }
     const cp = can ? cellPos(r) : null;
-    const lage = !cp ? "–" : cp.far ? `abweichend (${fmt(cp.dist,1)} km ${cp.dir})` : cp.edge ? `Rand (${cp.dir})` : "Mitte";
-    return `<tr class="${off ? "excl" : ""}"><td class="use">${can ? `<input type="checkbox" data-model="${esc(r.m.id)}" ${off ? "" : "checked"} aria-label="${esc(r.m.name)} (${esc(r.m.org)}) verwenden">` : ""}</td>
+    const lage = !cp ? "–" : cp.far ? `${T("abweichend", "offset")} (${fmt(cp.dist,1)} km ${cp.dir})` : cp.edge ? `${T("Rand", "edge")} (${cp.dir})` : T("Mitte", "centre");
+    return `<tr class="${off ? "excl" : ""}"><td class="use">${can ? `<input type="checkbox" data-model="${esc(r.m.id)}" ${off ? "" : "checked"} aria-label="${esc(r.m.name)} (${esc(r.m.org)}) ${T("verwenden", "use")}">` : ""}</td>
       <td>${esc(r.m.name)} <span class="muted">· ${esc(r.m.org)}</span></td><td>${esc(r.m.res)}</td>
-      <td class="${cp && (cp.edge || cp.far) ? "cell-edge" : ""}" title="${cp ? `Standort liegt ${fmt(cp.dist,1)} km von der Mitte der Modellzelle (Zellgröße ${fmt(cp.res,1)} km) entfernt` : ""}">${lage}</td>
+      <td class="${cp && (cp.edge || cp.far) ? "cell-edge" : ""}" title="${cp ? T(`Standort liegt ${fmt(cp.dist,1)} km von der Mitte der Modellzelle (Zellgröße ${fmt(cp.res,1)} km) entfernt`, `Site is ${fmt(cp.dist,1)} km from the centre of the model cell (cell size ${fmt(cp.res,1)} km)`) : ""}">${lage}</td>
       <td><span class="badge ${cls}" title="${esc(r.reason||"")}">${txt}</span></td><td class="num">${mx}</td><td class="num">${first}</td>
-      <td class="num raw"><a href="${esc(apiUrl(r.m))}" target="_blank" rel="noopener" title="Rohdaten dieses Modells direkt von Open-Meteo">JSON</a> · <a href="${esc(apiUrl(r.m,"csv"))}" target="_blank" rel="noopener" title="Als CSV, z. B. für Excel">CSV</a></td></tr>`;
+      <td class="num raw"><a href="${esc(apiUrl(r.m))}" target="_blank" rel="noopener" title="${T("Rohdaten dieses Modells direkt von Open-Meteo", "Raw data of this model directly from Open-Meteo")}">JSON</a> · <a href="${esc(apiUrl(r.m,"csv"))}" target="_blank" rel="noopener" title="${T("Als CSV, z. B. für Excel", "As CSV, e.g. for Excel")}">CSV</a></td></tr>`;
   });
-  $("modelTable").innerHTML = `<thead><tr><th title="Häkchen: Modell geht in die Bewertung ein">Nutzen</th><th>Modell</th><th>Auflösung</th><th title="Lage des Standorts in der Gitterzelle des Modells">Lage in der Zelle</th><th>Status</th><th>Max. Wind</th><th>Über Grenze ab</th><th class="raw">Rohdaten</th></tr></thead><tbody>${rows.join("")}</tbody>`;
+  $("modelTable").innerHTML = `<thead><tr><th title="${T("Häkchen: Modell geht in die Bewertung ein", "Tick: model is included in the assessment")}">${T("Nutzen", "Use")}</th><th>${T("Modell", "Model")}</th><th>${T("Auflösung", "Resolution")}</th><th title="${T("Lage des Standorts in der Gitterzelle des Modells", "Position of the site in the model grid cell")}">${T("Lage in der Zelle", "Position in cell")}</th><th>Status</th><th>Max. Wind</th><th>${T("Über Grenze ab", "Above limit from")}</th><th class="raw">${T("Rohdaten", "Raw data")}</th></tr></thead><tbody>${rows.join("")}</tbody>`;
   $("modelTable").querySelectorAll("input[data-model]").forEach(c => c.onchange = () => setModelUsed(c.dataset.model, c.checked));
   renderRanking();
 }

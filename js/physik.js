@@ -31,12 +31,12 @@ const workH = () => site.work || site.hub;
 /* Einsatz an einer Windenergieanlage (Standard) oder allgemein (Fassade, Brücke, Turm …): ohne Windkraft gibt es keine Nabe, Rotor und Gondel.
    Beim Speichern wird dann hub = Arbeitshöhe und rotor = 0 gesetzt, damit alle Berechnungen unverändert laufen. */
 const isWind = () => site.windkraft !== false;
-const topWord = () => isWind() ? "Nabe" : "Arbeitshöhe";
+const topWord = () => isWind() ? T("Nabe", "hub") : T("Arbeitshöhe", "working height");
 const accessMode = () => !isWind() && site.access === "nacelle" ? "ground" : (site.access || "ground");
 const zoneBottom = () => accessMode()==="ground" ? Math.min(10, workH()) : workH();
 const zoneTop = () => accessMode()==="nacelle" && workH() < site.hub ? site.hub : workH();
-const zoneTxt = () => zoneBottom() < workH() ? `bis ${workH()} m` : zoneTop() !== workH() ? `${workH()}–${zoneTop()} m` : `${workH()} m`;
-const ACCESS_TXT = {ground:"Aufstieg vom Boden", nacelle:"Abstieg von der Gondel", none:"nur Arbeitshöhe"};
+const zoneTxt = () => zoneBottom() < workH() ? `${T("bis", "up to")} ${workH()} m` : zoneTop() !== workH() ? `${workH()}–${zoneTop()} m` : `${workH()} m`;
+const ACCESS_TXT = {get ground(){ return T("Aufstieg vom Boden", "ascent from the ground"); }, get nacelle(){ return T("Abstieg von der Gondel", "descent from the nacelle"); }, get none(){ return T("nur Arbeitshöhe", "working height only"); }};
 /* Lage des Standorts in der Gitterzelle eines Modells (ohne zusätzliche Abrufe: Open-Meteo nennt die Zellmitte).
    Rand: Standort liegt nahe an der Zellgrenze, die Nachbarzelle kann anders rechnen. Abweichend: gewählte Zelle liegt weiter weg als eine Halbzelle
    (z. B. Landzelle statt Wasserzelle am Ufer). */

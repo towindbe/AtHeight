@@ -1,8 +1,8 @@
 /* Windbericht · mitlaufende Kurzleiste (Ampel, gewählte Stunde, Sprungmarken), sobald das Arbeitsfenster nach oben aus dem Bild ist */
 "use strict";
 
-const NAV_SECTIONS = [["chartCard","Wind"], ["sec-richtung","Richtung"], ["sec-regen","Regen"], ["sec-temp","Temperatur"],
-  ["sec-modelle","Modelle"], ["sec-ausblick","Ausblick"], ["sec-bericht","Bericht"]];
+const NAV_SECTIONS = () => [["chartCard","Wind"], ["sec-richtung",T("Richtung","Direction")], ["sec-regen",T("Regen","Rain")], ["sec-temp",T("Temperatur","Temperature")],
+  ["sec-modelle",T("Modelle","Models")], ["sec-ausblick",T("Ausblick","Outlook")], ["sec-bericht",T("Bericht","Report")]];
 let stickyPast = false;   // Arbeitsfenster ist nach oben aus dem Bild gescrollt
 
 function renderSticky(){
@@ -12,7 +12,7 @@ function renderSticky(){
   bar.hidden = !stickyPast;
   $("sbLamp").className = "sb-lamp c-" + day.lamp;
   $("sbLamp").textContent = LAMP_TXT[day.lamp];
-  $("sbHour").innerHTML = `<b>${esc(dayLabel(h.t.slice(0,10), true))}, ${hh(h.t)} Uhr</b> <span class="dot d-${h.lamp}"></span> ${esc(fw(h.med))} · Böe ${esc(fwu(h.gMed))}`;
+  $("sbHour").innerHTML = `<b>${esc(dayLabel(h.t.slice(0,10), true))}, ${hh(h.t)}${UHR()}</b> <span class="dot d-${h.lamp}"></span> ${esc(fw(h.med))} · ${T("Böe", "Gust")} ${esc(fwu(h.gMed))}`;
   $("sbPrev").disabled = state.sel <= 0;
   $("sbNext").disabled = state.sel >= state.hours.length - 1;
   renderStickyDays();
@@ -25,7 +25,7 @@ function renderStickyDays(){
   if($("sbDays").dataset.key === key) return;
   $("sbDays").dataset.key = key;
   $("sbDays").innerHTML = days.map(d => { const l = buildSummary(dayHours(d)).lamp, lab = dayLabel(d, true);
-    const short = lab === "Übermorgen" ? new Date(d+"T12:00:00").toLocaleDateString("de-DE", {weekday:"short"}) : lab;
+    const short = lab === T("Übermorgen", "Day after") ? new Date(d+"T12:00:00").toLocaleDateString(LOC(), {weekday:"short"}) : lab;
     return `<button type="button" data-day="${d}" aria-pressed="${d===state.day}" aria-label="${esc(lab)}: ${LAMP_TXT[l]}"><i class="dot d-${l}"></i>${esc(short)}</button>`; }).join("");
 }
 /* schmales Arbeitsfenster: eine Zelle je Stunde, wie die große Zeitleiste, zum seitlichen Durchscrollen */
@@ -37,7 +37,7 @@ function renderStrip(){
     const nk = nowKey();
     box.innerHTML = state.hours.map((h, k) => {
       const first = k===0 || h.t.slice(0,10) !== state.hours[k-1].t.slice(0,10);
-      return `<button type="button" class="tl-cell c-${h.lamp} ${isWork(h.t)?"":"off"} ${h.dark?"dark":""} ${h.t.slice(0,13)===nk?"nowc":""} ${first?"dstart":""}" data-i="${h.i}" aria-label="${esc(dayLabel(h.t.slice(0,10), true))} ${hh(h.t)} Uhr: ${LAMP_TXT[h.lamp]}, ${esc(fwu(h.med))}"><span>${first ? esc(dayLabel(h.t.slice(0,10))) : hourOf(h.t)%3===0 ? hh(h.t) : ""}</span></button>`;
+      return `<button type="button" class="tl-cell c-${h.lamp} ${isWork(h.t)?"":"off"} ${h.dark?"dark":""} ${h.t.slice(0,13)===nk?"nowc":""} ${first?"dstart":""}" data-i="${h.i}" aria-label="${esc(dayLabel(h.t.slice(0,10), true))} ${hh(h.t)}${UHR()}: ${LAMP_TXT[h.lamp]}, ${esc(fwu(h.med))}"><span>${first ? esc(dayLabel(h.t.slice(0,10))) : hourOf(h.t)%3===0 ? hh(h.t) : ""}</span></button>`;
     }).join("");
   }
   let selBtn = null;
@@ -59,8 +59,10 @@ function stripScrubbed(){
   if(best && +best.dataset.i !== state.sel) selectHour(+best.dataset.i);
 }
 
+// Sprungmarken der Kurzleiste (beim Sprachwechsel neu aufgebaut)
+function initStickyNav(){ $("sbNav").innerHTML = NAV_SECTIONS().map(([id, t]) => `<button type="button" data-go="${id}">${t}</button>`).join(""); $("sbDays").dataset.key = ""; }
 function initSticky(){
-  $("sbNav").innerHTML = NAV_SECTIONS.map(([id, t]) => `<button type="button" data-go="${id}">${t}</button>`).join("");
+  initStickyNav();
   $("sbNav").addEventListener("click", e => {
     const b = e.target.closest("button[data-go]"), el = b && $(b.dataset.go);
     if(!el) return;
