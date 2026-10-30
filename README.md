@@ -1,4 +1,4 @@
-# Windbericht für Höhenarbeit
+# JobsiteWX – Wetter-Check für Höhenarbeit
 
 Wind- und Wetterbericht in Nabenhöhe für Seilarbeiten an Windenergieanlagen. Eigenständige Web-App (eine HTML-Datei, kein Build).
 

@@ -1,6 +1,6 @@
 {
-  "name": "Windbericht für Höhenarbeit",
-  "short_name": "Windbericht",
+  "name": "JobsiteWX – Wetter-Check für Höhenarbeit",
+  "short_name": "JobsiteWX",
   "description": "Wind- und Wetterbericht in Nabenhöhe für Seilarbeiten an Windenergieanlagen. Entscheidungshilfe, keine Freigabe.",
   "lang": "de",
   "start_url": "windbericht.html",

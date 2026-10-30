@@ -117,7 +117,7 @@ async function buildReport(){
       Prüfen bei einzelnen Modellen über Grenzwert, Gewittersignal, CAPE ab ${CAPE_WARN} J/kg, Regen ab ${fmt(RAIN_WARN)} mm/h, mind. ${Math.round(ENS_WARN*100)} % der Szenarien über Grenze oder amtlicher Warnung. Nacht nur als Hinweis.
       Wind als Stundenwert der Modelle; kurzzeitig (z. B. im 10-Minuten-Mittel der Anlage) kann der Wind darüber liegen. Wind auf den Arbeitsbereich interpoliert (Höchstwert im Bereich), Böen in der Höhe aus dem 10-m-Böenfaktor geschätzt. Datenquelle Open-Meteo.com (CC BY 4.0).
       <b>Grenzen:</b> Die Prognosewerte sind Stundenmittel und können kurzzeitig überschritten werden. Lokale Effekte (Kuppen und Gelände, Nachlauf anderer Anlagen, Böenfronten, einzelne Gewitterzellen) bilden die Modelle nicht ab, Wind und Böen in der Höhe sind berechnet bzw. geschätzt, und die Prognose kann sich ändern. Wind vor Ort messen, bei Unsicherheit abbrechen.
-      Entscheidungshilfe; die Freigabe trifft der Aufsichtführende. Windbericht-Version ${esc(snap.version)}.
+      Entscheidungshilfe; die Freigabe trifft der Aufsichtführende. JobsiteWX-Version ${esc(snap.version)}.
     </div>
 
     <div class="sig"><div>Datum, Unterschrift Aufsichtführender</div><div>Datum, Unterschrift Auftraggeber (optional)</div></div>

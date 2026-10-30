@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0d1217">
-<title>So funktioniert der Windbericht</title>
+<title>So funktioniert JobsiteWX</title>
 <script>/* Hell nur, wenn so gewählt (Standard dunkel); vor dem Zeichnen setzen, damit nichts aufblitzt */
 try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-30l">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-30o">
 <style>
   .info h2{margin-bottom:2px}
   .info .ico{width:1.1em;height:1.1em;vertical-align:-3px}
@@ -31,15 +31,15 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
     <div class="brand-wrap" style="min-width:0">
       <img class="brand-logo logo-dunkel" src="icons/logo.svg" alt="" width="40" height="40"><img class="brand-logo logo-hell" src="icons/logo-hell.svg" alt="" width="40" height="40">
       <div style="min-width:0">
-        <div class="eyebrow">Windbericht für Höhenarbeit</div>
-        <h1>So funktioniert der Windbericht</h1>
+        <div class="eyebrow eyebrow-brand"><b class="bn">JobsiteWX</b> · Wetter-Check für Höhenarbeit</div>
+        <h1>So funktioniert JobsiteWX</h1>
       </div>
     </div>
     <div class="row"><a href="windbericht.html"><button type="button">← Zurück zur App</button></a></div>
   </header>
 
   <section class="card">
-    <p>Der Windbericht bewertet für eine bestimmte Anlage, ob der Wind in eurer <b>Arbeitshöhe</b> unter euren <b>Grenzwerten</b> bleibt, und dokumentiert die Prognose im Tagesbericht. Er ist eine <b>Entscheidungshilfe</b>: Die Freigabe trifft der Aufsichtführende, vor Ort und mit eigenem Urteil.</p>
+    <p>JobsiteWX bewertet für eine bestimmte Anlage, ob der Wind in eurer <b>Arbeitshöhe</b> unter euren <b>Grenzwerten</b> bleibt, und dokumentiert die Prognose im Tagesbericht. Er ist eine <b>Entscheidungshilfe</b>: Die Freigabe trifft der Aufsichtführende, vor Ort und mit eigenem Urteil.</p>
     <nav class="toc" aria-label="Inhalt">
       <a href="#wind">Wind und Böe</a><a href="#stunde">Stundenwerte</a><a href="#hoehe">Arbeitsbereich</a><a href="#ampel">Ampel</a>
       <a href="#szenarien">Zu windig (Szenarien)</a><a href="#modelle">Modelle und Spanne</a><a href="#warnungen">Warnungen</a><a href="#feuchte">Feuchte, Taupunkt, Wolken</a><a href="#diagramme">Diagramme und Matrix</a>
@@ -55,7 +55,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <tr><td><b>Böe</b></td><td>kurze Windspitzen von wenigen Sekunden.</td><td>15 m/s</td></tr>
     </table>
     <p>Beide Grenzen tragt ihr in den Einstellungen ein, nach den Vorgaben von Betreiber, Hersteller und Auftraggeber. Rot wird es erst <b>über</b> der Grenze; genau 12,0 m/s gilt noch als zulässig. Die Einheit (m/s, km/h oder Knoten) stellt ihr in den Einstellungen um; sie gilt für alle Anzeigen und den gedruckten Bericht. Gerechnet wird immer in m/s (1 m/s = 3,6 km/h ≈ 1,94 kn), die JSON-Datei bleibt in m/s.</p>
-    <p>Die Wettermodelle liefern Böen nur in 10 m Höhe. Die Böe in Arbeitshöhe schätzt der Windbericht aus dem Böenfaktor in 10 m (Verhältnis von Böe zu Wind) und rechnet ihn auf die Höhe um.</p>
+    <p>Die Wettermodelle liefern Böen nur in 10 m Höhe. Die Böe in Arbeitshöhe schätzt JobsiteWX aus dem Böenfaktor in 10 m (Verhältnis von Böe zu Wind) und rechnet ihn auf die Höhe um.</p>
   </section>
 
   <section class="card" id="stunde">
@@ -70,7 +70,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
     <ul>
       <li><b>Arbeitshöhe:</b> die Höhe, in der ihr arbeitet (z. B. 80 m am Turm). Leer = Nabenhöhe.</li>
       <li><b>Zugang zur Arbeitshöhe:</b> bewertet wird der stärkste Wind auf dem ganzen Seilweg. <i>Vom Boden am Seil nach oben</i> (Standard): 10 m bis Arbeitshöhe, angezeigt als „bis 80 m“. <i>Von der Gondel am Seil nach unten</i>: Arbeitshöhe bis Nabe, angezeigt als „80–125 m“. <i>Nur Arbeitshöhe</i>: nur diese eine Höhe. Meist ist der Wind oben am stärksten; bei Inversionen oder Strahlströmen in geringer Höhe kann es weiter unten windiger sein.</li>
-      <li>Die Modelle liefern Wind in 10, 80, 120 und 180 m. Dazwischen rechnet der Windbericht geradlinig um, darüber mit einem Höhen-Exponenten aus den beiden obersten Höhen. Modelle, die nur 10-m-Wind liefern, werden mit einer Faustformel hochgerechnet und als „hochgerechnet“ gekennzeichnet.</li>
+      <li>Die Modelle liefern Wind in 10, 80, 120 und 180 m. Dazwischen rechnet JobsiteWX geradlinig um, darüber mit einem Höhen-Exponenten aus den beiden obersten Höhen. Modelle, die nur 10-m-Wind liefern, werden mit einer Faustformel hochgerechnet und als „hochgerechnet“ gekennzeichnet.</li>
       <li>Die Temperatur in Arbeitshöhe kommt aus den Höhenwerten der Modelle, sonst 0,65 °C kälter je 100 m. Die gefühlte Temperatur berücksichtigt den Wind (Windchill).</li>
     </ul>
   </section>
@@ -91,13 +91,13 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
   <section class="card" id="szenarien">
     <h2>„Zu windig“ und Szenarien</h2>
     <p>Die Wetterdienste rechnen ihre Vorhersage nicht nur einmal, sondern viele Male mit minimal veränderten Ausgangswerten, weil die Messungen am Start nie ganz genau sind: der DWD 20-mal (ICON-D2-EPS), das europäische Zentrum ECMWF 51-mal (ECMWF-ENS). Das nennt man eine <b>Ensemble-Vorhersage</b>, jede einzelne Rechnung ein Ensemblemitglied. In der App heißt sie kurz <b>Szenario</b>.</p>
-    <p>Der Windbericht rechnet jedes Szenario auf euren Arbeitsbereich um und zählt, in wie vielen Wind oder Böe über euren Grenzen liegen. <b>„Zu windig 30 %“</b> heißt: in 30 % der möglichen Wetterverläufe wird es zu windig, bei 71 Szenarien also in 21. Der Balken zeigt dasselbe farbig: grün unter 10 %, gelb ab 10 %, rot ab 30 %. Es ist ein Anteil der Szenarien, keine geprüfte Wahrscheinlichkeit.</p>
+    <p>JobsiteWX rechnet jedes Szenario auf euren Arbeitsbereich um und zählt, in wie vielen Wind oder Böe über euren Grenzen liegen. <b>„Zu windig 30 %“</b> heißt: in 30 % der möglichen Wetterverläufe wird es zu windig, bei 71 Szenarien also in 21. Der Balken zeigt dasselbe farbig: grün unter 10 %, gelb ab 10 %, rot ab 30 %. Es ist ein Anteil der Szenarien, keine geprüfte Wahrscheinlichkeit.</p>
   </section>
 
   <section class="card" id="modelle">
     <h2>Modelle, Spanne und Modellvergleich</h2>
     <ul>
-      <li>Der Windbericht nutzt bis zu 16 Wettermodelle von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA, KNMI, DMI und Kanada. Modelle, die den Standort nicht abdecken, fallen automatisch weg. Einzelne Modelle lassen sich in der Modelltabelle per Häkchen ausschließen.</li>
+      <li>JobsiteWX nutzt bis zu 16 Wettermodelle von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA, KNMI, DMI und Kanada. Modelle, die den Standort nicht abdecken, fallen automatisch weg. Einzelne Modelle lassen sich in der Modelltabelle per Häkchen ausschließen.</li>
       <li><b>Median:</b> der mittlere Wert aller Modelle; er ist robust gegen einzelne Ausreißer.</li>
       <li><b>Einigkeit der Modelle:</b> oben steht immer, wie einig sich die Modelle sind (grün „weitgehend einig“, gelb „streuen mäßig“, blau „Lage unsicher“), mit dem höchsten Wind der Arbeitszeit. <b>Lage unsicher:</b> streuen die Modelle stark (mittlere Spanne ab 5 m/s), zeigt die App den höchsten Wind der Arbeitszeit getrennt für hochauflösende Modelle (1–5 km) und regionale/globale Modelle (7–25 km), dazu das stürmischste Modell. Es wird dabei kein Modell aus der Bewertung genommen: Ausreißer können recht haben.</li>
       <li><b>Spanne:</b> vom vorsichtigsten bis zum stürmischsten Modell. Schmal heißt: die Modelle sind sich einig. Breit heißt: unsicher.</li>
@@ -140,7 +140,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
     <details>
       <summary><b>Genauer: wie der Taupunkt berechnet wird</b></summary>
       <ul>
-        <li>Der Taupunkt ist die Temperatur, bei der sich Wasser aus der Luft niederschlägt. Der Windbericht berechnet ihn je Modell aus Temperatur und Luftfeuchte in 2 m (Magnus-Formel: Taupunkt = 243,12 · γ / (17,62 − γ) mit γ = ln(Feuchte/100) + 17,62 · T / (243,12 + T), T in °C). Beispiel: 10 °C bei 80 % ergeben 6,7 °C.</li>
+        <li>Der Taupunkt ist die Temperatur, bei der sich Wasser aus der Luft niederschlägt. JobsiteWX berechnet ihn je Modell aus Temperatur und Luftfeuchte in 2 m (Magnus-Formel: Taupunkt = 243,12 · γ / (17,62 − γ) mit γ = ln(Feuchte/100) + 17,62 · T / (243,12 + T), T in °C). Beispiel: 10 °C bei 80 % ergeben 6,7 °C.</li>
         <li><b>Warum Temperatur oben, Taupunkt unten?</b> Die Modelle liefern die Feuchte nur in 2 m. Der Taupunkt von dort wird mit der Lufttemperatur in Arbeitshöhe verglichen. Mit der Höhe sinkt der Taupunkt etwas (etwa 0,2 K je 100 m), die Temperatur meist stärker. Der echte Taupunktabstand oben ist deshalb meist etwas größer als berechnet: Die Warnung kommt eher zu früh als zu spät. Bei Inversion (oben wärmer als unten, z. B. morgens in Tälern) kann es umgekehrt sein.</li>
         <li><b>Temperatur unter dem Taupunkt (2 m)</b> ist kein Rechenfehler: Die feuchte Luft vom Boden würde oben sofort kondensieren, die Luft in Arbeitshöhe ist gesättigt. Wie weit darunter, sagt nichts Zusätzliches; deshalb steht in der Zeile nur „Tau“.</li>
       </ul>
@@ -171,17 +171,17 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <li>Messstationen: DWD über Bright Sky, GeoSphere Austria Data Hub. Warnungen: DWD, GeoSphere Austria. Radar: DWD. Satellitenbild: Esri. Ortssuche: OpenStreetMap (Nominatim).</li>
       <li><b>Modellzellen:</b> Jedes Modell rechnet in Gitterzellen (hochauflösende etwa 1 bis 2,5 km, gröbere 7 bis 25 km). Es gilt der Wert der Zelle, in der der Standort liegt. Liegt der Standort am <b>Rand</b> einer Zelle, kann die Nachbarzelle (zum Beispiel über dem See oder auf der anderen Seite einer Kuppe) deutlich anderen Wind rechnen. Die Modelltabelle zeigt je Modell die „Lage in der Zelle“, und ein Hinweis erscheint, wenn mehrere hochauflösende Modelle am Zellrand liegen. Das ist nur ein Hinweis, die Ampel ändert sich nicht.</li>
       <li>Wettermodelle können irren, besonders bei Gewittern, im Gebirge und bei Fronten. Lokale Effekte an der Anlage (Turbulenz, Abschattung, Gelände) erfasst kein Modell vollständig.</li>
-      <li>Der Windbericht ersetzt nicht die Beurteilung vor Ort. Jeder im Team darf die Arbeit jederzeit abbrechen, wenn es unsicher wird.</li>
-      <li>Der Windbericht ist eine <b>Entscheidungshilfe, keine Freigabe</b>. Die Entscheidung trifft der Aufsichtführende. Die Grenzwerte trägt ihr selbst ein, sie richten sich nach den Vorgaben von Hersteller und Auftraggeber.</li>
+      <li>JobsiteWX ersetzt nicht die Beurteilung vor Ort. Jeder im Team darf die Arbeit jederzeit abbrechen, wenn es unsicher wird.</li>
+      <li>JobsiteWX ist eine <b>Entscheidungshilfe, keine Freigabe</b>. Die Entscheidung trifft der Aufsichtführende. Die Grenzwerte trägt ihr selbst ein, sie richten sich nach den Vorgaben von Hersteller und Auftraggeber.</li>
       <li>Wind und Böen sind <b>Stundenwerte</b>. Kurzzeitig kann der Wind darüber liegen. Wind in der Höhe ist berechnet, Böen sind geschätzt. Windrichtungswechsel, Böenfronten und einzelne Gewitterzellen können schneller kommen, als die Prognose zeigt.</li>
       <li>Gelände, Kuppen, Nachlauf anderer Anlagen und Turbulenz am Turm erfasst kein Modell. <b>Wind vor Ort messen</b> und bei Unsicherheit abbrechen.</li>
-      <li>Jeder Tagesbericht trägt Stand der Prognose, Version des Windberichts und eine Prüfsumme. So lässt sich später nachvollziehen, womit entschieden wurde.</li>
+      <li>Jeder Tagesbericht trägt Stand der Prognose, Version von JobsiteWX und eine Prüfsumme. So lässt sich später nachvollziehen, womit entschieden wurde.</li>
     </ul>
   </section>
 
   <footer class="foot"><p class="note">© 2026 Tobias Windberg · <a href="https://www.windberg-ropeaccess.com" target="_blank" rel="noopener">www.windberg-ropeaccess.com</a> · <a href="windbericht.html">Zurück zur App</a></p></footer>
 </div>
-<script src="js/hilfen.js?v=2026-10-30l"></script>
+<script src="js/hilfen.js?v=2026-10-30o"></script>
 <script>
   // Symbol-Platzhalter füllen (wie in der App)
   document.querySelectorAll("[data-ico]").forEach(e => { e.outerHTML = icon(e.dataset.ico); });

@@ -93,7 +93,7 @@ function installShow(ios){
   const box = document.createElement("div");
   box.id = "installBox"; box.className = "install-box"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", "App installieren");
   box.innerHTML = `<img src="icons/icon-192.png" alt="" width="44" height="44">
-    <div><b>Windbericht als App installieren</b><span>${ios ? "Teilen-Symbol antippen, dann „Zum Home-Bildschirm“. Danach ohne Browserleiste und mit gespeichertem Stand ohne Netz." : "Startet ohne Browserleiste, mit Symbol auf dem Startbildschirm und gespeichertem Stand ohne Netz."}</span></div>
+    <div><b>JobsiteWX als App installieren</b><span>${ios ? "Teilen-Symbol antippen, dann „Zum Home-Bildschirm“. Danach ohne Browserleiste und mit gespeichertem Stand ohne Netz." : "Startet ohne Browserleiste, mit Symbol auf dem Startbildschirm und gespeichertem Stand ohne Netz."}</span></div>
     <div class="ib-btns">${ios ? "" : `<button type="button" class="primary" id="installGo">Installieren</button>`}<button type="button" class="ghost" id="installLater">Später</button></div>`;
   document.body.appendChild(box);
   $("installLater").onclick = () => installClose(true);
