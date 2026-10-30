@@ -20,9 +20,9 @@ const ICON_PATHS = {
   report:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
   cloud:'<path d="M17.5 19H8a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 19 11.5a3.75 3.75 0 0 1-1.5 7.5z"/>',
   clouds:'<path d="M16.5 20H8.5a3.5 3.5 0 0 1-.4-6.98A5 5 0 0 1 18 14a3 3 0 0 1-1.5 6z"/><path d="M8 10.2A5 5 0 0 1 17.6 9"/>',
-  cloudsun:'<path d="M12 3v1.5M5 6l1 1M19 6l-1 1M3 12h1.5M20 12h1.5"/><path d="M8.2 12.6a4 4 0 1 1 7.1-2.8"/><path d="M17 20H9.5a3.25 3.25 0 0 1-.3-6.5A4.5 4.5 0 0 1 18 14.5a2.75 2.75 0 0 1-1 5.5z"/>',
-  sunfew:'<circle cx="10" cy="10" r="3.5"/><path d="M10 3v1.5M3 10h1.5M5 5l1 1M15 5l-1 1M5 15l1-1"/><path d="M19 20h-5a2.5 2.5 0 0 1-.2-5 3.5 3.5 0 0 1 6.7 1.3 2 2 0 0 1-1.5 3.700z"/>',
-  moonfew:'<path d="M15 9.5A6 6 0 1 1 8.5 3a4.8 4.8 0 0 0 6.5 6.5z"/><path d="M19 20h-5a2.5 2.5 0 0 1-.2-5 3.5 3.5 0 0 1 6.7 1.3 2 2 0 0 1-1.5 3.700z"/>',
+  cloudsun:'<g class="ic-a"><path d="M12 3v1.5M5 6l1 1M19 6l-1 1M3 12h1.5M20 12h1.5"/><path d="M8.2 12.6a4 4 0 1 1 7.1-2.8"/></g><path d="M17 20H9.5a3.25 3.25 0 0 1-.3-6.5A4.5 4.5 0 0 1 18 14.5a2.75 2.75 0 0 1-1 5.5z"/>',
+  sunfew:'<g class="ic-a"><circle cx="10" cy="10" r="3.5"/><path d="M10 3v1.5M3 10h1.5M5 5l1 1M15 5l-1 1M5 15l1-1"/></g><path d="M19 20h-5a2.5 2.5 0 0 1-.2-5 3.5 3.5 0 0 1 6.7 1.3 2 2 0 0 1-1.5 3.700z"/>',
+  moonfew:'<path class="ic-a" d="M15 9.5A6 6 0 1 1 8.5 3a4.8 4.8 0 0 0 6.5 6.5z"/><path d="M19 20h-5a2.5 2.5 0 0 1-.2-5 3.5 3.5 0 0 1 6.7 1.3 2 2 0 0 1-1.5 3.700z"/>',
   matrix:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>'
 };
 // Nach dem Einblenden einer Erklärung dorthin scrollen (sie steht oft weiter unten in der Karte)

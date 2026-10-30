@@ -10,13 +10,13 @@ const RH_MID = 85, RH_HI = 95;
 const rhCls = v => v==null ? "m-none" : v >= RH_HI ? "f-3" : v >= RH_MID ? "f-2" : v >= 60 ? "f-1" : "f-0";
 // Bewölkung in Achteln wie im Wetterbericht: klar, heiter, wolkig, stark bewölkt, bedeckt; nachts Mond statt Sonne (Linien-Symbole, Farbe = Textfarbe)
 function cloudSym(cc, dark){
-  if(cc==null) return ["·", "keine Angabe"];
+  if(cc==null) return ["·", "keine Angabe", ""];
   const o = Math.round(cc/12.5);
-  if(o <= 1) return [icon(dark ? "moon" : "sun", 22), "klar"];
-  if(o <= 3) return [icon(dark ? "moonfew" : "sunfew", 22), "heiter"];
-  if(o <= 5) return [icon(dark ? "cloud" : "cloudsun", 22), "wolkig"];
-  if(o <= 6) return [icon("cloud", 22), "stark bewölkt"];
-  return [icon("clouds", 22), "bedeckt"];
+  if(o <= 1) return [icon(dark ? "moon" : "sun", 22), "klar", dark ? "cl-moon" : "cl-sun"];
+  if(o <= 3) return [icon(dark ? "moonfew" : "sunfew", 22), "heiter", dark ? "cl-moonc" : "cl-sunc"];
+  if(o <= 5) return dark ? [icon("cloud", 22), "wolkig", "cl-cloud"] : [icon("cloudsun", 22), "wolkig", "cl-sunc"];
+  if(o <= 6) return [icon("cloud", 22), "stark bewölkt", "cl-cloud"];
+  return [icon("clouds", 22), "bedeckt", "cl-cloud"];
 }
 function renderMatrix(){
   const idxs = dayIdx().filter(i => isWork(state.times[i]));
@@ -30,8 +30,8 @@ function renderMatrix(){
   const u = usableModels().sort((a,b)=> (b.m.hi-a.m.hi));
   const head = `<tr><th></th>${idxs.map(i=>`<th>${hh(state.times[i])}</th>`).join("")}</tr>`;
   const rhTd = (v, i, tip, b) => `<td class="${rhCls(v)}${coatOn(state.day) && v!=null && v > coatRh() ? " r-w" : ""}" data-i="${i}" title="${tip}"${b ? ' style="font-weight:700"' : ""}>${v==null ? "·" : Math.round(v)}</td>`;
-  const ccTd = (v, i, tip) => { const [sym, txt] = cloudSym(v, isDark(state.times[i]));
-    return `<td class="cl" data-i="${i}" title="${tip}: ${txt}${v==null ? "" : " (" + Math.round(v) + " %)"}" style="--cc:${v==null ? 0 : (v/100).toFixed(2)}">${sym}</td>`; };
+  const ccTd = (v, i, tip) => { const [sym, txt, kind] = cloudSym(v, isDark(state.times[i]));
+    return `<td class="cl ${kind}" data-i="${i}" title="${tip}: ${txt}${v==null ? "" : " (" + Math.round(v) + " %)"}" style="--cc:${v==null ? 0 : (v/100).toFixed(2)}">${sym}</td>`; };
   const cellOf = (s, i, r) => {
     if(feu) return rhTd(s?.rh, i, `${esc(r.m.name)} ${hh(state.times[i])} Uhr: Luftfeuchte ${s?.rh==null ? "–" : Math.round(s.rh)+" %"}`);
     if(wol) return ccTd(s?.cc, i, `${esc(r.m.name)} ${hh(state.times[i])} Uhr`);

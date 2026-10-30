@@ -524,6 +524,12 @@ body.unconfirmed #timeline,body.unconfirmed #sbStrip{filter:grayscale(1);opacity
 .mx td.f-1{background:rgba(95,190,190,.22)} .mx td.f-2{background:rgba(95,190,190,.5)} .mx td.f-3{background:#3a9a9a;color:#fff}
 .mx td.cl{background:rgba(128,138,150,calc(var(--cc) * .55));font-size:15px;line-height:1}
 .mx td.cl .ico{vertical-align:middle}
+/* Wolken-Matrix: Sonne gelb, Mond hellblau, Wolken in Wolkenfarbe; bei Sonne/Mond mit Wolke wird nur der Sonnen-/Mondteil (ic-a) gefärbt */
+.mx td.cl{--sun:#f2b84b;--moon:#b9c6ff;--wolke:#9fb0c0}
+:root[data-theme="light"] .mx td.cl{--sun:#c98a0a;--moon:#5a6fd0;--wolke:#6b7a89}
+.mx td.cl-sun{color:var(--sun)} .mx td.cl-moon{color:var(--moon)} .mx td.cl-cloud{color:var(--wolke)}
+.mx td.cl-sunc{color:var(--wolke);--a:var(--sun)} .mx td.cl-moonc{color:var(--wolke);--a:var(--moon)}
+.mx td.cl .ic-a{stroke:var(--a,currentColor)}
 .mx td.r-w{border:1.5px solid var(--warn)}
 
 /* Hinweis: Standort am Rand der Modellzelle */
