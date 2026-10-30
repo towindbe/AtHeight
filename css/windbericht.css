@@ -643,3 +643,7 @@ header.top .row .icon-btn{width:48px;min-width:48px;padding:0;font-size:20px}
 .brand-logo.logo-hell{display:none}
 :root[data-theme="light"] .brand-logo.logo-dunkel{display:none}
 :root[data-theme="light"] .brand-logo.logo-hell{display:block}
+
+/* Hinweis nur auf Touchgeräten, nicht im Vollbild */
+.touch-only{display:none}
+@media (pointer:coarse){ .touch-only{display:block} #mapCard.map-max .touch-only{display:none} }
