@@ -123,6 +123,10 @@ legend{font:600 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:upper
 body.map-open{overflow:hidden}
 #chartCard.chart-max{position:fixed;inset:0;z-index:3000;border-radius:0;border:0;padding:12px max(12px,env(safe-area-inset-left,0px));overflow:auto;background:var(--surface)}
 #chartCard.chart-max .chart-box{height:calc(100dvh - 150px);min-height:260px}
+/* Vollbild: Wertezeile nicht zusammendrücken (sonst überlappen die Zeilen bei vielen Modellen), lieber darin scrollen */
+#chartCard.chart-max .readout{flex:none;max-height:26vh;overflow-y:auto;grid-auto-rows:max-content;align-content:start}
+#chartCard.chart-max .readout b{position:sticky;top:-6px;z-index:1;background:var(--raised)}   /* Uhrzeit bleibt beim Scrollen stehen */
+@media (orientation:landscape) and (max-height:520px){ #chartCard.chart-max .readout{max-height:66px} #chartCard.chart-max .chart-box{height:calc(100dvh - 150px)} }
 @media (orientation:landscape) and (max-height:520px){ #chartCard.chart-max .chart-box{height:calc(100dvh - 78px);min-height:160px} }
 .map-wrap{position:relative}
 .radar-time{position:absolute;top:10px;right:10px;z-index:500;background:rgba(0,0,0,.6);color:#fff;font:600 14px var(--f-mono);padding:5px 9px;border-radius:6px;pointer-events:none}

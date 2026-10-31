@@ -80,7 +80,10 @@ applyTheme(theme);
 $("themeBtn").onclick = () => {
   theme = theme==="light" ? "dark" : "light";
   try{ localStorage.setItem("wb_theme", theme); }catch(e){}
-  applyTheme(theme); if(state.hours.length) render();
+  applyTheme(theme);
+  // alles außer den Diagrammen folgt dem Design über CSS-Variablen sofort; die Diagramme lesen ihre Farben beim Aufbau,
+  // deshalb nur sie neu aufbauen, einzeln nacheinander (so springt die Seite sofort um und bleibt bedienbar)
+  if(state.hours.length) [renderChart, renderRain, renderTemp, renderProfile].reduce((p, f) => p.then(() => new Promise(ok => setTimeout(() => { f(); ok(); }, 0))), new Promise(requestAnimationFrame));
 };
 // Zahnrad neben dem Beschichten-Modus: Einstellungen öffnen, direkt zu den Grenzen springen und sie kurz hervorheben
 $("coatGear").onclick = () => {
