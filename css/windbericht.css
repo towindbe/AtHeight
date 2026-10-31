@@ -659,3 +659,22 @@ header.top .row .lang-btn{font:700 15px var(--f-body);letter-spacing:.04em}
 .map-hint[hidden],#mapCard.map-max .map-hint{display:none}
 @keyframes mapHintPulse{0%,100%{opacity:1}50%{opacity:.35}}
 @media (prefers-reduced-motion:reduce){ .map-hint{animation:none} }
+
+/* Kopfzeile der Diagramme: Titel und Tag links, Knöpfe rechts in derselben Zeile; am Handy nur Symbole */
+.card-head.ch{flex-wrap:nowrap;align-items:flex-start}
+.ch-title{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ch-title h2{margin:0}
+.ch-tools{display:flex;gap:6px;flex:none}
+.ch-tools button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:6px 12px;border-radius:99px;font-size:13px;white-space:nowrap}
+.ch-tools .ico{margin:0}
+.max-btn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+@media (max-width:700px){
+  .ch-tools button{width:44px;height:44px;min-height:44px;padding:0;border-radius:12px}
+  .ch-tools .nl,.ch-tools .bt{display:none}
+}
+/* Diagramme über alle Tage: seitlich scrollen; die Achsen bleiben als Kopie (.cs-ax) stehen */
+.cs-scroll{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:thin}
+.cs-inner{position:relative;height:100%}
+.cs-ax{position:absolute;top:0;pointer-events:none}
+.cs-ax.l{left:0}
+.cs-ax.r{right:0}
