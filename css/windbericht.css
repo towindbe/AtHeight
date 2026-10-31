@@ -687,16 +687,18 @@ header.top .row .lang-btn{font:700 15px var(--f-body);letter-spacing:.04em}
 
 /* Werte über den Diagrammen: am PC mehrspaltig, ohne Höhenbegrenzung */
 @media (min-width:701px){ .readout{grid-template-columns:repeat(auto-fill,minmax(190px,1fr));max-height:none} }
-/* Überblick am PC zweispaltig wie auf der Homepage: links Ampel und Arbeitsfenster, rechts Hinweise und Werte der Stunde */
+/* Überblick am PC wie auf der Homepage: links Ampel und Arbeitsfenster, rechts die Hinweise;
+   darunter über die ganze Breite die Werte der gewählten Stunde (sechs Kacheln in einer Zeile) */
 .ov-side{display:flex;flex-direction:column;gap:10px;min-width:0}
 @media (min-width:960px){
   #sec-ueberblick{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,1fr);gap:10px 18px;align-items:start}
   #sec-ueberblick > *{grid-column:1 / -1}
   #sec-ueberblick > .hero{grid-column:1}
-  #sec-ueberblick > .ov-side{grid-column:2;margin-top:12px}
-  .ov-side .status-row,.ov-side .now-head{margin-top:0}
+  #sec-ueberblick > .ov-side{display:contents}   /* Kinder stehen direkt im Raster */
+  .ov-side > *{grid-column:1 / -1}
+  .ov-side > .status-row{grid-column:2;margin-top:12px}
+  .ov-side .now-head{margin-top:6px}
   .ov-side .status-row > div{grid-column:1!important;grid-row:auto!important}
-  .ov-side .now{grid-template-columns:repeat(2,1fr)}
 }
 
 /* Stundentabelle: Gründe einzeilig, Antippen klappt auf */
