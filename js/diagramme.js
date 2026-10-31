@@ -194,16 +194,17 @@ const csAxisPlugin = {id:"csAxis", afterDraw(c){
 function csAfter(key){
   const c = charts[key], sc = $(CS[key])?.closest(".cs-scroll"); if(!c || !sc) return;
   c.$sc = sc; c.$key = key; sc.dataset.key = key;
+  c.$cw = sc.clientWidth; c.$max = sc.scrollWidth - c.$cw;   // gemerkt: beim Scrollen nichts nachmessen (jedes Messen nach dem Verschieben bremst)
   c.$step = c.chartArea.width / c.$idxs.length;
   const dk = state.fetchedAt + "|" + site.lat + "," + site.lon;
   if(dk !== csDataKey){ csDataKey = dk; csCenter = null; }
   if(csCenter == null) csShowDay(state.day, [key]); else csSetCenter(key, csCenter);
 }
-function csSetCenter(key, gi){
+function csSetCenter(key, gi, noDraw){
   const c = charts[key]; if(!c?.$sc) return;
   const sc = c.$sc;
-  sc.scrollLeft = csKOf(c.$idxs, gi) * c.$step - (sc.clientWidth - csPad(c))/2; sc._want = sc.scrollLeft;
-  c.draw();
+  sc.scrollLeft = sc._want = Math.max(0, Math.min(c.$max, csKOf(c.$idxs, gi) * c.$step - (c.$cw - csPad(c))/2));
+  if(!noDraw) c.draw();
 }
 /* Tag von seinem Anfang an zeigen (Tages-Tasten) */
 function csShowDay(d, keys = Object.keys(CS)){
@@ -221,38 +222,45 @@ function csShowHour(i, center){
   if(!center && px >= vl && px <= vr) return;
   csCenter = i + .5; Object.keys(CS).forEach(o => csSetCenter(o, csCenter));
 }
-let csRaf = 0, csSrc = null;
 // vom Programm gesetzte Position (nicht weiterreichen, sonst schaukeln sich Diagramme und Zeitleiste gegenseitig auf)
 const csOwn = el => { if(el._want != null && Math.abs(el.scrollLeft - el._want) < 1.5) return true; el._want = null; return false; };
+/* Beim Scrollen nur die Position der anderen nachziehen, sofort im Scroll-Ereignis (sonst hängen sie einen Bildaufbau hinterher).
+   Neu zeichnen (Beschriftungen am Rand) und den Tag wechseln erst, wenn das Scrollen kurz ruht: das hält es flüssig. */
+let csRest = 0;
+function csSettle(){
+  clearTimeout(csRest);
+  csRest = setTimeout(() => { Object.keys(CS).forEach(k => charts[k]?.draw()); csDayCheck(csCenter); }, 140);
+}
 function csScrolled(sc){
   if(csOwn(sc)) return;
-  csSrc = sc.dataset.key; if(!csRaf) csRaf = requestAnimationFrame(csFollow);
+  const key = sc.dataset.key, c = charts[key]; if(!c?.$sc) return;
+  csCenter = csGiOf(c.$idxs, (sc.scrollLeft + (c.$cw - csPad(c))/2) / c.$step);
+  Object.keys(CS).forEach(o => { if(o !== key) csSetCenter(o, csCenter, true); });
+  tlFollow(csCenter); csSettle();
 }
-function csFollow(){
-  csRaf = 0; const c = charts[csSrc]; if(!c?.$sc) return;
-  const sc = c.$sc;
-  csCenter = csGiOf(c.$idxs, (sc.scrollLeft + (sc.clientWidth - csPad(c))/2) / c.$step);
-  c.draw();
-  Object.keys(CS).forEach(o => { if(o !== csSrc) csSetCenter(o, csCenter); });
-  tlFollow(csCenter); csDayCheck(csCenter);
+/* Zeitleiste „Arbeitsfenster“: Lage der Zellen einmal messen (neu, wenn die Leiste neu aufgebaut oder breiter/schmaler wird) */
+let tlPos = null;
+function tlCells(){
+  const box = $("tlScroll"), first = $("timeline").querySelector(".tl-cell");
+  if(tlPos && tlPos.first === first) return tlPos;
+  const b0 = box.getBoundingClientRect().left - box.scrollLeft;
+  const list = [...$("timeline").querySelectorAll(".tl-cell")].map(e => ({i:+e.dataset.i, x:e.getBoundingClientRect().left - b0, w:e.offsetWidth}));
+  return tlPos = {first, w:box.clientWidth, max:box.scrollWidth - box.clientWidth, list, map:new Map(list.map(o => [o.i, o]))};
 }
-/* Zeitleiste „Arbeitsfenster“ auf dieselbe Stunde stellen */
-const tlCellX = (box, el) => el.getBoundingClientRect().left - box.getBoundingClientRect().left + box.scrollLeft;
 function tlFollow(gi){
-  const box = $("tlScroll"), el = $("timeline").querySelector(`.tl-cell[data-i="${Math.floor(gi)}"]`); if(!box || !el) return;
-  box.scrollLeft = tlCellX(box, el) + el.offsetWidth*(gi - Math.floor(gi)) - box.clientWidth/2; box._want = box.scrollLeft;
+  const box = $("tlScroll"), p = tlCells().map.get(Math.floor(gi)); if(!p) return;
+  box.scrollLeft = box._want = Math.max(0, Math.min(tlPos.max, p.x + p.w*(gi - Math.floor(gi)) - tlPos.w/2));
 }
 /* Scrollen in der Zeitleiste: Diagramme laufen mit */
-let tlRaf = 0;
 function tlScrolled(){
-  tlRaf = 0;
-  const box = $("tlScroll"), mid = box.scrollLeft + box.clientWidth/2;
-  let best = null, bx = 0, bd = Infinity;
-  box.querySelectorAll(".tl-cell").forEach(b => { const x = tlCellX(box, b), d = Math.abs(x + b.offsetWidth/2 - mid); if(d < bd){ bd = d; best = b; bx = x; } });
-  if(!best) return;
-  csCenter = +best.dataset.i + Math.max(0, Math.min(.999, (mid - bx) / best.offsetWidth));
-  Object.keys(CS).forEach(o => csSetCenter(o, csCenter));
-  csDayCheck(csCenter);
+  const box = $("tlScroll"), T = tlCells(), mid = box.scrollLeft + T.w/2, L = T.list;
+  if(!L.length) return;
+  let lo = 0, hi = L.length - 1;   // Zelle unter der Mitte (Zellen sind nach Lage sortiert)
+  while(lo < hi){ const m = (lo + hi + 1) >> 1; if(L[m].x <= mid) lo = m; else hi = m - 1; }
+  const p = L[lo];
+  csCenter = p.i + Math.max(0, Math.min(.999, (mid - p.x) / p.w));
+  Object.keys(CS).forEach(o => csSetCenter(o, csCenter, true));
+  csSettle();
 }
 function csDayCheck(gi){ const d = state.times[Math.floor(gi)]?.slice(0,10); if(d && d !== state.day) dayFromScroll(d); }
 /* nach einem Tageswechsel: Tagesangaben, Taupunkt-Zeile und Markierungen in den Diagrammen nachziehen */
@@ -263,13 +271,10 @@ function chartDayChanged(){
 }
 function csInit(){
   Object.values(CS).forEach(csWrap);
-  $("tlScroll").addEventListener("scroll", () => {
-    if(csOwn($("tlScroll"))) return;
-    if(!tlRaf) tlRaf = requestAnimationFrame(tlScrolled);
-  }, {passive:true});
+  $("tlScroll").addEventListener("scroll", () => { if(!csOwn($("tlScroll"))) tlScrolled(); }, {passive:true});
   // andere Breite (Drehen, Fenster): Stundenbreite neu berechnen, Ausschnitt bleibt
   let w = innerWidth, t = 0;
-  addEventListener("resize", () => { if(innerWidth === w) return; w = innerWidth; clearTimeout(t);
+  addEventListener("resize", () => { if(innerWidth === w) return; w = innerWidth; tlPos = null; clearTimeout(t);
     t = setTimeout(() => { if(state.hours.length){ renderChart(); renderRain(); renderTemp(); } }, 150); });
 }
 
