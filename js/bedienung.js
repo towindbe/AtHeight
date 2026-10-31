@@ -7,7 +7,7 @@ function toggleSettings(open){
   $("settingsBtn").classList.toggle("pulse-hint", !open && siteChosen && !site.checked);
   if(open){ toggleFavs(false); $("settings").scrollIntoView({behavior:"smooth", block:"start"}); }
 }
-$("siteMeta").onclick = () => toggleSettings(true);
+$("siteMeta").onclick = $("confirmCta").onclick = () => toggleSettings(true);
 $("nowBox").addEventListener("click", e => {
   if(!e.target.closest("#ensInfoBtn")) return;
   const open = $("ensInfo").hidden; $("ensInfo").hidden = !open; if(open) showHelp($("ensInfo"));

@@ -7,7 +7,7 @@
 <script>/* Hell nur, wenn so gewählt (Standard dunkel); vor dem Zeichnen setzen, damit nichts aufblitzt */
 try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
 
-<link rel="manifest" href="manifest.webmanifest?v=2026-11-01f">
+<link rel="manifest" href="manifest.webmanifest?v=2026-11-01o">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -17,7 +17,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-11-01f">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-11-01o">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tw-logo" viewBox="-6 -6 790 512"><g fill="currentColor" stroke="currentColor" stroke-linejoin="miter"><path stroke-width="3" d="M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z"/><path stroke-width="15" d="m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z"/></g></symbol></svg>
@@ -48,22 +48,24 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 <div class="wrap">
 
   <header class="top">
-    <div class="brand-wrap" style="min-width:0">
-      <img class="brand-logo logo-dunkel" src="icons/logo.svg" alt="" width="40" height="40"><img class="brand-logo logo-hell" src="icons/logo-hell.svg" alt="" width="40" height="40">
-      <div style="min-width:0">
-        <div class="eyebrow eyebrow-brand"><b class="bn">AtHeight</b> · <span data-en="weather check for work at height">Wetter-Check für Höhenarbeit</span></div>
-        <h1 id="siteTitle">AtHeight</h1>
-        <button class="site-meta mono" id="siteMeta" type="button" title="Einstellungen öffnen" data-en-title="Open settings"></button>
-      </div>
+    <!-- Kopfzeile: oben Marke und selten gebrauchte Knöpfe, darunter die Baustellen-Karte mit den wichtigen Aktionen -->
+    <div class="top-bar">
+      <img class="brand-logo logo-dunkel" src="icons/logo.svg" alt="" width="32" height="32"><img class="brand-logo logo-hell" src="icons/logo-hell.svg" alt="" width="32" height="32">
+      <div class="brand-txt"><b class="bn">AtHeight</b><span class="tagline" data-en="weather check for work at height">Wetter-Check für Höhenarbeit</span></div>
+      <button id="langBtn" class="ghost-btn lang-btn" type="button" title="English" aria-label="Sprache: Englisch" data-en-title="Deutsch" data-en-aria="Language: German" data-en="DE">EN</button>
+      <button id="themeBtn" class="ghost-btn" type="button" title="Helles Design (für draußen)" aria-label="Design wechseln: hell oder dunkel" data-en-aria="Switch theme: light or dark"><i data-ico="sun"></i></button>
+      <button id="infoBtn" class="ghost-btn" type="button" title="So funktioniert AtHeight" aria-label="Infoseite öffnen" aria-haspopup="dialog" data-en-title="How AtHeight works" data-en-aria="Open info page"><i data-ico="help"></i></button>
     </div>
-    <div class="row">
-      <button id="favBtn" class="icon-btn" type="button" aria-expanded="false" aria-controls="favPanel" title="Baustellen" aria-label="Baustellen" data-en-title="Sites" data-en-aria="Sites"><i class="star" data-ico="star"></i></button>
-      <button id="mapJumpBtn" class="icon-btn" type="button" title="Standort auf der Karte zeigen" aria-label="Standort auf der Karte zeigen" data-en-title="Show site on the map" data-en-aria="Show site on the map"><i data-ico="pin"></i></button>
-      <button id="settingsBtn" class="settings-btn" type="button" aria-expanded="false" aria-controls="settings" aria-label="Einstellungen" data-en-aria="Settings"><i data-ico="gear"></i><span class="lbl" data-en=" Settings"> Einstellungen</span> <span class="chev" aria-hidden="true"></span></button>
-      <button id="langBtn" class="icon-btn lang-btn" type="button" title="English" aria-label="Sprache: Englisch" data-en-title="Deutsch" data-en-aria="Language: German" data-en="DE">EN</button>
-      <button id="themeBtn" class="icon-btn" type="button" title="Helles Design (für draußen)" aria-label="Design wechseln: hell oder dunkel" data-en-aria="Switch theme: light or dark"><i data-ico="sun"></i></button>
-      <button id="infoBtn" class="icon-btn" type="button" title="So funktioniert AtHeight" aria-label="Infoseite öffnen" aria-haspopup="dialog" data-en-title="How AtHeight works" data-en-aria="Open info page"><i data-ico="help"></i></button>
-      <button id="reloadBtn" class="icon-btn" type="button" title="Wetterdaten neu laden" aria-label="Wetterdaten neu laden" data-en-title="Reload weather data" data-en-aria="Reload weather data"><i data-ico="reload"></i></button>
+    <div class="site-card">
+      <div class="site-main">
+        <h1><button id="favBtn" class="site-head" type="button" aria-expanded="false" aria-controls="favPanel" title="Baustellen" data-en-title="Sites"><span class="star"><i data-ico="star"></i></span><span id="siteTitle">AtHeight</span><span class="sh-chev"><i data-ico="chevron"></i></span></button></h1>
+        <button class="site-meta" id="siteMeta" type="button" title="Einstellungen öffnen" data-en-title="Open settings"></button>
+      </div>
+      <div class="site-actions">
+        <button id="settingsBtn" type="button" aria-expanded="false" aria-controls="settings"><i data-ico="gear"></i><span data-en="Settings">Einstellungen</span></button>
+        <button id="mapJumpBtn" type="button" title="Standort auf der Karte zeigen" data-en-title="Show site on the map"><i data-ico="pin"></i><span data-en="Map">Karte</span></button>
+        <button id="reloadBtn" type="button" title="Wetterdaten neu laden" data-en-title="Reload weather data"><i data-ico="reload"></i><span data-en="Reload">Neu laden</span></button>
+      </div>
     </div>
     <div class="fav-panel" id="favPanel" hidden>
       <div class="eyebrow" data-en="Saved sites">Gespeicherte Baustellen</div>
@@ -170,6 +172,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <div class="hero-text">
         <p class="headline" id="headline">Lade Wettermodelle…</p>
         <p class="muted" id="summary"></p>
+        <button class="confirm-cta" id="confirmCta" type="button" hidden><i data-ico="gear"></i><span data-en="Check heights and limits">Höhen und Grenzwerte prüfen</span></button>
         <div class="inst-strip needs-data" id="instStrip" role="group" aria-label="Arbeitsstunden: Stunde wählen" data-en-aria="Working hours: choose an hour"></div>
         <div class="inst-metrics needs-data" id="instMetrics"></div>
         <p class="rain-note" id="rainNote"></p>
@@ -432,25 +435,25 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 </div>
 
 <!-- Skripte teilen sich den globalen Gültigkeitsbereich; Reihenfolge beachten. Bei Änderungen ?v= erhöhen. -->
-<script src="js/konfiguration.js?v=2026-11-01f"></script>
-<script src="js/hilfen.js?v=2026-11-01f"></script>
-<script src="js/physik.js?v=2026-11-01f"></script>
-<script src="js/daten.js?v=2026-11-01f"></script>
-<script src="js/offline.js?v=2026-11-01f"></script>
-<script src="js/tageslicht.js?v=2026-11-01f"></script>
-<script src="js/bewertung.js?v=2026-11-01f"></script>
-<script src="js/anzeige.js?v=2026-11-01f"></script>
-<script src="js/leiste.js?v=2026-11-01f"></script>
-<script src="js/diagramme.js?v=2026-11-01f"></script>
-<script src="js/tabellen.js?v=2026-11-01f"></script>
-<script src="js/modellvergleich.js?v=2026-11-01f"></script>
-<script src="js/ausblick.js?v=2026-11-01f"></script>
-<script src="js/karte.js?v=2026-11-01f"></script>
-<script src="js/radar.js?v=2026-11-01f"></script>
-<script src="js/bericht.js?v=2026-11-01f"></script>
-<script src="js/ausfall.js?v=2026-11-01f"></script>
-<script src="js/anlagen.js?v=2026-11-01f"></script>
-<script src="js/bedienung.js?v=2026-11-01f"></script>
-<script src="js/start.js?v=2026-11-01f"></script>
+<script src="js/konfiguration.js?v=2026-11-01o"></script>
+<script src="js/hilfen.js?v=2026-11-01o"></script>
+<script src="js/physik.js?v=2026-11-01o"></script>
+<script src="js/daten.js?v=2026-11-01o"></script>
+<script src="js/offline.js?v=2026-11-01o"></script>
+<script src="js/tageslicht.js?v=2026-11-01o"></script>
+<script src="js/bewertung.js?v=2026-11-01o"></script>
+<script src="js/anzeige.js?v=2026-11-01o"></script>
+<script src="js/leiste.js?v=2026-11-01o"></script>
+<script src="js/diagramme.js?v=2026-11-01o"></script>
+<script src="js/tabellen.js?v=2026-11-01o"></script>
+<script src="js/modellvergleich.js?v=2026-11-01o"></script>
+<script src="js/ausblick.js?v=2026-11-01o"></script>
+<script src="js/karte.js?v=2026-11-01o"></script>
+<script src="js/radar.js?v=2026-11-01o"></script>
+<script src="js/bericht.js?v=2026-11-01o"></script>
+<script src="js/ausfall.js?v=2026-11-01o"></script>
+<script src="js/anlagen.js?v=2026-11-01o"></script>
+<script src="js/bedienung.js?v=2026-11-01o"></script>
+<script src="js/start.js?v=2026-11-01o"></script>
 </body>
 </html>

@@ -28,7 +28,10 @@ function fillSettings(){
   $("s_from").value = site.from; $("s_to").value = site.to; $("s_mintemp").value = minTemp();
   $("s_coatrh").value = coatRh(); $("s_coatdew").value = coatDew(); $("s_coatstop").checked = !!site.coatStop;
   $("siteTitle").textContent = site.name;
-  $("siteMeta").innerHTML = `<span>${T("Arbeit", "Work")} ${zoneTxt()}</span><span>${T("Grenze", "Limit")} ${fw(site.wind)} · ${T("Böe", "Gust")} ${fwu(site.gust)}</span><span>${site.from}–${site.to}${UHR()}</span>`;
+  // Eckdaten: am PC als Chips „Beschriftung Wert“, am Handy als drei Kennzahlen mit kleiner Beschriftung darüber (CSS)
+  const kz = (lab, val) => `<span><small>${lab}</small> <b>${val}</b></span>`;
+  $("siteMeta").innerHTML = kz(T("Arbeitshöhe", "Work height"), zoneTxt()) + kz(T("Grenze Wind/Böe", "Limit wind/gust"), `${fw(site.wind)} / ${fwu(site.gust)}`)
+    + kz(T("Arbeitszeit", "Working hours"), `${String(site.from).padStart(2,"0")}–${site.to}${UHR()}`);
   // Hinweis, bis die Werte dieser Baustelle einmal bestätigt wurden
   const todo = siteChosen && !site.checked;
   $("setupHint").hidden = !todo;
@@ -62,7 +65,9 @@ function renderHero(){
   document.body.classList.toggle("unconfirmed", unconfirmed);
   if(unconfirmed) sum = {...sum, lamp:"none", head:T("Erst Höhen und Grenzwerte bestätigen", "Confirm heights and limits first"), text:T("Die Werte dieser Baustelle sind noch Beispielwerte. Bitte unter Einstellungen prüfen und „Übernehmen“ antippen, erst dann gilt die Bewertung.", "The values of this site are still example values. Please check them under Settings and tap “Apply”; only then does the assessment apply.")};
   state.summary = sum;
-  $("lamp").className = "lamp " + sum.lamp; $("lamp").innerHTML = (LAMP_ICON[sum.lamp] || "") + `<span>${LAMP_TXT[sum.lamp]}</span>`;
+  $("confirmCta").hidden = !unconfirmed;
+  if(unconfirmed){ $("lamp").className = "lamp pending"; $("lamp").innerHTML = icon("gear", 18) + `<span>${T("OFFEN", "PENDING")}</span>`; }   // statt leerer Lampe: noch einzurichten
+  else{ $("lamp").className = "lamp " + sum.lamp; $("lamp").innerHTML = (LAMP_ICON[sum.lamp] || "") + `<span>${LAMP_TXT[sum.lamp]}</span>`; }
   const dl = daylight(state.day);
   $("heroDay").textContent = `${kurzDatum(state.day)} · ${T("Arbeitszeit", "Working hours")} ${site.from}–${site.to}${UHR()}` + (dl.start && dl.end ? ` · ${T("hell", "daylight")} ${dl.start}–${dl.end}` : "");
   $("headline").textContent = sum.head; $("summary").textContent = sum.text;
@@ -133,7 +138,7 @@ function renderInstrument(sum){
   if(coatOn(state.day)){
     const rh = max("rh"), dew = min("dew"), bad = site.coatStop ? "m-stop" : "m-warn";
     $("instMetrics").innerHTML = tile(T("Feuchte max", "Humidity max"), rh==null ? null : Math.round(rh), "%", rh!=null && rh > coatRh() ? bad : "")
-      + tile(T("Taupunktabst.", "Dew pt spread"), dew==null ? null : dew <= 0 ? T("Tau", "Dew") : fmt(dew,1), dew!=null && dew > 0 ? "K" : "", dew!=null && dew < coatDew() ? bad : "")
+      + tile(T("Taupunktabst.", "Dew pt spread"), dew==null ? null : dew <= 0 ? T("Tau", "Dew") : fmt(dew,1), dew!=null && dew > 0 ? "°C" : "", dew!=null && dew < coatDew() ? bad : "")
       + tile("Wind max", wMax==null ? null : fw(wMax), WU(), lim(wMax, site.wind));
   } else {
     const tMin = min("tW"), tMax = max("tW");

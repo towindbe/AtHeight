@@ -272,14 +272,14 @@ function csScrolled(sc){
   barFollow(csCenter); csLive(); csSettle();
 }
 /* Großes und kleines Arbeitsfenster (Kurzleiste oben): gleiche Mitte wie die Diagramme; die Zelle in der Mitte ist die gewählte */
-const BARS = () => [$("tlScroll"), $("sbStrip"), $("dirStrip")];
+const BARS = () => [$("tlScroll"), $("sbStrip"), $("dirStrip"), $("dewRow")];
 const barOn = box => box._vis !== false && (box.id !== "sbStrip" || !$("stickyBar").hidden);   // nur Leisten, die zu sehen sind (_vis: ResizeObserver in csInit)
 // Lage der Zellen einmal messen (neu, wenn die Leiste neu aufgebaut, eingeblendet oder breiter/schmaler wird)
 function barCells(box){
-  const first = box.querySelector("[data-i]");
+  const sel = box.dataset.cells || "[data-i]", first = box.querySelector(sel);   // Taupunkt-Tabelle: nur die Stundenzeile
   if(box._pos && box._pos.first === first && box._pos.w) return box._pos;
   const b0 = box.getBoundingClientRect().left - box.scrollLeft;
-  const list = [...box.querySelectorAll("[data-i]")].map(e => ({i:+e.dataset.i, x:e.getBoundingClientRect().left - b0, w:e.offsetWidth}));
+  const list = [...box.querySelectorAll(sel)].map(e => ({i:+e.dataset.i, x:e.getBoundingClientRect().left - b0, w:e.offsetWidth}));
   return box._pos = {first, w:box.clientWidth, max:box.scrollWidth - box.clientWidth, list, map:new Map(list.map(o => [o.i, o]))};
 }
 function barFollow(gi, except){
@@ -314,6 +314,7 @@ function csInit(){
   Object.values(CS).forEach(csWrap);
   BARS().forEach(box => box.addEventListener("scroll", () => barScrolled(box), {passive:true}));
   $("dirStrip").addEventListener("click", e => { const b = e.target.closest(".dir-cell"); if(b) selectHour(+b.dataset.i); });
+  $("dewRow").addEventListener("click", e => { const c = e.target.closest("[data-i]"); if(c) selectHour(+c.dataset.i); });
   // ausgeblendete Leisten nicht bei jedem Wischen neu vermessen; beim Einblenden auf die Mitte holen
   if("ResizeObserver" in window){
     const ro = new ResizeObserver(es => es.forEach(e => { const b = e.target, v = e.contentRect.width > 0;
@@ -473,18 +474,26 @@ function tempNote(){
 /* Taupunkt-Zeile: je Arbeitsstunde der Abstand der Temperatur in Arbeitshöhe zum Taupunkt (2 m).
    „Tau“ = Taupunkt erreicht. Im Beschichten-Modus zusätzlich die Luftfeuchte, Farben nach euren Grenzen. */
 function renderDewRow(){
-  const hs = dayHours(state.day), coat = coatOn(state.day), stopC = coat && site.coatStop, k = v => fmt(v, v%1 ? 1 : 0);
-  if(!hs.some(h => h.dew!=null)){ $("dewRow").innerHTML = ""; $("dewRowNote").textContent = T("Für diesen Tag liegen keine Werte zum Taupunkt vor.", "No dew point values for this day."); return; }
-  const over = coat ? (h => h.dew < coatDew()) : (h => h.dew <= DEW_INFO);
-  const dCls = h => h.dew==null ? "m-none" : stopC && coatViol(h) ? "m-stop" : h.dew <= 0 ? "d-wet" : over(h) ? "d-near" : "d-ok";
-  const rCls = h => h.rh==null ? "m-none" : h.rh > coatRh() ? (stopC ? "m-stop" : "d-near") : "d-ok";
-  const td = (h, cls, txt, tip) => `<td class="${cls}" data-i="${h.i}" title="${esc(tip)}">${txt}</td>`;
+  // über alle Tage (Arbeitsstunden), Tagesnamen in einer Kopfzeile; läuft wie die Pfeilreihe mit der Mitte der Diagramme
+  const hs = state.hours.filter(h => isWork(h.t)), coat = coatOn(state.day), stopC = coat && site.coatStop, k = v => fmt(v, v%1 ? 1 : 0);
+  const box = $("dewRow");
+  if(!hs.some(h => h.dew!=null)){ box.innerHTML = ""; box._html = ""; $("dewRowNote").textContent = T("Es liegen keine Werte zum Taupunkt vor.", "No dew point values available."); return; }
+  const cH = h => coatOn(h.t.slice(0,10)), sH = h => cH(h) && site.coatStop;   // Beschichten-Modus gilt je Tag (bis zum Enddatum)
+  const dCls = h => h.dew==null ? "m-none" : sH(h) && coatViol(h) ? "m-stop" : h.dew <= 0 ? "d-wet" : (cH(h) ? h.dew < coatDew() : h.dew <= DEW_INFO) ? "d-near" : "d-ok";
+  const rCls = h => h.rh==null || !cH(h) ? "m-none" : h.rh > coatRh() ? (sH(h) ? "m-stop" : "d-near") : "d-ok";
+  const ds = (h, k) => k===0 || h.t.slice(0,10) !== hs[k-1].t.slice(0,10) ? " dstart" : "";
+  const td = (h, k, cls, txt, tip) => `<td class="${cls}${ds(h, k)}" data-i="${h.i}" title="${esc(tip)}">${txt}</td>`;
   const row = (name, cell) => `<tr><th class="mname">${name}</th>${hs.map(cell).join("")}</tr>`;
-  let rows = row(`${T("Taupunktabstand", "Dew pt spread")} <small>°C</small>`, h => td(h, dCls(h), h.dew==null ? "·" : h.dew <= 0 ? T("Tau", "Dew") : fmt(h.dew,1),
+  let rows = row(`${T("Abstand", "Spread")} <small>°C</small>`, (h, k) => td(h, k, dCls(h), h.dew==null ? "·" : h.dew <= 0 ? T("Tau", "Dew") : fmt(h.dew,1),
     h.dew==null ? "" : T(`${hh(h.t)} Uhr: ${fmt(h.tW,1)} °C in ${workH()} m, Taupunkt (2 m) ${fmt(h.td,1)} °C: ${h.dew <= 0 ? "Taupunkt erreicht" : "Taupunktabstand " + fmt(h.dew,1) + " °C"}`, `${hh(h.t)}h: ${fmt(h.tW,1)} °C at ${workH()} m, dew point (2 m) ${fmt(h.td,1)} °C: ${h.dew <= 0 ? "dew point reached" : "dew point spread " + fmt(h.dew,1) + " °C"}`)));
-  if(coat) rows += row(`${T("Luftfeuchte", "Humidity")} <small>%</small>`, h => td(h, rCls(h), h.rh==null ? "·" : Math.round(h.rh), T(`${hh(h.t)} Uhr: Luftfeuchte ${h.rh==null ? "–" : Math.round(h.rh) + " %"} (Grenze ${coatRh()} %)`, `${hh(h.t)}h: humidity ${h.rh==null ? "–" : Math.round(h.rh) + " %"} (limit ${coatRh()} %)`)));
-  $("dewRow").innerHTML = `<table><tr><th></th>${hs.map(h => `<th>${hh(h.t)}</th>`).join("")}</tr>${rows}</table>`;
-  $("dewRow").querySelectorAll("td[data-i]").forEach(c => c.onclick = () => selectHour(+c.dataset.i));
+  if(hs.some(cH)) rows += row(`${T("Feuchte", "Humidity")} <small>%</small>`, (h, k) => td(h, k, rCls(h), h.rh==null || !cH(h) ? "·" : Math.round(h.rh), T(`${hh(h.t)} Uhr: Luftfeuchte ${h.rh==null ? "–" : Math.round(h.rh) + " %"} (Grenze ${coatRh()} %)`, `${hh(h.t)}h: humidity ${h.rh==null ? "–" : Math.round(h.rh) + " %"} (limit ${coatRh()} %)`)));
+  const days = dayRuns(hs.map(h => h.i)).map(([a, b, d]) => `<th class="dd${a ? " dstart" : ""}" colspan="${b - a + 1}">${esc(dayLabel(d, true))}</th>`).join("");
+  const html = `<table><tr><th class="mname"></th>${days}</tr><tr class="dew-h"><th class="mname"></th>${hs.map((h, k) => `<th class="${ds(h, k)}" data-i="${h.i}">${hh(h.t)}</th>`).join("")}</tr>${rows}</table>`;
+  if(html !== box._html){   // nur neu aufbauen, wenn sich etwas geändert hat (sonst müsste die Lage jedes Mal neu gemessen werden)
+    box._html = html; box.innerHTML = html; box.dataset.cells = "tr.dew-h th[data-i]";
+    highlightSel();
+    if(csCenter != null) requestAnimationFrame(() => barFollow(csCenter));
+  }
   $("dewRowNote").textContent = coat
     ? T(`Beschichten-Modus: Taupunktabstand mind. ${k(coatDew())} °C und höchstens ${coatRh()} % Feuchte. ${stopC ? "Rot: Grenze überschritten, Ampel STOP." : "Gelb: Grenze überschritten (Hinweis)."} „Tau“: Taupunkt erreicht, Nebel oder Wolke in Arbeitshöhe, alles nass.`, `Coating mode: dew point spread at least ${k(coatDew())} °C and at most ${coatRh()} % humidity. ${stopC ? "Red: limit exceeded, traffic light STOP." : "Yellow: limit exceeded (note)."} “Dew”: dew point reached, fog or cloud at working height, everything wet.`)
     : T(`Zahl: Taupunktabstand in °C, also wie weit die Temperatur in Arbeitshöhe über dem Taupunkt liegt. „Tau“ (gelb): Taupunkt erreicht, Nebel oder Wolke in Arbeitshöhe, Oberflächen und Seile nass. Hellgelb: bis ${k(DEW_INFO)} °C, Kondenswasser möglich. Darüber rechnet die Prognose nicht mit Kondenswasser; Oberflächen können trotzdem kälter sein.`, `Number: dew point spread in °C, i.e. how far the temperature at working height is above the dew point. “Dew” (yellow): dew point reached, fog or cloud at working height, surfaces and ropes wet. Light yellow: up to ${k(DEW_INFO)} °C, condensation possible. Above that the forecast does not expect condensation; surfaces may still be colder.`);
