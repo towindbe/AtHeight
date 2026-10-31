@@ -252,10 +252,13 @@ function csLive(){
   state.sel = gi; csMarks(); highlightSel();
   if(typeof sbHourText === "function") sbHourText(state.hours[gi]);
 }
-let csRest = 0;
+/* Uhrzeit am Zeiger nur beim Wischen (in der Ruhe steht sie in Kopfzeile und Wertezeile); blendet kurz nach dem Einrasten aus */
+let csRest = 0, csHide = 0;
 function csSettle(){
-  clearTimeout(csRest);
-  csRest = setTimeout(() => selectHour(Math.floor(csCenter)), 150);
+  clearTimeout(csRest); clearTimeout(csHide);
+  document.documentElement.classList.add("cs-live");
+  csRest = setTimeout(() => { selectHour(Math.floor(csCenter));
+    csHide = setTimeout(() => document.documentElement.classList.remove("cs-live"), 700); }, 150);
 }
 function csScrolled(sc){
   if(csOwn(sc)) return;
