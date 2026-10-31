@@ -7,12 +7,12 @@ if(typeof Chart !== "undefined") Chart.defaults.plugins.tooltip.callbacks.labelC
   return {borderColor:c, backgroundColor:c};
 };
 
-/* Schmale Bildschirme: Der Wertekasten (Tooltip) verdeckt dort die Linien. Stattdessen stehen die Werte der gewählten Stunde als Zeile über dem Diagramm. */
+/* Werte der gewählten Stunde als Zeile über dem Diagramm statt Wertekasten (Tooltip): der verdeckt sonst die Linien.
+   Am Handy zweispaltig, am PC so viele Spalten, wie Platz ist. */
 const isNarrow = () => matchMedia("(max-width: 700px)").matches;
 function narrowReadout(opt, id){
   const el = $(id); if(!el) return;
-  const on = isNarrow(); el.hidden = !on;
-  if(!on) return;
+  el.hidden = false;
   opt.plugins.tooltip.enabled = false;
   el.style.minHeight = ""; el.dataset.mh = "0";
   opt.plugins.tooltip.external = ({tooltip:t}) => {
@@ -36,6 +36,15 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
   c.$idxs.forEach((gi,k) => {
     if(!isWork(state.times[gi])){ ctx.fillStyle = css("--raised"); ctx.fillRect(x.getPixelForValue(k)-step/2, a.top, step, a.bottom-a.top); }
   });
+  // ausgeblendete Nacht: schraffierter Streifen zwischen letzter Abend- und erster Morgenstunde
+  nightCuts(c.$idxs).forEach(k => {
+    const x0 = x.getPixelForValue(k-1), x1 = x.getPixelForValue(k), w = x1 - x0;
+    ctx.fillStyle = css("--raised"); ctx.fillRect(x0, a.top, w, a.bottom - a.top);
+    ctx.save(); ctx.beginPath(); ctx.rect(x0, a.top, w, a.bottom - a.top); ctx.clip();
+    ctx.strokeStyle = css("--muted"); ctx.globalAlpha = .45; ctx.lineWidth = 1;
+    for(let y = a.top - w; y < a.bottom + w; y += 6){ ctx.beginPath(); ctx.moveTo(x0, y + w); ctx.lineTo(x1, y); ctx.stroke(); }
+    ctx.restore();
+  });
   // Tageswechsel: senkrechte Linie
   ctx.strokeStyle = css("--muted"); ctx.lineWidth = 1; ctx.globalAlpha = .6;
   dayRuns(c.$idxs).slice(1).forEach(([k0]) => { const px = x.getPixelForValue(k0) - step/2; ctx.beginPath(); ctx.moveTo(px, a.top); ctx.lineTo(px, a.bottom); ctx.stroke(); });
@@ -45,6 +54,7 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
   if(!c.$idxs?.length) return;
   const {ctx, chartArea:a, scales:{x}} = c, step = x.getPixelForValue(1) - x.getPixelForValue(0);
   const toH = t => +t.slice(0,2) + +t.slice(3,5)/60, y = a.bottom + 8, sun = "#f2b632";
+  let lastR = -Infinity;   // rechter Rand der zuletzt geschriebenen Uhrzeit: aneinanderstoßende Uhrzeiten (Nacht ausgeblendet) nicht übereinander schreiben
   ctx.save();
   dayRuns(c.$idxs).forEach(([k0, , d]) => {
     const dl = daylight(d); if(!dl.start || !dl.end) return;
@@ -62,8 +72,9 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
     for(let k = 0; k < 8; k++){ const w = k*Math.PI/4; ctx.beginPath(); ctx.moveTo(cx + Math.cos(w)*4.4, y + Math.sin(w)*4.4); ctx.lineTo(cx + Math.cos(w)*6.4, y + Math.sin(w)*6.4); ctx.stroke(); }
     // Uhrzeiten links und rechts neben dem Balken
     ctx.font = "600 9.5px " + css("--f-mono"); ctx.textBaseline = "middle";
-    ctx.textAlign = "right"; ctx.fillText(dl.start, xs - 5, y + 0.5);
-    ctx.textAlign = "left"; ctx.fillText(dl.end, xe + 5, y + 0.5);
+    const ws = ctx.measureText(dl.start).width, we = ctx.measureText(dl.end).width;
+    if(xs - 5 - ws > lastR + 4){ ctx.textAlign = "right"; ctx.fillText(dl.start, xs - 5, y + 0.5); }
+    ctx.textAlign = "left"; ctx.fillText(dl.end, xe + 5, y + 0.5); lastR = xe + 5 + we;
   });
   ctx.restore();
 }, dayNames(c){
@@ -142,6 +153,12 @@ const fixAxis = s => { s.width = AX; };
 const csR = {};   // Breite rechts je Diagramm
 const csPad = c => AX + (csR[c.$key] ?? AX);   // links + rechts
 let csCenter = null, csDataKey = "";   // Stunde (Index in state.times, mit Bruchteil) in der Mitte des sichtbaren Ausschnitts
+/* Nacht ausgeblendet: dort springt die Zeit (z. B. 19 -> 06 Uhr). Linien und Flächen werden an dieser Stelle unterbrochen,
+   sonst sähe es aus wie ein durchgehender Verlauf über Nacht. */
+const nightCuts = idxs => idxs ? idxs.reduce((r, gi, k) => (k && gi - idxs[k-1] > 1 ? [...r, k] : r), []) : [];
+const nightCut = ctx => { const ix = ctx.chart.$idxs; if(!ix) return false;
+  for(let k = ctx.p0DataIndex + 1; k <= ctx.p1DataIndex; k++) if(ix[k] - ix[k-1] > 1) return true; return false; };
+const NIGHT_GAP = {borderColor:ctx => nightCut(ctx) ? "transparent" : undefined, backgroundColor:ctx => nightCut(ctx) ? "transparent" : undefined};
 // zusammenhängende Stunden eines Tages: [erster Index, letzter Index, Tag]
 const dayRuns = idxs => idxs.reduce((r, gi, k) => { const d = state.times[gi].slice(0,10), l = r[r.length-1];
   if(l && l[2] === d) l[1] = k; else r.push([k, k, d]); return r; }, []);
@@ -172,6 +189,7 @@ function csPrepare(key, idxs){
 /* feste Achsenbreiten: so stehen die Stunden genau, und die Achsen lassen sich als Kopie stehen lassen */
 function csAxes(opt, key){
   opt.scales.x.offset = true;
+  opt.datasets = {line:{segment:NIGHT_GAP}};
   opt.scales.y.afterFit = fixAxis;
   if(opt.scales.y2 && opt.scales.y2.display !== false){ opt.scales.y2.afterFit = fixAxis; csR[key] = AX; }
   else{ opt.layout = {padding:{right:AX_NONE}}; csR[key] = AX_NONE; }
@@ -194,16 +212,17 @@ const csAxisPlugin = {id:"csAxis", afterDraw(c){
 function csAfter(key){
   const c = charts[key], sc = $(CS[key])?.closest(".cs-scroll"); if(!c || !sc) return;
   c.$sc = sc; c.$key = key; sc.dataset.key = key;
+  c.$cw = sc.clientWidth; c.$max = sc.scrollWidth - c.$cw;   // gemerkt: beim Scrollen nichts nachmessen (jedes Messen nach dem Verschieben bremst)
   c.$step = c.chartArea.width / c.$idxs.length;
   const dk = state.fetchedAt + "|" + site.lat + "," + site.lon;
   if(dk !== csDataKey){ csDataKey = dk; csCenter = null; }
   if(csCenter == null) csShowDay(state.day, [key]); else csSetCenter(key, csCenter);
 }
-function csSetCenter(key, gi){
+function csSetCenter(key, gi, noDraw){
   const c = charts[key]; if(!c?.$sc) return;
   const sc = c.$sc;
-  sc.scrollLeft = csKOf(c.$idxs, gi) * c.$step - (sc.clientWidth - csPad(c))/2; sc._want = sc.scrollLeft;
-  c.draw();
+  sc.scrollLeft = sc._want = Math.max(0, Math.min(c.$max, csKOf(c.$idxs, gi) * c.$step - (c.$cw - csPad(c))/2));
+  if(!noDraw) c.draw();
 }
 /* Tag von seinem Anfang an zeigen (Tages-Tasten) */
 function csShowDay(d, keys = Object.keys(CS)){
@@ -221,38 +240,45 @@ function csShowHour(i, center){
   if(!center && px >= vl && px <= vr) return;
   csCenter = i + .5; Object.keys(CS).forEach(o => csSetCenter(o, csCenter));
 }
-let csRaf = 0, csSrc = null;
 // vom Programm gesetzte Position (nicht weiterreichen, sonst schaukeln sich Diagramme und Zeitleiste gegenseitig auf)
 const csOwn = el => { if(el._want != null && Math.abs(el.scrollLeft - el._want) < 1.5) return true; el._want = null; return false; };
+/* Beim Scrollen nur die Position der anderen nachziehen, sofort im Scroll-Ereignis (sonst hängen sie einen Bildaufbau hinterher).
+   Neu zeichnen (Beschriftungen am Rand) und den Tag wechseln erst, wenn das Scrollen kurz ruht: das hält es flüssig. */
+let csRest = 0;
+function csSettle(){
+  clearTimeout(csRest);
+  csRest = setTimeout(() => { Object.keys(CS).forEach(k => charts[k]?.draw()); csDayCheck(csCenter); }, 140);
+}
 function csScrolled(sc){
   if(csOwn(sc)) return;
-  csSrc = sc.dataset.key; if(!csRaf) csRaf = requestAnimationFrame(csFollow);
+  const key = sc.dataset.key, c = charts[key]; if(!c?.$sc) return;
+  csCenter = csGiOf(c.$idxs, (sc.scrollLeft + (c.$cw - csPad(c))/2) / c.$step);
+  Object.keys(CS).forEach(o => { if(o !== key) csSetCenter(o, csCenter, true); });
+  tlFollow(csCenter); csSettle();
 }
-function csFollow(){
-  csRaf = 0; const c = charts[csSrc]; if(!c?.$sc) return;
-  const sc = c.$sc;
-  csCenter = csGiOf(c.$idxs, (sc.scrollLeft + (sc.clientWidth - csPad(c))/2) / c.$step);
-  c.draw();
-  Object.keys(CS).forEach(o => { if(o !== csSrc) csSetCenter(o, csCenter); });
-  tlFollow(csCenter); csDayCheck(csCenter);
+/* Zeitleiste „Arbeitsfenster“: Lage der Zellen einmal messen (neu, wenn die Leiste neu aufgebaut oder breiter/schmaler wird) */
+let tlPos = null;
+function tlCells(){
+  const box = $("tlScroll"), first = $("timeline").querySelector(".tl-cell");
+  if(tlPos && tlPos.first === first) return tlPos;
+  const b0 = box.getBoundingClientRect().left - box.scrollLeft;
+  const list = [...$("timeline").querySelectorAll(".tl-cell")].map(e => ({i:+e.dataset.i, x:e.getBoundingClientRect().left - b0, w:e.offsetWidth}));
+  return tlPos = {first, w:box.clientWidth, max:box.scrollWidth - box.clientWidth, list, map:new Map(list.map(o => [o.i, o]))};
 }
-/* Zeitleiste „Arbeitsfenster“ auf dieselbe Stunde stellen */
-const tlCellX = (box, el) => el.getBoundingClientRect().left - box.getBoundingClientRect().left + box.scrollLeft;
 function tlFollow(gi){
-  const box = $("tlScroll"), el = $("timeline").querySelector(`.tl-cell[data-i="${Math.floor(gi)}"]`); if(!box || !el) return;
-  box.scrollLeft = tlCellX(box, el) + el.offsetWidth*(gi - Math.floor(gi)) - box.clientWidth/2; box._want = box.scrollLeft;
+  const box = $("tlScroll"), p = tlCells().map.get(Math.floor(gi)); if(!p) return;
+  box.scrollLeft = box._want = Math.max(0, Math.min(tlPos.max, p.x + p.w*(gi - Math.floor(gi)) - tlPos.w/2));
 }
 /* Scrollen in der Zeitleiste: Diagramme laufen mit */
-let tlRaf = 0;
 function tlScrolled(){
-  tlRaf = 0;
-  const box = $("tlScroll"), mid = box.scrollLeft + box.clientWidth/2;
-  let best = null, bx = 0, bd = Infinity;
-  box.querySelectorAll(".tl-cell").forEach(b => { const x = tlCellX(box, b), d = Math.abs(x + b.offsetWidth/2 - mid); if(d < bd){ bd = d; best = b; bx = x; } });
-  if(!best) return;
-  csCenter = +best.dataset.i + Math.max(0, Math.min(.999, (mid - bx) / best.offsetWidth));
-  Object.keys(CS).forEach(o => csSetCenter(o, csCenter));
-  csDayCheck(csCenter);
+  const box = $("tlScroll"), T = tlCells(), mid = box.scrollLeft + T.w/2, L = T.list;
+  if(!L.length) return;
+  let lo = 0, hi = L.length - 1;   // Zelle unter der Mitte (Zellen sind nach Lage sortiert)
+  while(lo < hi){ const m = (lo + hi + 1) >> 1; if(L[m].x <= mid) lo = m; else hi = m - 1; }
+  const p = L[lo];
+  csCenter = p.i + Math.max(0, Math.min(.999, (mid - p.x) / p.w));
+  Object.keys(CS).forEach(o => csSetCenter(o, csCenter, true));
+  csSettle();
 }
 function csDayCheck(gi){ const d = state.times[Math.floor(gi)]?.slice(0,10); if(d && d !== state.day) dayFromScroll(d); }
 /* nach einem Tageswechsel: Tagesangaben, Taupunkt-Zeile und Markierungen in den Diagrammen nachziehen */
@@ -263,13 +289,10 @@ function chartDayChanged(){
 }
 function csInit(){
   Object.values(CS).forEach(csWrap);
-  $("tlScroll").addEventListener("scroll", () => {
-    if(csOwn($("tlScroll"))) return;
-    if(!tlRaf) tlRaf = requestAnimationFrame(tlScrolled);
-  }, {passive:true});
+  $("tlScroll").addEventListener("scroll", () => { if(!csOwn($("tlScroll"))) tlScrolled(); }, {passive:true});
   // andere Breite (Drehen, Fenster): Stundenbreite neu berechnen, Ausschnitt bleibt
   let w = innerWidth, t = 0;
-  addEventListener("resize", () => { if(innerWidth === w) return; w = innerWidth; clearTimeout(t);
+  addEventListener("resize", () => { if(innerWidth === w) return; w = innerWidth; tlPos = null; clearTimeout(t);
     t = setTimeout(() => { if(state.hours.length){ renderChart(); renderRain(); renderTemp(); } }, 150); });
 }
 
@@ -297,7 +320,7 @@ function renderChart(){
   if(charts.main) charts.main.destroy();
   csPrepare("main", idxs);
   charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, limitLabels, csAxisPlugin]});
-  charts.main.$idxs = idxs; charts.main.update("none"); csAfter("main"); if(isNarrow()) syncTooltip(charts.main);
+  charts.main.$idxs = idxs; charts.main.update("none"); csAfter("main"); syncTooltip(charts.main);
   $("chartTitle").textContent = T("Windverlauf · ", "Wind · ") + zoneTxt();
   $("chartDay").textContent = dayLabel(state.day);
   renderChips(); renderLegend();
@@ -378,7 +401,7 @@ function renderRain(){
     {type:"bar", label:T("Regen", "Rain"), data:H.map(h=>h.rain==null?null:+h.rain.toFixed(2)), backgroundColor:H.map(h => rainColor(h)), borderColor:css("--band-line"), borderRadius:2},
     {type:"line", label:"CAPE", yAxisID:"y2", data:H.map(h=>h.cape==null?null:Math.round(h.cape)), borderColor:css("--warn"), borderWidth:2, pointRadius:0, tension:.3},
   ]}, options:opt, plugins:[markPlugin, csAxisPlugin]});
-  charts.rain.$idxs = idxs; charts.rain.update("none"); csAfter("rain"); if(isNarrow()) syncTooltip(charts.rain);
+  charts.rain.$idxs = idxs; charts.rain.update("none"); csAfter("rain"); syncTooltip(charts.rain);
   $("rainDay").textContent = dayLabel(state.day);
 }
 
@@ -447,7 +470,7 @@ function renderTemp(){
   if(charts.temp) charts.temp.destroy();
   csPrepare("temp", idxs);
   charts.temp = new Chart($("temp"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, coatLimitPlugin, csAxisPlugin]});
-  charts.temp.$idxs = idxs; charts.temp.update("none"); csAfter("temp"); if(isNarrow()) syncTooltip(charts.temp);
+  charts.temp.$idxs = idxs; charts.temp.update("none"); csAfter("temp"); syncTooltip(charts.temp);
   $("tempTitle").textContent = T("Temperatur · ", "Temperature · ") + workH() + T(" m & Feuchte", " m & humidity");
   $("tempDay").textContent = dayLabel(state.day);
   $("tempNote").textContent = tempNote();
