@@ -51,7 +51,9 @@ function setModelUsed(id, used){
 function defaultSel(day){
   const now = state.times.findIndex(t => t.slice(0,13)===nowKey());
   if(now>=0 && state.times[now].startsWith(day) && isWork(state.times[now])) return now;
-  const i = state.times.findIndex(t => t.startsWith(day) && hourOf(t)===site.from);
+  // sonst Mitte des Arbeitsfensters: so steht beim Tageswechsel der ganze Arbeitstag mittig in den Diagrammen
+  const mid = site.to > site.from ? Math.floor((site.from + site.to) / 2) : site.from;
+  const i = state.times.findIndex(t => t.startsWith(day) && hourOf(t)===mid);
   return i>=0 ? i : state.times.findIndex(t=>t.startsWith(day));
 }
 

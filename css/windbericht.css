@@ -703,7 +703,10 @@ header.top .row .lang-btn{font:700 15px var(--f-body);letter-spacing:.04em}
 .cs-cv{position:relative;height:100%}
 .cs-mark{position:absolute;width:0;pointer-events:none}
 .cs-mark::before{content:"";position:absolute;left:-1px;top:0;bottom:0;width:2px;background:var(--accent)}
-.cs-mark b{position:absolute;top:0;left:0;transform:translateX(-50%);background:var(--accent);color:var(--accent-ink);font:600 11px/18px var(--f-body);padding:0 7px;border-radius:9px;white-space:nowrap}
+/* Spitze auf der oberen Kante; die Uhrzeit darüber nur beim Wischen (.cs-live) */
+.cs-mark::after{content:"";position:absolute;left:-6px;top:-7px;border:6px solid transparent;border-top:7px solid var(--accent);border-bottom:0}
+.cs-mark b{position:absolute;top:-9px;left:0;transform:translate(-50%,-100%);background:var(--accent);color:var(--accent-ink);font:600 11px/18px var(--f-body);padding:0 7px;border-radius:9px;white-space:nowrap;opacity:0;transition:opacity .25s}
+.cs-live .cs-mark b{opacity:1;transition:none}
 .cs-mark[hidden]{display:none}
 /* großes Arbeitsfenster: links und rechts halbe Breite frei, damit jede Stunde in die Mitte kommt (wie die Kurzleiste) */
 .tl-days{padding:0 calc(50% - 13px)}
