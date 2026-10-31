@@ -63,7 +63,8 @@ function initSticky(){
   $("sbPrev").onclick = () => stepDay(-1);
   $("sbNext").onclick = () => stepDay(1);
   if("IntersectionObserver" in window){
-    new IntersectionObserver(([en]) => { stickyPast = !en.isIntersecting && en.boundingClientRect.top < 0; renderSticky(); }).observe($("sec-zeit"));
+    // unten weit verlängert: „unter dem Bild“ zählt als sichtbar, so meldet der Beobachter auch einen Sprung von unten direkt nach oben
+    new IntersectionObserver(([en]) => { stickyPast = !en.isIntersecting; renderSticky(); }, {rootMargin:"0px 0px 100000px 0px"}).observe($("sec-zeit"));
   }
 }
 initSticky();
