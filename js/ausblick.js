@@ -101,7 +101,7 @@ function outlookDew(hs, d){
   if(coatOn(d)){
     const ok = hs.filter(h => !coatViol(h)).length, r = rangeTxt(hs, h => !coatViol(h));
     return {label:icon("brush", 14) + T(" Beschichten", " Coating"), txt: ok ? short(r) : T("nicht möglich", "not possible"), cls: ok===hs.length ? "ol-ok" : ok ? "ol-part" : (site.coatStop ? "ol-stop" : "ol-part"),
-      tip:T(`Beschichten möglich in ${ok} von ${hs.length} Arbeitsstunden (Grenzen: höchstens ${coatRh()} % Feuchte, Taupunktabstand mind. ${fmt(coatDew(), coatDew()%1 ? 1 : 0)} K)`, `Coating possible in ${ok} of ${hs.length} working hours (limits: at most ${coatRh()} % humidity, dew point spread at least ${fmt(coatDew(), coatDew()%1 ? 1 : 0)} K)`)};
+      tip:T(`Beschichten möglich in ${ok} von ${hs.length} Arbeitsstunden (Grenzen: höchstens ${coatRh()} % Feuchte, Taupunktabstand mind. ${fmt(coatDew(), coatDew()%1 ? 1 : 0)} °C)`, `Coating possible in ${ok} of ${hs.length} working hours (limits: at most ${coatRh()} % humidity, dew point spread at least ${fmt(coatDew(), coatDew()%1 ? 1 : 0)} °C)`)};
   }
   const r = rangeTxt(hs, h => h.dew <= 0);
   return {label:icon("drop", 14) + T(" Tau", " Dew"), txt: r ? short(r) : "–", cls: r ? "ol-part" : "", tip: r ? T("Taupunkt erreicht: Nebel oder Wolke in Arbeitshöhe, Oberflächen nass", "Dew point reached: fog or cloud at working height, surfaces wet") : T("Taupunkt in der Arbeitszeit nicht erreicht", "Dew point not reached during working hours")};

@@ -149,7 +149,7 @@ function renderCoatBar(){
   $("coatBar").classList.toggle("on", on);
   $("coatBtn").setAttribute("aria-pressed", String(on));
   $("coatLbl").textContent = on ? T("Beschichten-Modus an", "Coating mode on") : T("Beschichten-Modus", "Coating mode");
-  $("coatInfo").textContent = on ? T(`An für alle Tage, endet von selbst nach ${kurzDatum(coatEnd())} · Grenzen: höchstens ${coatRh()} % Feuchte, Taupunktabstand mind. ${k(coatDew())} K${site.coatStop ? ", setzt die Ampel auf STOP" : " (nur Hinweis)"}. `, `On for all days, ends by itself after ${kurzDatum(coatEnd())} · Limits: at most ${coatRh()} % humidity, dew point spread at least ${k(coatDew())} K${site.coatStop ? ", sets the traffic light to STOP" : " (note only)"}. `) + coatDaySummary(dayHours(state.day)) : "";
+  $("coatInfo").textContent = on ? T(`An für alle Tage, endet von selbst nach ${kurzDatum(coatEnd())} · Grenzen: höchstens ${coatRh()} % Feuchte, Taupunktabstand mind. ${k(coatDew())} °C${site.coatStop ? ", setzt die Ampel auf STOP" : " (nur Hinweis)"}. `, `On for all days, ends by itself after ${kurzDatum(coatEnd())} · Limits: at most ${coatRh()} % humidity, dew point spread at least ${k(coatDew())} °C${site.coatStop ? ", sets the traffic light to STOP" : " (note only)"}. `) + coatDaySummary(dayHours(state.day)) : "";
 }
 function toggleCoat(){
   setCoat(coatOn(state.day) ? null : coatDefaultEnd());

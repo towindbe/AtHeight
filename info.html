@@ -7,7 +7,7 @@
 <title>So funktioniert AtHeight</title>
 <script>/* Hell nur, wenn so gewählt (Standard dunkel); vor dem Zeichnen setzen, damit nichts aufblitzt */
 try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-31m">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-31o">
 <style>
   .info h2{margin-bottom:2px}
   .info .ico{width:1.1em;height:1.1em;vertical-align:-3px}
@@ -129,10 +129,10 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
   <section class="card" id="feuchte">
     <h2>Feuchte, Taupunkt und Wolken</h2>
     <ul>
-      <li><b>Taupunktabstand:</b> wie weit die Temperatur über dem Taupunkt liegt, in K (Kelvin; 1 K entspricht 1 °C Unterschied). Unter dem Temperatur-Diagramm steht er je Arbeitsstunde, ebenso in „Stunden im Detail“. <b>„<i data-ico="drop"></i> Tau“</b> (gelb) heißt: Taupunkt erreicht, die Luft oben ist gesättigt, Nebel oder eine tiefe Wolke in Arbeitshöhe sind wahrscheinlich, Oberflächen und Seile werden nass und glatt. <b>Hellgelb</b>: Taupunktabstand höchstens 1 K, Kondenswasser möglich. Der Überblick oben fasst das einmal je Tag zusammen, z. B. „Kondenswasser: Taupunkt erreicht 06–09 Uhr“. Kein Einfluss auf die Ampel.</li>
-      <li><b>Mehr als 1 K Taupunktabstand</b> heißt nur: Die Prognose rechnet nicht mit Kondenswasser in der Luft. Trocken sind Oberflächen damit nicht sicher, siehe Oberflächentemperatur.</li>
+      <li><b>Taupunktabstand:</b> wie weit die Temperatur über dem Taupunkt liegt, in °C. Unter dem Temperatur-Diagramm steht er je Arbeitsstunde, ebenso in „Stunden im Detail“. <b>„<i data-ico="drop"></i> Tau“</b> (gelb) heißt: Taupunkt erreicht, die Luft oben ist gesättigt, Nebel oder eine tiefe Wolke in Arbeitshöhe sind wahrscheinlich, Oberflächen und Seile werden nass und glatt. <b>Hellgelb</b>: Taupunktabstand höchstens 1 °C, Kondenswasser möglich. Der Überblick oben fasst das einmal je Tag zusammen, z. B. „Kondenswasser: Taupunkt erreicht 06–09 Uhr“. Kein Einfluss auf die Ampel.</li>
+      <li><b>Mehr als 1 °C Taupunktabstand</b> heißt nur: Die Prognose rechnet nicht mit Kondenswasser in der Luft. Trocken sind Oberflächen damit nicht sicher, siehe Oberflächentemperatur.</li>
       <li><b>Oberflächentemperatur:</b> Entscheidend für Kondenswasser ist die Temperatur der Oberfläche, nicht der Luft. Nach klaren Nächten sind Untergründe wie Stahl, Beton oder Glas oft kälter als die Luft. Das kennt kein Wettermodell: <b>vor Ort mit dem Oberflächenthermometer messen</b>.</li>
-      <li><b><i data-ico="brush"></i> Beschichten / Laminieren:</b> Viele Harze und Lacke dürfen nur bis zu einer bestimmten Luftfeuchte und mit ausreichendem Taupunktabstand verarbeitet werden. Die Grenzen stehen in den Einstellungen (Start: höchstens 80 % Feuchte, Taupunktabstand mind. 3 K, übliche Regel nach ISO 8502-4). <b>Eingeschaltet wird es im Überblick oben</b> mit „<i data-ico="brush"></i> Beschichten-Modus“. Es gilt dann für alle Tage an diesem Standort, bis ihr es wieder ausschaltet, höchstens 7 Tage; danach ist es von selbst aus, damit es nicht versehentlich wochenlang an bleibt. Ist es an, steht oben gut sichtbar „Beschichten-Modus an“ mit den Grenzen und den Uhrzeiten, in denen nicht beschichtet werden darf. In der Taupunkt-Zeile kommt die Luftfeuchte dazu, im Diagramm die Feuchte-Grenze als gestrichelte Linie. Ohne das Häkchen „Ampel auf STOP“ in den Einstellungen sind das nur Hinweise (gelb). Mit Häkchen setzen überschrittene Grenzen die Ampel auf STOP (rot); Überblick und Tagesbericht nennen dann getrennt „Stop nur wegen Beschichtung, nicht wegen Wetter“. Maßgeblich bleibt das Datenblatt des Herstellers.</li>
+      <li><b><i data-ico="brush"></i> Beschichten / Laminieren:</b> Viele Harze und Lacke dürfen nur bis zu einer bestimmten Luftfeuchte und mit ausreichendem Taupunktabstand verarbeitet werden. Die Grenzen stehen in den Einstellungen (Start: höchstens 80 % Feuchte, Taupunktabstand mind. 3 °C, übliche Regel nach ISO 8502-4). <b>Eingeschaltet wird es im Überblick oben</b> mit „<i data-ico="brush"></i> Beschichten-Modus“. Es gilt dann für alle Tage an diesem Standort, bis ihr es wieder ausschaltet, höchstens 7 Tage; danach ist es von selbst aus, damit es nicht versehentlich wochenlang an bleibt. Ist es an, steht oben gut sichtbar „Beschichten-Modus an“ mit den Grenzen und den Uhrzeiten, in denen nicht beschichtet werden darf. In der Taupunkt-Zeile kommt die Luftfeuchte dazu, im Diagramm die Feuchte-Grenze als gestrichelte Linie. Ohne das Häkchen „Ampel auf STOP“ in den Einstellungen sind das nur Hinweise (gelb). Mit Häkchen setzen überschrittene Grenzen die Ampel auf STOP (rot); Überblick und Tagesbericht nennen dann getrennt „Stop nur wegen Beschichtung, nicht wegen Wetter“. Maßgeblich bleibt das Datenblatt des Herstellers.</li>
       <li><b>Luftfeuchte:</b> relative Luftfeuchte in 2 m über dem Boden, je Modell und als Median. Die Modelle geben sie in der Höhe nicht aus. Ab etwa 95 % ist mit Nebel, Tau oder nassen Oberflächen zu rechnen.</li>
       <li><b>Bewölkung:</b> Gesamtbedeckung des Himmels in %, als Symbol in Achteln wie im Wetterbericht: <i data-ico="sun"></i> klar (0–1/8), <i data-ico="sunfew"></i> heiter (2–3/8), <i data-ico="cloudsun"></i> wolkig (4–5/8), <i data-ico="cloud"></i> stark bewölkt (6/8), <i data-ico="clouds"></i> bedeckt (7–8/8); nachts <i data-ico="moon"></i> statt Sonne. Wie hoch die Wolken hängen, sagt der Wert nicht. Nur Anzeige.</li>
       <li>Nicht jedes Modell liefert jeden Wert; fehlt einer, steht „·“.</li>
@@ -141,7 +141,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <summary><b>Genauer: wie der Taupunkt berechnet wird</b></summary>
       <ul>
         <li>Der Taupunkt ist die Temperatur, bei der sich Wasser aus der Luft niederschlägt. AtHeight berechnet ihn je Modell aus Temperatur und Luftfeuchte in 2 m (Magnus-Formel: Taupunkt = 243,12 · γ / (17,62 − γ) mit γ = ln(Feuchte/100) + 17,62 · T / (243,12 + T), T in °C). Beispiel: 10 °C bei 80 % ergeben 6,7 °C.</li>
-        <li><b>Warum Temperatur oben, Taupunkt unten?</b> Die Modelle liefern die Feuchte nur in 2 m. Der Taupunkt von dort wird mit der Lufttemperatur in Arbeitshöhe verglichen. Mit der Höhe sinkt der Taupunkt etwas (etwa 0,2 K je 100 m), die Temperatur meist stärker. Der echte Taupunktabstand oben ist deshalb meist etwas größer als berechnet: Die Warnung kommt eher zu früh als zu spät. Bei Inversion (oben wärmer als unten, z. B. morgens in Tälern) kann es umgekehrt sein.</li>
+        <li><b>Warum Temperatur oben, Taupunkt unten?</b> Die Modelle liefern die Feuchte nur in 2 m. Der Taupunkt von dort wird mit der Lufttemperatur in Arbeitshöhe verglichen. Mit der Höhe sinkt der Taupunkt etwas (etwa 0,2 °C je 100 m), die Temperatur meist stärker. Der echte Taupunktabstand oben ist deshalb meist etwas größer als berechnet: Die Warnung kommt eher zu früh als zu spät. Bei Inversion (oben wärmer als unten, z. B. morgens in Tälern) kann es umgekehrt sein.</li>
         <li><b>Temperatur unter dem Taupunkt (2 m)</b> ist kein Rechenfehler: Die feuchte Luft vom Boden würde oben sofort kondensieren, die Luft in Arbeitshöhe ist gesättigt. Wie weit darunter, sagt nichts Zusätzliches; deshalb steht in der Zeile nur „Tau“.</li>
       </ul>
     </details>
@@ -181,7 +181,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 
   <footer class="foot"><p class="note">© 2026 Tobias Windberg · <a href="https://www.windberg-ropeaccess.com" target="_blank" rel="noopener">www.windberg-ropeaccess.com</a> · <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="./">Zurück zur App</a></p></footer>
 </div>
-<script src="js/hilfen.js?v=2026-10-31m"></script>
+<script src="js/hilfen.js?v=2026-10-31o"></script>
 <script>
   // Symbol-Platzhalter füllen (wie in der App)
   document.querySelectorAll("[data-ico]").forEach(e => { e.outerHTML = icon(e.dataset.ico); });
