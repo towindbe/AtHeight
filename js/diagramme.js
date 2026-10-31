@@ -36,6 +36,15 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
   c.$idxs.forEach((gi,k) => {
     if(!isWork(state.times[gi])){ ctx.fillStyle = css("--raised"); ctx.fillRect(x.getPixelForValue(k)-step/2, a.top, step, a.bottom-a.top); }
   });
+  // ausgeblendete Nacht: schraffierter Streifen zwischen letzter Abend- und erster Morgenstunde
+  nightCuts(c.$idxs).forEach(k => {
+    const x0 = x.getPixelForValue(k-1), x1 = x.getPixelForValue(k), w = x1 - x0;
+    ctx.fillStyle = css("--raised"); ctx.fillRect(x0, a.top, w, a.bottom - a.top);
+    ctx.save(); ctx.beginPath(); ctx.rect(x0, a.top, w, a.bottom - a.top); ctx.clip();
+    ctx.strokeStyle = css("--muted"); ctx.globalAlpha = .45; ctx.lineWidth = 1;
+    for(let y = a.top - w; y < a.bottom + w; y += 6){ ctx.beginPath(); ctx.moveTo(x0, y + w); ctx.lineTo(x1, y); ctx.stroke(); }
+    ctx.restore();
+  });
   // Tageswechsel: senkrechte Linie
   ctx.strokeStyle = css("--muted"); ctx.lineWidth = 1; ctx.globalAlpha = .6;
   dayRuns(c.$idxs).slice(1).forEach(([k0]) => { const px = x.getPixelForValue(k0) - step/2; ctx.beginPath(); ctx.moveTo(px, a.top); ctx.lineTo(px, a.bottom); ctx.stroke(); });
@@ -45,6 +54,7 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
   if(!c.$idxs?.length) return;
   const {ctx, chartArea:a, scales:{x}} = c, step = x.getPixelForValue(1) - x.getPixelForValue(0);
   const toH = t => +t.slice(0,2) + +t.slice(3,5)/60, y = a.bottom + 8, sun = "#f2b632";
+  let lastR = -Infinity;   // rechter Rand der zuletzt geschriebenen Uhrzeit: aneinanderstoßende Uhrzeiten (Nacht ausgeblendet) nicht übereinander schreiben
   ctx.save();
   dayRuns(c.$idxs).forEach(([k0, , d]) => {
     const dl = daylight(d); if(!dl.start || !dl.end) return;
@@ -62,8 +72,9 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
     for(let k = 0; k < 8; k++){ const w = k*Math.PI/4; ctx.beginPath(); ctx.moveTo(cx + Math.cos(w)*4.4, y + Math.sin(w)*4.4); ctx.lineTo(cx + Math.cos(w)*6.4, y + Math.sin(w)*6.4); ctx.stroke(); }
     // Uhrzeiten links und rechts neben dem Balken
     ctx.font = "600 9.5px " + css("--f-mono"); ctx.textBaseline = "middle";
-    ctx.textAlign = "right"; ctx.fillText(dl.start, xs - 5, y + 0.5);
-    ctx.textAlign = "left"; ctx.fillText(dl.end, xe + 5, y + 0.5);
+    const ws = ctx.measureText(dl.start).width, we = ctx.measureText(dl.end).width;
+    if(xs - 5 - ws > lastR + 4){ ctx.textAlign = "right"; ctx.fillText(dl.start, xs - 5, y + 0.5); }
+    ctx.textAlign = "left"; ctx.fillText(dl.end, xe + 5, y + 0.5); lastR = xe + 5 + we;
   });
   ctx.restore();
 }, dayNames(c){
@@ -142,6 +153,12 @@ const fixAxis = s => { s.width = AX; };
 const csR = {};   // Breite rechts je Diagramm
 const csPad = c => AX + (csR[c.$key] ?? AX);   // links + rechts
 let csCenter = null, csDataKey = "";   // Stunde (Index in state.times, mit Bruchteil) in der Mitte des sichtbaren Ausschnitts
+/* Nacht ausgeblendet: dort springt die Zeit (z. B. 19 -> 06 Uhr). Linien und Flächen werden an dieser Stelle unterbrochen,
+   sonst sähe es aus wie ein durchgehender Verlauf über Nacht. */
+const nightCuts = idxs => idxs ? idxs.reduce((r, gi, k) => (k && gi - idxs[k-1] > 1 ? [...r, k] : r), []) : [];
+const nightCut = ctx => { const ix = ctx.chart.$idxs; if(!ix) return false;
+  for(let k = ctx.p0DataIndex + 1; k <= ctx.p1DataIndex; k++) if(ix[k] - ix[k-1] > 1) return true; return false; };
+const NIGHT_GAP = {borderColor:ctx => nightCut(ctx) ? "transparent" : undefined, backgroundColor:ctx => nightCut(ctx) ? "transparent" : undefined};
 // zusammenhängende Stunden eines Tages: [erster Index, letzter Index, Tag]
 const dayRuns = idxs => idxs.reduce((r, gi, k) => { const d = state.times[gi].slice(0,10), l = r[r.length-1];
   if(l && l[2] === d) l[1] = k; else r.push([k, k, d]); return r; }, []);
@@ -172,6 +189,7 @@ function csPrepare(key, idxs){
 /* feste Achsenbreiten: so stehen die Stunden genau, und die Achsen lassen sich als Kopie stehen lassen */
 function csAxes(opt, key){
   opt.scales.x.offset = true;
+  opt.datasets = {line:{segment:NIGHT_GAP}};
   opt.scales.y.afterFit = fixAxis;
   if(opt.scales.y2 && opt.scales.y2.display !== false){ opt.scales.y2.afterFit = fixAxis; csR[key] = AX; }
   else{ opt.layout = {padding:{right:AX_NONE}}; csR[key] = AX_NONE; }
