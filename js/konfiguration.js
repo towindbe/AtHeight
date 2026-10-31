@@ -96,7 +96,8 @@ const LAMP_ICON = {
 
 let site = loadSite();
 let state = {results:[], times:[], hours:[], fetchedAt:null, day:null, sel:null,
-  show:new Set((() => { try{ return JSON.parse(localStorage.getItem("wb_show")||"[]"); }catch(e){ return []; } })())};   // im Windverlauf eingeblendete Modelle (nur Anzeige)
+  show:new Set((() => { try{ return JSON.parse(localStorage.getItem("wb_show")||"[]"); }catch(e){ return []; } })()),
+  showBest:(() => { try{ return localStorage.getItem("wb_showbest")==="1"; }catch(e){ return false; } })()};   // „Am besten bewertet“ gewählt: folgt dem Modellvergleich der jeweiligen Baustelle   // im Windverlauf eingeblendete Modelle (nur Anzeige)
 state.nightOff = (() => { try{ return localStorage.getItem("wb_night")==="1"; }catch(e){ return false; } })();   // Diagramme ohne dunkle Stunden außerhalb der Arbeitszeit
 state.hide = new Set((() => { try{ return JSON.parse(localStorage.getItem("wb_hide")||"[]"); }catch(e){ return []; } })());   // im Windverlauf ausgeblendete Linien: median, band, gust, lim, glim
 const charts = {};

@@ -697,3 +697,4 @@ header.top .row .lang-btn{font:700 15px var(--f-body);letter-spacing:.04em}
 #hourTable td.why-cell{min-width:0;cursor:pointer}
 #hourTable td.why-cell > span{display:inline-block;vertical-align:bottom;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #hourTable td.why-cell.open > span{white-space:normal;max-width:340px}
+.mq button[aria-pressed="true"]{background:var(--band-line);color:var(--bg);border-color:var(--band-line)}
