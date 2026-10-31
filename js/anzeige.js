@@ -56,7 +56,7 @@ function renderHero(){
   state.summary = sum;
   $("lamp").className = "lamp " + sum.lamp; $("lamp").innerHTML = (LAMP_ICON[sum.lamp] || "") + `<span>${LAMP_TXT[sum.lamp]}</span>`;
   const dl = daylight(state.day);
-  $("heroDay").textContent = `${new Date(state.day+"T12:00:00").toLocaleDateString(LOC(),{weekday:"short", day:"2-digit", month:"2-digit"})} · ${T("Arbeitszeit", "Working hours")} ${site.from}–${site.to}${UHR()}` + (dl.start && dl.end ? ` · ${T("hell", "daylight")} ${dl.start}–${dl.end}` : "");
+  $("heroDay").textContent = `${kurzDatum(state.day)} · ${T("Arbeitszeit", "Working hours")} ${site.from}–${site.to}${UHR()}` + (dl.start && dl.end ? ` · ${T("hell", "daylight")} ${dl.start}–${dl.end}` : "");
   $("headline").textContent = sum.head; $("summary").textContent = sum.text;
   renderInstrument(sum);
   $("rainNote").textContent = rainSummary(dayHours(state.day));
@@ -141,7 +141,7 @@ function renderCoatBar(){
   $("coatBar").classList.toggle("on", on);
   $("coatBtn").setAttribute("aria-pressed", String(on));
   $("coatLbl").textContent = on ? T("Beschichten-Modus an", "Coating mode on") : T("Beschichten-Modus", "Coating mode");
-  $("coatInfo").textContent = on ? T(`An für alle Tage, endet von selbst nach ${new Date(coatEnd()+"T12:00:00").toLocaleDateString(LOC(),{weekday:"short", day:"2-digit", month:"2-digit"})} · Grenzen: höchstens ${coatRh()} % Feuchte, Taupunktabstand mind. ${k(coatDew())} K${site.coatStop ? ", setzt die Ampel auf STOP" : " (nur Hinweis)"}. `, `On for all days, ends by itself after ${new Date(coatEnd()+"T12:00:00").toLocaleDateString(LOC(),{weekday:"short", day:"2-digit", month:"2-digit"})} · Limits: at most ${coatRh()} % humidity, dew point spread at least ${k(coatDew())} K${site.coatStop ? ", sets the traffic light to STOP" : " (note only)"}. `) + coatDaySummary(dayHours(state.day)) : "";
+  $("coatInfo").textContent = on ? T(`An für alle Tage, endet von selbst nach ${kurzDatum(coatEnd())} · Grenzen: höchstens ${coatRh()} % Feuchte, Taupunktabstand mind. ${k(coatDew())} K${site.coatStop ? ", setzt die Ampel auf STOP" : " (nur Hinweis)"}. `, `On for all days, ends by itself after ${kurzDatum(coatEnd())} · Limits: at most ${coatRh()} % humidity, dew point spread at least ${k(coatDew())} K${site.coatStop ? ", sets the traffic light to STOP" : " (note only)"}. `) + coatDaySummary(dayHours(state.day)) : "";
 }
 function toggleCoat(){
   setCoat(coatOn(state.day) ? null : coatDefaultEnd());
