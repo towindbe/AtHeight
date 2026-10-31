@@ -237,11 +237,11 @@ function csSetCenter(key, gi, noDraw){
   const c = charts[key]; if(!c?.$sc) return;
   const sc = c.$sc;
   sc.scrollLeft = sc._want = Math.max(0, Math.min(c.$max, c.$S + csKOf(c.$idxs, gi) * c.$step - csHalf(c)));
-  if(noDraw) csPlaceMark(c); else c.draw();
+  if(!noDraw) c.draw();   // der Zeiger steht fest in der Mitte: beim Mitziehen nichts an ihm schreiben (sonst rechnet der Browser das Layout je Diagramm neu)
 }
-/* Stunde unter den Zeiger holen (Antippen, Tag-Tasten, Einrasten nach dem Wischen) */
-function csShowHour(i){
-  csCenter = i + .5; Object.keys(CS).forEach(o => csSetCenter(o, csCenter)); barFollow(csCenter);
+/* Stunde unter den Zeiger holen (Antippen, Tag-Tasten, Einrasten nach dem Wischen); noDraw: gezeichnet wird danach ohnehin (syncCharts) */
+function csShowHour(i, noDraw){
+  csCenter = i + .5; Object.keys(CS).forEach(o => csSetCenter(o, csCenter, noDraw)); barFollow(csCenter);
 }
 // vom Programm gesetzte Position (nicht weiterreichen, sonst schaukeln sich Diagramme und Leisten gegenseitig auf)
 const csOwn = el => { if(el._want != null && Math.abs(el.scrollLeft - el._want) < 1.5) return true; el._want = null; return false; };
@@ -296,11 +296,10 @@ function barScrolled(box){
   Object.keys(CS).forEach(o => csSetCenter(o, csCenter, true));
   barFollow(csCenter, box); csLive(); csSettle();
 }
-/* nach einem Tageswechsel: Tagesangaben, Taupunkt-Zeile und Markierungen in den Diagrammen nachziehen */
+/* nach einem Tageswechsel: Tagesangaben und Taupunkt-Zeile nachziehen (die Diagramme zeichnet danach syncCharts) */
 function chartDayChanged(){
   ["chartDay", "rainDay", "tempDay"].forEach(id => { $(id).textContent = dayLabel(state.day); });
   renderDewRow();
-  Object.keys(CS).forEach(k => charts[k]?.draw());
 }
 function csInit(){
   Object.values(CS).forEach(csWrap);

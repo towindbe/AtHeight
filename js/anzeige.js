@@ -149,7 +149,7 @@ function renderCoatBar(){
   $("coatBar").classList.toggle("on", on);
   $("coatBtn").setAttribute("aria-pressed", String(on));
   $("coatLbl").textContent = on ? T("Beschichten-Modus an", "Coating mode on") : T("Beschichten-Modus", "Coating mode");
-  $("coatInfo").textContent = on ? T(`An für alle Tage, endet von selbst nach ${kurzDatum(coatEnd())} · Grenzen: höchstens ${coatRh()} % Feuchte, Taupunktabstand mind. ${k(coatDew())} °C${site.coatStop ? ", setzt die Ampel auf STOP" : " (nur Hinweis)"}. `, `On for all days, ends by itself after ${kurzDatum(coatEnd())} · Limits: at most ${coatRh()} % humidity, dew point spread at least ${k(coatDew())} °C${site.coatStop ? ", sets the traffic light to STOP" : " (note only)"}. `) + coatDaySummary(dayHours(state.day)) : "";
+  $("coatInfo").textContent = on ? T(`Grenzen: höchstens ${coatRh()} % Feuchte, Taupunktabstand mind. ${k(coatDew())} °C${site.coatStop ? ", setzt die Ampel auf STOP" : " (nur Hinweis)"}. `, `Limits: at most ${coatRh()} % humidity, dew point spread at least ${k(coatDew())} °C${site.coatStop ? ", sets the traffic light to STOP" : " (note only)"}. `) + coatDaySummary(dayHours(state.day)) : "";
 }
 function toggleCoat(){
   setCoat(coatOn(state.day) ? null : coatDefaultEnd());
@@ -210,7 +210,7 @@ function selectHour(i){
   const d = state.times[i].slice(0,10);
   if(d!==state.day){ state.day = d; dayChanged(); }
   renderSelected();
-  if(typeof csShowHour==="function") csShowHour(i);   // Stunde unter den Zeiger in der Mitte holen
+  if(typeof csShowHour==="function") csShowHour(i, true);   // Stunde unter den Zeiger in der Mitte holen (gezeichnet wird in syncCharts)
   syncCharts();
 }
 const syncCharts = () => ["main","rain","temp"].forEach(k => { if(charts[k]) syncTooltip(charts[k]); });
@@ -245,7 +245,7 @@ function goDay(d){
   renderHero(); renderDayTabs(); renderTimeline(); renderMatrix(); renderHourTable(); renderModelTable();
   if(typeof chartDayChanged==="function") chartDayChanged();
   renderSelected();
-  if(typeof csShowHour==="function") csShowHour(state.sel);
+  if(typeof csShowHour==="function") csShowHour(state.sel, true);
   syncCharts();
 }
 
