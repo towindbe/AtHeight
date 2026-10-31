@@ -186,7 +186,7 @@ function renderTimeline(){
       `<button type="button" class="tl-cell c-${h.lamp} ${isWork(h.t)?"":"off"} ${h.dark?"dark":""} ${h.t.slice(0,13)===nk?"nowc":""}" data-i="${h.i}" title="${esc(h.why.map(w=>w.t).join(" · "))}" aria-label="${dayLabel(d,true)} ${hh(h.t)}${UHR()}: ${LAMP_TXT[h.lamp]}, ${fwu(h.med)}"><span>${hourOf(h.t)%3===0?hh(h.t):""}</span></button>`).join("");
     return `<div class="tl-day ${d===state.day?"cur":""}" data-day="${d}"><span class="eyebrow">${esc(dayLabel(d))}</span><div class="tl-hours">${cells}</div></div>`;
   }).join("");
-  $("timeline").querySelectorAll(".tl-cell").forEach(b => b.onclick = () => selectHour(+b.dataset.i, true));
+  $("timeline").querySelectorAll(".tl-cell").forEach(b => b.onclick = () => selectHour(+b.dataset.i));
   scrollTimeline();
 }
 function scrollTimeline(){
@@ -204,29 +204,23 @@ function highlightSel(){
   $("instStrip").querySelectorAll(".ic").forEach(b => b.classList.toggle("sel", +b.dataset.i===state.sel));
   document.querySelectorAll(".mx td[data-i]").forEach(td => td.classList.toggle("selcol", +td.dataset.i===state.sel));
 }
-/* Stunde wählen. src: "chart" (im Diagramm), "strip" (Kurzleiste, Diagramme laufen mittig mit), true (Zeitleiste) */
-function selectHour(i, src){
+/* Stunde wählen (Antippen, Pfeile, Einrasten nach dem Wischen): alles zeigt diese Stunde, Diagramme und Leisten holen sie in die Mitte */
+function selectHour(i){
   state.sel = i;
   const d = state.times[i].slice(0,10);
-  if(d!==state.day){ state.day = d; dayChanged(src !== true); }
+  if(d!==state.day){ state.day = d; dayChanged(); }
   renderSelected();
-  if(src !== "chart" && typeof csShowHour==="function") csShowHour(i, src === "strip");
+  if(typeof csShowHour==="function") csShowHour(i);   // Stunde unter den Zeiger in der Mitte holen
   syncCharts();
 }
 const syncCharts = () => ["main","rain","temp"].forEach(k => { if(charts[k]) syncTooltip(charts[k]); });
 /* Tag gewechselt: alles außer den Diagrammen neu aufbauen (die zeigen ohnehin alle Tage) */
-function dayChanged(scrollTl){
-  renderHero(); renderDayTabs(); markTimelineDay(); if(scrollTl) scrollTimeline();
+function dayChanged(){
+  renderHero(); renderDayTabs(); markTimelineDay();
   renderMatrix(); renderHourTable(); renderModelTable();
   if(typeof chartDayChanged==="function") chartDayChanged();
 }
 function markTimelineDay(){ $("timeline").querySelectorAll(".tl-day").forEach(e => e.classList.toggle("cur", e.dataset.day === state.day)); }
-/* in den Diagrammen oder einer Leiste in einen anderen Tag gescrollt: Tag (Ampel, Tabellen) wechselt, Ausschnitt bleibt.
-   Die gewählte Stunde (oranger Zeiger, „Werte für“) bleibt stehen; sie ändert sich nur durch Antippen oder Ziehen. */
-function dayFromScroll(d){
-  state.day = d;
-  dayChanged(false); syncCharts();
-}
 /* Wertekasten (Tooltip) jedes Diagramms folgt der gewählten Stunde, auch wenn in einem anderen Diagramm gezogen wird */
 function syncTooltip(c){
   const k = c.$idxs ? c.$idxs.indexOf(state.sel) : -1;
@@ -251,7 +245,7 @@ function goDay(d){
   renderHero(); renderDayTabs(); renderTimeline(); renderMatrix(); renderHourTable(); renderModelTable();
   if(typeof chartDayChanged==="function") chartDayChanged();
   renderSelected();
-  if(typeof csShowDay==="function") csShowDay(d);
+  if(typeof csShowHour==="function") csShowHour(state.sel);
   syncCharts();
 }
 
