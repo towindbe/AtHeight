@@ -61,8 +61,8 @@ const VARS = ["wind_speed_10m","wind_speed_80m","wind_speed_120m","wind_speed_18
   "temperature_80m","temperature_120m","temperature_180m","apparent_temperature",
   "relative_humidity_2m","cloud_cover"];
 const CHILL_INFO = -10, HEAT_INFO = 32, UV_INFO = 6;
-const DEW_INFO = 1;   // Temperatur in Arbeitshöhe höchstens so viele K über dem Taupunkt: Hinweis Kondenswasser
-// Beschichten / Laminieren (Grenzen je Baustelle): max. Luftfeuchte und Mindestabstand zum Taupunkt (ISO 8502-4: 3 K)
+const DEW_INFO = 1;   // Temperatur in Arbeitshöhe höchstens so viele °C über dem Taupunkt: Hinweis Kondenswasser
+// Beschichten / Laminieren (Grenzen je Baustelle): max. Luftfeuchte und Mindestabstand zum Taupunkt (ISO 8502-4: 3 °C)
 const coatRh = () => site.coatRh ?? 80, coatDew = () => site.coatDew ?? 3;
 /* Beschichten-Modus: im Überblick je Standort eingeschaltet, gilt für alle Tage bis zum Ausschalten,
    höchstens COAT_DAYS Tage ab dem Einschalten. Danach ist er von selbst aus:

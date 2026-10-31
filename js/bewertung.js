@@ -80,7 +80,7 @@ function rate(h){
   if(coatOn(h.t.slice(0,10))){   // Beschichten-Modus: Hinweis, auf Wunsch (Einstellungen) Stop
     const cl = site.coatStop ? "stop" : "info", k = fmt(coatDew(), coatDew()%1 ? 1 : 0);
     if(h.rh!=null && h.rh > coatRh()) add(cl, T(`Beschichten: Luftfeuchte ${Math.round(h.rh)} % (Grenze ${coatRh()} %)`, `Coating: humidity ${Math.round(h.rh)} % (limit ${coatRh()} %)`), "coat");
-    if(h.dew!=null && h.dew < coatDew()) add(cl, T(`Beschichten: ${h.dew <= 0 ? "Taupunkt erreicht" : `Taupunktabstand ${fmt(h.dew,1)} K`} (Grenze mind. ${k} K)`, `Coating: ${h.dew <= 0 ? "dew point reached" : `dew point spread ${fmt(h.dew,1)} K`} (limit min. ${k} K)`), "coat");
+    if(h.dew!=null && h.dew < coatDew()) add(cl, T(`Beschichten: ${h.dew <= 0 ? "Taupunkt erreicht" : `Taupunktabstand ${fmt(h.dew,1)} °C`} (Grenze mind. ${k} °C)`, `Coating: ${h.dew <= 0 ? "dew point reached" : `dew point spread ${fmt(h.dew,1)} °C`} (limit min. ${k} °C)`), "coat");
   }
   const lamp = why.some(w => w.l==="stop") ? "stop" : why.some(w => w.l==="warn") ? "warn" : "go";
   // Stop allein wegen Beschichtung (nicht wegen Wetter): wird im Überblick und Bericht getrennt genannt
@@ -193,7 +193,7 @@ function rangeTxt(hs, test){
 function dewDaySummary(hs){
   const wet = rangeTxt(hs, h => h.dew!=null && h.dew <= 0), near = rangeTxt(hs, h => h.dew!=null && h.dew > 0 && h.dew <= DEW_INFO);
   if(!wet && !near) return "";
-  return T("Kondenswasser: ", "Condensation: ") + [wet && T(`Taupunkt erreicht ${wet} (Nebel/Wolke, alles nass)`, `dew point reached ${wet} (fog/cloud, everything wet)`), near && T(`knapp ${near} (bis ${fmt(DEW_INFO,0)} K)`, `close ${near} (up to ${fmt(DEW_INFO,0)} K)`)].filter(Boolean).join(" · ") + ".";
+  return T("Kondenswasser: ", "Condensation: ") + [wet && T(`Taupunkt erreicht ${wet} (Nebel/Wolke, alles nass)`, `dew point reached ${wet} (fog/cloud, everything wet)`), near && T(`knapp ${near} (bis ${fmt(DEW_INFO,0)} °C)`, `close ${near} (up to ${fmt(DEW_INFO,0)} °C)`)].filter(Boolean).join(" · ") + ".";
 }
 /* Beschichten-Modus: wann an diesem Tag die Grenzen überschritten sind */
 const coatViol = h => !!h && ((h.dew!=null && h.dew < coatDew()) || (h.rh!=null && h.rh > coatRh()));
