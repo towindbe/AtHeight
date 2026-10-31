@@ -92,11 +92,14 @@ function hourRows(hs, dots){
     <td class="num">${fmt(h.chill,0)}</td>
     <td class="num ${c.rh}">${h.rh==null ? "–" : Math.round(h.rh)}</td>
     <td class="num ${c.dew}" title="${h.dew==null ? "" : h.dew <= 0 ? T("Taupunkt erreicht: Nebel oder Wolke in Arbeitshöhe, alles nass", "Dew point reached: fog or cloud at working height, everything wet") : h.dew <= DEW_INFO ? T("Kondenswasser möglich", "Condensation possible") : ""}">${h.dew==null ? "–" : h.dew <= 0 ? T("Tau", "Dew") : fmt(h.dew,1)}</td>
-    <td class="why-cell">${esc(h.why.filter(w=>w.l!=="go").map(w=>shortWhy(w.t)).join(" · ")) || "–"}</td></tr>`; }).join("");
+    ${whyCell(h.why.filter(w=>w.l!=="go").map(w=>shortWhy(w.t)).join(" · "))}</tr>`; }).join("");
 }
 
 const HOUR_HEAD = () => `<thead><tr><th>${T("Uhr", "Time")}</th><th>Wind <span class="wu">${WU()}</span></th><th>${T("Spanne", "Spread")}</th><th>${T("Böe", "Gust")}</th><th>${T("Richtung", "Direction")}</th><th title="${T("Anzahl der Modelle mit Wind oder Böe über euren Grenzwerten", "Number of models with wind or gust above your limits")}">${T("Modelle über Grenze", "Models above limit")}</th><th title="${T("Anteil der Szenarien, in denen Wind oder Böe über Grenze liegen", "Share of scenarios with wind or gust above the limit")}">${T("Zu windig", "Too windy")}</th><th>${T("Regen", "Rain")}</th><th>CAPE</th><th>${T("°C Arbeit", "°C work")}</th><th>${T("Gefühlt", "Feels like")}</th><th title="${T("Relative Luftfeuchte in 2 m", "Relative humidity at 2 m")}">${T("Feuchte %", "Humidity %")}</th><th title="${T("Taupunktabstand: wie weit die Temperatur in Arbeitshöhe über dem Taupunkt (2 m) liegt; Tau = Taupunkt erreicht", "Dew point spread: how far the temperature at working height is above the dew point (2 m); Dew = dew point reached")}">${T("Taupunktabstand °C", "Dew pt spread °C")}</th><th>${T("Gründe", "Reasons")}</th></tr></thead>`;
 function renderHourTable(){ $("hourTable").innerHTML = HOUR_HEAD() + "<tbody>" + hourRows(dayHours(state.day), true) + "</tbody>"; $("hourDay").textContent = dayLabel(state.day); }
+/* Gründe einzeilig (sonst werden die Zeilen bei viel Text sehr hoch); Antippen klappt den ganzen Text auf */
+const whyCell = t => `<td class="why-cell" title="${esc(t)}"><span>${esc(t) || "–"}</span></td>`;
+$("hourTable").addEventListener("click", e => { const c = e.target.closest("td.why-cell"); if(c) c.classList.toggle("open"); });
 
 function renderModelTable(){
   $("modelDay").textContent = dayLabel(state.day);
@@ -120,7 +123,7 @@ function renderModelTable(){
       <td>${esc(r.m.name)} <span class="muted">· ${esc(r.m.org)}</span></td><td>${esc(r.m.res)}</td>
       <td class="${cp && (cp.edge || cp.far) ? "cell-edge" : ""}" title="${cp ? T(`Standort liegt ${fmt(cp.dist,1)} km von der Mitte der Modellzelle (Zellgröße ${fmt(cp.res,1)} km) entfernt`, `Site is ${fmt(cp.dist,1)} km from the centre of the model cell (cell size ${fmt(cp.res,1)} km)`) : ""}">${lage}</td>
       <td><span class="badge ${cls}" title="${esc(r.status==="extrap" ? T("Das Modell liefert keine Winddaten bis zur Arbeitshöhe. Der Wind darüber ist aus den höchsten gelieferten Höhen hochgerechnet.", "The model provides no wind data up to working height. The wind above is extrapolated from the highest heights provided.") : r.reason||"")}">${status}</span>${heights}</td><td class="num">${mx}</td><td class="num">${first}</td>
-      <td class="num raw"><a href="${esc(apiUrl(r.m, null, true))}" target="_blank" rel="noopener" title="${T("Rohdaten dieses Modells direkt von Open-Meteo", "Raw data of this model directly from Open-Meteo")}">JSON</a> · <a href="${esc(apiUrl(r.m,"csv"))}" target="_blank" rel="noopener" title="${T("Als CSV, z. B. für Excel", "As CSV, e.g. for Excel")}">CSV</a></td></tr>`;
+      <td class="num raw"><a href="${esc(apiUrl(r.m, null, true))}" target="_blank" rel="noopener" title="${T("Rohdaten dieses Modells direkt von Open-Meteo", "Raw data of this model directly from Open-Meteo")}">JSON</a> · <a href="${esc(apiUrl(r.m, "csv", true))}" target="_blank" rel="noopener" title="${T("Als CSV, z. B. für Excel", "As CSV, e.g. for Excel")}">CSV</a></td></tr>`;
   });
   $("modelTable").innerHTML = `<thead><tr><th title="${T("Häkchen: Modell geht in die Bewertung ein", "Tick: model is included in the assessment")}">${T("Nutzen", "Use")}</th><th>${T("Modell", "Model")}</th><th>${T("Auflösung", "Resolution")}</th><th title="${T("Lage des Standorts in der Gitterzelle des Modells", "Position of the site in the model grid cell")}">${T("Lage in der Zelle", "Position in cell")}</th><th>Status</th><th>Max. Wind</th><th>${T("Über Grenze ab", "Above limit from")}</th><th class="raw">${T("Rohdaten", "Raw data")}</th></tr></thead><tbody>${rows.join("")}</tbody>`;
   $("modelTable").querySelectorAll("input[data-model]").forEach(c => c.onchange = () => setModelUsed(c.dataset.model, c.checked));

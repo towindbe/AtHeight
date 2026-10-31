@@ -14,13 +14,14 @@ function renderSticky(){
   bar.hidden = !stickyPast;
   $("sbLamp").className = "sb-lamp c-" + day.lamp;
   $("sbLamp").textContent = LAMP_TXT[day.lamp];
-  $("sbHour").innerHTML = `<b>${esc(dayLabel(h.t.slice(0,10), true))}, ${hh(h.t)}${UHR()}</b> <span class="dot d-${h.lamp}"></span> ${esc(fw(h.med))} · ${T("Böe", "Gust")} ${esc(fwu(h.gMed))}`;
+  sbHourText(h);
   const days = dayList(), k = days.indexOf(state.day);
   $("sbPrev").disabled = k <= 0;
   $("sbNext").disabled = k < 0 || k >= days.length - 1;
   renderStickyDays();
   renderStrip();
 }
+const sbHourText = h => { $("sbHour").innerHTML = `<b>${esc(dayLabel(h.t.slice(0,10), true))}, ${hh(h.t)}${UHR()}</b> <span class="dot d-${h.lamp}"></span> ${esc(fw(h.med))} · ${T("Böe", "Gust")} ${esc(fwu(h.gMed))}`; };
 /* Tagesauswahl in der Kurzleiste (ersetzt die Pfeile in den einzelnen Abschnitten): kurz beschriftet, Punkt in Ampelfarbe des Tages */
 function renderStickyDays(){
   const days = [...new Set(state.times.map(t => t.slice(0,10)))];
@@ -54,12 +55,18 @@ function renderStrip(){
 }
 /* Wischen durch die Leiste wählt immer die Stunde in der Mitte: Wert oben, Diagramme, Tabellen und Karte laufen mit */
 let stripBusyUntil = 0, stripIgnoreUntil = 0, stripRaf = 0;
+/* Beim Wischen nur das Leichte (Kopfzeile, Diagramme mitziehen); alles Weitere (Werte, Profil, Karte, Tageswechsel) erst, wenn die Leiste kurz ruht */
+let stripRest = 0;
 function stripScrubbed(){
   stripRaf = 0;
   const box = $("sbStrip"), mid = box.scrollLeft + box.clientWidth/2;
   let best = null, bd = Infinity;
   box.querySelectorAll(".tl-cell").forEach(b => { const d = Math.abs(b.offsetLeft + b.offsetWidth/2 - mid); if(d < bd){ bd = d; best = b; } });
-  if(best && +best.dataset.i !== state.sel) selectHour(+best.dataset.i, "strip");
+  if(!best || +best.dataset.i === state.sel) return;
+  box.querySelector(".tl-cell.sel")?.classList.remove("sel"); best.classList.add("sel");
+  state.sel = +best.dataset.i; sbHourText(state.hours[state.sel]);
+  if(typeof csFollowHour==="function") csFollowHour(state.sel);
+  clearTimeout(stripRest); stripRest = setTimeout(() => selectHour(state.sel, "strip"), 160);
 }
 
 // Sprungmarken der Kurzleiste (beim Sprachwechsel neu aufgebaut)

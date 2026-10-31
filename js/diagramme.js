@@ -256,6 +256,8 @@ function csScrolled(sc){
   Object.keys(CS).forEach(o => { if(o !== key) csSetCenter(o, csCenter, true); });
   tlFollow(csCenter); csSettle();
 }
+/* Kurzleiste wird gewischt: Diagramme nur verschieben (ohne Neuzeichnen), der Rest folgt in der Pause */
+function csFollowHour(i){ csCenter = i + .5; Object.keys(CS).forEach(o => csSetCenter(o, csCenter, true)); }
 /* Zeitleiste „Arbeitsfenster“: Lage der Zellen einmal messen (neu, wenn die Leiste neu aufgebaut oder breiter/schmaler wird) */
 let tlPos = null;
 function tlCells(){
