@@ -7,12 +7,12 @@ if(typeof Chart !== "undefined") Chart.defaults.plugins.tooltip.callbacks.labelC
   return {borderColor:c, backgroundColor:c};
 };
 
-/* Schmale Bildschirme: Der Wertekasten (Tooltip) verdeckt dort die Linien. Stattdessen stehen die Werte der gewählten Stunde als Zeile über dem Diagramm. */
+/* Werte der gewählten Stunde als Zeile über dem Diagramm statt Wertekasten (Tooltip): der verdeckt sonst die Linien.
+   Am Handy zweispaltig, am PC so viele Spalten, wie Platz ist. */
 const isNarrow = () => matchMedia("(max-width: 700px)").matches;
 function narrowReadout(opt, id){
   const el = $(id); if(!el) return;
-  const on = isNarrow(); el.hidden = !on;
-  if(!on) return;
+  el.hidden = false;
   opt.plugins.tooltip.enabled = false;
   el.style.minHeight = ""; el.dataset.mh = "0";
   opt.plugins.tooltip.external = ({tooltip:t}) => {
@@ -297,7 +297,7 @@ function renderChart(){
   if(charts.main) charts.main.destroy();
   csPrepare("main", idxs);
   charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, limitLabels, csAxisPlugin]});
-  charts.main.$idxs = idxs; charts.main.update("none"); csAfter("main"); if(isNarrow()) syncTooltip(charts.main);
+  charts.main.$idxs = idxs; charts.main.update("none"); csAfter("main"); syncTooltip(charts.main);
   $("chartTitle").textContent = T("Windverlauf · ", "Wind · ") + zoneTxt();
   $("chartDay").textContent = dayLabel(state.day);
   renderChips(); renderLegend();
@@ -378,7 +378,7 @@ function renderRain(){
     {type:"bar", label:T("Regen", "Rain"), data:H.map(h=>h.rain==null?null:+h.rain.toFixed(2)), backgroundColor:H.map(h => rainColor(h)), borderColor:css("--band-line"), borderRadius:2},
     {type:"line", label:"CAPE", yAxisID:"y2", data:H.map(h=>h.cape==null?null:Math.round(h.cape)), borderColor:css("--warn"), borderWidth:2, pointRadius:0, tension:.3},
   ]}, options:opt, plugins:[markPlugin, csAxisPlugin]});
-  charts.rain.$idxs = idxs; charts.rain.update("none"); csAfter("rain"); if(isNarrow()) syncTooltip(charts.rain);
+  charts.rain.$idxs = idxs; charts.rain.update("none"); csAfter("rain"); syncTooltip(charts.rain);
   $("rainDay").textContent = dayLabel(state.day);
 }
 
@@ -447,7 +447,7 @@ function renderTemp(){
   if(charts.temp) charts.temp.destroy();
   csPrepare("temp", idxs);
   charts.temp = new Chart($("temp"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, coatLimitPlugin, csAxisPlugin]});
-  charts.temp.$idxs = idxs; charts.temp.update("none"); csAfter("temp"); if(isNarrow()) syncTooltip(charts.temp);
+  charts.temp.$idxs = idxs; charts.temp.update("none"); csAfter("temp"); syncTooltip(charts.temp);
   $("tempTitle").textContent = T("Temperatur · ", "Temperature · ") + workH() + T(" m & Feuchte", " m & humidity");
   $("tempDay").textContent = dayLabel(state.day);
   $("tempNote").textContent = tempNote();
