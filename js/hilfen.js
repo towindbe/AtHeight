@@ -34,6 +34,13 @@ const showHelp = el => { if(el) setTimeout(() => el.scrollIntoView({behavior:"sm
 const icon = (name, size = 20) => `<svg class="ico" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON_PATHS[name] || ""}</svg>`;
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt = (v, d=1) => v==null || isNaN(v) ? "–" : LANG === "en" ? v.toFixed(d) : v.toFixed(d).replace(".", ",");
+/* Kurzes Datum „Mi., 21.10.“ / „Wed 21/10“. Englisch selbst gebaut: die Systeme (Windows, Linux) setzen sonst unterschiedlich ein Komma. */
+const kurzDatum = (d, jahr) => {
+  const o = new Date(d+"T12:00:00");
+  if(LANG !== "en") return o.toLocaleDateString(LOC(), {weekday:"short", day:"2-digit", month:"2-digit", ...(jahr ? {year:"2-digit"} : {})});
+  const z = n => String(n).padStart(2, "0");
+  return o.toLocaleDateString(LOC(), {weekday:"short"}) + " " + z(o.getDate()) + "/" + z(o.getMonth()+1) + (jahr ? "/" + z(o.getFullYear()%100) : "");
+};
 /* Einheit der Windangaben (nur Anzeige; gerechnet und gespeichert wird immer in m/s) */
 const UNITS = {ms:{f:1, l:"m/s", d:1, step:0.5}, kmh:{f:3.6, l:"km/h", d:0, step:1}, kn:{f:1.943844, l:"kn", d:0, step:1}};
 let windUnit = (() => { try{ return localStorage.getItem("wb_unit"); }catch(e){ return null; } })();
