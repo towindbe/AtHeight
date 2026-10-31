@@ -30,6 +30,9 @@ button.danger{color:var(--stop)}
 .meta{color:var(--muted);font-size:14px;margin:4px 0 8px}
 .aktion{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 code{font-family:ui-monospace,monospace;font-size:13px;word-break:break-all}
+.verlauf{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}
+.verlauf td{padding:6px 4px;border-top:1px solid var(--line)}
+.verlauf td:last-child{text-align:right}
 .neu{border-color:var(--go);margin:14px 0 0}
 .fehler{color:var(--stop);margin:8px 0 0}
 [hidden]{display:none}
@@ -77,6 +80,8 @@ let APP = "";
 const key = () => { try{ return sessionStorage.getItem("ah_admin") || ""; }catch(e){ return ""; } };
 const datum = s => new Date(s + "T12:00:00").toLocaleDateString("de-DE", {day:"2-digit", month:"2-digit", year:"numeric"});
 const link = t => APP + "?t=" + t;
+const ANSICHT = 21;   // Abfragen je volle App-Ansicht (16 Modelle, 2 Ensembles, Zusatzdaten, Ausblick)
+const wd = s => new Date(s + "T12:00:00").toLocaleDateString("de-DE", {weekday:"short", day:"2-digit", month:"2-digit"});
 
 async function api(pfad, opt = {}){
   const r = await fetch("/admin/api/tokens" + pfad, {...opt, headers: {"X-Admin-Key": key(), "Content-Type": "application/json"}});
@@ -89,17 +94,21 @@ function kopieren(text, knopf){
   navigator.clipboard.writeText(text).then(fertig, () => { prompt("Zum Kopieren:", text); });
 }
 function zeile(t){
-  const status = t.rest < 0 ? ["abgelaufen", "aus"] : t.rest <= 3 ? ["läuft bald ab", "bald"] : ["aktiv", "ok"];
+  const status = t.rest < 0 ? ["abgelaufen", "aus"] : t.heute >= t.limit ? ["Limit erreicht", "bald"] : t.rest <= 3 ? ["läuft bald ab", "bald"] : ["aktiv", "ok"];
   const rest = t.rest < 0 ? "seit " + (-t.rest) + " Tg. abgelaufen" : t.rest === 0 ? "läuft heute ab" : "noch " + t.rest + " Tg.";
   const d = document.createElement("div"); d.className = "tok";
   d.innerHTML = '<div class="kopf"><span class="name"></span><span class="pill ' + status[1] + '">' + status[0] + '</span></div>' +
-    '<div class="meta">gültig bis ' + datum(t.bis) + ' (' + rest + ') · heute ' + t.heute + ' von ' + t.limit + ' Abfragen</div>' +
+    '<div class="meta">gültig bis ' + datum(t.bis) + ' (' + rest + ')' + '</div><div class="meta">Abfragen: heute ' + t.heute + ' von ' + t.limit + ' · 7 Tage ' + t.tage7 + ' · 30 Tage ' + t.tage30 + ' (eine App-Ansicht ≈ ' + ANSICHT + ')</div>' +
     '<code></code><div class="aktion"></div>';
   d.querySelector(".name").textContent = t.name;
   d.querySelector("code").textContent = t.token;
   const akt = d.querySelector(".aktion");
   const knopf = (text, fn, cls) => { const b = document.createElement("button"); b.type = "button"; b.textContent = text; if(cls) b.className = cls; b.onclick = () => fn(b); akt.append(b); };
   knopf("Link kopieren", b => kopieren(link(t.token), b));
+  const tab = document.createElement("table"); tab.className = "verlauf"; tab.hidden = true;
+  tab.innerHTML = t.verlauf.length ? "" : '<tr><td>Noch keine Abfragen</td></tr>';
+  t.verlauf.forEach(x => { const r = tab.insertRow(); r.insertCell().textContent = wd(x.tag); const c = r.insertCell(); c.textContent = x.n + " (≈ " + Math.round(x.n / ANSICHT) + " Ansichten)"; });
+  knopf("Verlauf", () => { tab.hidden = !tab.hidden; });
   knopf("Verlängern", async () => {
     const n = prompt("Wie viele Tage ab heute?", "30"); if(!n) return;
     try{ await api("/" + t.token + "/verlaengern", {method: "POST", body: JSON.stringify({tage: +n})}); laden(); }catch(e){ alert(e.message); }
@@ -108,6 +117,7 @@ function zeile(t){
     if(!confirm("Zugang „" + t.name + "“ sofort sperren?")) return;
     try{ await api("/" + t.token, {method: "DELETE"}); laden(); }catch(e){ alert(e.message); }
   }, "danger");
+  d.append(tab);
   return d;
 }
 async function laden(){

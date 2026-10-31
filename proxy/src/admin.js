@@ -5,6 +5,7 @@ import seite from "./admin.html";
 const json = (status, daten) => new Response(JSON.stringify(daten), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
 const heute = () => new Date().toISOString().slice(0, 10);
 const plusTage = n => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
+const VERLAUF_TAGE = 90;   // so lange bleibt der Tagesverlauf gespeichert
 const TOKEN_FORM = /^[a-f0-9]{24}$/;
 
 // Vergleich in gleicher Zeit, damit die Antwortdauer das Passwort nicht verrät
@@ -17,15 +18,22 @@ function gleich(a, b) {
 
 async function liste(env) {
   const h = heute(), out = [];
+  await env.ZAEHLER.prepare("DELETE FROM zaehler WHERE tag < ?").bind(plusTage(-VERLAUF_TAGE)).run();   // alte Zähler aufräumen
+  const verlauf = new Map();   // token -> [{tag, n}], neueste zuerst
+  for(const r of (await env.ZAEHLER.prepare("SELECT token, tag, n FROM zaehler ORDER BY tag DESC").all()).results){
+    if(!verlauf.has(r.token)) verlauf.set(r.token, []);
+    verlauf.get(r.token).push({ tag: r.tag, n: r.n });
+  }
+  const summe = (v, tage) => v.filter(x => x.tag > plusTage(-tage)).reduce((s, x) => s + x.n, 0);
   let cursor;
   do {
     const r = await env.TOKENS.list({ prefix: "t:", cursor });
     for (const k of r.keys) {
       const token = k.name.slice(2), info = await env.TOKENS.get(k.name, "json");
       if (!info) continue;
-      const heuteN = parseInt(await env.TOKENS.get(`z:${token}:${h}`) || "0", 10);
+      const v = verlauf.get(token) || [], heuteN = (v.find(x => x.tag === h) || {}).n || 0;
       const rest = Math.round((Date.parse(info.bis + "T12:00:00Z") - Date.parse(h + "T12:00:00Z")) / 864e5);
-      out.push({ token, name: info.name, bis: info.bis, limit: info.limit || parseInt(env.STANDARD_LIMIT, 10), heute: heuteN, rest });
+      out.push({ token, name: info.name, bis: info.bis, limit: info.limit || parseInt(env.STANDARD_LIMIT, 10), heute: heuteN, tage7: summe(v, 7), tage30: summe(v, 30), verlauf: v, rest });
     }
     cursor = r.list_complete ? null : r.cursor;
   } while (cursor);
