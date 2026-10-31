@@ -10,9 +10,14 @@ function apiUrl(m, format){
 }
 /* Abruf mit Zeitlimit: hängt ein Dienst, bricht die Abfrage nach FETCH_TIMEOUT ab */
 const FETCH_TIMEOUT = 20000;
+let testStand = null;
 function fetchT(url, ms = FETCH_TIMEOUT){
   const c = new AbortController(), t = setTimeout(() => c.abort(), ms);
-  return fetch(url, {signal:c.signal}).finally(() => clearTimeout(t));
+  return fetch(url, {signal:c.signal}).then(r => {   // Testversion: der Proxy meldet Ablauf und Resttage im Antwortkopf
+    const rest = r.headers.get("X-Token-Rest");
+    if(rest != null) testStand = {rest: +rest, bis: r.headers.get("X-Token-Bis")};
+    return r;
+  }).finally(() => clearTimeout(t));
 }
 async function fetchModel(m){
   const r = await fetchModelOnce(m);
@@ -144,9 +149,10 @@ async function load(){
   let [raw, ex] = await Promise.all([Promise.all(MODELS.map(m => fetchModel(m).then(r => (tick(), r)))), loadExtras().then(r => (tick(), r))]);
   $("loadBar").hidden = true;
   $("reloadBtn").disabled = false;
+  zeigeTest();
   let okAny = raw.find(r => r.status==="ok"), offlineAt = null;
   if(okAny){ if(raw.filter(r => r.status==="ok").length >= MODELS.length/2) cacheSave(raw, ex); }
-  else{
+  else if(!raw.some(r => r.reason==="abgelaufen" || r.reason==="token")){   // Zugang gesperrt: nie den Zwischenspeicher anzeigen
     // keine Verbindung: zuletzt gespeicherten Stand dieses Standorts verwenden, deutlich als alt gekennzeichnet
     const old = await cacheLoad();
     if(old){ raw = old.raw; ex = old.ex; offlineAt = old.at; okAny = raw.find(r => r.status==="ok"); }
@@ -155,7 +161,11 @@ async function load(){
   if(!okAny){
     // Grund benennen: Limit bei Open-Meteo, keine Verbindung oder sonstiger Fehler
     const reasons = raw.map(r => r.reason || "");
-    const msg = reasons.some(x => /429|too many|limit/i.test(x))
+    const msg = reasons.includes("abgelaufen")
+      ? T("Der Testzeitraum ist beendet. Bitte Tobias Windberg kontaktieren, um die Nutzung zu verlängern.", "The trial period has ended. Please contact Tobias Windberg to extend your access.")
+      : reasons.includes("token")
+      ? T("Der Zugangslink ist ungültig. Bitte den Link neu anfordern.", "The access link is not valid. Please request a new link.")
+      : reasons.some(x => /429|too many|limit/i.test(x))
       ? T("Open-Meteo meldet zu viele Anfragen (Nutzungsgrenze). Bitte in ein paar Minuten erneut versuchen.", "Open-Meteo reports too many requests (usage limit). Please try again in a few minutes.")
       : reasons.every(x => x==="Zeitüberschreitung" || x==="Keine Verbindung") && reasons.includes("Zeitüberschreitung")
         ? T("Die Wetterdienste antworten nicht (Zeitüberschreitung). Bitte in einem Moment erneut versuchen.", "The weather services do not respond (timeout). Please try again in a moment.")

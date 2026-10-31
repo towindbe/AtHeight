@@ -22,10 +22,19 @@ function applyStaticLang(){
   swap("[data-en-ph]", e => e.placeholder, (e, v) => { e.placeholder = v; }, "enPh");
 }
 
-/* Open-Meteo-Adressen. Leer = direkt zu open-meteo.com (kostenlos, nicht-kommerziell).
-   Mit Proxy-Adresse (z. B. "https://xyz.workers.dev") läuft jede Abfrage als <Proxy>/<Dienst>/<Pfad>. */
-const OM_PROXY = "";
-const OM = (dienst, pfad) => OM_PROXY ? `${OM_PROXY}/${dienst}${pfad}` : `https://${dienst}.open-meteo.com${pfad}`;
+/* Open-Meteo-Adressen. Ohne Zugangs-Token direkt zu open-meteo.com (kostenlos, nicht-kommerziell).
+   Mit Token (Link ?t=…, wird im Browser gemerkt) läuft jede Abfrage über den Proxy: <Proxy>/<Dienst>/<Pfad>?t=<Token>&… */
+const OM_PROXY = "https://atheight-proxy.atheight-proxy.workers.dev";
+const TOKEN = (() => {
+  let t = new URLSearchParams(location.search).get("t");
+  try{
+    if(t && /^[a-f0-9]{8,64}$/.test(t)){ localStorage.setItem("wb_token", t);
+      const u = new URL(location.href); u.searchParams.delete("t"); history.replaceState(null, "", u); }
+    else t = localStorage.getItem("wb_token");
+  }catch(err){}
+  return t && /^[a-f0-9]{8,64}$/.test(t) ? t : "";
+})();
+const OM = (dienst, pfad) => TOKEN ? `${OM_PROXY}/${dienst}${pfad}t=${TOKEN}&` : `https://${dienst}.open-meteo.com${pfad}`;
 
 const MODELS = [
   {id:"icon_d2", name:"ICON-D2", org:"DWD", res:"2 km", hi:true},
