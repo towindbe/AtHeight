@@ -256,6 +256,8 @@ function csScrolled(sc){
   Object.keys(CS).forEach(o => { if(o !== key) csSetCenter(o, csCenter, true); });
   tlFollow(csCenter); csSettle();
 }
+/* Kurzleiste wird gewischt: Diagramme nur verschieben (ohne Neuzeichnen), der Rest folgt in der Pause */
+function csFollowHour(i){ csCenter = i + .5; Object.keys(CS).forEach(o => csSetCenter(o, csCenter, true)); }
 /* Zeitleiste „Arbeitsfenster“: Lage der Zellen einmal messen (neu, wenn die Leiste neu aufgebaut oder breiter/schmaler wird) */
 let tlPos = null;
 function tlCells(){
@@ -355,7 +357,8 @@ function renderChips(note){
   const u = usableModels().sort((a,b) => (b.m.hi-a.m.hi));
   $("modelChips").innerHTML = u.map(r => { const on = state.show.has(r.m.id);
     return `<button type="button" class="mchip ${on?"on":""}" style="--c:${modelColor(r.m)}" data-id="${r.m.id}" aria-pressed="${on}" title="${esc(r.m.org)} · ${esc(r.m.res)}${r.m.hi?"":T(" (gestrichelt)", " (dashed)")}"><i></i>${esc(r.m.name)}${r.m.name==="HARMONIE" ? ` <small>${esc(r.m.org)}</small>` : ""}</button>`; }).join("");
-  $("modelChips").querySelectorAll(".mchip").forEach(b => b.onclick = () => { const id = b.dataset.id; state.show.has(id) ? state.show.delete(id) : state.show.add(id); setShown(state.show); });
+  $("modelChips").querySelectorAll(".mchip").forEach(b => b.onclick = () => { const id = b.dataset.id; state.show.has(id) ? state.show.delete(id) : state.show.add(id); setBestMode(false); setShown(state.show, " "); });
+  document.querySelectorAll("[data-q]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.q === "best" && state.showBest)));
   $("chipNote").textContent = note || T("Nur Anzeige: Ampel und Median nutzen weiter alle aktiven Modelle.", "Display only: traffic light and median still use all active models.");
   const n = u.filter(r => state.show.has(r.m.id)).length;
   $("mCount").textContent = n ? `· ${n} ${T("eingeblendet", "shown")}` : "";
@@ -363,20 +366,34 @@ function renderChips(note){
 function setShown(ids, note){
   state.show = new Set(ids);
   try{ localStorage.setItem("wb_show", JSON.stringify([...state.show])); }catch(e){}
-  renderChart(); if(note) renderChips(note);
+  renderChart(); if(note) renderChips(note.trim() ? note : undefined);
 }
 let wantBest = false;
+function setBestMode(on){ state.showBest = on; try{ localStorage.setItem("wb_showbest", on ? "1" : "0"); }catch(e){} }
 function showQuick(q){
   const u = usableModels();
-  if(q==="all") return setShown(u.map(r => r.m.id));
-  if(q==="none") return setShown([]);
-  if(q==="hi") return setShown(u.filter(r => r.m.hi).map(r => r.m.id), u.some(r => r.m.hi) ? null : T("Für diesen Standort liefert kein hochauflösendes Modell Daten.", "No high-resolution model provides data for this site."));
-  // am besten bewertet: aus dem Modellvergleich dieser Baustelle
-  const rk = rankGroups();
-  if(!rk){ wantBest = true; renderChips(T("Noch kein Modellvergleich für diese Baustelle: wird jetzt berechnet (unten bei „Welche Modelle treffen hier?“) …", "No model comparison for this site yet: calculating now (below under “Which models are accurate here?”) …")); computeRanking(); return; }
-  if(rk.narrow) return setShown(u.filter(r => r.m.hi).map(r => r.m.id), T("Laut Modellvergleich treffen hier alle Modelle etwa gleich gut. Eingeblendet: die hochauflösenden.", "According to the model comparison all models are about equally accurate here. Shown: the high-resolution ones."));
-  const ids = rk.good.filter(id => u.some(r => r.m.id===id));
-  setShown(ids, T(`Am besten bewertet laut Modellvergleich (${ids.length}). Nur Anzeige, Ampel und Median nutzen weiter alle aktiven Modelle.`, `Best rated according to the model comparison (${ids.length}). Display only, traffic light and median still use all active models.`));
+  setBestMode(q === "best");
+  if(q==="all") return setShown(u.map(r => r.m.id), " ");
+  if(q==="none") return setShown([], " ");
+  if(q==="hi") return setShown(u.filter(r => r.m.hi).map(r => r.m.id), u.some(r => r.m.hi) ? " " : T("Für diesen Standort liefert kein hochauflösendes Modell Daten.", "No high-resolution model provides data for this site."));
+  applyBest(true);
+}
+/* „Am besten bewertet“: Auswahl aus dem Modellvergleich der aktuellen Baustelle bilden. Wird bei jedem neuen Vergleich,
+   Baustellenwechsel und Abruf erneut aufgerufen (aus renderRanking), damit Grafik und Vergleich nie auseinanderlaufen. */
+function applyBest(start){
+  const u = usableModels(), rk = rankGroups();
+  if(!rk){
+    let done = false; try{ done = !!localStorage.getItem(rankKey()); }catch(e){}   // Vergleich lief, ergab aber zu wenig Daten
+    renderChips(done ? T("Für diese Baustelle ist kein Modellvergleich möglich (zu wenige Messwerte), Auswahl bleibt.", "No model comparison possible for this site (too few measurements), selection kept.")
+      : T("Noch kein Modellvergleich für diese Baustelle: wird jetzt berechnet (unten bei „Welche Modelle treffen hier?“) …", "No model comparison for this site yet: calculating now (below under “Which models are accurate here?”) …"));
+    if(start && !done && !$("rankBtn").disabled){ wantBest = true; computeRanking(); }
+    return;
+  }
+  const narrow = rk.narrow, ids = narrow ? u.filter(r => r.m.hi).map(r => r.m.id) : rk.good.filter(id => u.some(r => r.m.id===id));
+  const note = narrow ? T("Laut Modellvergleich treffen hier alle Modelle etwa gleich gut. Eingeblendet: die hochauflösenden.", "According to the model comparison all models are about equally accurate here. Shown: the high-resolution ones.")
+    : T(`Am besten bewertet laut Modellvergleich dieser Baustelle (${ids.length}). Nur Anzeige, Ampel und Median nutzen weiter alle aktiven Modelle.`, `Best rated according to this site’s model comparison (${ids.length}). Display only, traffic light and median still use all active models.`);
+  const same = ids.length === state.show.size && ids.every(id => state.show.has(id));
+  if(same) renderChips(note); else setShown(ids, note);
 }
 
 // Regenbalken: je mehr Modelle Regen vorhersagen (ab 0,1 mm), desto kräftiger die Farbe

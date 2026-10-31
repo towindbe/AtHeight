@@ -101,8 +101,8 @@ async function computeRanking(){
     rows.sort((a,b) => (a.p_cen + a.p_csi) - (b.p_cen + b.p_csi) || a.cen - b.cen);
     const res = {v:2, date:new Date().toISOString(), start, end, models:models.map(m => m.id), station:{name:st.name, src:st.src, dist:st.dist, alt:st.alt}, elev:state.elev ?? null, rows};
     try{ localStorage.setItem(rankKey(), JSON.stringify(res)); }catch(e){}
-    renderRanking();
-    if(wantBest){ wantBest = false; showQuick("best"); }
+    wantBest = false;
+    renderRanking();   // zieht „Am besten bewertet“ selbst nach
   } finally { btn.disabled = false; if(wantBest){ wantBest = false; renderChips(T("Modellvergleich nicht möglich, Details unten bei „Welche Modelle treffen hier?“.", "Model comparison not possible, details below under “Which models are accurate here?”.")); } }
 }
 /* Modellvergleich automatisch im Hintergrund, wenn für die Baustelle keiner vorliegt oder er älter als 7 Tage ist */
@@ -128,6 +128,7 @@ function renderRanking(){
   let res = null; try{ res = JSON.parse(localStorage.getItem(rankKey())||"null"); }catch(e){}
   if(res && res.v !== 2) res = null;   // ältere Berechnung ohne neue Kennzahlen
   $("rankBtn").textContent = res ? T("Vergleich neu berechnen", "Recalculate comparison") : T("Modelle vergleichen", "Compare models");
+  if(state.showBest && typeof applyBest==="function") applyBest(false);   // Grafik folgt dem Vergleich dieser Baustelle
   if(!res){ $("rankOut").innerHTML = ""; return; }
   if(!res.rows.length){ $("rankOut").innerHTML = `<p class="note">${T(`Für ${esc(res.station.name)} lagen zu wenige vergleichbare Stunden vor.`, `Too few comparable hours for ${esc(res.station.name)}.`)}</p>`; return; }
   const byId = id => MODELS.find(m => m.id===id), name = id => { const m = byId(id); return m ? `${m.name} (${m.org})` : id; };
