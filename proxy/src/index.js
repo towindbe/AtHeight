@@ -1,5 +1,7 @@
 /* AtHeight-Proxy: prüft Test-Token und leitet Abfragen an Open-Meteo weiter.
    Aufruf: <Proxy>/<dienst>/<pfad>?...&t=<token>   (dienst z. B. api, ensemble-api) */
+import { admin } from "./admin.js";
+
 const DIENSTE = ["api", "ensemble-api", "historical-forecast-api", "previous-runs-api", "geocoding-api"];
 
 const CORS = {
@@ -14,6 +16,8 @@ const antwort = (status, fehler, extra = {}) =>
 
 export default {
   async fetch(req, env) {
+    const url0 = new URL(req.url);
+    if (url0.pathname === "/admin" || url0.pathname.startsWith("/admin/")) return admin(req, env, url0);
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
     if (req.method !== "GET") return antwort(405, "methode");
 
