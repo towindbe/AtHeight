@@ -43,7 +43,7 @@ function zeigeTest(){
   b.hidden = !testStand;
   if(!testStand) return;
   const n = testStand.rest, bis = new Date(testStand.bis+"T12:00:00").toLocaleDateString(LOC(), {day:"2-digit", month:"2-digit", year:"numeric"});
-  b.textContent = n > 0 ? T(`Testversion: noch ${n} ${n===1 ? "Tag" : "Tage"} (bis ${bis})`, `Trial version: ${n} ${n===1 ? "day" : "days"} left (until ${bis})`) : T(`Testzeitraum beendet (${bis})`, `Trial period ended (${bis})`);
+  b.textContent = n > 0 ? T(`Testversion: noch ${n} ${n===1 ? "Tag" : "Tage"} (bis ${bis})`, `Trial version: ${n} ${n===1 ? "day" : "days"} left (until ${bis})`) : n === 0 ? T(`Testversion: heute letzter Tag (bis ${bis})`, `Trial version: last day today (until ${bis})`) : T(`Testzeitraum beendet (${bis})`, `Trial period ended (${bis})`);
 }
 function fmtAge(ms){ const m = Math.round(ms/6e4), h = Math.floor(m/60); return h ? `${h} h ${m%60} min` : `${m} min`; }
 function checkStale(){

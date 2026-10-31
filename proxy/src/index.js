@@ -32,8 +32,8 @@ export default {
     if (!info) return antwort(401, "token");
 
     const heute = new Date().toISOString().slice(0, 10);
-    const rest_tage = Math.ceil((Date.parse(info.bis + "T23:59:59Z") - Date.now()) / 864e5);
-    const kopf = { "X-Token-Bis": info.bis, "X-Token-Rest": String(Math.max(rest_tage, 0)) };
+    // Resttage = volle Tage nach heute; 0 = letzter gültiger Tag, -1 = abgelaufen
+    const kopf = { "X-Token-Bis": info.bis, "X-Token-Rest": String(heute > info.bis ? -1 : Math.round((Date.parse(info.bis) - Date.parse(heute)) / 864e5)) };
     if (heute > info.bis) return antwort(403, "abgelaufen", kopf);
 
     // Tageszähler in D1: ein Befehl zählt hoch und liefert den neuen Stand (genau, auch bei vielen gleichzeitigen Abfragen)
