@@ -1,0 +1,16 @@
+name = "atheight-proxy"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+# Namespace anlegen mit:  npx wrangler kv namespace create TOKENS
+# und die ausgegebene id hier eintragen.
+[[kv_namespaces]]
+binding = "TOKENS"
+id = "HIER_ID_EINTRAGEN"
+
+[vars]
+# Leer = kostenloser Endpunkt. Nach Buchung des Plans: "customer-"
+OM_PREFIX = ""
+# Standard-Tageslimit je Token, falls im Token nichts steht
+STANDARD_LIMIT = "2000"
+# Der API-Key kommt als Secret:  npx wrangler secret put OM_KEY
