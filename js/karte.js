@@ -127,7 +127,7 @@ async function search(q){
   }catch(e){}
   if(!items.length){
     try{
-      const r = await fetch("https://geocoding-api.open-meteo.com/v1/search?" + new URLSearchParams({name:q, count:"6", language:"de"}));
+      const r = await fetch(OM("geocoding-api","/v1/search?") + new URLSearchParams({name:q, count:"6", language:"de"}));
       const j = await r.json();
       items = (j.results||[]).map(x => ({name:x.name, detail:[x.admin2, x.admin1, x.country].filter(Boolean).join(", "), lat:x.latitude, lon:x.longitude}));
     }catch(e){}

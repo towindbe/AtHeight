@@ -22,6 +22,11 @@ function applyStaticLang(){
   swap("[data-en-ph]", e => e.placeholder, (e, v) => { e.placeholder = v; }, "enPh");
 }
 
+/* Open-Meteo-Adressen. Leer = direkt zu open-meteo.com (kostenlos, nicht-kommerziell).
+   Mit Proxy-Adresse (z. B. "https://xyz.workers.dev") läuft jede Abfrage als <Proxy>/<Dienst>/<Pfad>. */
+const OM_PROXY = "";
+const OM = (dienst, pfad) => OM_PROXY ? `${OM_PROXY}/${dienst}${pfad}` : `https://${dienst}.open-meteo.com${pfad}`;
+
 const MODELS = [
   {id:"icon_d2", name:"ICON-D2", org:"DWD", res:"2 km", hi:true},
   {id:"meteoswiss_icon_ch1", name:"ICON-CH1", org:"MeteoSwiss", res:"1 km", hi:true},
