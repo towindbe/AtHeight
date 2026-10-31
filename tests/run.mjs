@@ -84,7 +84,7 @@ await page.route(API, async route => {
   return route.fulfill({status: hit.status, body: hit.body, headers: {"content-type": "application/json", "access-control-allow-origin": "*"}});
 });
 
-await page.goto(base + "/windbericht.html");
+await page.goto(base + "/index.html");
 await page.waitForFunction(() => typeof load === "function" && document.body.classList.contains("no-site"));
 
 // Fester Ablauf. Ergebnis: Werte und sichtbare Texte, die sich nicht ändern dürfen.

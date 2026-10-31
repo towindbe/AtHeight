@@ -25,7 +25,7 @@ if (cmd === "neu" && a && b) {
   const token = randomBytes(12).toString("hex");
   const info = { name: a, bis: bis(+b), ...(c ? { limit: +c } : {}) };
   setze(token, info);
-  console.log(`\nToken: ${token}\nLink:  …/windbericht.html?t=${token}\nGültig bis ${info.bis}`);
+  console.log(`\nToken: ${token}\nLink:  …/?t=${token}\nGültig bis ${info.bis}`);
 } else if (cmd === "verlaengern" && a && b) {
   setze(a, { name: "verlaengert", bis: bis(+b) });
 } else if (cmd === "sperren" && a) {

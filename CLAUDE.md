@@ -12,7 +12,7 @@ Mit ihm **auf Deutsch**, in kleinen Schritten, kurz erklärt; vor größerem Umb
   aber **nie zwei Sitzungen gleichzeitig** an der App.
 - Vor dem Push: `npm test` muss grün sein (prüft **Deutsch und Englisch**, Referenzen `tests/expected.json` und
   `tests/expected.en.json`). Gewollte Änderung: `npm run test:accept`, Unterschiede vorher ansehen.
-- Bei jeder Änderung den Versionsstempel `?v=` in `windbericht.html` und `info.html` erhöhen (alle Vorkommen gleich).
+- Bei jeder Änderung den Versionsstempel `?v=` in `index.html` und `info.html` erhöhen (alle Vorkommen gleich).
 - Pushen nur nach OK von Tobias. Commit-Nachrichten auf Deutsch.
 
 ## Sprache (Deutsch/Englisch)
