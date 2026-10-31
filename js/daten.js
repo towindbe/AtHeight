@@ -153,7 +153,7 @@ async function load(){
   zeigeTest();
   let okAny = raw.find(r => r.status==="ok"), offlineAt = null;
   if(okAny){ if(raw.filter(r => r.status==="ok").length >= MODELS.length/2) cacheSave(raw, ex); }
-  else if(!raw.some(r => r.reason==="abgelaufen" || r.reason==="token")){   // Zugang gesperrt: nie den Zwischenspeicher anzeigen
+  else if(!raw.some(r => r.reason==="abgelaufen" || r.reason==="token" || r.reason==="limit")){   // Zugang gesperrt oder Tageslimit erreicht: nie den Zwischenspeicher anzeigen
     // keine Verbindung: zuletzt gespeicherten Stand dieses Standorts verwenden, deutlich als alt gekennzeichnet
     const old = await cacheLoad();
     if(old){ raw = old.raw; ex = old.ex; offlineAt = old.at; okAny = raw.find(r => r.status==="ok"); }
@@ -166,6 +166,8 @@ async function load(){
       ? T("Der Testzeitraum ist beendet. Bitte Tobias Windberg kontaktieren, um die Nutzung zu verlängern.", "The trial period has ended. Please contact Tobias Windberg to extend your access.")
       : reasons.includes("token")
       ? T("Der Zugangslink ist ungültig. Bitte den Link neu anfordern.", "The access link is not valid. Please request a new link.")
+      : reasons.includes("limit")
+      ? T("Das Tageslimit für deinen Zugang ist erreicht. Morgen geht es wieder. Wenn du mehr brauchst, melde dich bei Tobias Windberg.", "The daily limit for your access has been reached. It resets tomorrow. If you need more, contact Tobias Windberg.")
       : reasons.some(x => /429|too many|limit/i.test(x))
       ? T("Open-Meteo meldet zu viele Anfragen (Nutzungsgrenze). Bitte in ein paar Minuten erneut versuchen.", "Open-Meteo reports too many requests (usage limit). Please try again in a few minutes.")
       : reasons.every(x => x==="Zeitüberschreitung" || x==="Keine Verbindung") && reasons.includes("Zeitüberschreitung")
