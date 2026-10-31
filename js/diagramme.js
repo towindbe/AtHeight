@@ -268,21 +268,25 @@ function csScrolled(sc){
   barFollow(csCenter); csLive(); csSettle();
 }
 /* Großes und kleines Arbeitsfenster (Kurzleiste oben): gleiche Mitte wie die Diagramme; die Zelle in der Mitte ist die gewählte */
-const BARS = () => [$("tlScroll"), $("sbStrip")];
-const barOn = box => box.id !== "sbStrip" || !$("stickyBar").hidden;   // die Kurzleiste nur, solange sie zu sehen ist
+const BARS = () => [$("tlScroll"), $("sbStrip"), $("dirStrip")];
+const barOn = box => box._vis !== false && (box.id !== "sbStrip" || !$("stickyBar").hidden);   // nur Leisten, die zu sehen sind (_vis: ResizeObserver in csInit)
 // Lage der Zellen einmal messen (neu, wenn die Leiste neu aufgebaut, eingeblendet oder breiter/schmaler wird)
 function barCells(box){
-  const first = box.querySelector(".tl-cell");
+  const first = box.querySelector("[data-i]");
   if(box._pos && box._pos.first === first && box._pos.w) return box._pos;
   const b0 = box.getBoundingClientRect().left - box.scrollLeft;
-  const list = [...box.querySelectorAll(".tl-cell")].map(e => ({i:+e.dataset.i, x:e.getBoundingClientRect().left - b0, w:e.offsetWidth}));
+  const list = [...box.querySelectorAll("[data-i]")].map(e => ({i:+e.dataset.i, x:e.getBoundingClientRect().left - b0, w:e.offsetWidth}));
   return box._pos = {first, w:box.clientWidth, max:box.scrollWidth - box.clientWidth, list, map:new Map(list.map(o => [o.i, o]))};
 }
 function barFollow(gi, except){
   BARS().forEach(box => {
     if(!box || box === except || !barOn(box)) return;
-    const P = barCells(box), p = P.map.get(Math.floor(gi)); if(!p || !P.w) return;
-    box.scrollLeft = box._want = Math.max(0, Math.min(P.max, p.x + p.w*(gi - Math.floor(gi)) - P.w/2));
+    const P = barCells(box); if(!P.w || !P.list.length) return;
+    const p = P.map.get(Math.floor(gi));
+    let x;
+    if(p) x = p.x + p.w*(gi - Math.floor(gi));
+    else{ const n = P.list.find(o => o.i > gi), l = P.list[P.list.length - 1]; x = n ? n.x - 2 : l.x + l.w; }   // Stunde fehlt (Pfeilreihe: Nacht): an die Lücke davor
+    box.scrollLeft = box._want = Math.max(0, Math.min(P.max, x - P.w/2));
   });
 }
 function barScrolled(box){
@@ -304,6 +308,13 @@ function chartDayChanged(){
 function csInit(){
   Object.values(CS).forEach(csWrap);
   BARS().forEach(box => box.addEventListener("scroll", () => barScrolled(box), {passive:true}));
+  $("dirStrip").addEventListener("click", e => { const b = e.target.closest(".dir-cell"); if(b) selectHour(+b.dataset.i); });
+  // ausgeblendete Leisten nicht bei jedem Wischen neu vermessen; beim Einblenden auf die Mitte holen
+  if("ResizeObserver" in window){
+    const ro = new ResizeObserver(es => es.forEach(e => { const b = e.target, v = e.contentRect.width > 0;
+      b._pos = null; if(v && b._vis === false && csCenter != null){ b._vis = v; barFollow(csCenter); } b._vis = v; }));
+    BARS().forEach(b => b && ro.observe(b));
+  }
   // andere Breite (Drehen, Fenster): Stundenbreite neu berechnen, gewählte Stunde bleibt in der Mitte
   let w = innerWidth, t = 0;
   addEventListener("resize", () => { if(innerWidth === w) return; w = innerWidth; BARS().forEach(b => { b._pos = null; }); clearTimeout(t);
@@ -588,20 +599,25 @@ function renderCompass(i = state.sel){
 const DIR_TURN = 45;      // ab dieser Drehung (Grad) Hinweis
 const DIR_CALM = 2;       // darunter (m/s) zählt die Richtung für die Drehung nicht und wird blass gezeigt
 const angDiff = (a, b) => { const d = Math.abs(a - b) % 360; return d > 180 ? 360 - d : d; };
+/* Pfeilreihe über alle Tage (Arbeitsstunden, Tage durch Namen getrennt); läuft wie die Leisten mit der Mitte der Diagramme */
+let dirKey = "";
 function renderDirStrip(sel = state.sel){
-  const hs = dayHours(state.day);
-  if(!hs.length){ $("dirStrip").innerHTML = ""; $("dirTurn").innerHTML = ""; return; }
-  $("dirStrip").innerHTML = hs.map(h => {
-    const d = h.dir.mean;
-    const arrow = d==null ? `<span class="dir-na">–</span>`
-      : `<svg viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(${(d+180)%360} 12 12)"><line x1="12" y1="20" x2="12" y2="7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><polygon points="12,2 6.5,10 17.5,10" fill="currentColor"/></g></svg>`;
-    return `<button type="button" class="dir-cell d-${h.lampW || h.lamp} ${h.i===sel?"sel":""} ${h.med!=null && h.med < DIR_CALM ? "calm" : ""}" data-i="${h.i}" title="${hh(h.t)}${UHR()}: ${T("aus", "from")} ${dirName(d)}${d==null?"":" ("+Math.round(d)+"°)"}, ${fwu(h.med)}">${arrow}<span>${hh(h.t)}</span></button>`;
-  }).join("");
-  $("dirStrip").querySelectorAll(".dir-cell").forEach(b => b.onclick = () => selectHour(+b.dataset.i));
+  const all = state.hours.filter(h => isWork(h.t)), hs = dayHours(state.day), box = $("dirStrip");
+  if(!all.length){ box.innerHTML = ""; $("dirTurn").innerHTML = ""; dirKey = ""; return; }
+  const key = state.fetchedAt + "|" + LOC() + "|" + all.map(h => h.i + (h.lampW || h.lamp)[0] + Math.round(h.dir.mean ?? -1) + (h.med != null && h.med < DIR_CALM ? "c" : "")).join();
+  if(key !== dirKey){
+    dirKey = key;
+    box.innerHTML = all.map((h, k) => {
+      const d = h.dir.mean, day = h.t.slice(0,10);
+      const arrow = d==null ? `<span class="dir-na">–</span>`
+        : `<svg viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(${(d+180)%360} 12 12)"><line x1="12" y1="20" x2="12" y2="7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><polygon points="12,2 6.5,10 17.5,10" fill="currentColor"/></g></svg>`;
+      const sep = k===0 || day !== all[k-1].t.slice(0,10) ? `<i class="dir-day">${esc(dayLabel(day, true))}</i>` : "";
+      return sep + `<button type="button" class="dir-cell d-${h.lampW || h.lamp} ${h.med!=null && h.med < DIR_CALM ? "calm" : ""}" data-i="${h.i}" title="${esc(dayLabel(day, true))} ${hh(h.t)}${UHR()}: ${T("aus", "from")} ${dirName(d)}${d==null?"":" ("+Math.round(d)+"°)"}, ${fwu(h.med)}">${arrow}<span>${hh(h.t)}</span></button>`;
+    }).join("");
+    if(csCenter != null) requestAnimationFrame(() => barFollow(csCenter));
+  }
+  box.querySelectorAll(".dir-cell").forEach(b => b.classList.toggle("sel", +b.dataset.i === sel));
   // Lee-Seite zur gewählten Stunde
-  // gezeigte Stunde in der Pfeilreihe sichtbar halten (nur seitlich, die Seite bleibt stehen)
-  const box = $("dirStrip"), on = box.querySelector(".dir-cell.sel");
-  if(on && box.clientWidth) box.scrollLeft = on.getBoundingClientRect().left - box.getBoundingClientRect().left + box.scrollLeft - box.clientWidth/2 + on.offsetWidth/2;
   const cur = state.hours[sel], lee = cur && cur.dir.mean!=null ? dirName((cur.dir.mean+180)%360) : null;
   // größte Drehung zwischen zwei Arbeitsstunden mit Wind
   const ws = hs.filter(h => h.dir.mean!=null && h.med!=null && h.med >= DIR_CALM);
