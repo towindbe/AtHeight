@@ -20,6 +20,6 @@ OM_PREFIX = ""
 # Standard-Tageslimit je Token, falls im Token nichts steht
 STANDARD_LIMIT = "2000"
 # Adresse der App (für die Links in der Admin-Seite; bei Umzug des Repos hier ändern)
-APP_URL = "https://towindbe.github.io/windbericht/windbericht.html"
+APP_URL = "https://towindbe.github.io/AtHeight/windbericht.html"
 # Secrets (nicht im Repo): npx wrangler secret put ADMIN_KEY   und   npx wrangler secret put OM_KEY
 # Der API-Key kommt als Secret:  npx wrangler secret put OM_KEY
