@@ -32,7 +32,7 @@ function renderStickyDays(){
     const short = lab === T("Übermorgen", "Day after") ? new Date(d+"T12:00:00").toLocaleDateString(LOC(), {weekday:"short"}) : lab;
     return `<button type="button" data-day="${d}" aria-pressed="${d===state.day}" aria-label="${esc(lab)}: ${LAMP_TXT[l]}"><i class="dot d-${l}"></i>${esc(short)}</button>`; }).join("");
 }
-/* schmales Arbeitsfenster: eine Zelle je Stunde, wie die große Zeitleiste, zum seitlichen Durchscrollen */
+/* schmales Arbeitsfenster: eine Zelle je Stunde wie die große Zeitleiste; Wischen verschiebt den Ausschnitt (wie die Diagramme), Antippen wählt die Stunde */
 let stripKey = "";
 function renderStrip(){
   const box = $("sbStrip"), key = state.fetchedAt + "|" + state.hours.map(h => h.lamp[0]).join("") + "|" + site.from + "-" + site.to;   // Ampelfarben im Schlüssel: neu zeichnen, wenn sich die Bewertung ändert
@@ -44,29 +44,9 @@ function renderStrip(){
       return `<button type="button" class="tl-cell c-${h.lamp} ${isWork(h.t)?"":"off"} ${h.dark?"dark":""} ${h.t.slice(0,13)===nk?"nowc":""} ${first?"dstart":""}" data-i="${h.i}" aria-label="${esc(dayLabel(h.t.slice(0,10), true))} ${hh(h.t)}${UHR()}: ${LAMP_TXT[h.lamp]}, ${esc(fwu(h.med))}"><span>${first ? esc(dayLabel(h.t.slice(0,10))) : hourOf(h.t)%3===0 ? hh(h.t) : ""}</span></button>`;
     }).join("");
   }
-  let selBtn = null;
-  box.querySelectorAll(".tl-cell").forEach(b => { const on = +b.dataset.i === state.sel; b.classList.toggle("sel", on); if(on) selBtn = b; });
-  // gewählte Stunde in die Mitte der Leiste holen (erst nach dem Einblenden messbar; nicht, solange gerade gewischt wird)
-  requestAnimationFrame(() => {
-    if(!selBtn || !box.clientWidth || Date.now() < stripBusyUntil) return;
-    const want = selBtn.offsetLeft + selBtn.offsetWidth/2 - box.clientWidth/2;
-    if(Math.abs(want - box.scrollLeft) > 1){ stripIgnoreUntil = Date.now() + 150; box.scrollLeft = want; }
-  });
-}
-/* Wischen durch die Leiste wählt immer die Stunde in der Mitte: Wert oben, Diagramme, Tabellen und Karte laufen mit */
-let stripBusyUntil = 0, stripIgnoreUntil = 0, stripRaf = 0;
-/* Beim Wischen nur das Leichte (Kopfzeile, Diagramme mitziehen); alles Weitere (Werte, Profil, Karte, Tageswechsel) erst, wenn die Leiste kurz ruht */
-let stripRest = 0;
-function stripScrubbed(){
-  stripRaf = 0;
-  const box = $("sbStrip"), mid = box.scrollLeft + box.clientWidth/2;
-  let best = null, bd = Infinity;
-  box.querySelectorAll(".tl-cell").forEach(b => { const d = Math.abs(b.offsetLeft + b.offsetWidth/2 - mid); if(d < bd){ bd = d; best = b; } });
-  if(!best || +best.dataset.i === state.sel) return;
-  box.querySelector(".tl-cell.sel")?.classList.remove("sel"); best.classList.add("sel");
-  state.sel = +best.dataset.i; sbHourText(state.hours[state.sel]);
-  if(typeof csFollowHour==="function") csFollowHour(state.sel);
-  clearTimeout(stripRest); stripRest = setTimeout(() => selectHour(state.sel, "strip"), 160);
+  box.querySelectorAll(".tl-cell").forEach(b => b.classList.toggle("sel", +b.dataset.i === state.sel));
+  // gleicher Ausschnitt wie die Diagramme (erst nach dem Einblenden messbar)
+  if(csCenter != null) requestAnimationFrame(() => barFollow(csCenter));
 }
 
 // Sprungmarken der Kurzleiste (beim Sprachwechsel neu aufgebaut)
@@ -78,11 +58,6 @@ function initSticky(){
     if(!el) return;
     el.scrollIntoView({behavior:"smooth", block:"start"});
   });
-  $("sbStrip").addEventListener("scroll", () => {
-    if(Date.now() < stripIgnoreUntil) return;
-    stripBusyUntil = Date.now() + 500;
-    if(!stripRaf) stripRaf = requestAnimationFrame(stripScrubbed);
-  }, {passive:true});
   $("sbStrip").addEventListener("click", e => { const b = e.target.closest(".tl-cell"); if(b) selectHour(+b.dataset.i); });
   $("sbDays").addEventListener("click", e => { const b = e.target.closest("button[data-day]"); if(b && b.dataset.day !== state.day) goDay(b.dataset.day); });
   $("sbPrev").onclick = () => stepDay(-1);
