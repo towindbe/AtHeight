@@ -6,7 +6,7 @@ compatibility_date = "2026-10-01"
 # und die ausgegebene id hier eintragen.
 [[kv_namespaces]]
 binding = "TOKENS"
-id = "HIER_ID_EINTRAGEN"
+id = "13608f63af6c410bbd8e78ce068749aa"
 
 [vars]
 # Leer = kostenloser Endpunkt. Nach Buchung des Plans: "customer-"
