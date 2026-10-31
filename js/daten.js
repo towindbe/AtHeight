@@ -6,7 +6,7 @@ function apiUrl(m, format){
   const p = new URLSearchParams({latitude:site.lat, longitude:site.lon, hourly:VARS.join(","), models:m.id,
     wind_speed_unit:"ms", timezone:"auto", forecast_days:"3"});
   if(format) p.set("format", format);
-  return "https://api.open-meteo.com/v1/forecast?" + p.toString();
+  return OM("api","/v1/forecast?") + p.toString();
 }
 /* Abruf mit Zeitlimit: hängt ein Dienst, bricht die Abfrage nach FETCH_TIMEOUT ab */
 const FETCH_TIMEOUT = 20000;
@@ -40,7 +40,7 @@ async function loadExtras(){
   const ex = {};
   try{
     const p = new URLSearchParams({latitude:site.lat, longitude:site.lon, hourly:"uv_index", timezone:"auto", forecast_days:"3"});
-    const j = await (await fetchT("https://api.open-meteo.com/v1/forecast?"+p)).json();
+    const j = await (await fetchT(OM("api","/v1/forecast?")+p)).json();
     if(j.hourly){ fixTimes(j.hourly, j.timezone, j.utc_offset_seconds||0); ex.uv = new Map(j.hourly.time.map((t,i) => [t, j.hourly.uv_index[i]])); }
   }catch(e){}
   [ex.dwd, ex.geo, ex.ens] = await Promise.all([loadDwdWarnings(), loadGeoWarnings(), Promise.all(ENSEMBLES.map(loadEnsemble))]);
@@ -52,7 +52,7 @@ async function loadEnsemble(e){
   try{
     const q = new URLSearchParams({latitude:site.lat, longitude:site.lon, models:e.id, timezone:"auto", forecast_days:"3", wind_speed_unit:"ms",
       hourly:"wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_gusts_10m"});
-    const j = await (await fetchT("https://ensemble-api.open-meteo.com/v1/ensemble?"+q)).json();
+    const j = await (await fetchT(OM("ensemble-api","/v1/ensemble?")+q)).json();
     if(j.error || !j.hourly) return {...e, ok:false, reason:j.reason||"keine Daten"};
     fixTimes(j.hourly, j.timezone, j.utc_offset_seconds||0);
     const h = j.hourly;

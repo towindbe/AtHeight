@@ -27,7 +27,7 @@ async function afModel(start, end){
   const today = isoDay(Date.now());
   const q = new URLSearchParams({latitude:site.lat, longitude:site.lon, start_date:start, end_date:end > today ? today : end, wind_speed_unit:"ms", timezone:"GMT",
     hourly:"wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_speed_180m,wind_gusts_10m"});
-  try{ const j = await (await fetchT("https://historical-forecast-api.open-meteo.com/v1/forecast?"+q, 45000)).json(); return j.hourly || null; }
+  try{ const j = await (await fetchT(OM("historical-forecast-api","/v1/forecast?")+q, 45000)).json(); return j.hourly || null; }
   catch(e){ return null; }
 }
 

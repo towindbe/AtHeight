@@ -24,7 +24,7 @@ async function outlookModel(m){
   try{
     const q = new URLSearchParams({latitude:site.lat, longitude:site.lon, hourly:VARS.join(","), models:m.id,
       wind_speed_unit:"ms", timezone:"auto", forecast_days:String(OUTLOOK_DAYS)});
-    const j = await (await fetchT("https://api.open-meteo.com/v1/forecast?"+q)).json();
+    const j = await (await fetchT(OM("api","/v1/forecast?")+q)).json();
     if(!j.hourly) return null;
     fixTimes(j.hourly, j.timezone, j.utc_offset_seconds||0);
     return {...m, h:j.hourly};
@@ -35,7 +35,7 @@ async function outlookEnsemble(){
   try{
     const q = new URLSearchParams({latitude:site.lat, longitude:site.lon, models:"ecmwf_ifs025_ensemble", timezone:"auto",
       forecast_days:String(OUTLOOK_DAYS), wind_speed_unit:"ms", hourly:"wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_gusts_10m"});
-    const j = await (await fetchT("https://ensemble-api.open-meteo.com/v1/ensemble?"+q)).json();
+    const j = await (await fetchT(OM("ensemble-api","/v1/ensemble?")+q)).json();
     if(!j.hourly) return null;
     fixTimes(j.hourly, j.timezone, j.utc_offset_seconds||0);
     const h = j.hourly;

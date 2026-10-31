@@ -47,7 +47,7 @@ async function prevRun(m, st, start, end){
     hourly:"wind_speed_10m_previous_day1,wind_gusts_10m_previous_day1"});
   for(let attempt = 0; attempt < 2; attempt++){       // Archiv antwortet nicht immer sofort: ein zweiter Versuch
     try{
-      const j = await (await fetch("https://previous-runs-api.open-meteo.com/v1/forecast?"+q)).json();
+      const j = await (await fetch(OM("previous-runs-api","/v1/forecast?")+q)).json();
       if(j.hourly) return j.hourly;
       if(j.error && /no data/i.test(j.reason||"")) return null;   // gibt es für dieses Modell nicht
     }catch(e){}
