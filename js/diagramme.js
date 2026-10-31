@@ -142,8 +142,8 @@ function attachScrub(canvasId, chartKey){
    Wind, Regen und Temperatur zeigen alle Prognosetage nebeneinander, sichtbar ist etwa ein Tag. Der orange Zeiger steht fest
    in der Mitte, die Kurven laufen beim Wischen darunter durch. Die Stunde unter dem Zeiger ist die gewählte: Werte, Kompass,
    Profil, Karte und Tag zeigen immer genau diese eine Stunde. Die drei Diagramme und beide Arbeitsfenster-Leisten laufen
-   gemeinsam; Antippen einer Stunde holt sie unter den Zeiger. Links und rechts ist eine halbe Breite frei, damit auch die
-   erste und letzte Stunde in die Mitte kommen. */
+   gemeinsam; Antippen einer Stunde holt sie unter den Zeiger. Die Diagramme haben keinen leeren Rand: Am Anfang und Ende
+   verlässt der Zeiger die Mitte und steht auf der gewählten Stunde; sobald gewischt wird, ist er wieder in der Mitte. */
 const CS = {main:"chart", rain:"rain", temp:"temp"};   // Diagramm -> Canvas
 const AX = 46, AX_NONE = 10;   // feste Breite der y-Achsen (px); rechts ohne Achse nur ein schmaler Rand
 const fixAxis = s => { s.width = AX; };
@@ -179,13 +179,12 @@ function csWrap(id){
   mark.hidden = true; mark.setAttribute("aria-hidden", "true"); mark.innerHTML = "<b></b>"; box.appendChild(mark);
   sc.addEventListener("scroll", () => csScrolled(sc), {passive:true});
 }
-/* Breite festlegen, bevor das Diagramm entsteht: alle Stunden nebeneinander, sichtbar etwa ein Tag, links und rechts halbe Breite frei */
+/* Breite festlegen, bevor das Diagramm entsteht: alle Stunden nebeneinander, sichtbar etwa ein Tag */
 function csPrepare(key, idxs){
   csWrap(CS[key]);
   const cv = $(CS[key]), sc = cv.closest(".cs-scroll"); if(!sc) return;
   const vis = Math.min(idxs.length, csVisible(idxs)), cw = sc.clientWidth, pad = AX + (csR[key] ?? AX), step = (cw - pad) / vis;
   cv.parentElement.style.width = Math.round(pad + idxs.length * step) + "px";
-  cv.closest(".cs-inner").style.padding = `0 ${Math.round(Math.max(0, (cw - pad)/2 - step/2))}px`;
 }
 /* feste Achsenbreiten: so stehen die Stunden genau, und die Achsen lassen sich als Kopie stehen lassen */
 function csAxes(opt, key){
@@ -213,12 +212,16 @@ const csAxisPlugin = {id:"csAxis", afterDraw(c){
   ctx.clearRect(0, 0, Math.round(AX*r), H); ctx.clearRect(Math.floor((src.clientWidth - ar)*r), 0, Math.ceil(ar*r) + 1, H);
   ctx.restore();
 }};
-/* oranger Zeiger: fest in der Mitte des sichtbaren Bereichs, mit der Uhrzeit der gewählten Stunde */
+/* oranger Zeiger: in der Mitte des sichtbaren Bereichs, mit der Uhrzeit der gewählten Stunde. Am Anfang und Ende lässt sich
+   nicht weiter scrollen: dort rückt er aus der Mitte auf die Stunde (ohne etwas nachzumessen, nur aus der gewünschten Lage) */
+let csOff = false;   // ein Zeiger steht gerade außerhalb der Mitte
 function csPlaceMark(c){
   const mark = c.canvas?.closest(".cs")?.querySelector(".cs-mark"); if(!mark || !c.chartArea || !c.$sc) return;
   const t = state.times[state.sel]; mark.hidden = !t; if(!t) return;
-  const a = c.chartArea;
-  mark.style.left = (AX + csHalf(c)) + "px"; mark.style.top = a.top + "px"; mark.style.height = (a.bottom - a.top) + "px";
+  const a = c.chartArea, want = c.$S + csKOf(c.$idxs, csCenter ?? state.sel + .5) * c.$step - csHalf(c);
+  const off = want - Math.max(0, Math.min(c.$max, want));
+  if(Math.abs(off) > .5) csOff = true;
+  mark.style.left = (AX + csHalf(c) + off) + "px"; mark.style.top = a.top + "px"; mark.style.height = (a.bottom - a.top) + "px";
   mark.firstChild.textContent = hh(t) + UHR();
 }
 const csMarks = () => Object.keys(CS).forEach(k => { if(charts[k]) csPlaceMark(charts[k]); });
@@ -265,6 +268,7 @@ function csScrolled(sc){
   const key = sc.dataset.key, c = charts[key]; if(!c?.$sc) return;
   csCenter = csMidOf(c);
   Object.keys(CS).forEach(o => { if(o !== key) csSetCenter(o, csCenter, true); });
+  if(csOff){ csOff = false; csMarks(); }   // Zeiger vom Rand zurück in die Mitte
   barFollow(csCenter); csLive(); csSettle();
 }
 /* Großes und kleines Arbeitsfenster (Kurzleiste oben): gleiche Mitte wie die Diagramme; die Zelle in der Mitte ist die gewählte */
@@ -298,6 +302,7 @@ function barScrolled(box){
   const p = L[lo];
   csCenter = p.i + Math.max(0, Math.min(.999, (mid - p.x) / p.w));
   Object.keys(CS).forEach(o => csSetCenter(o, csCenter, true));
+  if(csOff){ csOff = false; csMarks(); }
   barFollow(csCenter, box); csLive(); csSettle();
 }
 /* nach einem Tageswechsel: Tagesangaben und Taupunkt-Zeile nachziehen (die Diagramme zeichnet danach syncCharts) */

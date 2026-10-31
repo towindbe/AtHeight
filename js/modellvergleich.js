@@ -55,12 +55,6 @@ async function prevRun(m, st, start, end){
   }
   return null;
 }
-// höchstens n Abfragen gleichzeitig
-async function pool(items, n, fn){
-  const out = new Array(items.length); let k = 0;
-  await Promise.all(Array.from({length:Math.min(n, items.length)}, async () => { while(k < items.length){ const i = k++; out[i] = await fn(items[i]); } }));
-  return out;
-}
 const quantile = (a, q) => { const s = [...a].sort((x,y) => x-y); return s.length ? s[Math.min(s.length-1, Math.floor(q*s.length))] : null; };
 /* Kennzahlen je Modell:
    mae   mittlerer Fehler; bias Grundtendenz (+ zu viel, − zu wenig)

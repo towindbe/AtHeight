@@ -45,7 +45,9 @@ export default {
     ziel.search = url.search;
     if (env.OM_KEY) ziel.searchParams.set("apikey", env.OM_KEY);
 
-    const r = await fetch(ziel, { cf: { cacheTtl: 300, cacheEverything: true } });
+    // nur Erfolge 5 Minuten zwischenspeichern; Fehler (z. B. 429 „Too many concurrent requests“) nie, sonst bekämen
+    // alle Abrufe derselben Abfrage den Fehler, bis der Zwischenspeicher abläuft
+    const r = await fetch(ziel, { cf: { cacheEverything: true, cacheTtlByStatus: { "200-299": 300, "300-599": -1 } } });
     const h = new Headers(r.headers);
     for (const [k, v] of Object.entries({ ...CORS, ...kopf })) h.set(k, v);
     return new Response(r.body, { status: r.status, headers: h });
