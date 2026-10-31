@@ -698,3 +698,8 @@ header.top .row .lang-btn{font:700 15px var(--f-body);letter-spacing:.04em}
 #hourTable td.why-cell > span{display:inline-block;vertical-align:bottom;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #hourTable td.why-cell.open > span{white-space:normal;max-width:340px}
 .mq button[aria-pressed="true"]{background:var(--band-line);color:var(--bg);border-color:var(--band-line)}
+/* Griff am orangen Zeiger (44 px breit): Ziehen verschiebt die Stunde, Wischen daneben scrollt */
+.cs-grip{position:absolute;width:44px;touch-action:none;cursor:ew-resize}
+.cs-grip::before{content:"";position:absolute;left:21px;top:0;bottom:0;width:2px;background:var(--accent)}
+.cs-grip b{position:absolute;top:0;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--accent-ink);font:600 11px/18px var(--f-body);padding:0 7px;border-radius:9px;white-space:nowrap}
+.cs-grip[hidden]{display:none}

@@ -94,17 +94,16 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
   if(!c.$idxs) return;
   markPlugin.dayNames(c);
   // Verschiebbarer Zeitmarker: Linie mit Griff und Uhrzeit
-  const sk = c.$idxs.indexOf(state.sel); if(sk < 0) return;
-  const {ctx, chartArea:a, scales:{x}} = c, px = x.getPixelForValue(sk), acc = css("--accent"), [vl, vr] = csVis(c);
-  ctx.save();
-  ctx.strokeStyle = acc; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(px, a.top); ctx.lineTo(px, a.bottom); ctx.stroke();
-  const label = hh(state.times[state.sel]) + UHR();
-  ctx.font = "600 11px " + css("--f-body"); const w = ctx.measureText(label).width + 14, h = 18;
-  const bx = Math.min(Math.max(px - w/2, vl), vr - w);
-  ctx.fillStyle = acc; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, a.top, w, h, 9) : ctx.rect(bx, a.top, w, h); ctx.fill();
-  ctx.fillStyle = css("--accent-ink"); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(label, bx + w/2, a.top + h/2 + 0.5);
-  ctx.restore();
+  // Zeitmarker (orange Linie mit Uhrzeit) ist ein eigenes Element über dem Diagramm: so lässt er sich ohne Neuzeichnen verschieben
+  csPlaceGrip(c);
 }};
+function csPlaceGrip(c){
+  const grip = c.canvas?.parentElement?.querySelector(".cs-grip"); if(!grip || !c.$idxs || !c.chartArea) return;
+  const sk = c.$idxs.indexOf(state.sel); grip.hidden = sk < 0; if(sk < 0) return;
+  const a = c.chartArea;
+  grip.style.left = (c.scales.x.getPixelForValue(sk) - 22) + "px"; grip.style.top = a.top + "px"; grip.style.height = (a.bottom - a.top) + "px";
+  grip.firstChild.textContent = hh(state.times[state.sel]) + UHR();
+}
 /* Beschriftung der Grenzlinien rechts am sichtbaren Rand */
 const limitLabels = {id:"limitLabels", afterDatasetsDraw(c){
   const {ctx, chartArea:ca, scales:{y}} = c, a = {top:ca.top, bottom:ca.bottom, right:csVis(c)[1]};
@@ -177,7 +176,27 @@ function csWrap(id){
   box.insertBefore(sc, cv); inner.appendChild(cv); sc.appendChild(inner);
   ["l", "r"].forEach(k => { const a = document.createElement("canvas"); a.className = "cs-ax " + k; a.setAttribute("aria-hidden", "true"); box.appendChild(a); });
   sc.addEventListener("scroll", () => csScrolled(sc), {passive:true});
+  // Griff über dem orangen Zeiger: dort ziehen verschiebt die Stunde, überall sonst scrollt Wischen die Diagramme
+  const key = Object.keys(CS).find(k => CS[k] === id), grip = document.createElement("div");
+  grip.className = "cs-grip"; grip.hidden = true; grip.setAttribute("aria-hidden", "true"); grip.innerHTML = "<b></b>"; inner.appendChild(grip);
+  let drag = false;
+  grip.addEventListener("pointerdown", e => { drag = true; e.preventDefault(); try{ grip.setPointerCapture(e.pointerId); }catch(err){} });
+  grip.addEventListener("pointermove", e => { if(drag) csScrub(key, e.clientX); });
+  ["pointerup", "pointercancel", "lostpointercapture"].forEach(t => grip.addEventListener(t, () => { if(drag){ drag = false; csScrubEnd(); } }));
 }
+/* Zeiger ziehen: beim Ziehen nur Zeiger, Werte und Kopfzeile; die volle Stundenwahl (Profil, Karte, Tag) beim Loslassen oder in einer Pause */
+let csScrubT = 0;
+function csScrub(key, clientX){
+  const c = charts[key]; if(!c?.$idxs) return;
+  const v = c.scales.x.getValueForPixel(clientX - c.canvas.getBoundingClientRect().left);
+  const gi = c.$idxs[Math.max(0, Math.min(c.$idxs.length - 1, Math.round(v)))];
+  if(gi == null || gi === state.sel) return;
+  state.sel = gi;
+  Object.keys(CS).forEach(k => { if(charts[k]) csPlaceGrip(charts[k]); });
+  if(typeof sbHourText === "function") sbHourText(state.hours[gi]);
+  clearTimeout(csScrubT); csScrubT = setTimeout(() => selectHour(state.sel, "chart"), 200);
+}
+function csScrubEnd(){ clearTimeout(csScrubT); selectHour(state.sel, "chart"); }
 /* Breite festlegen, bevor das Diagramm entsteht: alle Stunden nebeneinander, sichtbar etwa ein Tag */
 function csPrepare(key, idxs){
   csWrap(CS[key]);
@@ -232,13 +251,14 @@ function csShowDay(d, keys = Object.keys(CS)){
     const sc = c.$sc; sc.scrollLeft = k0 * c.$step; sc._want = sc.scrollLeft; c.draw();
     csCenter = csGiOf(c.$idxs, (sc.scrollLeft + (sc.clientWidth - csPad(c))/2) / c.$step);
   });
+  if(csCenter != null) barFollow(csCenter);
 }
-/* gewählte Stunde sichtbar machen; von der Kurzleiste aus immer mittig, damit die Diagramme beim Wischen mitlaufen */
+/* gewählte Stunde sichtbar machen (nur wenn sie außerhalb des Ausschnitts liegt) */
 function csShowHour(i, center){
   const c = charts.main || charts.rain || charts.temp; if(!c?.$sc) return;
   const k = csKOf(c.$idxs, i), [vl, vr] = csVis(c), px = c.scales.x.getPixelForValue(Math.floor(k));
   if(!center && px >= vl && px <= vr) return;
-  csCenter = i + .5; Object.keys(CS).forEach(o => csSetCenter(o, csCenter));
+  csCenter = i + .5; Object.keys(CS).forEach(o => csSetCenter(o, csCenter)); barFollow(csCenter);
 }
 // vom Programm gesetzte Position (nicht weiterreichen, sonst schaukeln sich Diagramme und Zeitleiste gegenseitig auf)
 const csOwn = el => { if(el._want != null && Math.abs(el.scrollLeft - el._want) < 1.5) return true; el._want = null; return false; };
@@ -254,33 +274,38 @@ function csScrolled(sc){
   const key = sc.dataset.key, c = charts[key]; if(!c?.$sc) return;
   csCenter = csGiOf(c.$idxs, (sc.scrollLeft + (c.$cw - csPad(c))/2) / c.$step);
   Object.keys(CS).forEach(o => { if(o !== key) csSetCenter(o, csCenter, true); });
-  tlFollow(csCenter); csSettle();
+  barFollow(csCenter); csSettle();
 }
-/* Kurzleiste wird gewischt: Diagramme nur verschieben (ohne Neuzeichnen), der Rest folgt in der Pause */
-function csFollowHour(i){ csCenter = i + .5; Object.keys(CS).forEach(o => csSetCenter(o, csCenter, true)); }
-/* Zeitleiste „Arbeitsfenster“: Lage der Zellen einmal messen (neu, wenn die Leiste neu aufgebaut oder breiter/schmaler wird) */
-let tlPos = null;
-function tlCells(){
-  const box = $("tlScroll"), first = $("timeline").querySelector(".tl-cell");
-  if(tlPos && tlPos.first === first) return tlPos;
+/* Großes und kleines Arbeitsfenster (Kurzleiste oben) hängen beide am sichtbaren Ausschnitt der Diagramme:
+   Wischen verschiebt den Ausschnitt, Antippen wählt die Stunde. */
+const BARS = () => [$("tlScroll"), $("sbStrip")];
+const barOn = box => box.id !== "sbStrip" || !$("stickyBar").hidden;   // die Kurzleiste nur, solange sie zu sehen ist
+// Lage der Zellen einmal messen (neu, wenn die Leiste neu aufgebaut, eingeblendet oder breiter/schmaler wird)
+function barCells(box){
+  const first = box.querySelector(".tl-cell");
+  if(box._pos && box._pos.first === first && box._pos.w) return box._pos;
   const b0 = box.getBoundingClientRect().left - box.scrollLeft;
-  const list = [...$("timeline").querySelectorAll(".tl-cell")].map(e => ({i:+e.dataset.i, x:e.getBoundingClientRect().left - b0, w:e.offsetWidth}));
-  return tlPos = {first, w:box.clientWidth, max:box.scrollWidth - box.clientWidth, list, map:new Map(list.map(o => [o.i, o]))};
+  const list = [...box.querySelectorAll(".tl-cell")].map(e => ({i:+e.dataset.i, x:e.getBoundingClientRect().left - b0, w:e.offsetWidth}));
+  return box._pos = {first, w:box.clientWidth, max:box.scrollWidth - box.clientWidth, list, map:new Map(list.map(o => [o.i, o]))};
 }
-function tlFollow(gi){
-  const box = $("tlScroll"), p = tlCells().map.get(Math.floor(gi)); if(!p) return;
-  box.scrollLeft = box._want = Math.max(0, Math.min(tlPos.max, p.x + p.w*(gi - Math.floor(gi)) - tlPos.w/2));
+function barFollow(gi, except){
+  BARS().forEach(box => {
+    if(!box || box === except || !barOn(box)) return;
+    const P = barCells(box), p = P.map.get(Math.floor(gi)); if(!p || !P.w) return;
+    box.scrollLeft = box._want = Math.max(0, Math.min(P.max, p.x + p.w*(gi - Math.floor(gi)) - P.w/2));
+  });
 }
-/* Scrollen in der Zeitleiste: Diagramme laufen mit */
-function tlScrolled(){
-  const box = $("tlScroll"), T = tlCells(), mid = box.scrollLeft + T.w/2, L = T.list;
-  if(!L.length) return;
+/* in einer der beiden Leisten gewischt: Diagramme und die andere Leiste laufen mit */
+function barScrolled(box){
+  if(csOwn(box)) return;
+  const P = barCells(box), mid = box.scrollLeft + P.w/2, L = P.list;
+  if(!L.length || !P.w) return;
   let lo = 0, hi = L.length - 1;   // Zelle unter der Mitte (Zellen sind nach Lage sortiert)
   while(lo < hi){ const m = (lo + hi + 1) >> 1; if(L[m].x <= mid) lo = m; else hi = m - 1; }
   const p = L[lo];
   csCenter = p.i + Math.max(0, Math.min(.999, (mid - p.x) / p.w));
   Object.keys(CS).forEach(o => csSetCenter(o, csCenter, true));
-  csSettle();
+  barFollow(csCenter, box); csSettle();
 }
 function csDayCheck(gi){ const d = state.times[Math.floor(gi)]?.slice(0,10); if(d && d !== state.day) dayFromScroll(d); }
 /* nach einem Tageswechsel: Tagesangaben, Taupunkt-Zeile und Markierungen in den Diagrammen nachziehen */
@@ -291,10 +316,10 @@ function chartDayChanged(){
 }
 function csInit(){
   Object.values(CS).forEach(csWrap);
-  $("tlScroll").addEventListener("scroll", () => { if(!csOwn($("tlScroll"))) tlScrolled(); }, {passive:true});
+  BARS().forEach(box => box.addEventListener("scroll", () => barScrolled(box), {passive:true}));
   // andere Breite (Drehen, Fenster): Stundenbreite neu berechnen, Ausschnitt bleibt
   let w = innerWidth, t = 0;
-  addEventListener("resize", () => { if(innerWidth === w) return; w = innerWidth; tlPos = null; clearTimeout(t);
+  addEventListener("resize", () => { if(innerWidth === w) return; w = innerWidth; BARS().forEach(b => { b._pos = null; }); clearTimeout(t);
     t = setTimeout(() => { if(state.hours.length){ renderChart(); renderRain(); renderTemp(); } }, 150); });
 }
 
