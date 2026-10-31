@@ -221,10 +221,11 @@ function dayChanged(scrollTl){
   if(typeof chartDayChanged==="function") chartDayChanged();
 }
 function markTimelineDay(){ $("timeline").querySelectorAll(".tl-day").forEach(e => e.classList.toggle("cur", e.dataset.day === state.day)); }
-/* in den Diagrammen oder der Zeitleiste in einen anderen Tag gescrollt: Tag wechseln, Ausschnitt bleibt */
+/* in den Diagrammen oder einer Leiste in einen anderen Tag gescrollt: Tag (Ampel, Tabellen) wechselt, Ausschnitt bleibt.
+   Die gewählte Stunde (oranger Zeiger, „Werte für“) bleibt stehen; sie ändert sich nur durch Antippen oder Ziehen. */
 function dayFromScroll(d){
-  state.day = d; state.sel = defaultSel(d);
-  dayChanged(false); renderSelected(); syncCharts();
+  state.day = d;
+  dayChanged(false); syncCharts();
 }
 /* Wertekasten (Tooltip) jedes Diagramms folgt der gewählten Stunde, auch wenn in einem anderen Diagramm gezogen wird */
 function syncTooltip(c){

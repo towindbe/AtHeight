@@ -267,7 +267,10 @@ const csOwn = el => { if(el._want != null && Math.abs(el.scrollLeft - el._want) 
 let csRest = 0;
 function csSettle(){
   clearTimeout(csRest);
-  csRest = setTimeout(() => { Object.keys(CS).forEach(k => charts[k]?.draw()); csDayCheck(csCenter); }, 140);
+  csRest = setTimeout(() => {
+    Object.keys(CS).forEach(k => charts[k]?.draw()); csDayCheck(csCenter);
+    const v = Math.floor(csCenter); if(state.hours[v]){ renderProfile(v); renderCompass(v); }   // Profil und Kompass zur Mitte des Ausschnitts
+  }, 140);
 }
 function csScrolled(sc){
   if(csOwn(sc)) return;
@@ -520,9 +523,11 @@ function renderTemp(){
   document.querySelectorAll("#tempLegend button").forEach(b => b.setAttribute("aria-pressed", String(!hid(b.dataset.s))));
 }
 
-function renderProfile(){
+/* Höhenprofil, Kompass und Pfeilreihe zeigen eine Stunde: die gewählte (Antippen, Zeiger ziehen) oder beim Scrollen
+   die Stunde in der Mitte des sichtbaren Ausschnitts. Ihre Überschrift nennt immer die gezeigte Stunde. */
+function renderProfile(i = state.sel){
   if(typeof Chart==="undefined") return;
-  const i = state.sel, h = state.hours[i]; if(!h) return;
+  const h = state.hours[i]; if(!h) return;
   $("profileNote").textContent = isWind() ? T("Wind vom Boden bis über die Blattspitze zur gewählten Stunde.", "Wind from the ground to above the blade tip at the selected hour.") : T("Wind vom Boden bis über die Arbeitshöhe zur gewählten Stunde.", "Wind from the ground to above working height at the selected hour.");
   const tip = site.hub + site.rotor/2, zs = [];
   for(let z=10; z<=Math.max(200, tip+10); z+=10) zs.push(z);
@@ -570,8 +575,8 @@ function renderProfile(){
   $("profileHour").textContent = `${dayLabel(state.times[i].slice(0,10),true)} · ${hh(state.times[i])}${UHR()}`;
 }
 
-function renderCompass(){
-  const i = state.sel, h = state.hours[i]; if(!h) return;
+function renderCompass(i = state.sel){
+  const h = state.hours[i]; if(!h) return;
   const dirs = usableModels().map(r => r.series[i]).filter(s => s && s.dir!=null);
   const fg = "var(--fg)", muted = "var(--muted)";
   const ticks = Array.from({length:36},(_,k)=>{ const a=k*10*Math.PI/180, r1=k%9===0?78:84; return `<line x1="${100+r1*Math.sin(a)}" y1="${100-r1*Math.cos(a)}" x2="${100+90*Math.sin(a)}" y2="${100-90*Math.cos(a)}" stroke="${muted}" stroke-width="${k%9===0?1.5:.6}"/>`; }).join("");
@@ -592,25 +597,28 @@ function renderCompass(){
     <dt>${T("Stärke", "Strength")}</dt><dd>${fwu(h.med)} · ${T("Böe", "Gust")} ${fw(h.gMed)}</dd>
     <dt>${T("Modelle", "Models")}</dt><dd>${dirs.length}</dd>`;
   $("compassHour").textContent = `${dayLabel(state.times[i].slice(0,10),true)} · ${hh(state.times[i])}${UHR()}`;
-  renderDirStrip();
+  renderDirStrip(i);
 }
 
 /* Richtung je Arbeitsstunde als Pfeilreihe, dazu Lee-Seite und Winddrehung */
 const DIR_TURN = 45;      // ab dieser Drehung (Grad) Hinweis
 const DIR_CALM = 2;       // darunter (m/s) zählt die Richtung für die Drehung nicht und wird blass gezeigt
 const angDiff = (a, b) => { const d = Math.abs(a - b) % 360; return d > 180 ? 360 - d : d; };
-function renderDirStrip(){
+function renderDirStrip(sel = state.sel){
   const hs = dayHours(state.day);
   if(!hs.length){ $("dirStrip").innerHTML = ""; $("dirTurn").innerHTML = ""; return; }
   $("dirStrip").innerHTML = hs.map(h => {
     const d = h.dir.mean;
     const arrow = d==null ? `<span class="dir-na">–</span>`
       : `<svg viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(${(d+180)%360} 12 12)"><line x1="12" y1="20" x2="12" y2="7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><polygon points="12,2 6.5,10 17.5,10" fill="currentColor"/></g></svg>`;
-    return `<button type="button" class="dir-cell d-${h.lampW || h.lamp} ${h.i===state.sel?"sel":""} ${h.med!=null && h.med < DIR_CALM ? "calm" : ""}" data-i="${h.i}" title="${hh(h.t)}${UHR()}: ${T("aus", "from")} ${dirName(d)}${d==null?"":" ("+Math.round(d)+"°)"}, ${fwu(h.med)}">${arrow}<span>${hh(h.t)}</span></button>`;
+    return `<button type="button" class="dir-cell d-${h.lampW || h.lamp} ${h.i===sel?"sel":""} ${h.med!=null && h.med < DIR_CALM ? "calm" : ""}" data-i="${h.i}" title="${hh(h.t)}${UHR()}: ${T("aus", "from")} ${dirName(d)}${d==null?"":" ("+Math.round(d)+"°)"}, ${fwu(h.med)}">${arrow}<span>${hh(h.t)}</span></button>`;
   }).join("");
   $("dirStrip").querySelectorAll(".dir-cell").forEach(b => b.onclick = () => selectHour(+b.dataset.i));
   // Lee-Seite zur gewählten Stunde
-  const cur = state.hours[state.sel], lee = cur && cur.dir.mean!=null ? dirName((cur.dir.mean+180)%360) : null;
+  // gezeigte Stunde in der Pfeilreihe sichtbar halten (nur seitlich, die Seite bleibt stehen)
+  const box = $("dirStrip"), on = box.querySelector(".dir-cell.sel");
+  if(on && box.clientWidth) box.scrollLeft = on.getBoundingClientRect().left - box.getBoundingClientRect().left + box.scrollLeft - box.clientWidth/2 + on.offsetWidth/2;
+  const cur = state.hours[sel], lee = cur && cur.dir.mean!=null ? dirName((cur.dir.mean+180)%360) : null;
   // größte Drehung zwischen zwei Arbeitsstunden mit Wind
   const ws = hs.filter(h => h.dir.mean!=null && h.med!=null && h.med >= DIR_CALM);
   let best = null;
