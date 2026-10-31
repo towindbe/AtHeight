@@ -717,5 +717,10 @@ header.top .row .lang-btn{font:700 15px var(--f-body);letter-spacing:.04em}
 .sb-lamp{padding:2px 10px;font-size:13px}
 .sb-days button{min-height:30px;padding:3px 9px;font-size:12.5px}
 /* Pfeilreihe „Richtung in der Arbeitszeit“: wischen ohne Scrollbalken */
+/* Pfeilreihe über alle Tage: links und rechts halbe Breite frei (jede Stunde kommt in die Mitte), Tagesname als Trenner */
+.dir-strip::before,.dir-strip::after{content:"";flex:0 0 calc(50% - 15px)}
+.dir-cell{flex:0 0 26px}
+.dir-day{flex:0 0 auto;display:flex;align-items:center;padding:0 4px 0 7px;margin-left:3px;border-left:1px solid var(--line);font:600 11px var(--f-body);font-style:normal;color:var(--muted);white-space:nowrap}
+.dir-day:first-of-type{margin-left:0}
 .dir-strip{scrollbar-width:none}
 .dir-strip::-webkit-scrollbar{display:none}
