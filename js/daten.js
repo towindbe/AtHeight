@@ -20,12 +20,19 @@ function fetchT(url, ms = FETCH_TIMEOUT){
     return r;
   }).finally(() => clearTimeout(t));
 }
+// höchstens n Abfragen gleichzeitig (Open-Meteo lehnt zu viele gleichzeitige Anfragen ab: „Too many concurrent requests“)
+async function pool(items, n, fn){
+  const out = new Array(items.length); let k = 0;
+  await Promise.all(Array.from({length:Math.min(n, items.length)}, async () => { while(k < items.length){ const i = k++; out[i] = await fn(items[i]); } }));
+  return out;
+}
 async function fetchModel(m){
-  const r = await fetchModelOnce(m);
-  // bei Verbindungs- oder Serverfehler bzw. Nutzungsgrenze einmal nach kurzer Pause wiederholen
-  if(r.status==="error" && /Keine Verbindung|Zeitüberschreitung|HTTP (429|5\d\d)|too many/i.test(r.reason||"")){
-    await new Promise(x => setTimeout(x, 1500));
-    return fetchModelOnce(m);
+  let r = await fetchModelOnce(m);
+  // bei Verbindungs- oder Serverfehler bzw. zu vielen Anfragen nach kurzer, wachsender Pause wiederholen
+  for(const wait of [1500, 3000]){
+    if(r.status!=="error" || !/Keine Verbindung|Zeitüberschreitung|HTTP (429|5\d\d)|too many/i.test(r.reason||"")) break;
+    await new Promise(x => setTimeout(x, wait));
+    r = await fetchModelOnce(m);
   }
   return r;
 }
@@ -147,7 +154,7 @@ async function load(){
   const tick = () => { done++; $("loadFill").style.width = Math.round(100*done/total) + "%";
     $("loadText").textContent = done <= MODELS.length ? `${Math.min(done, MODELS.length)} ${T("von", "of")} ${MODELS.length} ${T("Modellen", "models")}` : T("Szenarien und Warnungen", "Scenarios and warnings"); };
   $("loadFill").style.width = "0%"; $("loadText").textContent = `0 ${T("von", "of")} ${MODELS.length} ${T("Modellen", "models")}`; $("loadBar").hidden = false;
-  let [raw, ex] = await Promise.all([Promise.all(MODELS.map(m => fetchModel(m).then(r => (tick(), r)))), loadExtras().then(r => (tick(), r))]);
+  let [raw, ex] = await Promise.all([pool(MODELS, 4, m => fetchModel(m).then(r => (tick(), r))), loadExtras().then(r => (tick(), r))]);
   $("loadBar").hidden = true;
   $("reloadBtn").disabled = false;
   zeigeTest();

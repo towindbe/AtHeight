@@ -64,6 +64,7 @@ function setLang(l){
   try{ localStorage.setItem("wb_lang", l); }catch(e){}
   applyStaticLang();
   if(typeof initStickyNav === "function") initStickyNav();
+  if(typeof zeigeTest === "function") zeigeTest();   // Hinweis Testversion
   if(state.results.length){ state.hours = computeHours(state.results, state.times); render(); }
 }
 $("langBtn").onclick = () => setLang(LANG === "en" ? "de" : "en");
