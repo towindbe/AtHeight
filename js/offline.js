@@ -118,7 +118,7 @@ let updateShown = false;
 async function checkUpdate(){
   if(updateShown || !navigator.onLine) return;
   try{
-    const r = await fetch("windbericht.html", {cache:"no-store"}); if(!r.ok) return;
+    const r = await fetch("index.html", {cache:"no-store"}); if(!r.ok) return;
     const v = appVersion(await r.text()), me = ownVersion();
     if(v && me && v !== me) updateShow();
   }catch(e){}

@@ -15,7 +15,7 @@ Wetterdaten: Open-Meteo.com (CC BY 4.0), nur für nicht-kommerzielle Nutzung kos
 python -m http.server 8765
 ```
 
-Dann http://localhost:8765/windbericht.html öffnen.
+Dann http://localhost:8765/ öffnen.
 
 ## Werte prüfen
 
@@ -38,7 +38,7 @@ Kein Build-Schritt, läuft direkt auf GitHub Pages.
 
 | Datei | Inhalt |
 |---|---|
-| `windbericht.html` | Seitenaufbau (`index.html` leitet dorthin weiter) |
+| `index.html` | Seitenaufbau der App (`windbericht.html` leitet nur noch hierher weiter, damit alte Links gültig bleiben) |
 | `css/windbericht.css` | Gestaltung inkl. Druck des Tagesberichts |
 | `js/konfiguration.js` | Modelle, Schwellen, Standard-Baustelle, App-Zustand |
 | `js/hilfen.js` | Formatierung, Zeitzonen |
@@ -59,8 +59,8 @@ Kein Build-Schritt, läuft direkt auf GitHub Pages.
 | `js/start.js` | Start der App (zuletzt geladen) |
 | `sw.js`, `manifest.webmanifest`, `icons/` | Installierbare App: App-Dateien offline, Symbole |
 
-Die Skripte sind klassische Skripte (kein `type="module"`) und teilen sich den globalen Gültigkeitsbereich; die Reihenfolge in `windbericht.html` ist wichtig.
-**Bei jeder Veröffentlichung** den Parameter `?v=` aller Dateien in `windbericht.html` erhöhen, sonst mischen Browser alte und neue Dateien.
+Die Skripte sind klassische Skripte (kein `type="module"`) und teilen sich den globalen Gültigkeitsbereich; die Reihenfolge in `index.html` ist wichtig.
+**Bei jeder Veröffentlichung** den Parameter `?v=` aller Dateien in `index.html` erhöhen, sonst mischen Browser alte und neue Dateien.
 
 ## Automatischer Test
 

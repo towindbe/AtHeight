@@ -2,7 +2,7 @@
    Wetterdaten werden hier nicht zwischengespeichert (das macht die App selbst, mit Zeitstempel). */
 "use strict";
 const CACHE = "windbericht-app-v1";
-const SHELL = ["windbericht.html", "info.html", "manifest.webmanifest", "icons/icon-192.png",
+const SHELL = ["./", "index.html", "info.html", "manifest.webmanifest", "icons/icon-192.png",
   "fonts/barlow-400.woff2", "fonts/barlow-500.woff2", "fonts/barlow-600.woff2",
   "fonts/barlow-condensed-500.woff2", "fonts/barlow-condensed-600.woff2", "fonts/barlow-condensed-700.woff2", "icons/logo.svg", "icons/logo-hell.svg",
   "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css",
@@ -23,5 +23,5 @@ self.addEventListener("fetch", e => {
   e.respondWith(fetch(req).then(res => {
     if(res && (res.ok || res.type === "opaque")){ const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {}); }
     return res;
-  }).catch(() => caches.match(req, {ignoreSearch: req.mode === "navigate"}).then(r => r || (req.mode === "navigate" ? caches.match("windbericht.html") : Response.error()))));
+  }).catch(() => caches.match(req, {ignoreSearch: req.mode === "navigate"}).then(r => r || (req.mode === "navigate" ? caches.match("index.html") : Response.error()))));
 });

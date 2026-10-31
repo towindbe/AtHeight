@@ -7,7 +7,7 @@
 <title>So funktioniert AtHeight</title>
 <script>/* Hell nur, wenn so gewählt (Standard dunkel); vor dem Zeichnen setzen, damit nichts aufblitzt */
 try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-31g">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-31h">
 <style>
   .info h2{margin-bottom:2px}
   .info .ico{width:1.1em;height:1.1em;vertical-align:-3px}
@@ -35,7 +35,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
         <h1>So funktioniert AtHeight</h1>
       </div>
     </div>
-    <div class="row"><a href="windbericht.html"><button type="button">← Zurück zur App</button></a></div>
+    <div class="row"><a href="./"><button type="button">← Zurück zur App</button></a></div>
   </header>
 
   <section class="card">
@@ -179,15 +179,15 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
     </ul>
   </section>
 
-  <footer class="foot"><p class="note">© 2026 Tobias Windberg · <a href="https://www.windberg-ropeaccess.com" target="_blank" rel="noopener">www.windberg-ropeaccess.com</a> · <a href="windbericht.html">Zurück zur App</a></p></footer>
+  <footer class="foot"><p class="note">© 2026 Tobias Windberg · <a href="https://www.windberg-ropeaccess.com" target="_blank" rel="noopener">www.windberg-ropeaccess.com</a> · <a href="./">Zurück zur App</a></p></footer>
 </div>
-<script src="js/hilfen.js?v=2026-10-31g"></script>
+<script src="js/hilfen.js?v=2026-10-31h"></script>
 <script>
   // Symbol-Platzhalter füllen (wie in der App)
   document.querySelectorAll("[data-ico]").forEach(e => { e.outerHTML = icon(e.dataset.ico); });
   // eingeblendet in der App: eigene Zurück-Knöpfe ausblenden (die App hat „Schließen“); Esc schließt
   if(window.self !== window.top){
-    document.querySelectorAll('a[href="windbericht.html"]').forEach(a => { (a.closest(".row") || a).hidden = true; });
+    document.querySelectorAll('a[href="./"]').forEach(a => { (a.closest(".row") || a).hidden = true; });
     document.addEventListener("keydown", e => { if(e.key==="Escape") try{ parent.infoShow(false); }catch(err){} });
   }
 </script>
