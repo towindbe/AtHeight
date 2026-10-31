@@ -2,11 +2,12 @@
 "use strict";
 
 /* ---------- Daten laden ---------- */
-function apiUrl(m, format){
+/* oeffentlich: Adresse ohne Proxy und Token, für Export und Rohdaten-Link (der Token darf nie nach außen) */
+function apiUrl(m, format, oeffentlich){
   const p = new URLSearchParams({latitude:site.lat, longitude:site.lon, hourly:VARS.join(","), models:m.id,
     wind_speed_unit:"ms", timezone:"auto", forecast_days:"3"});
   if(format) p.set("format", format);
-  return OM("api","/v1/forecast?") + p.toString();
+  return (oeffentlich ? "https://api.open-meteo.com/v1/forecast?" : OM("api","/v1/forecast?")) + p.toString();
 }
 /* Abruf mit Zeitlimit: hängt ein Dienst, bricht die Abfrage nach FETCH_TIMEOUT ab */
 const FETCH_TIMEOUT = 20000;

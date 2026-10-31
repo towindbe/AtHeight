@@ -29,7 +29,7 @@ const RECORD_MISSING = process.argv.includes("--record-missing");   // neue Date
 const OUT = process.argv.find(a => a.startsWith("--out="))?.slice(6);
 
 // Wetter- und Warndienste: werden aufgezeichnet bzw. abgespielt
-const API = /open-meteo\.com|api\.brightsky\.dev|hub\.geosphere\.at|warnungen\.zamg\.at|maps\.dwd\.de/;
+const API = /open-meteo\.com|workers\.dev|api\.brightsky\.dev|hub\.geosphere\.at|warnungen\.zamg\.at|maps\.dwd\.de/;
 // Kartenkacheln und Radarbilder sind für den Test unwichtig
 const TILES = /arcgisonline\.com|tile\.openstreetmap\.org/;
 
@@ -63,18 +63,22 @@ await page.addInitScript(fixed => {
 // englische Oberfläche: Sprache vor dem Laden setzen
 await page.addInitScript(lang => { try{ if(lang === "en") localStorage.setItem("wb_lang", "en"); }catch(e){} }, LANG);
 
+// Die App läuft nur mit Zugangs-Token: ein Testtoken setzen und die Proxy-Adresse auf die direkte Open-Meteo-Adresse zurückführen,
+// damit die Aufzeichnungen (tests/fixtures) unverändert bleiben
+await page.addInitScript(() => { try{ localStorage.setItem("wb_token", "0123456789abcdef"); }catch(e){} });
+const direkt = u => u.replace(/^https:\/\/[^/]*workers\.dev\/([a-z-]+)\/(.*?)\?t=[a-f0-9]+&/, "https://$1.open-meteo.com/$2?");
 await page.route(TILES, r => r.fulfill({status: 204, body: ""}));
 await page.route(API, async route => {
-  const url = route.request().url();
+  const url = direkt(route.request().url());
   if(RECORD){
-    const resp = await route.fetch();
+    const resp = await route.fetch({url});
     const body = await resp.text();
     fixture.responses[url] = {status: resp.status(), body};
     return route.fulfill({status: resp.status(), body, headers: {"content-type": "application/json", "access-control-allow-origin": "*"}});
   }
   let hit = fixture.responses[url];
   if(!hit && RECORD_MISSING){
-    const resp = await route.fetch(); hit = fixture.responses[url] = {status: resp.status(), body: await resp.text()}; added++;
+    const resp = await route.fetch({url}); hit = fixture.responses[url] = {status: resp.status(), body: await resp.text()}; added++;
   }
   if(!hit){ missing.push(url); return route.fulfill({status: 599, body: '{"error":true,"reason":"nicht aufgezeichnet"}', headers: {"access-control-allow-origin": "*"}}); }
   return route.fulfill({status: hit.status, body: hit.body, headers: {"content-type": "application/json", "access-control-allow-origin": "*"}});
