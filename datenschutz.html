@@ -6,9 +6,10 @@
 <meta name="theme-color" content="#0d1217">
 <meta name="robots" content="noindex">
 <title>Datenschutz bei AtHeight</title>
+<!-- Rechtlich noch nicht geprüft: vor dem ersten Testkunden von der Rechtsberatung prüfen lassen (Rechtsgrundlagen, USA-Übermittlung, Auftragsverarbeitung Cloudflare/GitHub, Löschfrist). Wenn Leaflet und Chart.js selbst gehostet werden, den cdnjs-Punkt in Abschnitt 3 streichen. -->
 <script>/* Hell nur, wenn so gewählt (Standard dunkel); vor dem Zeichnen setzen, damit nichts aufblitzt */
 try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-10-31k">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-10-31l">
 <style>
   .info h2{margin-bottom:2px}
   .info p,.info li{margin:0;font-size:15px;line-height:1.55}
@@ -17,7 +18,6 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
   .info th,.info td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
   .info th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
   .info a{color:var(--accent)}
-  .entwurf{border:2px solid var(--warn);padding:10px 12px;border-radius:8px}
 </style>
 </head>
 <body>
@@ -33,7 +33,6 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
   </header>
 
   <section class="card">
-    <p class="entwurf"><b>ENTWURF, nicht rechtlich geprüft.</b> Stellen in [eckigen Klammern] sind offen. Vor der Weitergabe an Testkunden von einer Rechtsberatung prüfen lassen.</p>
     <p>Diese Erklärung gilt für die Testversion von AtHeight (Wetter-Check für Höhenarbeit). Sie beschreibt, welche Daten bei der Nutzung verarbeitet werden, wohin sie gehen und welche Rechte du hast. AtHeight wird ohne Werbung, ohne Tracking und ohne Analysedienste betrieben.</p>
   </section>
 
@@ -48,13 +47,13 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
     <table>
       <thead><tr><th>Daten</th><th>Zweck</th><th>Wo, wie lange</th></tr></thead>
       <tbody>
-        <tr><td><b>Zugangscode (Token)</b>, Name des Testkunden, Ablaufdatum, Tageslimit</td><td>Zugang zur Testversion prüfen, Testzeitraum und Missbrauch begrenzen</td><td>Cloudflare Workers KV. Bis zum Ende der Testphase, danach gelöscht [Frist festlegen].</td></tr>
+        <tr><td><b>Zugangscode (Token)</b>, Name des Testkunden, Ablaufdatum, Tageslimit</td><td>Zugang zur Testversion prüfen, Testzeitraum und Missbrauch begrenzen</td><td>Cloudflare Workers KV. Bis zum Ende der Testphase, danach gelöscht, spätestens 30 Tage nach Ende der Testphase.</td></tr>
         <tr><td><b>Zahl der Abfragen</b> je Zugangscode und Tag</td><td>Tageslimit durchsetzen, Nutzung der Testversion auswerten</td><td>Cloudflare D1 (Datenbank, Region Westeuropa). 90 Tage.</td></tr>
         <tr><td><b>Koordinaten der Baustelle</b> und gewählte Wettermodelle</td><td>Wetterprognose abrufen</td><td>Werden bei jeder Abfrage über unseren Proxy (Cloudflare Workers) an Open-Meteo weitergegeben. Wir speichern sie nicht.</td></tr>
         <tr><td><b>IP-Adresse</b> und technische Verbindungsdaten (Zeit, Browser)</td><td>Betrieb und Sicherheit des Proxys und des Webhostings</td><td>Verarbeiten Cloudflare (Proxy) und GitHub Pages (Webhosting) technisch. Wir werten sie nicht aus.</td></tr>
       </tbody>
     </table>
-    <p>Rechtsgrundlage ist die Durchführung der Testvereinbarung (Art. 6 Abs. 1 lit. b DSGVO) und unser berechtigtes Interesse an einem sicheren und kontrollierbaren Betrieb (Art. 6 Abs. 1 lit. f DSGVO) [prüfen].</p>
+    <p>Rechtsgrundlage ist die Durchführung der Testvereinbarung (Art. 6 Abs. 1 lit. b DSGVO) und unser berechtigtes Interesse an einem sicheren und kontrollierbaren Betrieb (Art. 6 Abs. 1 lit. f DSGVO).</p>
     <p>Die Wetterdaten selbst sind keine personenbezogenen Daten. Koordinaten einer Baustelle können es sein, wenn sie sich einer Person zuordnen lassen (zum Beispiel bei einer Einzelperson auf einer Baustelle).</p>
   </section>
 
@@ -66,7 +65,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <li><b>Ortssuche (OpenStreetMap Nominatim, nominatim.openstreetmap.org):</b> nur wenn du einen Ort suchst; der Suchbegriff geht an den Dienst.</li>
       <li><b>Amtliche Warnungen und Radar (Deutscher Wetterdienst, maps.dwd.de; GeoSphere Austria, warnungen.zamg.at und dataset.api.hub.geosphere.at):</b> die Koordinaten der Baustelle gehen an diese Dienste, um Warnungen und Messwerte zu holen.</li>
       <li><b>Vergleich mit Messwerten (Bright Sky, api.brightsky.dev):</b> nur im Modellvergleich.</li>
-      <li><b>Programmbibliotheken (Leaflet und Chart.js von cdnjs.cloudflare.com):</b> werden beim Start der App geladen [wird auf eigenes Hosting umgestellt, dann entfällt dieser Punkt].</li>
+      <li><b>Programmbibliotheken (Leaflet und Chart.js von cdnjs.cloudflare.com):</b> werden beim Start der App geladen.</li>
     </ul>
     <p>Schriften und Symbole liegen bei AtHeight selbst. Es gibt keine Verbindung zu Google Fonts oder zu Werbenetzwerken.</p>
   </section>
@@ -78,7 +77,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 
   <section class="card" id="empfaenger">
     <h2>5. Empfänger und Übermittlung in Drittländer</h2>
-    <p>Wir setzen folgende Dienstleister ein: <b>Cloudflare, Inc.</b> (Proxy, Token-Speicher, Datenbank), <b>GitHub, Inc.</b> (Webhosting über GitHub Pages) und <b>Open-Meteo</b> (Wetterdaten, erhält über den Proxy nur Koordinaten und Modellwahl, nicht den Zugangscode). Cloudflare und GitHub haben ihren Sitz in den USA. Die Übermittlung stützt sich auf [Angemessenheitsbeschluss (EU-US Data Privacy Framework) bzw. Standardvertragsklauseln, prüfen]. [Auftragsverarbeitungsverträge mit Cloudflare und GitHub prüfen.]</p>
+    <p>Wir setzen folgende Dienstleister ein: <b>Cloudflare, Inc.</b> (Proxy, Token-Speicher, Datenbank), <b>GitHub, Inc.</b> (Webhosting über GitHub Pages) und <b>Open-Meteo</b> (Wetterdaten, erhält über den Proxy nur Koordinaten und Modellwahl, nicht den Zugangscode). Cloudflare und GitHub haben ihren Sitz in den USA. Die Übermittlung stützt sich, soweit der Anbieter dafür zertifiziert ist, auf den Angemessenheitsbeschluss der EU-Kommission (EU-US Data Privacy Framework), sonst auf Standardvertragsklauseln. Mit beiden Anbietern gelten deren Auftragsverarbeitungsbedingungen.</p>
     <p>Wir verkaufen keine Daten und geben sie nicht zu Werbezwecken weiter.</p>
   </section>
 
@@ -90,12 +89,12 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 
   <section class="card" id="stand">
     <h2>7. Stand</h2>
-    <p>Entwurf vom 31.10.2026. Wir passen diese Erklärung an, wenn sich Dienste oder Datenflüsse ändern.</p>
+    <p>Stand: 31.10.2026. Wir passen diese Erklärung an, wenn sich Dienste oder Datenflüsse ändern.</p>
   </section>
 
   <footer class="foot"><p class="note">© 2026 Tobias Windberg · <a href="https://www.windberg-ropeaccess.com" target="_blank" rel="noopener">www.windberg-ropeaccess.com</a> · <a href="./">Zurück zur App</a></p></footer>
 </div>
-<script src="js/hilfen.js?v=2026-10-31k"></script>
+<script src="js/hilfen.js?v=2026-10-31l"></script>
 <script>
   // eingeblendet in der App: eigene Zurück-Knöpfe ausblenden; Esc schließt
   if(window.self !== window.top){
