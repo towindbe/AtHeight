@@ -69,7 +69,7 @@ async function afRechnen(von, bis){
     modell:"Open-Meteo Historical Forecast (best match), 10-m-Wind der Station auf den Arbeitsbereich hochgerechnet", projekt:$("af_project").value, tage, summen};
 }
 
-const afDay = d => new Date(d+"T12:00:00").toLocaleDateString(LOC(), {weekday:"short", day:"2-digit", month:"2-digit", year:"2-digit"});
+const afDay = d => kurzDatum(d, true);
 function afRows(data){
   return data.tage.map(t => t.n ? `<tr><td class="l">${esc(afDay(t.tag))}</td><td class="l"><span class="rp-pill ${AF_CLS[t.status]}">${AF_TXT[t.status]}</span></td>
     <td class="${t.windMax > data.grenzwerte.wind ? "over" : ""}">${fw(t.windMax)}</td><td class="${t.boeMax!=null && t.boeMax > data.grenzwerte.boe ? "over" : ""}">${t.boeMax==null ? "–" : fw(t.boeMax)}</td>
