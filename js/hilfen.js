@@ -27,7 +27,9 @@ const ICON_PATHS = {
   bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
   pause:'<path d="M8 5v14M16 5v14"/>',
   play:'<path d="M7 4l13 8-13 8z"/>',
-  matrix:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>'
+  matrix:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>',
+  expand:'<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>',
+  close:'<path d="M6 6l12 12M18 6L6 18"/>'
 };
 // Nach dem Einblenden einer Erklärung dorthin scrollen (sie steht oft weiter unten in der Karte)
 const showHelp = el => { if(el) setTimeout(() => el.scrollIntoView({behavior:"smooth", block:"center"}), 30); };

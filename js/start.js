@@ -3,7 +3,7 @@
 
 /* App-Dateien offline verfügbar machen (nicht im automatischen Test) */
 if("serviceWorker" in navigator && !navigator.webdriver && /^https:|^http:\/\/localhost/.test(location.href)) navigator.serviceWorker.register("sw.js").catch(() => {});
-attachScrub("chart", "main"); attachScrub("rain", "rain"); attachScrub("temp", "temp");
+csInit(); attachScrub("chart", "main"); attachScrub("rain", "rain"); attachScrub("temp", "temp");
 fillSettings();
 initMap();
 if(!TOKEN){   // ohne Zugangs-Token nichts laden

@@ -59,7 +59,7 @@ function stripScrubbed(){
   const box = $("sbStrip"), mid = box.scrollLeft + box.clientWidth/2;
   let best = null, bd = Infinity;
   box.querySelectorAll(".tl-cell").forEach(b => { const d = Math.abs(b.offsetLeft + b.offsetWidth/2 - mid); if(d < bd){ bd = d; best = b; } });
-  if(best && +best.dataset.i !== state.sel) selectHour(+best.dataset.i);
+  if(best && +best.dataset.i !== state.sel) selectHour(+best.dataset.i, "strip");
 }
 
 // Sprungmarken der Kurzleiste (beim Sprachwechsel neu aufgebaut)

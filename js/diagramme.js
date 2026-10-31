@@ -24,6 +24,9 @@ function narrowReadout(opt, id){
 }
 matchMedia("(max-width: 700px)").addEventListener?.("change", () => { if(state.hours.length){ renderChart(); renderRain(); renderTemp(); } });
 
+// Titel im Wertekasten: Tag und Uhrzeit (mehrere Tage im Bild)
+function csTipTitle(items){ const c = items[0]?.chart, gi = c?.$idxs?.[items[0].dataIndex]; return gi==null ? "" : `${dayLabel(state.times[gi].slice(0,10), true)}, ${hh(state.times[gi])}`; }
+
 /* Plugin: Arbeitszeit hinterlegen + gewählte Stunde markieren */
 const markPlugin = {id:"marks", beforeDatasetsDraw(c){
   if(!c.$idxs) return;
@@ -33,49 +36,67 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
   c.$idxs.forEach((gi,k) => {
     if(!isWork(state.times[gi])){ ctx.fillStyle = css("--raised"); ctx.fillRect(x.getPixelForValue(k)-step/2, a.top, step, a.bottom-a.top); }
   });
+  // Tageswechsel: senkrechte Linie
+  ctx.strokeStyle = css("--muted"); ctx.lineWidth = 1; ctx.globalAlpha = .6;
+  dayRuns(c.$idxs).slice(1).forEach(([k0]) => { const px = x.getPixelForValue(k0) - step/2; ctx.beginPath(); ctx.moveTo(px, a.top); ctx.lineTo(px, a.bottom); ctx.stroke(); });
   ctx.restore();
 }, daylightDraw(c){
-  // Tageslicht: gelblicher Balken von Dämmerungsbeginn bis -ende mit Sonnensymbol
+  // Tageslicht: je Tag ein gelblicher Balken von Dämmerungsbeginn bis -ende mit Sonnensymbol
   if(!c.$idxs?.length) return;
-  const dl = daylight(state.times[c.$idxs[0]].slice(0,10)); if(!dl.start || !dl.end) return;
   const {ctx, chartArea:a, scales:{x}} = c, step = x.getPixelForValue(1) - x.getPixelForValue(0);
-  const h0 = hourOf(state.times[c.$idxs[0]]), toH = t => +t.slice(0,2) + +t.slice(3,5)/60;
-  const xs = Math.max(a.left, x.getPixelForValue(0) + (toH(dl.start) - h0)*step), xe = Math.min(a.right, x.getPixelForValue(0) + (toH(dl.end) - h0)*step);
-  if(xe <= xs) return;
-  // eigener Streifen unterhalb der Zeichenfläche (Platz über ticks.padding), überdeckt keine Daten
-  const y = a.bottom + 8, sun = "#f2b632";
+  const toH = t => +t.slice(0,2) + +t.slice(3,5)/60, y = a.bottom + 8, sun = "#f2b632";
   ctx.save();
-  ctx.strokeStyle = sun; ctx.lineWidth = 3; ctx.lineCap = "round";
-  ctx.beginPath(); ctx.moveTo(xs, y); ctx.lineTo(xe, y); ctx.stroke();
-  // kleine Sonne in der Mitte, mit Hintergrund freigestellt
-  const cx = (xs + xe)/2;
-  ctx.fillStyle = css("--surface"); ctx.beginPath(); ctx.arc(cx, y, 7.5, 0, 2*Math.PI); ctx.fill();
-  ctx.fillStyle = sun; ctx.lineWidth = 1.4;
-  ctx.beginPath(); ctx.arc(cx, y, 2.8, 0, 2*Math.PI); ctx.fill();
-  for(let k = 0; k < 8; k++){ const w = k*Math.PI/4; ctx.beginPath(); ctx.moveTo(cx + Math.cos(w)*4.4, y + Math.sin(w)*4.4); ctx.lineTo(cx + Math.cos(w)*6.4, y + Math.sin(w)*6.4); ctx.stroke(); }
-  // Uhrzeiten links und rechts neben dem Balken
-  ctx.font = "600 9.5px " + css("--f-mono"); ctx.textBaseline = "middle";
-  ctx.textAlign = "right"; ctx.fillText(dl.start, xs - 5, y + 0.5);
-  ctx.textAlign = "left"; ctx.fillText(dl.end, xe + 5, y + 0.5);
+  dayRuns(c.$idxs).forEach(([k0, , d]) => {
+    const dl = daylight(d); if(!dl.start || !dl.end) return;
+    const h0 = hourOf(state.times[c.$idxs[k0]]), p0 = x.getPixelForValue(k0);
+    const xs = Math.max(a.left, p0 + (toH(dl.start) - h0)*step), xe = Math.min(a.right, p0 + (toH(dl.end) - h0)*step);
+    if(xe <= xs) return;
+    // eigener Streifen unterhalb der Zeichenfläche (Platz über ticks.padding), überdeckt keine Daten
+    ctx.strokeStyle = sun; ctx.lineWidth = 3; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(xs, y); ctx.lineTo(xe, y); ctx.stroke();
+    // kleine Sonne in der Mitte, mit Hintergrund freigestellt
+    const cx = (xs + xe)/2;
+    ctx.fillStyle = css("--surface"); ctx.beginPath(); ctx.arc(cx, y, 7.5, 0, 2*Math.PI); ctx.fill();
+    ctx.fillStyle = sun; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.arc(cx, y, 2.8, 0, 2*Math.PI); ctx.fill();
+    for(let k = 0; k < 8; k++){ const w = k*Math.PI/4; ctx.beginPath(); ctx.moveTo(cx + Math.cos(w)*4.4, y + Math.sin(w)*4.4); ctx.lineTo(cx + Math.cos(w)*6.4, y + Math.sin(w)*6.4); ctx.stroke(); }
+    // Uhrzeiten links und rechts neben dem Balken
+    ctx.font = "600 9.5px " + css("--f-mono"); ctx.textBaseline = "middle";
+    ctx.textAlign = "right"; ctx.fillText(dl.start, xs - 5, y + 0.5);
+    ctx.textAlign = "left"; ctx.fillText(dl.end, xe + 5, y + 0.5);
+  });
+  ctx.restore();
+}, dayNames(c){
+  // Tagesname unten links in jedem Tag; beim Scrollen bleibt er am linken Rand stehen, bis der Tag vorbei ist
+  const {ctx, chartArea:a, scales:{x}} = c, step = x.getPixelForValue(1) - x.getPixelForValue(0), [vl, vr] = csVis(c);
+  ctx.save(); ctx.font = "600 10px " + css("--f-body"); ctx.textBaseline = "bottom"; ctx.textAlign = "left";
+  dayRuns(c.$idxs).forEach(([k0, k1, d]) => {
+    const t = dayLabel(d, true), w = ctx.measureText(t).width + 8;
+    const lx = Math.min(Math.max(x.getPixelForValue(k0) - step/2, vl) + 3, x.getPixelForValue(k1) + step/2 - w - 3);
+    if(lx + w < vl || lx > vr) return;
+    ctx.fillStyle = css("--surface"); ctx.globalAlpha = .85; ctx.fillRect(lx, a.bottom - 17, w, 15); ctx.globalAlpha = 1;
+    ctx.fillStyle = d === state.day ? css("--fg") : css("--muted"); ctx.fillText(t, lx + 4, a.bottom - 4);
+  });
   ctx.restore();
 }, afterDatasetsDraw(c){
   markPlugin.daylightDraw(c);   // vor dem Infofenster zeichnen, damit es obenauf liegt
-  // Verschiebbarer Zeitmarker: Linie mit Griff und Uhrzeit
   if(!c.$idxs) return;
+  markPlugin.dayNames(c);
+  // Verschiebbarer Zeitmarker: Linie mit Griff und Uhrzeit
   const sk = c.$idxs.indexOf(state.sel); if(sk < 0) return;
-  const {ctx, chartArea:a, scales:{x}} = c, px = x.getPixelForValue(sk), acc = css("--accent");
+  const {ctx, chartArea:a, scales:{x}} = c, px = x.getPixelForValue(sk), acc = css("--accent"), [vl, vr] = csVis(c);
   ctx.save();
   ctx.strokeStyle = acc; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(px, a.top); ctx.lineTo(px, a.bottom); ctx.stroke();
   const label = hh(state.times[state.sel]) + UHR();
   ctx.font = "600 11px " + css("--f-body"); const w = ctx.measureText(label).width + 14, h = 18;
-  const bx = Math.min(Math.max(px - w/2, a.left), a.right - w);
+  const bx = Math.min(Math.max(px - w/2, vl), vr - w);
   ctx.fillStyle = acc; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, a.top, w, h, 9) : ctx.rect(bx, a.top, w, h); ctx.fill();
   ctx.fillStyle = css("--accent-ink"); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(label, bx + w/2, a.top + h/2 + 0.5);
   ctx.restore();
 }};
-/* Beschriftung der Grenzlinien rechts am Rand */
+/* Beschriftung der Grenzlinien rechts am sichtbaren Rand */
 const limitLabels = {id:"limitLabels", afterDatasetsDraw(c){
-  const {ctx, chartArea:a, scales:{y}} = c;
+  const {ctx, chartArea:ca, scales:{y}} = c, a = {top:ca.top, bottom:ca.bottom, right:csVis(c)[1]};
   const items = [["lim", site.wind, `${T("Grenze Wind", "Wind limit")} ${fwu(site.wind)}`], ["glim", site.gust, `${T("Grenze Böe", "Gust limit")} ${fwu(site.gust)}`]]
     .filter(([k]) => !state.hide.has(k)).map(([, v, t]) => [v, t])
     .map(([v, t]) => ({t, py:y.getPixelForValue(cw(v))})).filter(o => o.py >= a.top && o.py <= a.bottom).sort((p,q) => p.py-q.py);
@@ -91,20 +112,165 @@ const limitLabels = {id:"limitLabels", afterDatasetsDraw(c){
   });
   ctx.restore();
 }};
-/* Zeitmarker mit Maus oder Finger ziehen (waagrecht); senkrechtes Wischen scrollt weiter die Seite */
+/* Stunde wählen: mit der Maus den Zeitmarker ziehen; am Handy antippen (Wischen scrollt die Diagramme seitlich, senkrecht die Seite) */
 function attachScrub(canvasId, chartKey){
   const cv = $(canvasId); if(!cv) return;
-  let drag = false;
-  cv.style.touchAction = "pan-y"; cv.style.cursor = "ew-resize";
+  let drag = false, tap = null;
+  cv.style.touchAction = "pan-x pan-y"; cv.style.cursor = "ew-resize";
   const pick = e => {
     const c = charts[chartKey]; if(!c || !c.$idxs) return;
     const r = cv.getBoundingClientRect(), v = c.scales.x.getValueForPixel(e.clientX - r.left);
     const k = Math.max(0, Math.min(c.$idxs.length - 1, Math.round(v))), gi = c.$idxs[k];
-    if(gi!=null && gi!==state.sel) selectHour(gi);
+    if(gi!=null && gi!==state.sel) selectHour(gi, "chart");
   };
-  cv.addEventListener("pointerdown", e => { drag = true; try{ cv.setPointerCapture(e.pointerId); }catch(err){} pick(e); });
+  cv.addEventListener("pointerdown", e => {
+    if(e.pointerType !== "mouse"){ tap = {x:e.clientX, y:e.clientY}; return; }
+    drag = true; try{ cv.setPointerCapture(e.pointerId); }catch(err){} pick(e);
+  });
   cv.addEventListener("pointermove", e => { if(drag) pick(e); });
-  ["pointerup", "pointercancel", "lostpointercapture"].forEach(t => cv.addEventListener(t, () => { drag = false; }));
+  cv.addEventListener("pointerup", e => { if(tap && Math.hypot(e.clientX - tap.x, e.clientY - tap.y) < 10) pick(e); tap = null; drag = false; });
+  ["pointercancel", "lostpointercapture"].forEach(t => cv.addEventListener(t, () => { drag = false; tap = null; }));
+}
+
+/* ---------- Diagramme über alle Tage: gemeinsamer, seitlich scrollbarer Zeitraum ----------
+   Wind, Regen und Temperatur zeigen alle Prognosetage nebeneinander; sichtbar ist etwa ein Tag. Die drei Diagramme
+   und die Zeitleiste „Arbeitsfenster“ laufen beim Scrollen gemeinsam. Wer in einen anderen Tag scrollt, wechselt den
+   Tag (Ampel, Tabellen); die Diagramme werden dabei nicht neu aufgebaut. */
+const CS = {main:"chart", rain:"rain", temp:"temp"};   // Diagramm -> Canvas
+const AX = 46, AX_NONE = 10;   // feste Breite der y-Achsen (px); rechts ohne Achse nur ein schmaler Rand
+const fixAxis = s => { s.width = AX; };
+const csR = {};   // Breite rechts je Diagramm
+const csPad = c => AX + (csR[c.$key] ?? AX);   // links + rechts
+let csCenter = null, csDataKey = "";   // Stunde (Index in state.times, mit Bruchteil) in der Mitte des sichtbaren Ausschnitts
+// zusammenhängende Stunden eines Tages: [erster Index, letzter Index, Tag]
+const dayRuns = idxs => idxs.reduce((r, gi, k) => { const d = state.times[gi].slice(0,10), l = r[r.length-1];
+  if(l && l[2] === d) l[1] = k; else r.push([k, k, d]); return r; }, []);
+// sichtbarer Bereich der Zeichenfläche (Canvas-Pixel), ohne die stehenden Achsen links und rechts
+const csVis = c => { const a = c.chartArea, sc = c.$sc; if(!sc) return [a.left, a.right];
+  return [Math.max(a.left, sc.scrollLeft + AX), Math.min(a.right, sc.scrollLeft + sc.clientWidth - (csR[c.$key] ?? AX))]; };
+// so viele Stunden passen in die Breite: ein ganzer Tag, ohne Nacht die Stunden eines durchschnittlichen Tages
+const csVisible = idxs => state.nightOff ? Math.max(6, Math.round(idxs.length / dayRuns(idxs).length)) : 24;
+const csKOf = (idxs, gi) => { const g = Math.floor(gi), k = idxs.findIndex(i => i >= g); return k < 0 ? idxs.length : k + (idxs[k] === g ? gi - g : 0); };
+const csGiOf = (idxs, k) => { const kk = Math.max(0, Math.min(idxs.length - 1, Math.floor(k))); return idxs[kk] + Math.max(0, Math.min(.999, k - kk)); };
+
+function csWrap(id){
+  const cv = $(id); if(!cv || cv.parentElement.classList.contains("cs-inner")) return;
+  const box = cv.parentElement, sc = document.createElement("div"), inner = document.createElement("div");
+  box.classList.add("cs"); sc.className = "cs-scroll"; inner.className = "cs-inner";
+  box.insertBefore(sc, cv); inner.appendChild(cv); sc.appendChild(inner);
+  ["l", "r"].forEach(k => { const a = document.createElement("canvas"); a.className = "cs-ax " + k; a.setAttribute("aria-hidden", "true"); box.appendChild(a); });
+  sc.addEventListener("scroll", () => csScrolled(sc), {passive:true});
+}
+/* Breite festlegen, bevor das Diagramm entsteht: alle Stunden nebeneinander, sichtbar etwa ein Tag */
+function csPrepare(key, idxs){
+  csWrap(CS[key]);
+  const cv = $(CS[key]), sc = cv.closest(".cs-scroll"); if(!sc) return;
+  const vis = Math.min(idxs.length, csVisible(idxs)), cw = sc.clientWidth;
+  const pad = AX + (csR[key] ?? AX);
+  cv.parentElement.style.width = Math.round(pad + idxs.length * (cw - pad) / vis) + "px";
+}
+/* feste Achsenbreiten: so stehen die Stunden genau, und die Achsen lassen sich als Kopie stehen lassen */
+function csAxes(opt, key){
+  opt.scales.x.offset = true;
+  opt.scales.y.afterFit = fixAxis;
+  if(opt.scales.y2 && opt.scales.y2.display !== false){ opt.scales.y2.afterFit = fixAxis; csR[key] = AX; }
+  else{ opt.layout = {padding:{right:AX_NONE}}; csR[key] = AX_NONE; }
+}
+/* Die Achsen links und rechts als Kopie über das Diagramm legen: sie bleiben stehen, während die Kurven seitlich laufen */
+const csAxisPlugin = {id:"csAxis", afterDraw(c){
+  const box = c.canvas.closest(".cs"); if(!box) return;
+  const src = c.canvas, r = src.width / (src.clientWidth || 1), H = src.height, bg = css("--surface");
+  const ar = csR[c.$key] ?? AX;
+  [["l", 0, AX], ["r", src.clientWidth - ar, ar]].forEach(([k, x0, aw]) => {
+    const o = box.querySelector(".cs-ax." + k); if(!o) return;
+    const w = Math.round(aw*r);
+    if(o.width !== w || o.height !== H){ o.width = w; o.height = H; }
+    o.style.width = aw + "px"; o.style.height = src.clientHeight + "px";
+    const g = o.getContext("2d"); g.fillStyle = bg; g.fillRect(0, 0, w, H);
+    g.drawImage(src, Math.round(x0*r), 0, w, H, 0, 0, w, H);
+  });
+}};
+/* nach dem Aufbau: gemerkten Ausschnitt wiederherstellen (neue Daten: Anfang des gewählten Tages) */
+function csAfter(key){
+  const c = charts[key], sc = $(CS[key])?.closest(".cs-scroll"); if(!c || !sc) return;
+  c.$sc = sc; c.$key = key; sc.dataset.key = key;
+  c.$step = c.chartArea.width / c.$idxs.length;
+  const dk = state.fetchedAt + "|" + site.lat + "," + site.lon;
+  if(dk !== csDataKey){ csDataKey = dk; csCenter = null; }
+  if(csCenter == null) csShowDay(state.day, [key]); else csSetCenter(key, csCenter);
+}
+function csSetCenter(key, gi){
+  const c = charts[key]; if(!c?.$sc) return;
+  const sc = c.$sc;
+  sc.scrollLeft = csKOf(c.$idxs, gi) * c.$step - (sc.clientWidth - csPad(c))/2; sc._want = sc.scrollLeft;
+  c.draw();
+}
+/* Tag von seinem Anfang an zeigen (Tages-Tasten) */
+function csShowDay(d, keys = Object.keys(CS)){
+  keys.forEach(key => {
+    const c = charts[key]; if(!c?.$sc) return;
+    const k0 = c.$idxs.findIndex(gi => state.times[gi].startsWith(d)); if(k0 < 0) return;
+    const sc = c.$sc; sc.scrollLeft = k0 * c.$step; sc._want = sc.scrollLeft; c.draw();
+    csCenter = csGiOf(c.$idxs, (sc.scrollLeft + (sc.clientWidth - csPad(c))/2) / c.$step);
+  });
+}
+/* gewählte Stunde sichtbar machen; von der Kurzleiste aus immer mittig, damit die Diagramme beim Wischen mitlaufen */
+function csShowHour(i, center){
+  const c = charts.main || charts.rain || charts.temp; if(!c?.$sc) return;
+  const k = csKOf(c.$idxs, i), [vl, vr] = csVis(c), px = c.scales.x.getPixelForValue(Math.floor(k));
+  if(!center && px >= vl && px <= vr) return;
+  csCenter = i + .5; Object.keys(CS).forEach(o => csSetCenter(o, csCenter));
+}
+let csRaf = 0, csSrc = null;
+// vom Programm gesetzte Position (nicht weiterreichen, sonst schaukeln sich Diagramme und Zeitleiste gegenseitig auf)
+const csOwn = el => { if(el._want != null && Math.abs(el.scrollLeft - el._want) < 1.5) return true; el._want = null; return false; };
+function csScrolled(sc){
+  if(csOwn(sc)) return;
+  csSrc = sc.dataset.key; if(!csRaf) csRaf = requestAnimationFrame(csFollow);
+}
+function csFollow(){
+  csRaf = 0; const c = charts[csSrc]; if(!c?.$sc) return;
+  const sc = c.$sc;
+  csCenter = csGiOf(c.$idxs, (sc.scrollLeft + (sc.clientWidth - csPad(c))/2) / c.$step);
+  c.draw();
+  Object.keys(CS).forEach(o => { if(o !== csSrc) csSetCenter(o, csCenter); });
+  tlFollow(csCenter); csDayCheck(csCenter);
+}
+/* Zeitleiste „Arbeitsfenster“ auf dieselbe Stunde stellen */
+const tlCellX = (box, el) => el.getBoundingClientRect().left - box.getBoundingClientRect().left + box.scrollLeft;
+function tlFollow(gi){
+  const box = $("tlScroll"), el = $("timeline").querySelector(`.tl-cell[data-i="${Math.floor(gi)}"]`); if(!box || !el) return;
+  box.scrollLeft = tlCellX(box, el) + el.offsetWidth*(gi - Math.floor(gi)) - box.clientWidth/2; box._want = box.scrollLeft;
+}
+/* Scrollen in der Zeitleiste: Diagramme laufen mit */
+let tlRaf = 0;
+function tlScrolled(){
+  tlRaf = 0;
+  const box = $("tlScroll"), mid = box.scrollLeft + box.clientWidth/2;
+  let best = null, bx = 0, bd = Infinity;
+  box.querySelectorAll(".tl-cell").forEach(b => { const x = tlCellX(box, b), d = Math.abs(x + b.offsetWidth/2 - mid); if(d < bd){ bd = d; best = b; bx = x; } });
+  if(!best) return;
+  csCenter = +best.dataset.i + Math.max(0, Math.min(.999, (mid - bx) / best.offsetWidth));
+  Object.keys(CS).forEach(o => csSetCenter(o, csCenter));
+  csDayCheck(csCenter);
+}
+function csDayCheck(gi){ const d = state.times[Math.floor(gi)]?.slice(0,10); if(d && d !== state.day) dayFromScroll(d); }
+/* nach einem Tageswechsel: Tagesangaben, Taupunkt-Zeile und Markierungen in den Diagrammen nachziehen */
+function chartDayChanged(){
+  ["chartDay", "rainDay", "tempDay"].forEach(id => { $(id).textContent = dayLabel(state.day); });
+  renderDewRow();
+  Object.keys(CS).forEach(k => charts[k]?.draw());
+}
+function csInit(){
+  Object.values(CS).forEach(csWrap);
+  $("tlScroll").addEventListener("scroll", () => {
+    if(csOwn($("tlScroll"))) return;
+    if(!tlRaf) tlRaf = requestAnimationFrame(tlScrolled);
+  }, {passive:true});
+  // andere Breite (Drehen, Fenster): Stundenbreite neu berechnen, Ausschnitt bleibt
+  let w = innerWidth, t = 0;
+  addEventListener("resize", () => { if(innerWidth === w) return; w = innerWidth; clearTimeout(t);
+    t = setTimeout(() => { if(state.hours.length){ renderChart(); renderRain(); renderTemp(); } }, 150); });
 }
 
 function renderChart(){
@@ -126,10 +292,12 @@ function renderChart(){
   if(!hid("lim")) ds.push({label:T("Grenzwert", "Limit"), data:idxs.map(()=>cw(site.wind)), borderColor:stop, borderWidth:1.6, borderDash:[7,4], pointRadius:0});
   if(!hid("glim")) ds.push({label:T("Grenze Böe", "Gust limit"), data:idxs.map(()=>cw(site.gust)), borderColor:stop, borderWidth:1, borderDash:[2,4], pointRadius:0});
   const opt = chartBase(WU()+" · "+zoneTxt()); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
-  opt.plugins.tooltip = {filter: it => !["Minimum", T("Grenzwert", "Limit"), T("Grenze Böe", "Gust limit")].includes(it.dataset.label), callbacks:{label:c => `${c.dataset.label}: ${fmt(c.parsed.y, U().d)} ${WU()}`}}; narrowReadout(opt, "roMain");
+  opt.plugins.tooltip = {filter: it => !["Minimum", T("Grenzwert", "Limit"), T("Grenze Böe", "Gust limit")].includes(it.dataset.label), callbacks:{title:csTipTitle, label:c => `${c.dataset.label}: ${fmt(c.parsed.y, U().d)} ${WU()}`}}; narrowReadout(opt, "roMain");
+  csAxes(opt, "main");
   if(charts.main) charts.main.destroy();
-  charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, limitLabels]});
-  charts.main.$idxs = idxs; charts.main.update("none"); if(isNarrow()) syncTooltip(charts.main);
+  csPrepare("main", idxs);
+  charts.main = new Chart($("chart"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, limitLabels, csAxisPlugin]});
+  charts.main.$idxs = idxs; charts.main.update("none"); csAfter("main"); if(isNarrow()) syncTooltip(charts.main);
   $("chartTitle").textContent = T("Windverlauf · ", "Wind · ") + zoneTxt();
   $("chartDay").textContent = dayLabel(state.day);
   renderChips(); renderLegend();
@@ -149,6 +317,7 @@ function renderNightBtns(){
   document.querySelectorAll(".night-btn").forEach(b => {
     b.setAttribute("aria-pressed", String(off));
     b.querySelector(".nl").textContent = off ? T("Nacht einblenden", "Show night") : T("Nacht ausblenden", "Hide night");
+    b.setAttribute("aria-label", b.querySelector(".nl").textContent);
     b.title = off ? "Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen wieder einblenden" : "Dunkle Stunden außerhalb der Arbeitszeit in den Diagrammen ausblenden";
   });
 }
@@ -197,17 +366,19 @@ function renderRain(){
   if(typeof Chart==="undefined") return;
   const idxs = chartIdx(), labels = idxs.map(i => hh(state.times[i])), H = idxs.map(i=>state.hours[i]);
   const opt = chartBase("mm/h"); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
-  opt.scales.x.ticks.autoSkip = true; opt.scales.x.ticks.maxTicksLimit = 12;
+  opt.scales.x.ticks.autoSkip = true;
   opt.scales.y.suggestedMax = 2;
   opt.scales.y2 = {position:"right", beginAtZero:true, suggestedMax:1000, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"Barlow", size:10}}, title:{display:true, text:"CAPE J/kg", color:css("--muted")}};
-  opt.plugins.tooltip = {callbacks:{label:c => c.dataset.yAxisID==="y2" ? `CAPE: ${Math.round(c.parsed.y)} J/kg`
+  opt.plugins.tooltip = {callbacks:{title:csTipTitle, label:c => c.dataset.yAxisID==="y2" ? `CAPE: ${Math.round(c.parsed.y)} J/kg`
     : `${T("Regen", "Rain")}: ${fmt(c.parsed.y)} mm` + (H[c.dataIndex]?.rainN ? ` · ${H[c.dataIndex].rainYes} ${T("von", "of")} ${H[c.dataIndex].rainN} ${T("Modellen", "models")}` : "")}}; narrowReadout(opt, "roRain");
+  csAxes(opt, "rain");
   if(charts.rain) charts.rain.destroy();
+  csPrepare("rain", idxs);
   charts.rain = new Chart($("rain"), {data:{labels, datasets:[
     {type:"bar", label:T("Regen", "Rain"), data:H.map(h=>h.rain==null?null:+h.rain.toFixed(2)), backgroundColor:H.map(h => rainColor(h)), borderColor:css("--band-line"), borderRadius:2},
     {type:"line", label:"CAPE", yAxisID:"y2", data:H.map(h=>h.cape==null?null:Math.round(h.cape)), borderColor:css("--warn"), borderWidth:2, pointRadius:0, tension:.3},
-  ]}, options:opt, plugins:[markPlugin]});
-  charts.rain.$idxs = idxs; charts.rain.update("none"); if(isNarrow()) syncTooltip(charts.rain);
+  ]}, options:opt, plugins:[markPlugin, csAxisPlugin]});
+  charts.rain.$idxs = idxs; charts.rain.update("none"); csAfter("rain"); if(isNarrow()) syncTooltip(charts.rain);
   $("rainDay").textContent = dayLabel(state.day);
 }
 
@@ -215,7 +386,7 @@ function renderRain(){
    Kondenswasser steht nicht mehr als Fläche im Diagramm, sondern in der Taupunkt-Zeile darunter (eine Zelle je Arbeitsstunde). */
 const DEW_COLOR = "#b48ee6", RH_COLOR = "#3a9a9a";
 const coatLimitPlugin = {id:"coatLimit", afterDatasetsDraw(c){
-  const {ctx, chartArea:a, scales:{y2}} = c;
+  const {ctx, scales:{y2}} = c, [vl, vr] = csVis(c), a = {left:vl, right:vr};
   if(!coatOn(state.day) || state.hide.has("t_rh") || !y2) return;
   const py = y2.getPixelForValue(coatRh()), t = `Grenze Feuchte ${coatRh()} %`, lc = site.coatStop ? css("--stop") : css("--warn");
   ctx.save(); ctx.strokeStyle = lc; ctx.lineWidth = 1.2; ctx.setLineDash([6,4]);
@@ -260,7 +431,7 @@ function renderTemp(){
   opt.scales.y.beginAtZero = false;
   // Luftfeuchte auf eigener Achse rechts (0–100 %), nur Anzeige
   opt.scales.y2 = {display:!hid("t_rh"), position:"right", min:0, max:100, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"Barlow", size:10}, stepSize:25}, title:{display:true, text:T("Feuchte %", "Humidity %"), color:css("--muted")}};
-  opt.plugins.tooltip = {filter: it => !it.dataset.ref, callbacks:{label:c => c.dataset.yAxisID==="y2" ? `${T("Luftfeuchte", "Humidity")}: ${Math.round(c.parsed.y)} %`
+  opt.plugins.tooltip = {filter: it => !it.dataset.ref, callbacks:{title:csTipTitle, label:c => c.dataset.yAxisID==="y2" ? `${T("Luftfeuchte", "Humidity")}: ${Math.round(c.parsed.y)} %`
     : c.dataset.dew ? `${c.dataset.label}: ${fmt(c.parsed.y)} °C` + (H[c.dataIndex]?.dew==null ? "" : H[c.dataIndex].dew <= 0 ? T(" · Taupunkt erreicht", " · dew point reached") : ` · ${T("Taupunktabstand", "dew point spread")} ${fmt(H[c.dataIndex].dew,1)} °C`)
     : `${c.dataset.label}: ${fmt(c.parsed.y)} °C`}}; narrowReadout(opt, "roTemp");
   const ds = [
@@ -272,9 +443,11 @@ function renderTemp(){
   // Bezugslinien nur, wenn sie in die Nähe kommen: 0 °C (Frost), −10 °C (Kälteschutz)
   if(lo < 6) ds.push({label:"0 °C", ref:true, data:idxs.map(() => 0), borderColor:css("--muted"), borderWidth:1, borderDash:[2,3], pointRadius:0});
   if(lo < -5) ds.push({label:"−10 °C", ref:true, data:idxs.map(() => CHILL_INFO), borderColor:css("--band-line"), borderWidth:1, borderDash:[2,3], pointRadius:0});
+  csAxes(opt, "temp");
   if(charts.temp) charts.temp.destroy();
-  charts.temp = new Chart($("temp"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, coatLimitPlugin]});
-  charts.temp.$idxs = idxs; charts.temp.update("none"); if(isNarrow()) syncTooltip(charts.temp);
+  csPrepare("temp", idxs);
+  charts.temp = new Chart($("temp"), {type:"line", data:{labels, datasets:ds}, options:opt, plugins:[markPlugin, coatLimitPlugin, csAxisPlugin]});
+  charts.temp.$idxs = idxs; charts.temp.update("none"); csAfter("temp"); if(isNarrow()) syncTooltip(charts.temp);
   $("tempTitle").textContent = T("Temperatur · ", "Temperature · ") + workH() + T(" m & Feuchte", " m & humidity");
   $("tempDay").textContent = dayLabel(state.day);
   $("tempNote").textContent = tempNote();

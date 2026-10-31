@@ -184,7 +184,7 @@ function renderTimeline(){
   $("timeline").innerHTML = days.map(d => {
     const cells = state.hours.filter(h=>h.t.startsWith(d)).map(h =>
       `<button type="button" class="tl-cell c-${h.lamp} ${isWork(h.t)?"":"off"} ${h.dark?"dark":""} ${h.t.slice(0,13)===nk?"nowc":""}" data-i="${h.i}" title="${esc(h.why.map(w=>w.t).join(" · "))}" aria-label="${dayLabel(d,true)} ${hh(h.t)}${UHR()}: ${LAMP_TXT[h.lamp]}, ${fwu(h.med)}"><span>${hourOf(h.t)%3===0?hh(h.t):""}</span></button>`).join("");
-    return `<div class="tl-day ${d===state.day?"cur":""}"><span class="eyebrow">${esc(dayLabel(d))}</span><div class="tl-hours">${cells}</div></div>`;
+    return `<div class="tl-day ${d===state.day?"cur":""}" data-day="${d}"><span class="eyebrow">${esc(dayLabel(d))}</span><div class="tl-hours">${cells}</div></div>`;
   }).join("");
   $("timeline").querySelectorAll(".tl-cell").forEach(b => b.onclick = () => selectHour(+b.dataset.i, true));
   scrollTimeline();
@@ -197,18 +197,34 @@ function scrollTimeline(){
   const day = el.closest(".tl-day");
   box.scrollLeft = el.offsetLeft + el.offsetWidth - day.offsetLeft < box.clientWidth
     ? day.offsetLeft : el.offsetLeft - box.clientWidth/2 + el.offsetWidth/2;
+  box._want = box.scrollLeft;   // vom Programm verschoben: Diagramme nicht nachziehen
 }
 function highlightSel(){
   $("timeline").querySelectorAll(".tl-cell").forEach(b => b.classList.toggle("sel", +b.dataset.i===state.sel));
   $("instStrip").querySelectorAll(".ic").forEach(b => b.classList.toggle("sel", +b.dataset.i===state.sel));
   document.querySelectorAll(".mx td[data-i]").forEach(td => td.classList.toggle("selcol", +td.dataset.i===state.sel));
 }
-function selectHour(i, fromTimeline){
+/* Stunde wählen. src: "chart" (im Diagramm), "strip" (Kurzleiste, Diagramme laufen mittig mit), true (Zeitleiste) */
+function selectHour(i, src){
   state.sel = i;
   const d = state.times[i].slice(0,10);
-  if(d!==state.day){ state.day = d; renderHero(); renderDayTabs(); renderTimeline(); renderChart(); renderRain(); renderTemp(); renderMatrix(); renderHourTable(); renderModelTable(); }
+  if(d!==state.day){ state.day = d; dayChanged(src !== true); }
   renderSelected();
-  ["main","rain","temp"].forEach(k => { if(charts[k]) syncTooltip(charts[k]); });
+  if(src !== "chart" && typeof csShowHour==="function") csShowHour(i, src === "strip");
+  syncCharts();
+}
+const syncCharts = () => ["main","rain","temp"].forEach(k => { if(charts[k]) syncTooltip(charts[k]); });
+/* Tag gewechselt: alles außer den Diagrammen neu aufbauen (die zeigen ohnehin alle Tage) */
+function dayChanged(scrollTl){
+  renderHero(); renderDayTabs(); markTimelineDay(); if(scrollTl) scrollTimeline();
+  renderMatrix(); renderHourTable(); renderModelTable();
+  if(typeof chartDayChanged==="function") chartDayChanged();
+}
+function markTimelineDay(){ $("timeline").querySelectorAll(".tl-day").forEach(e => e.classList.toggle("cur", e.dataset.day === state.day)); }
+/* in den Diagrammen oder der Zeitleiste in einen anderen Tag gescrollt: Tag wechseln, Ausschnitt bleibt */
+function dayFromScroll(d){
+  state.day = d; state.sel = defaultSel(d);
+  dayChanged(false); renderSelected(); syncCharts();
 }
 /* Wertekasten (Tooltip) jedes Diagramms folgt der gewählten Stunde, auch wenn in einem anderen Diagramm gezogen wird */
 function syncTooltip(c){
@@ -231,7 +247,11 @@ function renderDayTabs(){
 /* Tag wechseln (Tages-Reiter oben und in der Kurzleiste): alles läuft mit */
 function goDay(d){
   state.day = d; state.sel = defaultSel(state.day);
-  renderHero(); renderDayTabs(); renderTimeline(); renderChart(); renderRain(); renderTemp(); renderMatrix(); renderHourTable(); renderModelTable(); renderSelected();
+  renderHero(); renderDayTabs(); renderTimeline(); renderMatrix(); renderHourTable(); renderModelTable();
+  if(typeof chartDayChanged==="function") chartDayChanged();
+  renderSelected();
+  if(typeof csShowDay==="function") csShowDay(d);
+  syncCharts();
 }
 
 
@@ -243,6 +263,6 @@ function chartBase(yTitle){
       y:{beginAtZero:true, ticks:{color:muted, font:{family:"Barlow", size:10}}, grid:{color:line}, title:{display:!!yTitle, text:yTitle, color:muted}}}};
 }
 const dayIdx = () => state.times.map((t,i)=>[t,i]).filter(([t])=>t.startsWith(state.day)).map(([,i])=>i);
-// Stunden für die Diagramme: auf Wunsch ohne Nacht; dunkle Stunden in der Arbeitszeit bleiben immer sichtbar
-const chartIdx = () => { const d = dayIdx(); if(!state.nightOff) return d;
+// Stunden für die Diagramme: alle Prognosetage; auf Wunsch ohne Nacht, dunkle Stunden in der Arbeitszeit bleiben immer sichtbar
+const chartIdx = () => { const d = state.times.map((t,i) => i); if(!state.nightOff) return d;
   const f = d.filter(i => !(state.hours[i]?.dark && !isWork(state.times[i]))); return f.length ? f : d; };
