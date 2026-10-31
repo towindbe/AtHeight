@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>AtHeight – Zugänge</title>
+<style>
+:root{--bg:#0e1116;--card:#171c24;--line:#2a323d;--text:#e8ecf1;--muted:#98a2b0;--go:#34c37a;--warn:#e8b030;--stop:#e5484d;--acc:#4da3ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:8px 0 16px}
+h2{font-size:15px;margin:0 0 12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:16px}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+input{width:100%;min-height:44px;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit}
+.grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+button{min-height:44px;min-width:44px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit;cursor:pointer}
+button.primary{background:var(--acc);border-color:var(--acc);color:#04121f;font-weight:600}
+button.danger{color:var(--stop)}
+.row{display:flex;gap:10px;align-items:flex-end;margin-top:12px;flex-wrap:wrap}
+.tok{border-top:1px solid var(--line);padding:12px 0}
+.tok:first-child{border-top:0}
+.kopf{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+.name{font-weight:600}
+.pill{font-size:12px;padding:2px 8px;border-radius:99px;border:1px solid currentColor}
+.ok{color:var(--go)}.bald{color:var(--warn)}.aus{color:var(--stop)}
+.meta{color:var(--muted);font-size:14px;margin:4px 0 8px}
+.aktion{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+code{font-family:ui-monospace,monospace;font-size:13px;word-break:break-all}
+.neu{border-color:var(--go);margin:14px 0 0}
+.fehler{color:var(--stop);margin:8px 0 0}
+[hidden]{display:none}
+</style>
+</head>
+<body>
+<main>
+<h1>AtHeight · Zugänge</h1>
+
+<div class="card" id="login">
+  <label for="pw">Admin-Passwort</label>
+  <input id="pw" type="password" autocomplete="current-password">
+  <div class="row"><button class="primary" id="anmelden" type="button">Anmelden</button></div>
+  <p class="fehler" id="loginFehler" hidden></p>
+</div>
+
+<div id="inhalt" hidden>
+  <div class="card">
+    <h2>Neuer Zugang</h2>
+    <div class="grid">
+      <div><label for="name">Name (z. B. Firma)</label><input id="name" maxlength="80"></div>
+      <div><label for="tage">Tage gültig</label><input id="tage" type="number" min="1" max="3650" value="30" inputmode="numeric"></div>
+      <div><label for="limit">Abfragen pro Tag</label><input id="limit" type="number" min="1" value="300" inputmode="numeric"></div>
+    </div>
+    <div class="row"><button class="primary" id="anlegen" type="button">Zugang anlegen</button></div>
+    <p class="fehler" id="anlegenFehler" hidden></p>
+    <div class="card neu" id="neu" hidden>
+      <div class="name" id="neuName"></div>
+      <div class="meta" id="neuBis"></div>
+      <code id="neuLink"></code>
+      <div class="row"><button id="neuKopie" type="button">Link kopieren</button></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Vergebene Zugänge <span id="anzahl"></span></h2>
+    <div id="liste"></div>
+  </div>
+</div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+let APP = "";
+const key = () => { try{ return sessionStorage.getItem("ah_admin") || ""; }catch(e){ return ""; } };
+const datum = s => new Date(s + "T12:00:00").toLocaleDateString("de-DE", {day:"2-digit", month:"2-digit", year:"numeric"});
+const link = t => APP + "?t=" + t;
+
+async function api(pfad, opt = {}){
+  const r = await fetch("/admin/api/tokens" + pfad, {...opt, headers: {"X-Admin-Key": key(), "Content-Type": "application/json"}});
+  const j = await r.json().catch(() => ({}));
+  if(!r.ok) throw Object.assign(new Error(j.fehler || "Fehler " + r.status), {status: r.status});
+  return j;
+}
+function kopieren(text, knopf){
+  const fertig = () => { const alt = knopf.textContent; knopf.textContent = "Kopiert"; setTimeout(() => knopf.textContent = alt, 1500); };
+  navigator.clipboard.writeText(text).then(fertig, () => { prompt("Zum Kopieren:", text); });
+}
+function zeile(t){
+  const status = t.rest < 0 ? ["abgelaufen", "aus"] : t.rest <= 3 ? ["läuft bald ab", "bald"] : ["aktiv", "ok"];
+  const rest = t.rest < 0 ? "seit " + (-t.rest) + " Tg. abgelaufen" : t.rest === 0 ? "läuft heute ab" : "noch " + t.rest + " Tg.";
+  const d = document.createElement("div"); d.className = "tok";
+  d.innerHTML = '<div class="kopf"><span class="name"></span><span class="pill ' + status[1] + '">' + status[0] + '</span></div>' +
+    '<div class="meta">gültig bis ' + datum(t.bis) + ' (' + rest + ') · heute ' + t.heute + ' von ' + t.limit + ' Abfragen</div>' +
+    '<code></code><div class="aktion"></div>';
+  d.querySelector(".name").textContent = t.name;
+  d.querySelector("code").textContent = t.token;
+  const akt = d.querySelector(".aktion");
+  const knopf = (text, fn, cls) => { const b = document.createElement("button"); b.type = "button"; b.textContent = text; if(cls) b.className = cls; b.onclick = () => fn(b); akt.append(b); };
+  knopf("Link kopieren", b => kopieren(link(t.token), b));
+  knopf("Verlängern", async () => {
+    const n = prompt("Wie viele Tage ab heute?", "30"); if(!n) return;
+    try{ await api("/" + t.token + "/verlaengern", {method: "POST", body: JSON.stringify({tage: +n})}); laden(); }catch(e){ alert(e.message); }
+  });
+  knopf("Sperren", async () => {
+    if(!confirm("Zugang „" + t.name + "“ sofort sperren?")) return;
+    try{ await api("/" + t.token, {method: "DELETE"}); laden(); }catch(e){ alert(e.message); }
+  }, "danger");
+  return d;
+}
+async function laden(){
+  try{
+    const j = await api("");
+    APP = j.app;
+    $("login").hidden = true; $("inhalt").hidden = false;
+    $("anzahl").textContent = "(" + j.tokens.length + ")";
+    const l = $("liste"); l.textContent = "";
+    if(!j.tokens.length) l.innerHTML = '<p class="meta">Noch keine Zugänge.</p>';
+    j.tokens.forEach(t => l.append(zeile(t)));
+  }catch(e){
+    $("inhalt").hidden = true; $("login").hidden = false;
+    if(e.status === 401){ try{ sessionStorage.removeItem("ah_admin"); }catch(x){} }
+    $("loginFehler").textContent = e.message; $("loginFehler").hidden = false;
+  }
+}
+$("anmelden").onclick = () => { try{ sessionStorage.setItem("ah_admin", $("pw").value); }catch(e){} $("loginFehler").hidden = true; laden(); };
+$("pw").onkeydown = e => { if(e.key === "Enter") $("anmelden").click(); };
+$("anlegen").onclick = async () => {
+  $("anlegenFehler").hidden = true;
+  try{
+    const j = await api("", {method: "POST", body: JSON.stringify({name: $("name").value, tage: +$("tage").value, limit: +$("limit").value})});
+    $("neu").hidden = false;
+    $("neuName").textContent = j.name;
+    $("neuBis").textContent = "gültig bis " + datum(j.bis) + (j.limit ? " · " + j.limit + " Abfragen pro Tag" : "");
+    $("neuLink").textContent = link(j.token);
+    $("neuKopie").onclick = () => kopieren(link(j.token), $("neuKopie"));
+    $("name").value = "";
+    laden();
+  }catch(e){ $("anlegenFehler").textContent = e.message; $("anlegenFehler").hidden = false; }
+};
+if(key()) laden();
+</script>
+</body>
+</html>
