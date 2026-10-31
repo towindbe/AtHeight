@@ -36,11 +36,10 @@ export default {
     const kopf = { "X-Token-Bis": info.bis, "X-Token-Rest": String(Math.max(rest_tage, 0)) };
     if (heute > info.bis) return antwort(403, "abgelaufen", kopf);
 
-    // Tageszähler (ungefähr genau, für ein Testlimit ausreichend)
-    const zk = `z:${token}:${heute}`;
-    const n = parseInt(await env.TOKENS.get(zk) || "0", 10);
-    if (n >= (info.limit || parseInt(env.STANDARD_LIMIT, 10))) return antwort(429, "limit", kopf);
-    await env.TOKENS.put(zk, String(n + 1), { expirationTtl: 172800 });
+    // Tageszähler in D1: ein Befehl zählt hoch und liefert den neuen Stand (genau, auch bei vielen gleichzeitigen Abfragen)
+    const z = await env.ZAEHLER.prepare("INSERT INTO zaehler (token, tag, n) VALUES (?, ?, 1) ON CONFLICT (token, tag) DO UPDATE SET n = n + 1 RETURNING n")
+      .bind(token, heute).first();
+    if (z.n > (info.limit || parseInt(env.STANDARD_LIMIT, 10))) return antwort(429, "limit", kopf);
 
     const ziel = new URL(`https://${env.OM_PREFIX || ""}${dienst}.open-meteo.com/${rest.join("/")}`);
     ziel.search = url.search;

@@ -8,6 +8,12 @@ compatibility_date = "2026-10-01"
 binding = "TOKENS"
 id = "13608f63af6c410bbd8e78ce068749aa"
 
+# Zähler der Abfragen je Token und Tag
+[[d1_databases]]
+binding = "ZAEHLER"
+database_name = "atheight-zaehler"
+database_id = "88d3f8b6-709e-4d7e-bfc7-ec79971d5aa1"
+
 [vars]
 # Leer = kostenloser Endpunkt. Nach Buchung des Plans: "customer-"
 OM_PREFIX = ""

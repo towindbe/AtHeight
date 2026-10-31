@@ -17,13 +17,15 @@ function gleich(a, b) {
 
 async function liste(env) {
   const h = heute(), out = [];
+  await env.ZAEHLER.prepare("DELETE FROM zaehler WHERE tag < ?").bind(plusTage(-3)).run();   // alte Zähler aufräumen
+  const zahlen = new Map(((await env.ZAEHLER.prepare("SELECT token, n FROM zaehler WHERE tag = ?").bind(h).all()).results).map(r => [r.token, r.n]));
   let cursor;
   do {
     const r = await env.TOKENS.list({ prefix: "t:", cursor });
     for (const k of r.keys) {
       const token = k.name.slice(2), info = await env.TOKENS.get(k.name, "json");
       if (!info) continue;
-      const heuteN = parseInt(await env.TOKENS.get(`z:${token}:${h}`) || "0", 10);
+      const heuteN = zahlen.get(token) || 0;
       const rest = Math.round((Date.parse(info.bis + "T12:00:00Z") - Date.parse(h + "T12:00:00Z")) / 864e5);
       out.push({ token, name: info.name, bis: info.bis, limit: info.limit || parseInt(env.STANDARD_LIMIT, 10), heute: heuteN, rest });
     }
