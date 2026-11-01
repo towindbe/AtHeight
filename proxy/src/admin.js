@@ -74,6 +74,17 @@ export async function admin(req, env, url) {
       await env.TOKENS.put("t:" + token, JSON.stringify(info));
       return json(200, { token, ...info });
     }
+    if (teile[5] === "bearbeiten" && req.method === "POST") {
+      // Name, Ablaufdatum und Tageslimit im laufenden Betrieb ändern; Token und Zähler bleiben gleich
+      const d = await req.json().catch(() => ({}));
+      const name = String(d.name || "").trim().slice(0, 80), bis = String(d.bis || ""), limit = Math.floor(+d.limit);
+      if (!name) return json(400, { fehler: "Name angeben" });
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(bis) || isNaN(Date.parse(bis)) || bis > plusTage(3650)) return json(400, { fehler: "Gültig bis: Datum angeben (höchstens 10 Jahre)" });
+      if (!(limit >= 1 && limit <= 100000)) return json(400, { fehler: "Abfragen pro Tag (1–100000) angeben" });
+      const neu = { ...info, name, bis, limit };
+      await env.TOKENS.put("t:" + token, JSON.stringify(neu));
+      return json(200, { token, ...neu });
+    }
     if (!teile[5] && req.method === "DELETE") {
       await env.TOKENS.delete("t:" + token);
       return json(200, { gesperrt: token });

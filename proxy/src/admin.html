@@ -34,6 +34,8 @@ code{font-family:ui-monospace,monospace;font-size:13px;word-break:break-all}
 .verlauf td{padding:6px 4px;border-top:1px solid var(--line)}
 .verlauf td:last-child{text-align:right}
 .neu{border-color:var(--go);margin:14px 0 0}
+.bearb{border-color:var(--acc);margin:10px 0 0}
+input[type=date]{color-scheme:dark}
 .fehler{color:var(--stop);margin:8px 0 0}
 [hidden]{display:none}
 </style>
@@ -109,15 +111,33 @@ function zeile(t){
   tab.innerHTML = t.verlauf.length ? "" : '<tr><td>Noch keine Abfragen</td></tr>';
   t.verlauf.forEach(x => { const r = tab.insertRow(); r.insertCell().textContent = wd(x.tag); const c = r.insertCell(); c.textContent = x.n + " (≈ " + Math.round(x.n / ANSICHT) + " Ansichten)"; });
   knopf("Verlauf", () => { tab.hidden = !tab.hidden; });
-  knopf("Verlängern", async () => {
-    const n = prompt("Wie viele Tage ab heute?", "30"); if(!n) return;
-    try{ await api("/" + t.token + "/verlaengern", {method: "POST", body: JSON.stringify({tage: +n})}); laden(); }catch(e){ alert(e.message); }
-  });
+  // Bearbeiten: Name, gültig bis und Abfragen pro Tag direkt im Eintrag ändern
+  const form = document.createElement("div"); form.className = "card neu bearb"; form.hidden = true;
+  const id = "b" + t.token;
+  form.innerHTML = '<div class="grid">' +
+    '<div><label for="' + id + 'n">Name</label><input id="' + id + 'n" maxlength="80"></div>' +
+    '<div><label for="' + id + 'b">Gültig bis</label><input id="' + id + 'b" type="date"></div>' +
+    '<div><label for="' + id + 'l">Abfragen pro Tag</label><input id="' + id + 'l" type="number" min="1" max="100000" inputmode="numeric"></div></div>' +
+    '<div class="row"><button class="primary" type="button">Speichern</button><button type="button">Abbrechen</button>' +
+    '<button type="button" data-tage="30">+30 Tage</button></div><p class="fehler" hidden></p>';
+  const [fName, fBis, fLimit] = form.querySelectorAll("input"), [bSpeichern, bAbbrechen, bPlus] = form.querySelectorAll("button"), fFehler = form.querySelector(".fehler");
+  const fuellen = () => { fName.value = t.name; fBis.value = t.bis; fLimit.value = t.limit; fFehler.hidden = true; };
+  bAbbrechen.onclick = () => { form.hidden = true; };
+  bPlus.onclick = () => {   // 30 Tage ab dem späteren von heute und bisherigem Ablauf
+    const basis = new Date(Math.max(Date.now(), Date.parse((fBis.value || t.bis) + "T12:00:00Z")));
+    fBis.value = new Date(basis.getTime() + 30 * 864e5).toISOString().slice(0, 10);
+  };
+  bSpeichern.onclick = async () => {
+    fFehler.hidden = true;
+    try{ await api("/" + t.token + "/bearbeiten", {method: "POST", body: JSON.stringify({name: fName.value, bis: fBis.value, limit: +fLimit.value})}); laden(); }
+    catch(e){ fFehler.textContent = e.message; fFehler.hidden = false; }
+  };
+  knopf("Bearbeiten", () => { if(form.hidden) fuellen(); form.hidden = !form.hidden; if(!form.hidden) fName.focus(); });
   knopf("Sperren", async () => {
     if(!confirm("Zugang „" + t.name + "“ sofort sperren?")) return;
     try{ await api("/" + t.token, {method: "DELETE"}); laden(); }catch(e){ alert(e.message); }
   }, "danger");
-  d.append(tab);
+  d.append(form, tab);
   return d;
 }
 async function laden(){
