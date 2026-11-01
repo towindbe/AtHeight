@@ -211,6 +211,7 @@ function scrollTimeline(){
 function highlightSel(){
   $("timeline").querySelectorAll(".tl-cell").forEach(b => b.classList.toggle("sel", +b.dataset.i===state.sel));
   $("instStrip").querySelectorAll(".ic").forEach(b => b.classList.toggle("sel", +b.dataset.i===state.sel));
+  $("dirStrip").querySelectorAll(".dir-cell").forEach(b => b.classList.toggle("sel", +b.dataset.i===state.sel));
   document.querySelectorAll(".mx td[data-i]").forEach(td => td.classList.toggle("selcol", +td.dataset.i===state.sel));
 }
 /* Stunde wählen (Antippen, Pfeile, Einrasten nach dem Wischen): alles zeigt diese Stunde, Diagramme und Leisten holen sie in die Mitte */

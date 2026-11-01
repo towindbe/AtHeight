@@ -167,9 +167,21 @@ const csVis = c => { const a = c.chartArea, sc = c.$sc; if(!sc) return [a.left, 
 const csVisible = idxs => state.nightOff ? Math.max(6, Math.round(idxs.length / dayRuns(idxs).length)) : 24;
 const csKOf = (idxs, gi) => { const g = Math.floor(gi), k = idxs.findIndex(i => i >= g); return k < 0 ? idxs.length : k + (idxs[k] === g ? gi - g : 0); };
 const csGiOf = (idxs, k) => { const kk = Math.max(0, Math.min(idxs.length - 1, Math.floor(k))); return idxs[kk] + Math.max(0, Math.min(.999, k - kk)); };
-// Mitte <-> Scrollposition (in Stunden ab Anfang der Zeichenfläche; Stunde k reicht von k bis k+1)
-const csHalf = c => (c.$cw - csPad(c))/2;
-const csMidOf = c => csGiOf(c.$idxs, (c.$sc.scrollLeft - c.$S + csHalf(c)) / c.$step);
+/* Zeiger am Rand statt Leerraum: Diagramme und Leisten beginnen ohne freien Rand. Im Großteil steht der Zeiger fest in der Mitte;
+   auf der ersten und letzten halben Breite wandert er beim Wischen bis an den Rand, so kommt trotzdem jede Stunde unter ihn.
+   s = Scrollposition, u = Lage der Stunde auf der Zeichenfläche, V = sichtbare Breite, max = größte Scrollposition (alles in px).
+   edgeP: wo der Zeiger im sichtbaren Bereich steht (0 … V); edgeU/edgeS rechnen Scrollposition und Stunde ineinander um. */
+function edgeP(s, V, max){ const H = V/2, R = Math.min(H, max/2); if(!(R > 0)) return null;
+  return s < R ? H*s/R : s > max - R ? V - H*(max - s)/R : H; }
+const edgeU = (s, V, max) => { const p = edgeP(s, V, max); return p == null ? null : s + p; };
+function edgeS(u, V, max){ const H = V/2, R = Math.min(H, max/2); if(!(R > 0)) return 0; const k = 1 + H/R;
+  return clamp(u < R + H ? u/k : u > max - R + H ? (u - V + H*max/R)/k : u - H, 0, max); }
+// Diagramme: Stunde (Index mit Bruchteil) <-> Scrollposition; Stunde k reicht von k bis k+1.
+// Gerechnet ab der Mitte der ersten Stunde bis zur Mitte der letzten: ganz am Anfang steht der Zeiger auf der ersten Stunde, ohne Versatz
+const csV = c => c.$cw - csPad(c) - c.$step;
+const csScrollOf = (c, gi) => c.$S + edgeS(csKOf(c.$idxs, gi) * c.$step - c.$step/2, csV(c), c.$max - c.$S);
+const csMidOf = c => { const s = c.$sc.scrollLeft - c.$S, u = edgeU(s, csV(c), c.$max - c.$S);
+  return csGiOf(c.$idxs, ((u ?? s + csV(c)/2) + c.$step/2) / c.$step); };
 
 function csWrap(id){
   const cv = $(id); if(!cv || cv.parentElement.classList.contains("cs-cv")) return;
@@ -213,16 +225,13 @@ const csAxisPlugin = {id:"csAxis", afterDraw(c){
   ctx.clearRect(0, 0, Math.round(AX*r), H); ctx.clearRect(Math.floor((src.clientWidth - ar)*r), 0, Math.ceil(ar*r) + 1, H);
   ctx.restore();
 }};
-/* oranger Zeiger: in der Mitte des sichtbaren Bereichs, mit der Uhrzeit der gewählten Stunde. Am Anfang und Ende lässt sich
-   nicht weiter scrollen: dort rückt er aus der Mitte auf die Stunde (ohne etwas nachzumessen, nur aus der gewünschten Lage) */
-let csOff = false;   // ein Zeiger steht gerade außerhalb der Mitte
+/* oranger Zeiger: in der Mitte des sichtbaren Bereichs, mit der Uhrzeit der gewählten Stunde; am Anfang und Ende wandert er
+   zum Rand (edgeP). Gerechnet aus der gewünschten Lage, ohne etwas nachzumessen. */
 function csPlaceMark(c){
   const mark = c.canvas?.closest(".cs")?.querySelector(".cs-mark"); if(!mark || !c.chartArea || !c.$sc) return;
   const t = state.times[state.sel]; mark.hidden = !t; if(!t) return;
-  const a = c.chartArea, want = c.$S + csKOf(c.$idxs, csCenter ?? state.sel + .5) * c.$step - csHalf(c);
-  const off = want - Math.max(0, Math.min(c.$max, want));
-  if(Math.abs(off) > .5) csOff = true;
-  mark.style.left = (AX + csHalf(c) + off) + "px"; mark.style.top = a.top + "px"; mark.style.height = (a.bottom - a.top) + "px";
+  const a = c.chartArea, gi = csCenter ?? state.sel + .5, p = csKOf(c.$idxs, gi) * c.$step - (csScrollOf(c, gi) - c.$S);
+  mark.style.left = (AX + p) + "px"; mark.style.top = a.top + "px"; mark.style.height = (a.bottom - a.top) + "px";
   mark.firstChild.textContent = hh(t) + UHR();
 }
 const csMarks = () => Object.keys(CS).forEach(k => { if(charts[k]) csPlaceMark(charts[k]); });
@@ -240,7 +249,7 @@ function csAfter(key){
 function csSetCenter(key, gi, noDraw){
   const c = charts[key]; if(!c?.$sc) return;
   const sc = c.$sc;
-  sc.scrollLeft = sc._want = Math.max(0, Math.min(c.$max, c.$S + csKOf(c.$idxs, gi) * c.$step - csHalf(c)));
+  sc.scrollLeft = sc._want = csScrollOf(c, gi);
   if(!noDraw) c.draw();   // der Zeiger steht fest in der Mitte: beim Mitziehen nichts an ihm schreiben (sonst rechnet der Browser das Layout je Diagramm neu)
 }
 /* Stunde unter den Zeiger holen (Antippen, Tag-Tasten, Einrasten nach dem Wischen); noDraw: gezeichnet wird danach ohnehin (syncCharts) */
@@ -255,13 +264,24 @@ function csLive(){
   const gi = Math.floor(csCenter); if(gi === state.sel || !state.hours[gi]) return;
   state.sel = gi; csMarks(); highlightSel();
   if(typeof sbHourText === "function") sbHourText(state.hours[gi]);
+  keepPlace(() => compassLive(gi));
+}
+/* Beim Wischen soll die Seite nicht springen, wenn sich darüber etwas in der Höhe ändert (Wertezeile, Kompass, Hinweise):
+   die gerade gewischte Leiste bzw. das Diagramm bleibt an derselben Stelle auf dem Bildschirm */
+let csActive = null;
+function keepPlace(fn){
+  const el = csActive?.isConnected ? csActive : null, y0 = el?.getBoundingClientRect().top;
+  fn();
+  if(el == null) return;
+  const dy = el.getBoundingClientRect().top - y0;
+  if(Math.abs(dy) > .5) (el.closest(".chart-max") || document.scrollingElement).scrollBy(0, dy);
 }
 /* Uhrzeit am Zeiger nur beim Wischen (in der Ruhe steht sie in Kopfzeile und Wertezeile); blendet kurz nach dem Einrasten aus */
 let csRest = 0, csHide = 0;
 function csSettle(){
   clearTimeout(csRest); clearTimeout(csHide);
   document.documentElement.classList.add("cs-live");
-  csRest = setTimeout(() => { selectHour(Math.floor(csCenter));
+  csRest = setTimeout(() => { keepPlace(() => selectHour(Math.floor(csCenter)));
     csHide = setTimeout(() => document.documentElement.classList.remove("cs-live"), 700); }, 150);
 }
 function csScrolled(sc){
@@ -269,8 +289,8 @@ function csScrolled(sc){
   const key = sc.dataset.key, c = charts[key]; if(!c?.$sc) return;
   csCenter = csMidOf(c);
   Object.keys(CS).forEach(o => { if(o !== key) csSetCenter(o, csCenter, true); });
-  if(csOff){ csOff = false; csMarks(); }   // Zeiger vom Rand zurück in die Mitte
-  barFollow(csCenter); csLive(); csSettle();
+  csMarks();   // Zeiger am Rand mitwandern lassen bzw. zurück in die Mitte (nur Lage, nichts gemessen)
+  csActive = sc; barFollow(csCenter); csLive(); csSettle();
 }
 /* Großes und kleines Arbeitsfenster (Kurzleiste oben): gleiche Mitte wie die Diagramme; die Zelle in der Mitte ist die gewählte */
 const BARS = () => [$("tlScroll"), $("sbStrip"), $("dirStrip"), $("dewRow")];
@@ -281,7 +301,10 @@ function barCells(box){
   if(box._pos && box._pos.first === first && box._pos.w) return box._pos;
   const b0 = box.getBoundingClientRect().left - box.scrollLeft;
   const list = [...box.querySelectorAll(sel)].map(e => ({i:+e.dataset.i, x:e.getBoundingClientRect().left - b0, w:e.offsetWidth}));
-  return box._pos = {first, w:box.clientWidth, max:box.scrollWidth - box.clientWidth, list, map:new Map(list.map(o => [o.i, o]))};
+  const w = box.clientWidth, max = box.scrollWidth - w, f = list[0], l = list[list.length - 1];
+  // lead/tail: bis zur Mitte der ersten bzw. ab der Mitte der letzten Stunde (davor z. B. Tagesname oder stehende Beschriftung);
+  // ganz am Anfang und Ende steht die Auswahl so genau auf der ersten bzw. letzten Stunde
+  return box._pos = {first, w, max, list, map:new Map(list.map(o => [o.i, o])), lead:f ? f.x + f.w/2 : 0, tail:l ? max + w - (l.x + l.w/2) : 0};
 }
 function barFollow(gi, except){
   BARS().forEach(box => {
@@ -291,20 +314,21 @@ function barFollow(gi, except){
     let x;
     if(p) x = p.x + p.w*(gi - Math.floor(gi));
     else{ const n = P.list.find(o => o.i > gi), l = P.list[P.list.length - 1]; x = n ? n.x - 2 : l.x + l.w; }   // Stunde fehlt (Pfeilreihe: Nacht): an die Lücke davor
-    box.scrollLeft = box._want = Math.max(0, Math.min(P.max, x - P.w/2));
+    box.scrollLeft = box._want = edgeS(x - P.lead, P.w - P.lead - P.tail, P.max);
   });
 }
 function barScrolled(box){
   if(csOwn(box)) return;
-  const P = barCells(box), mid = box.scrollLeft + P.w/2, L = P.list;
+  const P = barCells(box), L = P.list;
   if(!L.length || !P.w) return;
+  const V = P.w - P.lead - P.tail, mid = P.lead + (edgeU(box.scrollLeft, V, P.max) ?? box.scrollLeft + V/2);
   let lo = 0, hi = L.length - 1;   // Zelle unter der Mitte (Zellen sind nach Lage sortiert)
   while(lo < hi){ const m = (lo + hi + 1) >> 1; if(L[m].x <= mid) lo = m; else hi = m - 1; }
   const p = L[lo];
   csCenter = p.i + Math.max(0, Math.min(.999, (mid - p.x) / p.w));
   Object.keys(CS).forEach(o => csSetCenter(o, csCenter, true));
-  if(csOff){ csOff = false; csMarks(); }
-  barFollow(csCenter, box); csLive(); csSettle();
+  csMarks();
+  csActive = box; barFollow(csCenter, box); csLive(); csSettle();
 }
 /* nach einem Tageswechsel: Tagesangaben und Taupunkt-Zeile nachziehen (die Diagramme zeichnet danach syncCharts) */
 function chartDayChanged(){
@@ -616,7 +640,16 @@ function renderProfile(i = state.sel){
 }
 
 function renderCompass(i = state.sel){
-  const h = state.hours[i]; if(!h) return;
+  if(!state.hours[i]) return;
+  drawCompass(i);
+  renderDirStrip(i);
+}
+/* Kompass beim Wischen mitdrehen: je Stunde, die unter den Zeiger kommt, aber nur wenn der Kompass gerade zu sehen ist */
+let compassSeen = false;
+if("IntersectionObserver" in window) new IntersectionObserver(es => { compassSeen = es[es.length-1].isIntersecting; }).observe($("compass"));
+function compassLive(i){ if(compassSeen && !document.hidden && state.hours[i]) drawCompass(i); }
+function drawCompass(i){
+  const h = state.hours[i];
   const dirs = usableModels().map(r => r.series[i]).filter(s => s && s.dir!=null);
   const fg = "var(--fg)", muted = "var(--muted)";
   const ticks = Array.from({length:36},(_,k)=>{ const a=k*10*Math.PI/180, r1=k%9===0?78:84; return `<line x1="${100+r1*Math.sin(a)}" y1="${100-r1*Math.cos(a)}" x2="${100+90*Math.sin(a)}" y2="${100-90*Math.cos(a)}" stroke="${muted}" stroke-width="${k%9===0?1.5:.6}"/>`; }).join("");
@@ -637,7 +670,6 @@ function renderCompass(i = state.sel){
     <dt>${T("Stärke", "Strength")}</dt><dd>${fwu(h.med)} · ${T("Böe", "Gust")} ${fw(h.gMed)}</dd>
     <dt>${T("Modelle", "Models")}</dt><dd>${dirs.length}</dd>`;
   $("compassHour").textContent = `${dayLabel(state.times[i].slice(0,10),true)} · ${hh(state.times[i])}${UHR()}`;
-  renderDirStrip(i);
 }
 
 /* Richtung je Arbeitsstunde als Pfeilreihe, dazu Lee-Seite und Winddrehung */
