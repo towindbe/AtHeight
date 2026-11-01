@@ -146,7 +146,7 @@ function attachScrub(canvasId, chartKey){
    gemeinsam; Antippen einer Stunde holt sie unter den Zeiger. Die Diagramme haben keinen leeren Rand: Am Anfang und Ende
    verlässt der Zeiger die Mitte und steht auf der gewählten Stunde; sobald gewischt wird, ist er wieder in der Mitte. */
 const CS = {main:"chart", rain:"rain", temp:"temp"};   // Diagramm -> Canvas
-const AX = 46, AX_NONE = 10;   // feste Breite der y-Achsen (px); rechts ohne Achse nur ein schmaler Rand
+const AX = 30, AX_NONE = 8, AX_TOP = 20;   // feste Breite der y-Achsen (px, schmal für das Handy; die Einheit steht einmal oben); rechts ohne Achse nur ein schmaler Rand
 const fixAxis = s => { s.width = AX; };
 const csR = {};   // Breite rechts je Diagramm
 const csPad = c => AX + (csR[c.$key] ?? AX);   // links + rechts
@@ -204,15 +204,24 @@ function csAxes(opt, key){
   opt.scales.x.offset = true;
   opt.datasets = {line:{segment:NIGHT_GAP}};
   opt.scales.y.afterFit = fixAxis;
-  if(opt.scales.y2 && opt.scales.y2.display !== false){ opt.scales.y2.afterFit = fixAxis; csR[key] = AX; }
-  else{ opt.layout = {padding:{right:AX_NONE}}; csR[key] = AX_NONE; }
+  // Einheit einmal oben an der Achse statt als gedrehter Titel (spart Breite)
+  const unit = sc => { const t = sc?.title; if(!t) return ""; const u = t.display ? t.text : ""; t.display = false; return u || ""; };
+  opt.csUnit = {l:unit(opt.scales.y), r:unit(opt.scales.y2)};
+  const y2 = opt.scales.y2 && opt.scales.y2.display !== false;
+  if(y2){ opt.scales.y2.afterFit = fixAxis; csR[key] = AX; }
+  else csR[key] = AX_NONE;
+  opt.layout = {padding:{top:AX_TOP, right:y2 ? 0 : AX_NONE}};
 }
 /* Die Achsen links und rechts als Kopie stehen lassen, während die Kurven seitlich laufen; auf der Zeichenfläche selbst werden
    sie danach gelöscht, sonst stünden sie am Anfang und Ende doppelt */
 const csAxisPlugin = {id:"csAxis", afterDraw(c){
   const box = c.canvas.closest(".cs"); if(!box) return;
   const src = c.canvas, r = src.width / (src.clientWidth || 1), H = src.height, bg = css("--surface");
-  const ar = csR[c.$key] ?? AX;
+  const ar = csR[c.$key] ?? AX, un = c.options.csUnit || {};
+  c.ctx.save(); c.ctx.font = "600 10px " + css("--f-body"); c.ctx.fillStyle = css("--muted"); c.ctx.textAlign = "center"; c.ctx.textBaseline = "top";
+  if(un.l) c.ctx.fillText(un.l, AX/2, 3);
+  if(un.r) c.ctx.fillText(un.r, src.clientWidth - ar/2, 3);
+  c.ctx.restore();
   [["l", 0, AX], ["r", src.clientWidth - ar, ar]].forEach(([k, x0, aw]) => {
     const o = box.querySelector(".cs-ax." + k); if(!o) return;
     const w = Math.round(aw*r);
@@ -520,11 +529,9 @@ const coatLimitPlugin = {id:"coatLimit", afterDatasetsDraw(c){
   ctx.fillStyle = lc; ctx.fillText(t, a.right - 5, py - 2);
   ctx.restore();
 }};
-// Text unter dem Temperatur-Diagramm: sagt, was ausgeblendet ist (ausgeblendet bleibt gespeichert)
+// Text unter dem Temperatur-Diagramm (was ausgeblendet ist, steht im Feld „Anzeige“)
 function tempNote(){
-  const off = [["t_feel",T("Gefühlt","Feels like")],["t_dew",T("Taupunkt","Dew point")],["t_rh",T("Luftfeuchte","Humidity")]].filter(([k]) => state.hide.has(k)).map(([,t]) => t);
-  return (off.length ? T(`Ausgeblendet: ${off.join(", ")} (unter „Anzeige“ wieder einblenden). `, `Hidden: ${off.join(", ")} (show again under “Display”). `) : "")
-    + T("Taupunkt und Luftfeuchte gelten für 2 m über Boden.", "Dew point and humidity apply to 2 m above ground.");
+  return T("Taupunkt und Luftfeuchte gelten für 2 m über Boden.", "Dew point and humidity apply to 2 m above ground.");
 }
 /* Taupunkt-Zeile: je Arbeitsstunde der Abstand der Temperatur in Arbeitshöhe zum Taupunkt (2 m).
    „Tau“ = Taupunkt erreicht. Im Beschichten-Modus zusätzlich die Luftfeuchte, Farben nach euren Grenzen. */
@@ -562,7 +569,7 @@ function renderTemp(){
   const opt = chartBase("°C"); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
   opt.scales.y.beginAtZero = false;
   // Luftfeuchte auf eigener Achse rechts (0–100 %), nur Anzeige
-  opt.scales.y2 = {display:!hid("t_rh"), position:"right", min:0, max:100, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"Barlow", size:10}, stepSize:25}, title:{display:true, text:T("Feuchte %", "Humidity %"), color:css("--muted")}};
+  opt.scales.y2 = {display:!hid("t_rh"), position:"right", min:0, max:100, grid:{display:false}, ticks:{color:css("--muted"), font:{family:"Barlow", size:10}, stepSize:25}, title:{display:true, text:"%", color:css("--muted")}};
   opt.plugins.tooltip = {filter: it => !it.dataset.ref, callbacks:{title:csTipTitle, label:c => c.dataset.yAxisID==="y2" ? `${T("Luftfeuchte", "Humidity")}: ${Math.round(c.parsed.y)} %`
     : c.dataset.dew ? `${c.dataset.label}: ${fmt(c.parsed.y)} °C` + (H[c.dataIndex]?.dew==null ? "" : H[c.dataIndex].dew <= 0 ? T(" · Taupunkt erreicht", " · dew point reached") : ` · ${T("Taupunktabstand", "dew point spread")} ${fmt(H[c.dataIndex].dew,1)} °C`)
     : `${c.dataset.label}: ${fmt(c.parsed.y)} °C`}}; narrowReadout(opt, "roTemp");
