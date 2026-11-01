@@ -122,12 +122,16 @@ function renderHero(){
    Im Beschichten-Modus: Feuchte, Taupunktabstand und Wind. Farben nach denselben Schwellen wie überall. */
 function renderInstrument(sum){
   const hs = dayHours(state.day).filter(h => h.n), p2 = n => String(n).padStart(2, "0");
-  let win = "–";
+  let win = null;
   if(sum.lamp !== "none" && hs.length){
     if(sum.counts?.go === hs.length) win = `${p2(site.from)}–${p2(site.to)}`;
     else if(sum.best) win = `${hh(sum.best.start)}–${p2(hourOf(sum.best.end) + 1)}`;
   }
-  $("instWin").textContent = win; $("instUnit").textContent = win === "–" ? "" : T("Uhr", "h");
+  /* Ohne klares Fenster statt eines Strichs ein kurzer Text in kleinerer Schrift */
+  const noData = sum.lamp === "none" || !hs.length;
+  $("instWin").textContent = win ?? (noData ? T("keine Daten", "no data") : T("kein Fenster", "no window"));
+  $("instWin").classList.toggle("empty", !win);
+  $("instUnit").textContent = win ? T("Uhr", "h") : "";
   $("instStrip").innerHTML = hs.map(h => `<button type="button" class="ic c-${h.lamp}${h.i===state.sel ? " sel" : ""}" data-i="${h.i}" aria-label="${hh(h.t)}${UHR()}: ${LAMP_TXT[h.lamp]}"><span>${hourOf(h.t) % 3 === 0 ? hh(h.t) : ""}</span></button>`).join("");
   $("instStrip").querySelectorAll(".ic").forEach(b => b.onclick = () => selectHour(+b.dataset.i));
   const max = k => { const v = hs.map(h => h[k]).filter(x => x!=null); return v.length ? Math.max(...v) : null; };
