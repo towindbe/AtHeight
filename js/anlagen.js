@@ -23,7 +23,7 @@ function renderFavs(){
     <button type="button" class="fav-del" data-k="${k}" title="${T("Baustelle löschen", "Delete site")}" aria-label="${esc(f.name)} ${T("löschen", "delete")}">×</button></div>`).join("");
   $("favSaved").hidden = !cur;
   if(cur) $("favSaved").textContent = T(`„${cur.name}“ ist gespeichert. Änderungen unter „Einstellungen“ werden automatisch übernommen.`, `“${cur.name}” is saved. Changes under “Settings” are applied automatically.`);
-  $("favSaveRow").hidden = !!cur || !siteChosen;
+  $("favSaveRow").hidden = !!cur || !siteChosen; $("favShareCur").hidden = !siteChosen;
   $("favList").querySelectorAll(".fav-go").forEach(b => b.onclick = () => {
     const f = loadFavs()[+b.dataset.k]; if(!f) return;
     site = cleanSite({...DEFAULT_SITE, ...f.site, name:f.name});

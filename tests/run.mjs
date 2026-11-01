@@ -141,6 +141,8 @@ const result = await page.evaluate(async () => {
     kaputt:[parseShare("hallo"), parseShare("#s1=AAAAAAAAAA"), parseShare("#s1=" + b64uEnc(JSON.stringify(["x", 999, 11]))), parseShare("#s1=" + b64uEnc("{}"))].map(x => !!x),
     bereich:key(parseShare("#s1=" + b64uEnc(JSON.stringify(["<b>X</b>", 47, 11, 1, 5000, 9999, null, 1, "hack", -5, 1e9, null, null, 99, 30, 3])))),
     link:shareLink(teil).replace(location.origin, "")};
+  const sich = backupLink([{name:teil.name, site:teil}, {name:"Zwei", site:{...teil, lat:48.1, lon:11.5}}]), sichBack = parseBackup("Sicherung: " + sich);
+  out.sicherung = {anzahl:sichBack && sichBack.length, namen:sichBack && sichBack.map(x => x.name), einzelnAlsSicherung:!!parseBackup(shareLink(teil)), sicherungAlsEinzel:!!parseShare(sich), kaputt:!!parseBackup("#a1=AAAAAAAAAA")};
   // Beschichten: nur ein oder aus, ohne Enddatum
   const vorher = coatOn("2099-01-01"); setCoat(true); const an = coatOn("2099-01-01"); setCoat(false);
   out.beschichten = {vorher, an, aus:coatOn("2099-01-01")};

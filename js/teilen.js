@@ -7,19 +7,34 @@ const SHARE_TAG = "s1";   // Version des Formats; bei Änderungen hochzählen un
 const b64uEnc = s => btoa(String.fromCharCode(...new TextEncoder().encode(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 const b64uDec = c => new TextDecoder().decode(Uint8Array.from(atob(c.replace(/-/g, "+").replace(/_/g, "/")), ch => ch.charCodeAt(0)));
 
-function shareCode(s){
+const shareArr = s => {
   const w = !!s.windkraft;
-  return b64uEnc(JSON.stringify([s.name, s.lat, s.lon, w ? 1 : 0, s.hub, s.rotor, s.work ?? null, s.path === false ? 0 : 1, s.access, s.wind, s.gust,
-    s.nightWind ?? null, s.nightGust ?? null, s.minTemp, s.from, s.to, s.coatRh ?? null, s.coatDew ?? null, s.coatStop ? 1 : 0]));
-}
+  return [s.name, s.lat, s.lon, w ? 1 : 0, s.hub, s.rotor, s.work ?? null, s.path === false ? 0 : 1, s.access, s.wind, s.gust,
+    s.nightWind ?? null, s.nightGust ?? null, s.minTemp, s.from, s.to, s.coatRh ?? null, s.coatDew ?? null, s.coatStop ? 1 : 0];
+};
+const shareCode = s => b64uEnc(JSON.stringify(shareArr(s)));
+const BACKUP_TAG = "a1";   // Sicherung: Liste mehrerer Baustellen im selben Format
+const backupCode = favs => b64uEnc(JSON.stringify(favs.map(f => shareArr({...f.site, name:f.name}))));
+const backupLink = favs => `${location.origin}${location.pathname}#${BACKUP_TAG}=${backupCode(favs)}`;
 const shareLink = s => `${location.origin}${location.pathname}#${SHARE_TAG}=${shareCode(s)}`;
 
+const SHARE_MAX = 80000;   // Zeichen eines Codes (eine Sicherung enthält viele Baustellen)
+const codeOf = (t, tag) => { const m = String(t || "").trim().match(new RegExp(`#?${tag}=([A-Za-z0-9_-]{8,${SHARE_MAX}})`)); return m ? m[1] : null; };
+const readJson = c => { try{ return JSON.parse(b64uDec(c)); }catch(e){ return null; } };
 /* Liest einen Code aus einem Link, einer ganzen Nachricht oder dem reinen Code; gibt eine geprüfte Baustelle zurück oder null */
 function parseShare(text){
-  const t = String(text || "").trim();
-  const m = t.match(new RegExp(`#?${SHARE_TAG}=([A-Za-z0-9_-]{8,3000})`)) || t.match(/^(W[A-Za-z0-9_-]{7,3000})$/);
-  if(!m) return null;
-  let a; try{ a = JSON.parse(b64uDec(m[1])); }catch(e){ return null; }
+  const t = String(text || "").trim(), c = codeOf(t, SHARE_TAG) || (t.match(new RegExp(`^(W[A-Za-z0-9_-]{7,${SHARE_MAX}})$`)) || [])[1];
+  return c ? siteFromArr(readJson(c)) : null;
+}
+/* Liest eine Sicherung (mehrere Baustellen); gibt eine Liste geprüfter Baustellen zurück oder null */
+function parseBackup(text){
+  const t = String(text || "").trim(), c = codeOf(t, BACKUP_TAG) || (t.match(new RegExp(`^(W1s[A-Za-z0-9_-]{5,${SHARE_MAX}})$`)) || [])[1];
+  const a = c && readJson(c);
+  if(!Array.isArray(a)) return null;
+  const list = a.slice(0, 200).map(siteFromArr).filter(Boolean);
+  return list.length ? list : null;
+}
+function siteFromArr(a){
   if(!Array.isArray(a)) return null;
   const num = (v, lo, hi, d) => typeof v === "number" && v >= lo && v <= hi ? v : d;   // außerhalb des Bereichs: Vorgabe (bei Koordinaten: Link ablehnen)
   const lat = num(a[1], -90, 90, null), lon = num(a[2], -180, 180, null);
@@ -100,23 +115,61 @@ function shareFail(){
   $("shClose").onclick = shareDialogClose;
 }
 
+/* Sicherung aller gespeicherten Baustellen: als Link/Text verschicken (z. B. an sich selbst), später oder auf einem neuen Handy wieder einfügen */
+function backupOpen(){
+  const favs = loadFavs();
+  if(!favs.length){
+    shareDialog(T("Alle Baustellen sichern", "Back up all sites"), `<p class="ig-sub">${T("Es sind noch keine Baustellen gespeichert.", "No sites saved yet.")}</p>`, `<button type="button" class="primary" id="shClose">${T("Schließen", "Close")}</button>`);
+    $("shClose").onclick = shareDialogClose; return;
+  }
+  const link = backupLink(favs);
+  const msg = `${T(`AtHeight-Sicherung (${favs.length} Baustellen). Zum Wiederherstellen antippen oder in der App unter „Baustelle erhalten?“ einfügen:`, `AtHeight backup (${favs.length} sites). Tap to restore or paste it in the app under “Received a site?”:`)}
+${link}`;
+  shareDialog(T("Alle Baustellen sichern", "Back up all sites"),
+    `<div class="sh-sum">${favs.map(f => `<span>${esc(f.name)}</span>`).join("")}</div>
+    <p class="ig-sub">${T("Schicke dir den Link selbst (Mail, WhatsApp, Notizen). Bei Handywechsel oder Datenverlust fügst du ihn in der App wieder ein. Grenzwerte und Höhen sind enthalten, nie dein Zugang.", "Send the link to yourself (mail, WhatsApp, notes). After changing phones or losing data, paste it into the app again. Limits and heights are included, never your access.")}</p>`,
+    `${navigator.share ? `<button type="button" class="primary" id="shSend">${T("Senden", "Send")}</button>` : ""}<button type="button" class="${navigator.share ? "ghost" : "primary"}" id="shCopy">${T("Link kopieren", "Copy link")}</button><button type="button" class="ghost" id="shClose">${T("Schließen", "Close")}</button>`);
+  $("shClose").onclick = shareDialogClose;
+  $("shCopy").onclick = async () => {
+    try{ await navigator.clipboard.writeText(msg); $("shCopy").textContent = T("Kopiert", "Copied"); }
+    catch(e){ window.prompt(T("Link kopieren:", "Copy link:"), link); }
+  };
+  if($("shSend")) $("shSend").onclick = () => { navigator.share({text: msg}).catch(() => {}); };
+}
+function backupImport(list){
+  const favs = loadFavs(), isDup = s => favs.some(f => f.name === s.name || sameSpot(f.site, s)), n = list.filter(isDup).length;
+  shareDialog(T("Sicherung erhalten", "Backup received"),
+    `<div class="sh-sum"><b>${list.length} ${T(list.length === 1 ? "Baustelle" : "Baustellen", list.length === 1 ? "site" : "sites")}</b>${list.map(s => `<span>${esc(s.name)}${isDup(s) ? ` (${T("ersetzt die vorhandene", "replaces the existing one")})` : ""}</span>`).join("")}</div>
+    ${n ? `<p class="ig-warn">${T(`${n} davon gibt es schon. Sie werden durch die gesicherten ersetzt.`, `${n} of them already exist. They are replaced by the backed-up ones.`)}</p>` : ""}`,
+    `<button type="button" class="primary" id="shAdd">${T("Alle hinzufügen", "Add all")}</button><button type="button" class="ghost" id="shClose">${T("Abbrechen", "Cancel")}</button>`);
+  $("shClose").onclick = shareDialogClose;
+  $("shAdd").onclick = () => {
+    shareDialogClose();
+    let all = loadFavs();
+    for(const s of list) all = all.filter(f => f.name !== s.name && !sameSpot(f.site, s)).concat({name:s.name, site:{...s}});
+    all.sort((a, b) => a.name.localeCompare(b.name, "de")); saveFavs(all);
+    toggleFavs(true);
+  };
+}
+
 /* Beim Start oder wenn sich die Adresse ändert: „#s1=…“ lesen und aus der Adresszeile entfernen */
 function shareFromHash(){
-  if(!new RegExp(`^#${SHARE_TAG}=`).test(location.hash)) return;
-  const s = parseShare(location.hash);
+  if(!new RegExp(`^#(${SHARE_TAG}|${BACKUP_TAG})=`).test(location.hash)) return;
+  const h = location.hash, b = parseBackup(h), s = b ? null : parseShare(h);
   try{ history.replaceState(null, "", location.pathname + location.search); }catch(e){}
-  s ? shareImport(s) : shareFail();
+  b ? backupImport(b) : s ? shareImport(s) : shareFail();
 }
 window.addEventListener("hashchange", () => { if(TOKEN) shareFromHash(); });
 
 /* Feld „Link einfügen“ im Baustellen-Fenster (für die installierte App, in die ein Link nicht direkt führt) */
 function pasteCheck(){
   const v = $("pasteIn").value.trim(); if(!v) return;
-  const s = parseShare(v);
-  $("pasteErr").hidden = !!s;
-  if(s){ $("pasteIn").value = ""; toggleFavs(false); shareImport(s); }
+  const b = parseBackup(v), s = b ? null : parseShare(v);
+  $("pasteErr").hidden = !!(b || s);
+  if(b || s){ $("pasteIn").value = ""; toggleFavs(false); b ? backupImport(b) : shareImport(s); }
 }
 $("pasteGo").onclick = pasteCheck;
 $("pasteIn").onkeydown = e => { if(e.key === "Enter"){ e.preventDefault(); pasteCheck(); } };
 $("pasteIn").onpaste = () => setTimeout(pasteCheck, 0);
+$("favBackup").onclick = () => { toggleFavs(false); backupOpen(); };
 $("favShareCur").onclick = () => { toggleFavs(false); shareOpen(site.name, site); };

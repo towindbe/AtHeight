@@ -7,7 +7,7 @@
 <script>/* Hell nur, wenn so gewählt (Standard dunkel); vor dem Zeichnen setzen, damit nichts aufblitzt */
 try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
 
-<link rel="manifest" href="manifest.webmanifest?v=2026-11-02h">
+<link rel="manifest" href="manifest.webmanifest?v=2026-11-02i">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -17,7 +17,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-11-02h">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-11-02i">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tw-logo" viewBox="-6 -6 790 512"><g fill="currentColor" stroke="currentColor" stroke-linejoin="miter"><path stroke-width="3" d="M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z"/><path stroke-width="15" d="m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z"/></g></symbol></svg>
@@ -71,6 +71,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <div class="eyebrow" data-en="Saved sites">Gespeicherte Baustellen</div>
       <div class="fav-list" id="favList"></div>
       <button class="fav-new" id="favNew" type="button" data-en="+ Choose a new site on the map">+ Neue Baustelle auf der Karte wählen</button>
+      <button class="fav-new" id="favBackup" type="button" data-en="Back up all sites (send link to yourself)">Alle Baustellen sichern (Link an dich selbst)</button>
       <button class="fav-new" id="favShareCur" type="button" data-en="Share current site (link / QR code)">Aktuelle Baustelle teilen (Link / QR-Code)</button>
       <p class="note fav-saved" id="favSaved" hidden></p>
       <div class="fav-save" id="favSaveRow">
@@ -81,12 +82,12 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
         </div>
       </div>
       <div class="fav-save">
-        <span class="note" data-en="Received a site? Paste the link, message or code:">Baustelle erhalten? Link, Nachricht oder Code einfügen:</span>
+        <span class="note" data-en="Received a site or backup? Paste the link, message or code:">Baustelle oder Sicherung erhalten? Link, Nachricht oder Code einfügen:</span>
         <div class="fav-add">
-          <input type="text" id="pasteIn" placeholder="Link einfügen" maxlength="3200" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Link einfügen" data-en-ph="Paste link" data-en-aria="Paste link">
+          <input type="text" id="pasteIn" placeholder="Link einfügen" maxlength="80000" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Link einfügen" data-en-ph="Paste link" data-en-aria="Paste link">
           <button class="primary" id="pasteGo" type="button" data-en="Check">Prüfen</button>
         </div>
-        <p class="note" id="pasteErr" hidden data-en="No site found in this text.">In diesem Text steckt keine Baustelle.</p>
+        <p class="note" id="pasteErr" hidden data-en="No site or backup found in this text.">In diesem Text steckt keine Baustelle und keine Sicherung.</p>
       </div>
     </div>
   </header>
@@ -452,27 +453,27 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 </div>
 
 <!-- Skripte teilen sich den globalen Gültigkeitsbereich; Reihenfolge beachten. Bei Änderungen ?v= erhöhen. -->
-<script src="js/konfiguration.js?v=2026-11-02h"></script>
-<script src="js/hilfen.js?v=2026-11-02h"></script>
-<script src="js/physik.js?v=2026-11-02h"></script>
-<script src="js/daten.js?v=2026-11-02h"></script>
-<script src="js/offline.js?v=2026-11-02h"></script>
-<script src="js/tageslicht.js?v=2026-11-02h"></script>
-<script src="js/bewertung.js?v=2026-11-02h"></script>
-<script src="js/anzeige.js?v=2026-11-02h"></script>
-<script src="js/leiste.js?v=2026-11-02h"></script>
-<script src="js/diagramme.js?v=2026-11-02h"></script>
-<script src="js/tabellen.js?v=2026-11-02h"></script>
-<script src="js/modellvergleich.js?v=2026-11-02h"></script>
-<script src="js/ausblick.js?v=2026-11-02h"></script>
-<script src="js/karte.js?v=2026-11-02h"></script>
-<script src="js/radar.js?v=2026-11-02h"></script>
-<script src="js/bericht.js?v=2026-11-02h"></script>
-<script src="js/ausfall.js?v=2026-11-02h"></script>
-<script src="js/anlagen.js?v=2026-11-02h"></script>
-<script src="js/qrcode.js?v=2026-11-02h"></script>
-<script src="js/teilen.js?v=2026-11-02h"></script>
-<script src="js/bedienung.js?v=2026-11-02h"></script>
-<script src="js/start.js?v=2026-11-02h"></script>
+<script src="js/konfiguration.js?v=2026-11-02i"></script>
+<script src="js/hilfen.js?v=2026-11-02i"></script>
+<script src="js/physik.js?v=2026-11-02i"></script>
+<script src="js/daten.js?v=2026-11-02i"></script>
+<script src="js/offline.js?v=2026-11-02i"></script>
+<script src="js/tageslicht.js?v=2026-11-02i"></script>
+<script src="js/bewertung.js?v=2026-11-02i"></script>
+<script src="js/anzeige.js?v=2026-11-02i"></script>
+<script src="js/leiste.js?v=2026-11-02i"></script>
+<script src="js/diagramme.js?v=2026-11-02i"></script>
+<script src="js/tabellen.js?v=2026-11-02i"></script>
+<script src="js/modellvergleich.js?v=2026-11-02i"></script>
+<script src="js/ausblick.js?v=2026-11-02i"></script>
+<script src="js/karte.js?v=2026-11-02i"></script>
+<script src="js/radar.js?v=2026-11-02i"></script>
+<script src="js/bericht.js?v=2026-11-02i"></script>
+<script src="js/ausfall.js?v=2026-11-02i"></script>
+<script src="js/anlagen.js?v=2026-11-02i"></script>
+<script src="js/qrcode.js?v=2026-11-02i"></script>
+<script src="js/teilen.js?v=2026-11-02i"></script>
+<script src="js/bedienung.js?v=2026-11-02i"></script>
+<script src="js/start.js?v=2026-11-02i"></script>
 </body>
 </html>
