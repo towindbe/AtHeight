@@ -27,6 +27,6 @@ Mit ihm **auf Deutsch**, in kleinen Schritten, kurz erklärt; vor größerem Umb
 - Nur Modell-APIs (Open-Meteo, DWD, GeoSphere), kein Scraping. Open-Meteo gratis nur nicht-kommerziell.
 - Modelle nie automatisch wegnehmen; „einzelne Modelle über Grenze → PRÜFEN“ gilt immer.
 - Feuchte, Taupunkt, Wolken: nur Anzeige, außer Beschichten-Modus mit STOP-Häkchen (dann als „Stop nur wegen
-  Beschichtung“ getrennt vom Wetter). Beschichten-Modus gilt je Standort für alle Tage, höchstens 7 Tage.
+  Beschichtung“ getrennt vom Wetter). Beschichten-Modus ist je Standort nur ein oder aus (gilt für alle Tage, kein automatisches Ende).
 - Design: **dunkel ist Standard** auf allen Geräten, hell nur per Knopf. Linien-Icons statt Emojis. Tippflächen ≥ 44 px.
 - Texte branchenneutral halten (nicht nur Windkraft); Windkraft-Begriffe nur bei „Einsatz an einer Windenergieanlage“.

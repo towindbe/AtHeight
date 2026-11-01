@@ -5,6 +5,7 @@ const $ = id => document.getElementById(id);
 /* Linien-Symbole (einheitlich statt Emoji und Sonderzeichen): 24er-Raster, Strichfarbe = Textfarbe.
    Im HTML als Platzhalter <i data-ico="name"></i>, beim Start gefüllt (bedienung.js) */
 const ICON_PATHS = {
+  share:'<path d="M12 15V3M8 7l4-4 4 4"/><path d="M7 10H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1"/>',
   reload:'<path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/>',
   sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
   moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',

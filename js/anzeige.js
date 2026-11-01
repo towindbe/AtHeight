@@ -151,7 +151,7 @@ function renderInstrument(sum){
       + tile(T("Temp.", "Temp."), tMin==null ? null : (Math.round(tMin)===Math.round(tMax) ? fmt(tMin,0) : `${fmt(tMin,0)}…${fmt(tMax,0)}`), "°C", tMin!=null && tMin < minTemp() ? "m-stop" : "");
   }
 }
-/* Schalter „Beschichten-Modus“ im Überblick (gilt für alle Tage bis zum Ausschalten, höchstens 7 Tage); ist er an, steht der Modus mit Grenzen und Ergebnis gut sichtbar daneben */
+/* Schalter „Beschichten-Modus“ im Überblick (gilt für alle Tage bis zum Ausschalten); ist er an, steht der Modus mit Grenzen und Ergebnis gut sichtbar daneben */
 function renderCoatBar(){
   const on = coatOn(state.day), k = v => fmt(v, v%1 ? 1 : 0);
   document.body.classList.toggle("coat-on", on);   // im Beschichten-Modus bleibt die Temperatur auch in der einfachen Ansicht sichtbar
@@ -161,7 +161,7 @@ function renderCoatBar(){
   $("coatInfo").textContent = on ? T(`Grenzen: höchstens ${coatRh()} % Feuchte, Taupunktabstand mind. ${k(coatDew())} °C${site.coatStop ? ", setzt die Ampel auf STOP" : " (nur Hinweis)"}. `, `Limits: at most ${coatRh()} % humidity, dew point spread at least ${k(coatDew())} °C${site.coatStop ? ", sets the traffic light to STOP" : " (note only)"}. `) + coatDaySummary(dayHours(state.day)) : "";
 }
 function toggleCoat(){
-  setCoat(coatOn(state.day) ? null : coatDefaultEnd());
+  setCoat(!coatOn(state.day));
   state.hours = computeHours(state.results, state.times);
   render();
 }

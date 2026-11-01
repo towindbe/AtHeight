@@ -13,3 +13,4 @@ if(!TOKEN){   // ohne Zugangs-Token nichts laden
   $("errorBox").textContent = T("Für diese App brauchst du einen Zugangslink. Bitte bei Tobias Windberg anfragen und den Link öffnen.", "You need an access link for this app. Please request one from Tobias Windberg and open it.");
 }
 else if(siteChosen) load(); else startFirstRun();
+if(TOKEN) shareFromHash();   // Link „#s1=…“ von einem Kollegen: Baustelle zur Übernahme anzeigen

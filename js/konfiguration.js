@@ -64,20 +64,16 @@ const CHILL_INFO = -10, HEAT_INFO = 32, UV_INFO = 6;
 const DEW_INFO = 1;   // Temperatur in Arbeitshöhe höchstens so viele °C über dem Taupunkt: Hinweis Kondenswasser
 // Beschichten / Laminieren (Grenzen je Baustelle): max. Luftfeuchte und Mindestabstand zum Taupunkt (ISO 8502-4: 3 °C)
 const coatRh = () => site.coatRh ?? 80, coatDew = () => site.coatDew ?? 3;
-/* Beschichten-Modus: im Überblick je Standort eingeschaltet, gilt für alle Tage bis zum Ausschalten,
-   höchstens COAT_DAYS Tage ab dem Einschalten. Danach ist er von selbst aus:
-   so bleibt er nicht versehentlich wochenlang an und die Ampel steht nicht ohne Grund auf Stop. */
-const COAT_DAYS = 7;
+/* Beschichten-Modus: im Überblick je Standort ein- oder ausgeschaltet, gilt für alle Tage bis zum Ausschalten
+   (kein automatisches Ende). */
 const coatSpot = () => `${(+site.lat).toFixed(3)},${(+site.lon).toFixed(3)}`;
 let coatUntil = (() => { try{
   const t = new Date().toLocaleDateString("sv"), o = JSON.parse(localStorage.getItem("wb_coat")||"{}");
-  return Object.fromEntries(Object.entries(Array.isArray(o) ? {} : o).filter(([, u]) => u >= t));
+  return Object.fromEntries(Object.entries(Array.isArray(o) ? {} : o).filter(([, u]) => u === true || u >= t).map(([k]) => [k, true]));   // frühere Versionen speicherten ein Enddatum
 }catch(e){ return {}; } })();
-const coatEnd = () => coatUntil[coatSpot()] || null;
-const coatOn = d => !!d && !!coatEnd() && d <= coatEnd();
-function coatDefaultEnd(){ const d = new Date(); d.setDate(d.getDate() + COAT_DAYS - 1); return d.toLocaleDateString("sv"); }
-function setCoat(until){
-  until ? coatUntil[coatSpot()] = until : delete coatUntil[coatSpot()];
+const coatOn = d => !!d && !!coatUntil[coatSpot()];
+function setCoat(on){
+  on ? coatUntil[coatSpot()] = true : delete coatUntil[coatSpot()];
   try{ localStorage.setItem("wb_coat", JSON.stringify(coatUntil)); }catch(e){}
 }
 const minTemp = () => site.minTemp ?? 0;   // Mindesttemperatur (Luft in Arbeitshöhe), darunter Stop

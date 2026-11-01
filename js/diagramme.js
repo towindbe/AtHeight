@@ -533,7 +533,7 @@ function renderDewRow(){
   const hs = state.hours.filter(h => isWork(h.t)), coat = coatOn(state.day), stopC = coat && site.coatStop, k = v => fmt(v, v%1 ? 1 : 0);
   const box = $("dewRow");
   if(!hs.some(h => h.dew!=null)){ box.innerHTML = ""; box._html = ""; $("dewRowNote").textContent = T("Es liegen keine Werte zum Taupunkt vor.", "No dew point values available."); return; }
-  const cH = h => coatOn(h.t.slice(0,10)), sH = h => cH(h) && site.coatStop;   // Beschichten-Modus gilt je Tag (bis zum Enddatum)
+  const cH = h => coatOn(h.t.slice(0,10)), sH = h => cH(h) && site.coatStop;   // Beschichten-Modus gilt für alle Tage
   const dCls = h => h.dew==null ? "m-none" : sH(h) && coatViol(h) ? "m-stop" : h.dew <= 0 ? "d-wet" : (cH(h) ? h.dew < coatDew() : h.dew <= DEW_INFO) ? "d-near" : "d-ok";
   const rCls = h => h.rh==null || !cH(h) ? "m-none" : h.rh > coatRh() ? (sH(h) ? "m-stop" : "d-near") : "d-ok";
   const ds = (h, k) => k===0 || h.t.slice(0,10) !== hs[k-1].t.slice(0,10) ? " dstart" : "";

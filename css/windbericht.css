@@ -521,6 +521,11 @@ body.info-open{overflow:hidden}
 .ig-steps li::before{content:counter(ig);flex:none;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
 .ig-ic{flex:none;width:30px;display:flex;justify-content:center;color:var(--accent)} .ig-ic img{border-radius:6px}
 .ig-card .primary{min-height:48px}
+.fav-share{color:var(--muted);padding:4px 8px}
+.fav-share:hover{color:var(--accent)} .fav-share,.fav-del{min-width:44px;min-height:44px}
+.sh-sum{display:flex;flex-direction:column;gap:2px;padding:10px 12px;background:var(--raised);border-radius:12px;font-size:14px;color:var(--muted)} .sh-sum b{color:var(--fg);font-size:17px}
+.sh-qr{align-self:center;width:min(230px,100%);border-radius:10px;overflow:hidden;background:#fff} .sh-qr svg{display:block;width:100%;height:auto}
+.sh-btns{display:flex;flex-wrap:wrap;gap:8px} .sh-btns button{flex:1;min-width:120px;min-height:48px}
 .foot-info a#installLink{display:inline-block;min-height:44px;line-height:44px}
 @media print{.install-box,.update-box,.ig-back,#installFoot{display:none!important}}
 

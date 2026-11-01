@@ -19,6 +19,7 @@ function renderFavs(){
     ? `<div class="fav-empty">${T("Noch keine Baustellen gespeichert.", "No sites saved yet.")}</div>`
     : favs.map((f,k) => `<div class="fav-item ${isCurrent(f)?"cur":""}">
     <button type="button" class="fav-go" data-k="${k}"><span>${isCurrent(f)?"● ":""}${esc(f.name)}</span><small>${T("Arbeit", "Work")} ${f.site.work || f.site.hub} m${f.site.windkraft !== false ? ` · ${T("Nabe", "Hub")} ${f.site.hub} m` : ""} · ${fw(f.site.wind)}/${fwu(f.site.gust)}</small></button>
+    <button type="button" class="fav-share" data-k="${k}" title="${T("Baustelle teilen", "Share site")}" aria-label="${esc(f.name)} ${T("teilen", "share")}">${icon("share", 18)}</button>
     <button type="button" class="fav-del" data-k="${k}" title="${T("Baustelle löschen", "Delete site")}" aria-label="${esc(f.name)} ${T("löschen", "delete")}">×</button></div>`).join("");
   $("favSaved").hidden = !cur;
   if(cur) $("favSaved").textContent = T(`„${cur.name}“ ist gespeichert. Änderungen unter „Einstellungen“ werden automatisch übernommen.`, `“${cur.name}” is saved. Changes under “Settings” are applied automatically.`);
@@ -30,6 +31,7 @@ function renderFavs(){
     if(map){ cancelPending(); map.setView([site.lat, site.lon], 14); }
     load();
   });
+  $("favList").querySelectorAll(".fav-share").forEach(b => b.onclick = () => { const f = loadFavs()[+b.dataset.k]; if(f){ toggleFavs(false); shareOpen(f.name, {...DEFAULT_SITE, ...f.site}); } });
   $("favList").querySelectorAll(".fav-del").forEach(b => b.onclick = () => {
     const f = loadFavs(), k = +b.dataset.k;
     if(!f[k] || !confirm(T(`„${f[k].name}“ aus den gespeicherten Baustellen löschen?`, `Delete “${f[k].name}” from the saved sites?`))) return;

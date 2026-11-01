@@ -132,6 +132,18 @@ const result = await page.evaluate(async () => {
   setModelUsed("gfs_global", false);
   out.ohneGFS = hours().map(h => h.lamp + " " + (h.med==null ? "-" : h.med.toFixed(3)));
   setModelUsed("gfs_global", true);
+
+  // Teilen: Baustelle verpacken, wieder lesen, kaputte und ungültige Codes ablehnen
+  const teil = {...DEFAULT_SITE, name:"Test äö Standort", lat:47.2692, lon:11.4041, windkraft:false, work:60, wind:9, gust:13, minTemp:-3, from:7, to:17, coatRh:75, coatDew:4, coatStop:true};
+  const key = x => x && JSON.stringify([x.name, x.lat, x.lon, x.windkraft, x.hub, x.rotor, x.work, x.wind, x.gust, x.minTemp, x.from, x.to, x.coatRh, x.coatDew, x.coatStop, x.checked]);
+  const back = parseShare("Hallo " + shareLink(teil) + " Gruß");
+  out.teilen = {zurueck:key(back), nurCode:!!parseShare(shareCode(teil)),
+    kaputt:[parseShare("hallo"), parseShare("#s1=AAAAAAAAAA"), parseShare("#s1=" + b64uEnc(JSON.stringify(["x", 999, 11]))), parseShare("#s1=" + b64uEnc("{}"))].map(x => !!x),
+    bereich:key(parseShare("#s1=" + b64uEnc(JSON.stringify(["<b>X</b>", 47, 11, 1, 5000, 9999, null, 1, "hack", -5, 1e9, null, null, 99, 30, 3])))),
+    link:shareLink(teil).replace(location.origin, "")};
+  // Beschichten: nur ein oder aus, ohne Enddatum
+  const vorher = coatOn("2099-01-01"); setCoat(true); const an = coatOn("2099-01-01"); setCoat(false);
+  out.beschichten = {vorher, an, aus:coatOn("2099-01-01")};
   return out;
 });
 
