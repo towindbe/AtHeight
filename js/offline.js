@@ -79,35 +79,75 @@ function renderChange(){
   if(t){ box.className = "change-note ch-" + t.lvl; box.innerHTML = t.html; }
 }
 
-/* ---------- App installieren: kleines Fenster mit Installieren-Knopf ---------- */
+/* ---------- App installieren: kleines Fenster mit Installieren-Knopf, dazu Anleitung in 3 Schritten (iPhone/iPad) ---------- */
 const INSTALL_SNOOZE = 14*864e5;   // nach "Später" so lange nicht wieder fragen
 let installEvt = null;
 const isStandalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);   // iPadOS meldet sich als Mac
+const inAppBrowser = () => /FBAN|FBAV|Instagram|Snapchat|MicroMessenger|Line\//i.test(navigator.userAgent);   // Browser innerhalb anderer Apps: kein "Zum Home-Bildschirm"
+const otherIosBrowser = () => /CriOS|FxiOS|EdgiOS/i.test(navigator.userAgent);   // Teilen-Symbol sitzt dort neben der Adresse
 const installSnoozed = () => { try{ return Date.now() < +localStorage.getItem("wb_install_snooze"); }catch(e){ return false; } };
+const IC_SHARE = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M7 10H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1"/></svg>`;
+const IC_ADD = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3.5"/><path d="M12 8v8M8 12h8"/></svg>`;
 function installClose(snooze){
   $("installBox")?.remove();
   if(snooze) try{ localStorage.setItem("wb_install_snooze", String(Date.now() + INSTALL_SNOOZE)); }catch(e){}
 }
+async function installNative(){
+  if(!installEvt) return false;
+  installEvt.prompt();
+  try{ await installEvt.userChoice; }catch(e){}
+  installEvt = null; installClose(false);
+  return true;
+}
+function installGuideClose(){ $("installGuide")?.remove(); }
+function installGuide(){
+  if($("installGuide")) return;
+  const ios = isIOS();
+  const step = (ic, txt) => `<li><span class="ig-ic">${ic}</span><span>${txt}</span></li>`;
+  const steps = ios
+    ? step(IC_SHARE, otherIosBrowser() ? T("Oben neben der Adresse auf <b>Teilen</b> tippen.", "Tap <b>Share</b> next to the address at the top.") : T("Unten auf <b>Teilen</b> tippen (auf dem iPad oben).", "Tap <b>Share</b> at the bottom (at the top on iPad)."))
+      + step(IC_ADD, T("Nach unten wischen und <b>„Zum Home-Bildschirm“</b> wählen.", "Scroll down and choose <b>“Add to Home Screen”</b>."))
+      + step(`<img src="icons/icon-192.png" alt="" width="26" height="26">`, T("Oben rechts auf <b>„Hinzufügen“</b> tippen. Das Symbol liegt danach auf dem Home-Bildschirm.", "Tap <b>“Add”</b> at the top right. The icon is then on your home screen."))
+    : step(IC_ADD, T("Im Browser-Menü <b>„App installieren“</b> oder <b>„Zum Startbildschirm hinzufügen“</b> wählen. Am Computer erscheint dafür ein Symbol rechts in der Adresszeile.", "In the browser menu choose <b>“Install app”</b> or <b>“Add to Home screen”</b>. On a computer a symbol appears at the right of the address bar."));
+  const warn = ios && inAppBrowser() ? `<p class="ig-warn">${T("Du bist gerade in einem Browser innerhalb einer anderen App. Dort geht die Installation nicht: erst im Menü „In Safari öffnen“ wählen.", "You are in a browser inside another app. Installing does not work there: first choose “Open in Safari” in its menu.")}</p>` : "";
+  const box = document.createElement("div");
+  box.id = "installGuide"; box.className = "ig-back";
+  box.innerHTML = `<div class="ig-card" role="dialog" aria-modal="true" aria-label="${T("App installieren", "Install app")}">
+    <h2>${T("AtHeight als App installieren", "Install AtHeight as an app")}</h2>
+    <p class="ig-sub">${ios ? T("Ohne App Store, in 3 Schritten. Danach startet AtHeight ohne Browserleiste und zeigt den letzten Stand auch ohne Netz.", "No app store, in 3 steps. AtHeight then starts without the browser bar and shows the last data offline.") : T("Danach startet AtHeight ohne Browserleiste und zeigt den letzten Stand auch ohne Netz.", "AtHeight then starts without the browser bar and shows the last data offline.")}</p>
+    ${warn}<ol class="ig-steps">${steps}</ol>
+    <button type="button" class="primary" id="installGuideOk">${T("Verstanden", "Got it")}</button></div>`;
+  document.body.appendChild(box);
+  $("installGuideOk").onclick = installGuideClose;
+  box.onclick = e => { if(e.target === box) installGuideClose(); };
+  $("installGuideOk").focus();
+}
+document.addEventListener("keydown", e => { if(e.key === "Escape") installGuideClose(); });
 function installShow(ios){
   if($("installBox") || isStandalone() || installSnoozed()) return;
   const box = document.createElement("div");
   box.id = "installBox"; box.className = "install-box"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", T("App installieren", "Install app"));
   box.innerHTML = `<img src="icons/icon-192.png" alt="" width="44" height="44">
-    <div><b>${T("AtHeight als App installieren", "Install AtHeight as an app")}</b><span>${ios ? T("Teilen-Symbol antippen, dann „Zum Home-Bildschirm“. Danach ohne Browserleiste und mit gespeichertem Stand ohne Netz.", "Tap the share icon, then “Add to Home Screen”. It then runs without the browser bar and with saved data offline.") : T("Startet ohne Browserleiste, mit Symbol auf dem Startbildschirm und gespeichertem Stand ohne Netz.", "Starts without the browser bar, with an icon on the home screen and saved data offline.")}</span></div>
-    <div class="ib-btns">${ios ? "" : `<button type="button" class="primary" id="installGo">${T("Installieren", "Install")}</button>`}<button type="button" class="ghost" id="installLater">${T("Später", "Later")}</button></div>`;
+    <div><b>${T("AtHeight als App installieren", "Install AtHeight as an app")}</b><span>${ios ? T("Dauert 10 Sekunden, ohne App Store. Danach ohne Browserleiste und mit gespeichertem Stand ohne Netz.", "Takes 10 seconds, no app store. It then runs without the browser bar and with saved data offline.") : T("Startet ohne Browserleiste, mit Symbol auf dem Startbildschirm und gespeichertem Stand ohne Netz.", "Starts without the browser bar, with an icon on the home screen and saved data offline.")}</span></div>
+    <div class="ib-btns"><button type="button" class="primary" id="installGo">${ios ? T("So geht’s", "How to") : T("Installieren", "Install")}</button><button type="button" class="ghost" id="installLater">${T("Später", "Later")}</button></div>`;
   document.body.appendChild(box);
   $("installLater").onclick = () => installClose(true);
-  if($("installGo")) $("installGo").onclick = async () => {
-    if(!installEvt) return installClose(false);
-    installEvt.prompt();
-    try{ await installEvt.userChoice; }catch(e){}
-    installEvt = null; installClose(false);
+  $("installGo").onclick = async () => {
+    if(ios){ installClose(false); return installGuide(); }
+    if(!await installNative()) installClose(false);
   };
 }
+/* Dauerhafter Link am Seitenende (z. B. wenn das Symbol vom Home-Bildschirm gelöscht wurde); nur im Browser, nicht in der installierten App */
+(() => {
+  const f = $("installFoot"); if(!f) return;
+  f.hidden = isStandalone();
+  $("installLink").onclick = async e => { e.preventDefault(); if(!await installNative()) installGuide(); };
+})();
 window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; setTimeout(() => installShow(false), 4000); });
-window.addEventListener("appinstalled", () => { installEvt = null; installClose(false); });
-// iPhone/iPad (Safari) kennt das Ereignis nicht: einmalig Anleitung zeigen
-if(/iphone|ipad|ipod/i.test(navigator.userAgent) && !isStandalone() && !navigator.webdriver) setTimeout(() => installShow(true), 6000);
+window.addEventListener("appinstalled", () => { installEvt = null; installClose(false); installGuideClose(); const f = $("installFoot"); if(f) f.hidden = true; });
+// iPhone/iPad (Safari) kennt das Ereignis nicht: einmalig Anleitung anbieten
+if(isIOS() && !isStandalone() && !navigator.webdriver) setTimeout(() => installShow(true), 6000);
 
 /* ---------- Neue Version: Hinweis, wenn auf dem Server eine neuere App liegt ---------- */
 /* Die Version steht als ?v= an den Dateien. Wir laden die Startseite am Cache vorbei und vergleichen. Nie automatisch neu laden:

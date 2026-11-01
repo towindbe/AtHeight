@@ -511,7 +511,18 @@ body.info-open{overflow:hidden}
 .install-box img{border-radius:10px;flex:none}
 .install-box>div:first-child:not(.ib-btns),.install-box>div:nth-child(2){flex:1;min-width:180px;display:flex;flex-direction:column;gap:2px;font-size:13px;color:var(--muted)} .install-box b{color:var(--fg);font-size:15px}
 .ib-btns{display:flex;gap:8px;margin-left:auto}
-@media print{.install-box,.update-box{display:none!important}}
+.ig-back{position:fixed;inset:0;z-index:1400;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;padding:12px;padding-bottom:max(12px,env(safe-area-inset-bottom,0px))}
+.ig-card{width:min(480px,100%);max-height:100%;overflow:auto;background:var(--surface);border:1px solid var(--band-line);border-radius:16px;padding:18px 16px 16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 8px 28px rgba(0,0,0,.55)}
+.ig-card h2{margin:0;font-family:var(--f-display);font-size:24px;font-weight:600}
+.ig-sub{margin:0;font-size:14px;color:var(--muted)}
+.ig-warn{margin:0;padding:10px 12px;border-radius:10px;background:var(--warn-bg);border:1px solid var(--warn);font-size:14px}
+.ig-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:ig}
+.ig-steps li{counter-increment:ig;display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 12px;background:var(--raised);border-radius:12px;font-size:15px}
+.ig-steps li::before{content:counter(ig);flex:none;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+.ig-ic{flex:none;width:30px;display:flex;justify-content:center;color:var(--accent)} .ig-ic img{border-radius:6px}
+.ig-card .primary{min-height:48px}
+.foot-info a#installLink{display:inline-block;min-height:44px;line-height:44px}
+@media print{.install-box,.update-box,.ig-back,#installFoot{display:none!important}}
 
 /* Wetter-Ausfallprotokoll */
 .af-sum{margin:0;padding:10px 12px;border-radius:8px;background:var(--raised)}
