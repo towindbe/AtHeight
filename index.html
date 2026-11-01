@@ -7,7 +7,7 @@
 <script>/* Hell nur, wenn so gewählt (Standard dunkel); vor dem Zeichnen setzen, damit nichts aufblitzt */
 try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
 
-<link rel="manifest" href="manifest.webmanifest?v=2026-11-02k">
+<link rel="manifest" href="manifest.webmanifest?v=2026-11-02m">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -17,7 +17,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-11-02k">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-11-02m">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tw-logo" viewBox="-6 -6 790 512"><g fill="currentColor" stroke="currentColor" stroke-linejoin="miter"><path stroke-width="3" d="M 342.94351,112.11076 662.1317,80.284194 703.64461,1.8709137 29.520999,91.584934 2.537569,146.47423 257.78378,120.89227 l -66.12409,273.2432 62.27776,-32.72105 z"/><path stroke-width="15" d="m 274.15135,87.319794 h 70.11068 L 223.7113,429.32281 389.76299,326.92429 l 3.69003,105.16605 293.87856,-287.0625 91.32375,-2.60925 -383.52136,357.31762 -31.3494,0.14964 -3.91388,-99.15151 -138.29021,92.62838 -48.2712,-1.30463 z"/></g></symbol></svg>
@@ -100,8 +100,8 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
       <label class="chk"><input type="checkbox" id="s_windkraft"><span data-en="Work on a wind turbine (hub height, rotor and nacelle are taken into account)">Einsatz an einer Windenergieanlage (Nabenhöhe, Rotor und Gondel werden berücksichtigt)</span></label>
       <div class="grid">
         <label><span data-en="Name">Bezeichnung</span><input id="s_name" type="text"></label>
-        <label><span data-en="Latitude (°N)">Breite (°N)</span><input id="s_lat" type="number" step="0.0001" inputmode="decimal"></label>
-        <label><span data-en="Longitude (°E)">Länge (°E)</span><input id="s_lon" type="number" step="0.0001" inputmode="decimal"></label>
+        <label><span data-en="Latitude (°, south is negative)">Breite (°N)</span><input id="s_lat" type="number" step="0.0001" inputmode="decimal"></label>
+        <label><span data-en="Longitude (°, west is negative)">Länge (°E)</span><input id="s_lon" type="number" step="0.0001" inputmode="decimal"></label>
         <label id="lbl_hub"><span data-en="Hub height (m)">Nabenhöhe (m)</span><input id="s_hub" type="number" step="1" min="20" max="250" inputmode="numeric"></label>
         <label id="lbl_rotor"><span data-en="Rotor diameter (m)">Rotordurchmesser (m)</span><input id="s_rotor" type="number" step="1" min="0" max="250" inputmode="numeric"></label>
       </div>
@@ -189,7 +189,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
         <p class="rain-note" id="dewNote"></p>
         <div class="coat-bar needs-data" id="coatBar"><button type="button" id="coatBtn" aria-pressed="false" title="Für alle Tage an diesem Standort, bis zum Ausschalten; Grenzwerte in den Einstellungen" data-en-title="For all days at this site until switched off; limits in the settings"><i data-ico="brush"></i><span id="coatLbl">Beschichten-Modus</span></button><button type="button" class="coat-gear" id="coatGear" title="Grenzen fürs Beschichten einstellen" aria-label="Grenzen fürs Beschichten einstellen" data-en-title="Set coating limits" data-en-aria="Set coating limits"><i data-ico="gear"></i></button><span id="coatInfo"></span></div>
         <p class="change-note" id="changeNote" hidden></p>
-        <p class="decision-note" data-en="Decision aid, not a release: the supervisor decides. Measure the wind on site.">Entscheidungshilfe, keine Freigabe: Der Aufsichtführende entscheidet. Wind vor Ort messen.</p>
+        <p class="decision-note" data-en="Decision aid, not an approval: the supervisor decides. Measure the wind on site.">Entscheidungshilfe, keine Freigabe: Der Aufsichtführende entscheidet. Wind vor Ort messen.</p>
         <div class="loadbar" id="loadBar" hidden aria-live="polite"><div class="lb-track"><div class="lb-fill" id="loadFill"></div></div><span class="note" id="loadText"></span></div>
         <div class="setup-hint needs-data" id="setupHint" hidden>
           <div><b data-en="New site: check heights and limits">Neue Baustelle: Höhen und Grenzwerte prüfen</b><span data-en="Heights and limits are still example values.">Höhen und Grenzwerte sind noch Beispielwerte.</span></div>
@@ -385,7 +385,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
   <!-- 7-Tage-Ausblick -->
   <section class="card needs-data" id="sec-ausblick">
     <div class="card-head"><h2><span data-en="7-day outlook">Ausblick 7 Tage</span> <button type="button" class="info-btn" id="olInfoBtn" aria-expanded="false" aria-controls="olInfo" title="Was bedeuten die Werte?" data-en-title="What do the values mean?">?</button></h2><span class="eyebrow" data-en="rough trend">grobe Tendenz</span></div>
-    <p class="info-text" id="olInfo" hidden data-en="&lt;b&gt;How to read the outlook:&lt;/b&gt; All values apply to your working hours and working zone.&lt;br&gt;&lt;b&gt;Wind max:&lt;/b&gt; for each model the strongest wind of the day is found; shown is the middle of these values (median).&lt;br&gt;&lt;b&gt;Spread:&lt;/b&gt; from the most cautious to the windiest model. Narrow (2–3 m/s) means the models agree and the forecast is fairly reliable. Wide (from about 5 m/s) means uncertain, e.g. because the timing of a front is not yet clear. If the upper end is above your limit, keep an eye on the day.&lt;br&gt;&lt;b&gt;Gust max:&lt;/b&gt; strongest estimated gust of the day (median of the models).&lt;br&gt;&lt;b&gt;Too windy:&lt;/b&gt; share of the 51 ECMWF ensemble scenarios (possible weather paths) in which at least one working hour that day is above your limit. Bar green = below 10 %, yellow = from 10 %, red = from 30 %.&lt;br&gt;&lt;b&gt;Detail above / Trend:&lt;/b&gt; the first 3 days come from the detailed forecast with all models (tap to switch to that day). From day 4 only 4 global models are used (ECMWF, ICON, GFS, GEM); this is a rough trend for planning, not for release.&lt;br&gt;&lt;b&gt;Dew:&lt;/b&gt; working hours in which the dew point is reached (fog or cloud at working height, surfaces wet). &lt;b&gt;Coating&lt;/b&gt; (coating mode only): when your limits for humidity and dew point spread are met. From day 4 rough only: humidity and dew point are less accurate in global models than wind, especially with fog in valleys."><b>So liest du den Ausblick:</b> Alle Werte gelten für eure Arbeitszeit und den Arbeitsbereich.<br>
+    <p class="info-text" id="olInfo" hidden data-en="&lt;b&gt;How to read the outlook:&lt;/b&gt; All values apply to your working hours and working zone.&lt;br&gt;&lt;b&gt;Wind max:&lt;/b&gt; for each model the strongest wind of the day is found; shown is the middle of these values (median).&lt;br&gt;&lt;b&gt;Spread:&lt;/b&gt; from the most cautious to the windiest model. Narrow (2–3 m/s) means the models agree and the forecast is fairly reliable. Wide (from about 5 m/s) means uncertain, e.g. because the timing of a front is not yet clear. If the upper end is above your limit, keep an eye on the day.&lt;br&gt;&lt;b&gt;Gust max:&lt;/b&gt; strongest estimated gust of the day (median of the models).&lt;br&gt;&lt;b&gt;Too windy:&lt;/b&gt; share of the 51 ECMWF ensemble scenarios (possible weather paths) in which at least one working hour that day is above your limit. Bar green = below 10 %, yellow = from 10 %, red = from 30 %.&lt;br&gt;&lt;b&gt;Detail above / Trend:&lt;/b&gt; the first 3 days come from the detailed forecast with all models (tap to switch to that day). From day 4 only 4 global models are used (ECMWF, ICON, GFS, GEM); this is a rough trend for planning, not for approval.&lt;br&gt;&lt;b&gt;Dew:&lt;/b&gt; working hours in which the dew point is reached (fog or cloud at working height, surfaces wet). &lt;b&gt;Coating&lt;/b&gt; (coating mode only): when your limits for humidity and dew point spread are met. From day 4 rough only: humidity and dew point are less accurate in global models than wind, especially with fog in valleys."><b>So liest du den Ausblick:</b> Alle Werte gelten für eure Arbeitszeit und den Arbeitsbereich.<br>
       <b>Wind max:</b> Für jedes Modell wird der stärkste Wind des Tages ermittelt; angezeigt ist der mittlere dieser Werte (Median).<br>
       <b>Spanne:</b> vom vorsichtigsten bis zum stürmischsten Modell. Schmal (2–3 m/s) heißt: die Modelle sind sich einig, die Prognose ist recht verlässlich. Breit (ab etwa 5 m/s) heißt: unsicher, z. B. weil eine Front zeitlich noch nicht klar ist. Liegt das obere Ende über eurer Grenze, den Tag im Blick behalten.<br>
       <b>Böe max:</b> stärkste geschätzte Böe des Tages (Median der Modelle).<br>
@@ -398,7 +398,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
   <!-- Tagesbericht -->
   <section class="card needs-data" id="sec-bericht">
     <div class="card-head"><h2 data-en="Daily report">Tagesbericht</h2><span class="eyebrow" id="reportDay"></span></div>
-    <p class="note help" data-en="Documents the forecast at the time of release. Print as PDF and file with the project documentation. The report itself is in German for now.">Dokumentiert die Prognose zum Zeitpunkt der Freigabe. Als PDF drucken und zur Projektdokumentation legen.</p>
+    <p class="note help" data-en="Documents the forecast at the time of approval. Print as PDF and file with the project documentation. The report itself is in German for now.">Dokumentiert die Prognose zum Zeitpunkt der Freigabe. Als PDF drucken und zur Projektdokumentation legen.</p>
     <div class="grid">
       <label><span data-en="Project / client">Projekt / Auftraggeber</span><input id="r_project" type="text"></label>
       <label id="lbl_turbine"><span data-en="Turbine type">Anlagentyp</span><input id="r_turbine" type="text"></label>
@@ -442,9 +442,9 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
     <svg class="logo" role="img" aria-label="Logo Tobias Windberg"><use href="#tw-logo"/></svg>
     <div class="foot-text">
       <p class="foot-info" id="installFoot" hidden><a href="#" id="installLink" data-en="Install app (add to home screen)">App installieren (zum Home-Bildschirm)</a></p>
-      <p class="foot-info"><a href="info.html" id="infoLink" data-en="? How AtHeight works (German)">? So funktioniert AtHeight</a></p>
+      <p class="foot-info"><a href="info.html" id="infoLink" data-en="? How AtHeight works">? So funktioniert AtHeight</a></p>
       <p class="foot-info"><a href="impressum.html" target="_blank" rel="noopener" data-en="Legal notice (German)">Impressum</a> · <a href="datenschutz.html" target="_blank" rel="noopener" data-en="Privacy (German)">Datenschutz</a></p>
-      <p class="note" data-en="Weather data: Open-Meteo.com (CC BY 4.0) with models from DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA and others. Radar: DWD. Satellite image: Esri. Place search: OpenStreetMap (Nominatim). Open-Meteo is free for non-commercial use only. Decision aid, does not replace the assessment on site by the supervisor.">Wetterdaten: Open-Meteo.com (CC BY 4.0) mit Modellen von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA u. a. Radar: DWD. Satellitenbild: Esri. Ortssuche: OpenStreetMap (Nominatim). Open-Meteo ist kostenlos nur für nicht-kommerzielle Nutzung. Entscheidungshilfe, ersetzt nicht die Beurteilung vor Ort durch den Aufsichtführenden.</p>
+      <p class="note" data-en="Weather data: Open-Meteo.com (CC BY 4.0) with models from DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA and others. Radar: DWD. Satellite image: Esri. Place search: OpenStreetMap (Nominatim). Decision aid, does not replace the assessment on site by the supervisor.">Wetterdaten: Open-Meteo.com (CC BY 4.0) mit Modellen von DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA u. a. Radar: DWD. Satellitenbild: Esri. Ortssuche: OpenStreetMap (Nominatim). Entscheidungshilfe, ersetzt nicht die Beurteilung vor Ort durch den Aufsichtführenden.</p>
       <p class="foot-by">© 2026 Tobias Windberg<br><a href="https://www.windberg-ropeaccess.com/apps" target="_blank" rel="noopener">windberg-ropeaccess.com/apps</a></p>
     </div>
   </footer>
@@ -453,27 +453,27 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 </div>
 
 <!-- Skripte teilen sich den globalen Gültigkeitsbereich; Reihenfolge beachten. Bei Änderungen ?v= erhöhen. -->
-<script src="js/konfiguration.js?v=2026-11-02k"></script>
-<script src="js/hilfen.js?v=2026-11-02k"></script>
-<script src="js/physik.js?v=2026-11-02k"></script>
-<script src="js/daten.js?v=2026-11-02k"></script>
-<script src="js/offline.js?v=2026-11-02k"></script>
-<script src="js/tageslicht.js?v=2026-11-02k"></script>
-<script src="js/bewertung.js?v=2026-11-02k"></script>
-<script src="js/anzeige.js?v=2026-11-02k"></script>
-<script src="js/leiste.js?v=2026-11-02k"></script>
-<script src="js/diagramme.js?v=2026-11-02k"></script>
-<script src="js/tabellen.js?v=2026-11-02k"></script>
-<script src="js/modellvergleich.js?v=2026-11-02k"></script>
-<script src="js/ausblick.js?v=2026-11-02k"></script>
-<script src="js/karte.js?v=2026-11-02k"></script>
-<script src="js/radar.js?v=2026-11-02k"></script>
-<script src="js/bericht.js?v=2026-11-02k"></script>
-<script src="js/ausfall.js?v=2026-11-02k"></script>
-<script src="js/anlagen.js?v=2026-11-02k"></script>
-<script src="js/qrcode.js?v=2026-11-02k"></script>
-<script src="js/teilen.js?v=2026-11-02k"></script>
-<script src="js/bedienung.js?v=2026-11-02k"></script>
-<script src="js/start.js?v=2026-11-02k"></script>
+<script src="js/konfiguration.js?v=2026-11-02m"></script>
+<script src="js/hilfen.js?v=2026-11-02m"></script>
+<script src="js/physik.js?v=2026-11-02m"></script>
+<script src="js/daten.js?v=2026-11-02m"></script>
+<script src="js/offline.js?v=2026-11-02m"></script>
+<script src="js/tageslicht.js?v=2026-11-02m"></script>
+<script src="js/bewertung.js?v=2026-11-02m"></script>
+<script src="js/anzeige.js?v=2026-11-02m"></script>
+<script src="js/leiste.js?v=2026-11-02m"></script>
+<script src="js/diagramme.js?v=2026-11-02m"></script>
+<script src="js/tabellen.js?v=2026-11-02m"></script>
+<script src="js/modellvergleich.js?v=2026-11-02m"></script>
+<script src="js/ausblick.js?v=2026-11-02m"></script>
+<script src="js/karte.js?v=2026-11-02m"></script>
+<script src="js/radar.js?v=2026-11-02m"></script>
+<script src="js/bericht.js?v=2026-11-02m"></script>
+<script src="js/ausfall.js?v=2026-11-02m"></script>
+<script src="js/anlagen.js?v=2026-11-02m"></script>
+<script src="js/qrcode.js?v=2026-11-02m"></script>
+<script src="js/teilen.js?v=2026-11-02m"></script>
+<script src="js/bedienung.js?v=2026-11-02m"></script>
+<script src="js/start.js?v=2026-11-02m"></script>
 </body>
 </html>

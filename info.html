@@ -6,8 +6,10 @@
 <meta name="theme-color" content="#0d1217">
 <title>So funktioniert AtHeight</title>
 <script>/* Hell nur, wenn so gewählt (Standard dunkel); vor dem Zeichnen setzen, damit nichts aufblitzt */
-try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-11-02k">
+try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}
+try{ const p = new URLSearchParams(location.search).get("lang"); if(p==="en" || p==="de") localStorage.setItem("wb_lang", p); }catch(e){}
+try{ if(localStorage.getItem("wb_lang")==="en"){ document.documentElement.lang = "en"; document.title = "How AtHeight works"; } }catch(e){}</script>
+<link rel="stylesheet" href="css/windbericht.css?v=2026-11-02m">
 <style>
   .info h2{margin-bottom:2px}
   .info .ico{width:1.1em;height:1.1em;vertical-align:-3px}
@@ -21,6 +23,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
   .info th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
   .info a{color:var(--accent)}
   .toc{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px}
+  html[lang=en] .l-de, html:not([lang=en]) .l-en{display:none}
   .tag{display:inline-block;color:#fff;border-radius:4px;padding:0 6px;font:700 12px var(--f-body)}
   .tag.go{background:var(--go)} .tag.warn{background:var(--warn)} .tag.stop{background:var(--stop)}
 </style>
@@ -31,13 +34,14 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
     <div class="brand-wrap" style="min-width:0">
       <img class="brand-logo logo-dunkel" src="icons/logo.svg" alt="" width="40" height="40"><img class="brand-logo logo-hell" src="icons/logo-hell.svg" alt="" width="40" height="40">
       <div style="min-width:0">
-        <div class="eyebrow eyebrow-brand"><b class="bn">AtHeight</b> · Wetter-Check für Höhenarbeit</div>
-        <h1>So funktioniert AtHeight</h1>
+        <div class="eyebrow eyebrow-brand"><b class="bn">AtHeight</b> · <span class="l-de">Wetter-Check für Höhenarbeit</span><span class="l-en">Weather check for work at height</span></div>
+        <h1><span class="l-de">So funktioniert AtHeight</span><span class="l-en">How AtHeight works</span></h1>
       </div>
     </div>
-    <div class="row"><a href="./"><button type="button">← Zurück zur App</button></a></div>
+    <div class="row"><a href="./"><button type="button"><span class="l-de">← Zurück zur App</span><span class="l-en">← Back to the app</span></button></a></div>
   </header>
 
+  <div class="l-de">
   <section class="card">
     <p>AtHeight bewertet für eine bestimmte Baustelle, ob der Wind in eurer <b>Arbeitshöhe</b> unter euren <b>Grenzwerten</b> bleibt, und dokumentiert die Prognose im Tagesbericht. Er ist eine <b>Entscheidungshilfe</b>: Die Freigabe trifft der Aufsichtführende, vor Ort und mit eigenem Urteil.</p>
     <nav class="toc" aria-label="Inhalt">
@@ -167,7 +171,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
   <section class="card" id="quellen">
     <h2>Datenquellen und Grenzen</h2>
     <ul>
-      <li>Wetterdaten: <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0) mit Modellen der genannten Wetterdienste. Kostenlos nur für nicht-kommerzielle Nutzung.</li>
+      <li>Wetterdaten: <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0) mit Modellen der genannten Wetterdienste.</li>
       <li>Messstationen: DWD über Bright Sky, GeoSphere Austria Data Hub. Warnungen: DWD, GeoSphere Austria. Radar: DWD. Satellitenbild: Esri. Ortssuche: OpenStreetMap (Nominatim).</li>
       <li><b>Modellzellen:</b> Jedes Modell rechnet in Gitterzellen (hochauflösende etwa 1 bis 2,5 km, gröbere 7 bis 25 km). Es gilt der Wert der Zelle, in der der Standort liegt. Liegt der Standort am <b>Rand</b> einer Zelle, kann die Nachbarzelle (zum Beispiel über dem See oder auf der anderen Seite einer Kuppe) deutlich anderen Wind rechnen. Die Modelltabelle zeigt je Modell die „Lage in der Zelle“, und ein Hinweis erscheint, wenn mehrere hochauflösende Modelle am Zellrand liegen. Das ist nur ein Hinweis, die Ampel ändert sich nicht.</li>
       <li>Wettermodelle können irren, besonders bei Gewittern, im Gebirge und bei Fronten. Lokale Effekte an der Baustelle (Turbulenz, Abschattung, Gelände) erfasst kein Modell vollständig.</li>
@@ -179,9 +183,154 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
     </ul>
   </section>
 
-  <footer class="foot"><p class="note">© 2026 Tobias Windberg · <a href="https://www.windberg-ropeaccess.com" target="_blank" rel="noopener">www.windberg-ropeaccess.com</a> · <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="./">Zurück zur App</a></p></footer>
+  </div>
+
+  <div class="l-en">
+  <section class="card">
+    <p>For a specific site, AtHeight checks whether the wind at your <b>working height</b> stays below your <b>limits</b>, and documents the forecast in the daily report. It is a <b>decision aid</b>: the supervisor makes the approval decision, on site and with their own judgement.</p>
+    <nav class="toc" aria-label="Contents">
+      <a href="#en-wind">Wind and gust</a><a href="#en-stunde">Hourly values</a><a href="#en-hoehe">Work zone</a><a href="#en-ampel">Traffic light</a>
+      <a href="#en-szenarien">Too windy (scenarios)</a><a href="#en-modelle">Models and spread</a><a href="#en-warnungen">Warnings</a><a href="#en-feuchte">Humidity, dew point, clouds</a><a href="#en-diagramme">Charts and matrix</a>
+      <a href="#en-bericht">Daily report</a><a href="#en-quellen">Data sources and limits</a>
+    </nav>
+  </section>
+
+  <section class="card" id="en-wind">
+    <h2>Wind and gust</h2>
+    <table>
+      <tr><th>Term</th><th>Meaning</th><th>Limit (example)</th></tr>
+      <tr><td><b>Wind</b></td><td>the steady mean wind over a period of time. Technically “mean wind”: averaged over 10 minutes at the site, over about one hour in the weather models.</td><td>12 m/s</td></tr>
+      <tr><td><b>Gust</b></td><td>short wind peaks lasting a few seconds.</td><td>15 m/s</td></tr>
+    </table>
+    <p>You enter both limits in the settings, according to the requirements of the operator, manufacturer and client. It only turns red <b>above</b> the limit; exactly 12.0 m/s is still permitted. You change the unit (m/s, km/h or knots) in the settings; it applies to all displays and the printed report. Calculations are always in m/s (1 m/s = 3.6 km/h ≈ 1.94 kn); the JSON file stays in m/s.</p>
+    <p>The weather models only provide gusts at 10 m height. AtHeight estimates the gust at working height from the gust factor at 10 m (ratio of gust to wind) and converts it to that height.</p>
+  </section>
+
+  <section class="card" id="en-stunde">
+    <h2>Hourly values and 10-minute means</h2>
+    <p>The forecast gives the <b>mean wind per hour</b>. Operators usually state their limit as a <b>10-minute mean</b>, measured at the site. Wind fluctuates within an hour; the strongest 10-minute mean of an hour is therefore often somewhat above the hourly value, and clearly so in gusty wind.</p>
+    <p>No weather model can calculate 10-minute means at a single site: the models calculate the average wind over a grid cell of 1 to 25 km, not the fast fluctuations at the site. If you want more margin, enter a slightly lower limit. Later, the difference can be determined per site with measurements from the site (NC2).</p>
+  </section>
+
+  <section class="card" id="en-hoehe">
+    <h2>Work zone and height</h2>
+    <p><b>Type of job:</b> In the settings there is the tick “Work on a wind turbine”. If it is set, hub height, rotor diameter and access from the nacelle count. Without the tick (for example facade, bridge, chimney, mast) there is only the working height. It then also applies to the night rule, and the rotor circle on the map and the hub line in the height profile are omitted. The limits are always your own requirements.</p>
+    <ul>
+      <li><b>Working height:</b> the height at which you work (e.g. 80 m on the tower). Empty = hub height.</li>
+      <li><b>Access to working height:</b> the strongest wind along the whole rope path is assessed. <i>From the ground, rope upwards</i> (default): 10 m up to working height, shown as “up to 80 m”. <i>From the nacelle, rope downwards</i>: working height up to hub, shown as “80–125 m”. <i>Working height only</i>: just that one height. The wind is usually strongest at the top; with inversions or low-level jets it can be windier further down.</li>
+      <li>The models provide wind at 10, 80, 120 and 180 m. In between, AtHeight interpolates linearly; above that it uses a height exponent from the two topmost heights. Models that only provide 10 m wind are extrapolated with a rule of thumb and marked “extrapolated”.</li>
+      <li>The temperature at working height comes from the models’ height values, otherwise 0.65 °C colder per 100 m. The feels-like temperature takes the wind into account (wind chill).</li>
+    </ul>
+  </section>
+
+  <section class="card" id="en-ampel">
+    <h2>The traffic light</h2>
+    <p>Each hour is assessed by fixed rules. Each rule stores its reason; the reasons appear next to the selected hour, in the hourly table and in the daily report.</p>
+    <table>
+      <tr><th>Level</th><th>When</th></tr>
+      <tr><td><span class="tag stop">STOP</span></td><td>Median of all models above the wind or gust limit · thunderstorm in at least one third of the models (at least 2) · thunderstorm energy CAPE from 800 J/kg · air temperature at working height below your minimum temperature (settings, default 0 °C; exactly 0 °C is still allowed) · only in coating mode and if selected in the settings: coating limit exceeded (named separately in the overview and report as “Stop only because of coating”) · official severe weather warning or warning level red</td></tr>
+      <tr><td><span class="tag warn">CHECK</span></td><td>individual models above a limit · thunderstorm signal <i data-ico="bolt"></i> in one model · CAPE from 300 J/kg · rain from 0.5 mm/h · “Too windy” in at least 30 % of the scenarios · official warning for wind, thunderstorm, ice, snow or rain</td></tr>
+      <tr><td><span class="tag go">CLEAR</span></td><td>none of the rules applies</td></tr>
+    </table>
+    <p><b>Notes</b> without influence on the traffic light: night (outside civil twilight), cold protection from −10 °C feels-like, heat from 32 °C feels-like, UV index from 6, coating (only in coating mode and without the STOP tick: humidity or dew point spread outside your limits), “Too windy” in 10–29 % of the scenarios, warnings for frost, fog, heat or UV.</p>
+    <p>The daily rating at the top summarises the hours of your working hours, e.g. “Clear only 10–16”.</p>
+  </section>
+
+  <section class="card" id="en-szenarien">
+    <h2>“Too windy” and scenarios</h2>
+    <p>Weather services do not calculate their forecast just once, but many times with slightly changed starting values, because the measurements at the start are never completely exact: the DWD 20 times (ICON-D2-EPS), the European centre ECMWF 51 times (ECMWF-ENS). This is called an <b>ensemble forecast</b>, each single run an ensemble member. In the app it is simply called a <b>scenario</b>.</p>
+    <p>AtHeight converts each scenario to your work zone and counts in how many of them wind or gust are above your limits. <b>“Too windy 30 %”</b> means: in 30 % of the possible weather developments it becomes too windy, i.e. in 21 of 71 scenarios. The bar shows the same in colour: green below 10 %, yellow from 10 %, red from 30 %. It is a share of the scenarios, not a verified probability.</p>
+  </section>
+
+  <section class="card" id="en-modelle">
+    <h2>Models, spread and model comparison</h2>
+    <ul>
+      <li>AtHeight uses up to 16 weather models from DWD, ECMWF, Météo-France, MeteoSwiss, GeoSphere Austria, Met Office, NOAA, KNMI, DMI and Canada. Models that do not cover the site drop out automatically. Individual models can be excluded in the model table with a tick.</li>
+      <li><b>Median:</b> the middle value of all models; it is robust against single outliers.</li>
+      <li><b>Model agreement:</b> the top always shows how much the models agree (green “largely agree”, yellow “moderate spread”, blue “situation uncertain”), with the highest wind of the working hours. <b>Situation uncertain:</b> if the models spread widely (mean spread from 5 m/s), the app shows the highest wind of the working hours separately for high-resolution models (1–5 km) and regional/global models (7–25 km), plus the stormiest model. No model is removed from the assessment: outliers can be right.</li>
+      <li><b>Spread:</b> from the most cautious to the stormiest model. Narrow means the models agree. Wide means uncertain.</li>
+      <li><b>Model comparison – how it is calculated:</b>
+        <ol>
+          <li><b>Period:</b> the last 30 days.</li>
+          <li><b>Forecast:</b> for each of these days the <i>previous-day forecast</i> of each model, i.e. what the model predicted the day before (as in your planning the evening before).</li>
+          <li><b>Measurement:</b> the nearest weather station (DWD via Bright Sky, in Austria GeoSphere), hour by hour, only during your working hours. Name, distance and height of the station are shown with the result.</li>
+          <li><b>Metrics per model</b> from up to a few hundred hour pairs (30 days × working hours): error over time (after removing the basic bias), hit rate in the windiest 25 % of hours, bias (too much or too little) and error in gusts.</li>
+          <li><b>Rating:</b> “good”, “midfield” or “clearly worse”; if all are close together, they count as equivalent. Deliberately no ranking, because small differences would suggest an accuracy that is not there.</li>
+          <li><b>Currency:</b> runs automatically in the background for each site and is renewed after 7 days, or manually via “Recalculate comparison”. “Best rated” below the wind chart shows the models rated “good”.</li>
+        </ol>
+        <b>Limits:</b> the station measures at 10 m height and is often several kilometres away; the comparison therefore says only limited things about the wind at working height. 30 days is a compromise between “fits the current weather situation” and “enough data”. The assessment (traffic light, median) uses all active models independently of this.</li>
+      <li><b>7-day outlook:</b> days 1–3 from the detailed forecast, from day 4 a rough trend from four global models and the ECMWF scenarios. For planning only. Each day also shows when the dew point is reached (“<i data-ico="drop"></i> Dew”), in coating mode instead when coating is allowed (“<i data-ico="brush"></i> Coating”). From day 4 this is only rough, and it does not enter the traffic light there.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="en-warnungen">
+    <h2>Warnings, wind direction, daylight, radar</h2>
+    <ul>
+      <li><b>Warnings:</b> DWD (Germany) and GeoSphere Austria (Austria) for the municipality of the site. Without a warning it says “No official warnings for …”. For sites outside Germany and Austria, please check with the responsible weather service yourself.</li>
+      <li><b>Ropes and platform overnight:</b> from end of work until start of work the next day, the app checks the wind from 10 m up to the hub against your own limits (settings, default 15 m/s wind and 20 m/s gust). Red “High risk of damage, take down”: the median of the models is above it. Yellow “Increased, check”: individual models above it. Green “Low risk of damage”: according to the forecast nothing is above it; whether the ropes actually stay hanging is for you to decide on site. No influence on the traffic light of the working hours; also appears in the daily report.</li>
+      <li><b>Wind direction:</b> compass with mean direction and the individual models, below it one arrow per working hour (where the wind is blowing to, colour like the traffic light, but only by weather: a STOP only because of coating does not turn the arrows red). Lee side = side of the tower facing away from the wind. If the wind turns by 45° or more during working hours, a note appears; hours below 2 m/s do not count. No influence on the traffic light.</li>
+      <li><b>Daylight:</b> civil twilight (sun up to 6° below the horizon), calculated from the sun position. Hours outside are hatched and get the note “Night”; the traffic light colour depends only on the weather.</li>
+      <li><b>Rain radar:</b> DWD, last 90 minutes measured and up to 2 hours forecast; covers Germany and border regions.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="en-feuchte">
+    <h2>Humidity, dew point and clouds</h2>
+    <ul>
+      <li><b>Dew point spread:</b> how far the temperature is above the dew point, in °C. Below the temperature chart it is shown per working hour, and also in “Hours in detail”. <b>“<i data-ico="drop"></i> Dew”</b> (yellow) means: dew point reached, the air above is saturated, fog or a low cloud at working height is likely, surfaces and ropes become wet and slippery. <b>Light yellow</b>: dew point spread at most 1 °C, condensation possible. The overview at the top summarises this once per day, e.g. “Condensation: dew point reached 06–09”. No influence on the traffic light.</li>
+      <li><b>More than 1 °C dew point spread</b> only means: the forecast does not expect condensation in the air. That does not make surfaces safely dry, see surface temperature.</li>
+      <li><b>Surface temperature:</b> what matters for condensation is the temperature of the surface, not of the air. After clear nights, substrates such as steel, concrete or glass are often colder than the air. No weather model knows this: <b>measure on site with a surface thermometer</b>.</li>
+      <li><b><i data-ico="brush"></i> Coating / laminating:</b> Many resins and paints may only be applied up to a certain humidity and with sufficient dew point spread. The limits are in the settings (default: at most 80 % humidity, dew point spread at least 3 °C, the usual rule per ISO 8502-4). <b>You switch it on in the overview at the top</b> with “<i data-ico="brush"></i> Coating mode”. It then applies to all days at this site until you switch it off again. It also stays on when you close the app: please switch it off after coating. When it is on, “Coating mode on” is clearly visible at the top with the limits and the times when coating is not allowed. The humidity is added to the dew point row, and in the chart the humidity limit as a dashed line. Without the tick “Traffic light to STOP” in the settings these are only notes (yellow). With the tick, exceeded limits set the traffic light to STOP (red); overview and daily report then name separately “Stop only because of coating, not because of weather”. The manufacturer’s data sheet always takes precedence.</li>
+      <li><b>Humidity:</b> relative humidity at 2 m above the ground, per model and as median. The models do not provide it at height. From about 95 % expect fog, dew or wet surfaces.</li>
+      <li><b>Cloud cover:</b> total sky cover in %, as a symbol in eighths like in the weather report: <i data-ico="sun"></i> clear (0–1/8), <i data-ico="sunfew"></i> fair (2–3/8), <i data-ico="cloudsun"></i> cloudy (4–5/8), <i data-ico="cloud"></i> mostly cloudy (6/8), <i data-ico="clouds"></i> overcast (7–8/8); at night <i data-ico="moon"></i> instead of sun. The value does not say how high the clouds are. Display only.</li>
+      <li>Not every model provides every value; if one is missing, “·” is shown.</li>
+    </ul>
+    <details>
+      <summary><b>In more detail: how the dew point is calculated</b></summary>
+      <ul>
+        <li>The dew point is the temperature at which water condenses from the air. AtHeight calculates it per model from temperature and humidity at 2 m (Magnus formula: dew point = 243.12 · γ / (17.62 − γ) with γ = ln(humidity/100) + 17.62 · T / (243.12 + T), T in °C). Example: 10 °C at 80 % gives 6.7 °C.</li>
+        <li><b>Why temperature at height, dew point at 2 m?</b> The models only provide humidity at 2 m. The dew point from there is compared with the air temperature at working height. With height the dew point falls slightly (about 0.2 °C per 100 m), the temperature usually more. The real dew point spread at height is therefore usually somewhat larger than calculated: the warning comes rather too early than too late. With an inversion (warmer above than below, e.g. in valleys in the morning) it can be the other way round.</li>
+        <li><b>Temperature below the dew point (2 m)</b> is not a calculation error: the moist air from the ground would condense immediately higher up, the air at working height is saturated. How far below says nothing additional; that is why the row only shows “Dew”.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="card" id="en-diagramme">
+    <h2>Charts and model matrix</h2>
+    <ul>
+      <li><b>Wind chart:</b> median, spread of the models, gust and limit lines (the limit lines are always visible). With the “Display” button at the top of the card, lines can be hidden and shown and individual models added; the legend below the chart shows what is currently visible.</li>
+      <li><b>Temperature &amp; humidity:</b> temperature at working height (orange), feels-like temperature with wind (dashed), dew point at 2 m (violet dashed) and humidity at 2 m (green, right axis in %). The lines connect the hourly values directly, without smoothing. Feels-like, dew point and humidity can be hidden in the legend; what is hidden is shown below the legend. The dew point row below always stays visible.</li>
+      <li><b>Hide night:</b> button for wind, rain and temperature, applies to all three charts. Dark hours outside your working hours are hidden. If the working hours are in the dark (e.g. start at 6 am in winter), these hours stay visible.</li>
+      <li><b>Model matrix:</b> one row per model, one column per working hour, the median at the bottom. Switchable between wind, gust, rain, humidity (in %, shades of green from 60, 85 and 95 %) and clouds (symbols, the stronger the grey, the denser). This shows whether only one outlier warns or almost all models.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="en-bericht">
+    <h2>Daily report and checksum</h2>
+    <p>The daily report records which forecast was available at the time of approval: rating, hourly values, reasons, warning situation, rules and decision. “Print / PDF” and “Save raw data (JSON)” use the same data. The <b>checksum</b> (SHA-256) is in the PDF and in the JSON file; if both match, report and file belong together and are unchanged. It only becomes tamper-proof if it is additionally stored unalterably, e.g. by email to the client.</p>
+    <p>If the weather data is older than 3 hours, the app points this out and notes it in the report.</p>
+    <p>Condensation appears in the report as one line per day. If coating mode is on, the report has its own box “Coating / laminating” with your limits, the times when coating is not allowed, and, separately, the hours in which the traffic light is at STOP only because of coating.</p>
+  </section>
+
+  <section class="card" id="en-quellen">
+    <h2>Data sources and limits</h2>
+    <ul>
+      <li>Weather data: <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0) with models from the weather services named.</li>
+      <li>Measuring stations: DWD via Bright Sky, GeoSphere Austria Data Hub. Warnings: DWD, GeoSphere Austria. Radar: DWD. Satellite image: Esri. Place search: OpenStreetMap (Nominatim).</li>
+      <li><b>Model cells:</b> Each model calculates in grid cells (high-resolution about 1 to 2.5 km, coarser 7 to 25 km). The value of the cell in which the site lies applies. If the site is at the <b>edge</b> of a cell, the neighbouring cell (for example over the lake or on the other side of a ridge) can calculate clearly different wind. The model table shows the “position in the cell” per model, and a note appears when several high-resolution models are at the cell edge. This is only a note; the traffic light does not change.</li>
+      <li>Weather models can be wrong, especially with thunderstorms, in the mountains and with fronts. No model fully captures local effects at the site (turbulence, shading, terrain).</li>
+      <li>AtHeight does not replace the assessment on site. Anyone in the team may stop work at any time if it becomes unsafe.</li>
+      <li>AtHeight is a <b>decision aid, not an approval</b>. The decision is made by the supervisor. You enter the limits yourself; they follow the requirements of the manufacturer and client.</li>
+      <li>Wind and gusts are <b>hourly values</b>. For short periods the wind can be above them. Wind at height is calculated, gusts are estimated. Wind direction changes, gust fronts and individual thunderstorm cells can arrive faster than the forecast shows.</li>
+      <li>No model captures terrain, ridges, wake of other turbines and turbulence at the tower. <b>Measure the wind on site</b> and stop if in doubt.</li>
+      <li>Every daily report carries the forecast time, the AtHeight version and a checksum. This allows you to trace later what the decision was based on.</li>
+    </ul>
+  </section>
+  </div>
+
+  <footer class="foot"><p class="note">© 2026 Tobias Windberg · <a href="https://www.windberg-ropeaccess.com" target="_blank" rel="noopener">www.windberg-ropeaccess.com</a> · <a href="impressum.html"><span class="l-de">Impressum</span><span class="l-en">Legal notice (German)</span></a> · <a href="datenschutz.html"><span class="l-de">Datenschutz</span><span class="l-en">Privacy (German)</span></a> · <a href="./"><span class="l-de">Zurück zur App</span><span class="l-en">Back to the app</span></a></p></footer>
 </div>
-<script src="js/hilfen.js?v=2026-11-02k"></script>
+<script src="js/hilfen.js?v=2026-11-02m"></script>
 <script>
   // Symbol-Platzhalter füllen (wie in der App)
   document.querySelectorAll("[data-ico]").forEach(e => { e.outerHTML = icon(e.dataset.ico); });

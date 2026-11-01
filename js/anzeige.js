@@ -53,8 +53,8 @@ function checkStale(){
   if(!state.fetchedAt) return;
   const age = Date.now() - state.fetchedAt, off = !!state.offlineAt, stale = off || age > STALE_MS;
   $("staleBox").hidden = !stale;
-  if(off) $("staleText").textContent = T(`Keine Verbindung: gespeicherter Stand von ${state.fetchedAt.toLocaleString(LOC(),{weekday:"short", hour:"2-digit", minute:"2-digit"})} (${fmtAge(age)} alt). Nicht für die Freigabe verwenden, sobald wieder Netz da ist neu laden.`, `No connection: saved data from ${state.fetchedAt.toLocaleString(LOC(),{weekday:"short", hour:"2-digit", minute:"2-digit"})} (${fmtAge(age)} old). Do not use for release; reload as soon as you are online again.`);
-  else if(stale) $("staleText").textContent = T(`Wetterdaten sind ${fmtAge(age)} alt (Abruf ${state.fetchedAt.toLocaleString(LOC(),{weekday:"short", hour:"2-digit", minute:"2-digit"})}). Vor der Freigabe neu laden.`, `Weather data is ${fmtAge(age)} old (fetched ${state.fetchedAt.toLocaleString(LOC(),{weekday:"short", hour:"2-digit", minute:"2-digit"})}). Reload before release.`);
+  if(off) $("staleText").textContent = T(`Keine Verbindung: gespeicherter Stand von ${state.fetchedAt.toLocaleString(LOC(),{weekday:"short", hour:"2-digit", minute:"2-digit"})} (${fmtAge(age)} alt). Nicht für die Freigabe verwenden, sobald wieder Netz da ist neu laden.`, `No connection: saved data from ${state.fetchedAt.toLocaleString(LOC(),{weekday:"short", hour:"2-digit", minute:"2-digit"})} (${fmtAge(age)} old). Do not use for sign-off; reload as soon as you are online again.`);
+  else if(stale) $("staleText").textContent = T(`Wetterdaten sind ${fmtAge(age)} alt (Abruf ${state.fetchedAt.toLocaleString(LOC(),{weekday:"short", hour:"2-digit", minute:"2-digit"})}). Vor der Freigabe neu laden.`, `Weather data is ${fmtAge(age)} old (fetched ${state.fetchedAt.toLocaleString(LOC(),{weekday:"short", hour:"2-digit", minute:"2-digit"})}). Reload before sign-off.`);
 }
 setInterval(checkStale, 6e4);
 document.addEventListener("visibilitychange", () => { if(!document.hidden) checkStale(); });

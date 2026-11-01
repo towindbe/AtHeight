@@ -4,7 +4,14 @@
 /* Sprache: Deutsch (Standard) oder Englisch, gemerkt im Browser. T("deutsch", "english") liefert den Text der gewählten Sprache.
    Feste Texte im HTML tragen data-en (Inhalt) bzw. data-en-title / data-en-aria / data-en-ph (Attribute), getauscht von applyStaticLang().
    Tagesbericht und Infoseite bleiben vorerst deutsch (Schritt 2). */
-let LANG = (() => { try{ return localStorage.getItem("wb_lang")==="en" ? "en" : "de"; }catch(e){ return "de"; } })();
+/* Link von der Homepage kann die Sprache mitgeben (?lang=en oder ?lang=de); sie wird dann im Browser gemerkt */
+let LANG = (() => {
+  try{
+    const p = new URLSearchParams(location.search).get("lang");
+    if(p === "en" || p === "de") localStorage.setItem("wb_lang", p);
+    return localStorage.getItem("wb_lang")==="en" ? "en" : "de";
+  }catch(e){ return "de"; }
+})();
 const T = (de, en) => LANG === "en" ? en : de;   // nicht „L“: so heißt global die Kartenbibliothek Leaflet
 const LOC = () => LANG === "en" ? "en-GB" : "de-DE";
 const UHR = () => T(" Uhr", "h");   // Zeitangabe hinter Uhrzeiten: „06–19 Uhr“ bzw. „06–19h“
