@@ -7,7 +7,7 @@
 <title>So funktioniert AtHeight</title>
 <script>/* Hell nur, wenn so gewählt (Standard dunkel); vor dem Zeichnen setzen, damit nichts aufblitzt */
 try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dataset.theme = "light"; }catch(e){}</script>
-<link rel="stylesheet" href="css/windbericht.css?v=2026-11-02d">
+<link rel="stylesheet" href="css/windbericht.css?v=2026-11-02e">
 <style>
   .info h2{margin-bottom:2px}
   .info .ico{width:1.1em;height:1.1em;vertical-align:-3px}
@@ -150,7 +150,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
   <section class="card" id="diagramme">
     <h2>Diagramme und Modell-Matrix</h2>
     <ul>
-      <li><b>Windverlauf:</b> Median, Spanne der Modelle, Böe und Grenzlinien; Antippen in der Legende blendet Linien aus, unter „Modelle einblenden“ lassen sich einzelne Modelle dazunehmen.</li>
+      <li><b>Windverlauf:</b> Median, Spanne der Modelle, Böe und Grenzlinien (die Grenzlinien sind immer zu sehen). Über den Knopf „Anzeige“ oben in der Karte lassen sich Linien aus- und einblenden und einzelne Modelle dazunehmen; die Legende unter dem Diagramm zeigt, was gerade zu sehen ist.</li>
       <li><b>Temperatur &amp; Feuchte:</b> Temperatur in Arbeitshöhe (orange), gefühlte Temperatur mit Wind (gestrichelt), Taupunkt in 2 m (violett gestrichelt) und Luftfeuchte in 2 m (grün, rechte Achse in %). Die Linien verbinden die Stundenwerte direkt, ohne Glättung. Gefühlt, Taupunkt und Luftfeuchte lassen sich in der Legende ausblenden; was ausgeblendet ist, steht unter der Legende. Die Taupunkt-Zeile darunter bleibt immer sichtbar.</li>
       <li><b>Nacht ausblenden:</b> Knopf bei Wind, Regen und Temperatur, gilt für alle drei Diagramme. Ausgeblendet werden dunkle Stunden außerhalb eurer Arbeitszeit. Liegt die Arbeitszeit im Dunkeln (z. B. Arbeitsbeginn 6 Uhr im Winter), bleiben diese Stunden sichtbar.</li>
       <li><b>Modell-Matrix:</b> eine Zeile je Modell, eine Spalte je Arbeitsstunde, unten der Median. Umschaltbar zwischen Wind, Böe, Regen, Feuchte (in %, Grüntöne ab 60, 85 und 95 %) und Wolken (Symbole, je kräftiger das Grau, desto dichter). So sieht man, ob nur ein Ausreißer warnt oder fast alle Modelle.</li>
@@ -181,7 +181,7 @@ try{ if(localStorage.getItem("wb_theme")==="light") document.documentElement.dat
 
   <footer class="foot"><p class="note">© 2026 Tobias Windberg · <a href="https://www.windberg-ropeaccess.com" target="_blank" rel="noopener">www.windberg-ropeaccess.com</a> · <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="./">Zurück zur App</a></p></footer>
 </div>
-<script src="js/hilfen.js?v=2026-11-02d"></script>
+<script src="js/hilfen.js?v=2026-11-02e"></script>
 <script>
   // Symbol-Platzhalter füllen (wie in der App)
   document.querySelectorAll("[data-ico]").forEach(e => { e.outerHTML = icon(e.dataset.ico); });

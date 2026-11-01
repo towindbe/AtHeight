@@ -106,14 +106,15 @@ $("searchForm").onsubmit = e => { e.preventDefault(); const q = $("searchInput")
 $("pickApply").onclick = () => { if(pending) applyPending(); };
 $("pickCancel").onclick = cancelPending;
 document.querySelectorAll("[data-q]").forEach(b => b.onclick = () => { if(state.fetchedAt) showQuick(b.dataset.q); });
-/* Modellauswahl im Windverlauf auf- und zuklappen; Zustand merken */
-function mpickOpen(on){
-  $("mBody").hidden = !on; $("mToggle").setAttribute("aria-expanded", String(on));
-  $("mToggle").querySelector(".mt-arrow").textContent = on ? "▾" : "▸";
-  try{ localStorage.setItem("wb_mpick", on ? "1" : "0"); }catch(e){}
+/* Feld „Anzeige“ unter Windverlauf und Temperatur: Linien und einzelne Modelle ein- und ausblenden (nur Anzeige) */
+function viewPanel(btn, on){
+  const p = $(btn.getAttribute("aria-controls"));
+  p.hidden = !on; btn.setAttribute("aria-expanded", String(on));
+  if(on) setTimeout(() => p.scrollIntoView({behavior:"smooth", block:"nearest"}), 30); else btn.focus();
 }
-$("mToggle").onclick = () => mpickOpen($("mBody").hidden);
-mpickOpen((() => { try{ return localStorage.getItem("wb_mpick")==="1"; }catch(e){ return false; } })());
+document.querySelectorAll(".view-btn").forEach(b => b.onclick = () => viewPanel(b, $(b.getAttribute("aria-controls")).hidden));
+document.querySelectorAll(".vp-done").forEach(b => b.onclick = () => viewPanel(document.querySelector(`.view-btn[aria-controls="${b.closest(".view-panel").id}"]`), false));
+document.querySelectorAll(".view-panel input[data-s]").forEach(i => i.onchange = () => toggleLine(i.dataset.s));
 $("nowPrev").onclick = () => selectHour(state.sel - 1);
 $("nowNext").onclick = () => selectHour(state.sel + 1);
 /* Windfelder in den Einstellungen: angezeigt in der gewählten Einheit, gemerkt in m/s (data-ms),
@@ -181,8 +182,6 @@ function chartMax(on){
   }
 }
 document.addEventListener("fullscreenchange", () => { if(!document.fullscreenElement && $("chartCard").classList.contains("chart-max")) chartMax(false); });
-$("tempLegend").addEventListener("click", e => { const b = e.target.closest("button[data-s]"); if(b) toggleLine(b.dataset.s); });
 document.querySelectorAll(".night-btn").forEach(b => b.onclick = toggleNight);
-$("chartLegend").addEventListener("click", e => { const b = e.target.closest("button[data-s]"); if(b) toggleLine(b.dataset.s); });
 $("chartMaxBtn").onclick = () => chartMax(!$("chartCard").classList.contains("chart-max"));
 document.addEventListener("keydown", e => { if(e.key==="Escape" && $("chartCard").classList.contains("chart-max")) chartMax(false); });

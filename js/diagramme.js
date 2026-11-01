@@ -100,8 +100,7 @@ const markPlugin = {id:"marks", beforeDatasetsDraw(c){
 /* Beschriftung der Grenzlinien rechts am sichtbaren Rand */
 const limitLabels = {id:"limitLabels", afterDatasetsDraw(c){
   const {ctx, chartArea:ca, scales:{y}} = c, a = {top:ca.top, bottom:ca.bottom, right:csVis(c)[1]};
-  const items = [["lim", site.wind, `${T("Grenze Wind", "Wind limit")} ${fwu(site.wind)}`], ["glim", site.gust, `${T("Grenze Böe", "Gust limit")} ${fwu(site.gust)}`]]
-    .filter(([k]) => !state.hide.has(k)).map(([, v, t]) => [v, t])
+  const items = [[site.wind, `${T("Grenze Wind", "Wind limit")} ${fwu(site.wind)}`], [site.gust, `${T("Grenze Böe", "Gust limit")} ${fwu(site.gust)}`]]
     .map(([v, t]) => ({t, py:y.getPixelForValue(cw(v))})).filter(o => o.py >= a.top && o.py <= a.bottom).sort((p,q) => p.py-q.py);
   // liegen die Linien dicht beieinander, Beschriftungen auseinanderziehen
   for(let k = 1; k < items.length; k++) if(items[k].py - items[k-1].py < 13) items[k].py = items[k-1].py + 13;
@@ -345,8 +344,9 @@ function renderChart(){
     borderColor:modelColor(r.m), borderWidth:1.8, borderDash:r.m.hi?[]:[5,3], pointRadius:0, tension:.3, spanGaps:true}));
   if(!hid("median")) ds.push({label:"Median", data:H.map(h=>r2(h.med)), borderColor:fg, borderWidth:3, pointRadius:0, tension:.3});
   if(!hid("gust")) ds.push({label:T("Böe (gesch.)", "Gust (est.)"), data:H.map(h=>r2(h.gMed)), borderColor:css("--gust"), backgroundColor:css("--gust"), borderWidth:1.8, borderDash:[2,3], pointRadius:0, tension:.3});
-  if(!hid("lim")) ds.push({label:T("Grenzwert", "Limit"), data:idxs.map(()=>cw(site.wind)), borderColor:stop, borderWidth:1.6, borderDash:[7,4], pointRadius:0});
-  if(!hid("glim")) ds.push({label:T("Grenze Böe", "Gust limit"), data:idxs.map(()=>cw(site.gust)), borderColor:stop, borderWidth:1, borderDash:[2,4], pointRadius:0});
+  // Grenzlinien immer sichtbar (nicht ausblendbar)
+  ds.push({label:T("Grenzwert", "Limit"), data:idxs.map(()=>cw(site.wind)), borderColor:stop, borderWidth:1.6, borderDash:[7,4], pointRadius:0});
+  ds.push({label:T("Grenze Böe", "Gust limit"), data:idxs.map(()=>cw(site.gust)), borderColor:stop, borderWidth:1, borderDash:[2,4], pointRadius:0});
   const opt = chartBase(WU()+" · "+zoneTxt()); opt.scales.x.ticks.padding = 18;   // Platz für den Tageslicht-Streifen
   opt.plugins.tooltip = {filter: it => !["Minimum", T("Grenzwert", "Limit"), T("Grenze Böe", "Gust limit")].includes(it.dataset.label), callbacks:{title:csTipTitle, label:c => `${c.dataset.label}: ${fmt(c.parsed.y, U().d)} ${WU()}`}}; narrowReadout(opt, "roMain");
   csAxes(opt, "main");
@@ -358,9 +358,37 @@ function renderChart(){
   $("chartDay").textContent = dayLabel(state.day);
   renderChips(); renderLegend();
 }
-/* Legende unter dem Windverlauf: Antippen blendet Median, Spanne, Böe und Grenzlinien ein/aus (nur Anzeige) */
+/* Ruhige Legende unter den Diagrammen: zeigt nur, was gerade zu sehen ist (nicht klickbar).
+   Ein- und ausgeblendet wird im Feld „Anzeige“ (Schalter mit data-s). */
+const legItem = (cls, txt, sty) => `<span><i class="${cls}"${sty ? ` style="${sty}"` : ""}></i>${esc(txt)}</span>`;
+function syncSwitches(panel){
+  document.querySelectorAll(`#${panel} input[data-s]`).forEach(i => { i.checked = !state.hide.has(i.dataset.s); });
+}
 function renderLegend(){
-  document.querySelectorAll("#chartLegend button").forEach(b => b.setAttribute("aria-pressed", String(!state.hide.has(b.dataset.s))));
+  const on = k => !state.hide.has(k), MAXM = 3;
+  const ms = usableModels().filter(r => state.show.has(r.m.id));
+  const items = [
+    on("median") && legItem("lg-med", "Median"),
+    on("band") && legItem("lg-band", T("Spanne", "Spread")),
+    on("gust") && legItem("lg-gust", T("Böe", "Gust")),
+    legItem("lg-lim", T("Grenze Wind", "Wind limit")),
+    legItem("lg-glim", T("Grenze Böe", "Gust limit")),
+    ...ms.slice(0, MAXM).map(r => legItem("lg-model", r.m.name, `--c:${modelColor(r.m)};border-top-style:${r.m.hi ? "solid" : "dashed"}`))
+  ].filter(Boolean);
+  const more = ms.length - MAXM;
+  if(more > 0) items.push(`<span class="lg-more">+ ${more} ${more === 1 ? T("Modell", "model") : T("Modelle", "models")}</span>`);
+  $("chartLegend").innerHTML = items.join("");
+  syncSwitches("chartView");
+}
+function renderTempLegend(){
+  const on = k => !state.hide.has(k);
+  $("tempLegend").innerHTML = [
+    legItem("lg-temp", T("Temperatur", "Temperature")),
+    on("t_feel") && legItem("lg-feel", T("Gefühlt", "Feels like")),
+    on("t_dew") && legItem("lg-dew", T("Taupunkt", "Dew point")),
+    on("t_rh") && legItem("lg-rh", T("Luftfeuchte", "Humidity"))
+  ].filter(Boolean).join("");
+  syncSwitches("tempView");
 }
 function toggleLine(s){
   state.hide.has(s) ? state.hide.delete(s) : state.hide.add(s);
@@ -389,10 +417,11 @@ function renderChips(note){
   $("modelChips").innerHTML = u.map(r => { const on = state.show.has(r.m.id);
     return `<button type="button" class="mchip ${on?"on":""}" style="--c:${modelColor(r.m)}" data-id="${r.m.id}" aria-pressed="${on}" title="${esc(r.m.org)} · ${esc(r.m.res)}${r.m.hi?"":T(" (gestrichelt)", " (dashed)")}"><i></i>${esc(r.m.name)}${r.m.name==="HARMONIE" ? ` <small>${esc(r.m.org)}</small>` : ""}</button>`; }).join("");
   $("modelChips").querySelectorAll(".mchip").forEach(b => b.onclick = () => { const id = b.dataset.id; state.show.has(id) ? state.show.delete(id) : state.show.add(id); setBestMode(false); setShown(state.show, " "); });
-  document.querySelectorAll("[data-q]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.q === "best" && state.showBest)));
+  // Schnellwahl: der Knopf, dessen Auswahl gerade gilt, ist gedrückt
+  const ids = u.filter(r => state.show.has(r.m.id)).map(r => r.m.id), hi = u.filter(r => r.m.hi).map(r => r.m.id);
+  const cur = state.showBest ? "best" : !ids.length ? "none" : ids.length === u.length ? "all" : ids.length === hi.length && hi.every(id => ids.includes(id)) ? "hi" : "";
+  document.querySelectorAll("[data-q]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.q === cur)));
   $("chipNote").textContent = note || T("Nur Anzeige: Ampel und Median nutzen weiter alle aktiven Modelle.", "Display only: traffic light and median still use all active models.");
-  const n = u.filter(r => state.show.has(r.m.id)).length;
-  $("mCount").textContent = n ? `· ${n} ${T("eingeblendet", "shown")}` : "";
 }
 function setShown(ids, note){
   state.show = new Set(ids);
@@ -470,7 +499,7 @@ const coatLimitPlugin = {id:"coatLimit", afterDatasetsDraw(c){
 // Text unter dem Temperatur-Diagramm: sagt, was ausgeblendet ist (ausgeblendet bleibt gespeichert)
 function tempNote(){
   const off = [["t_feel",T("Gefühlt","Feels like")],["t_dew",T("Taupunkt","Dew point")],["t_rh",T("Luftfeuchte","Humidity")]].filter(([k]) => state.hide.has(k)).map(([,t]) => t);
-  return (off.length ? T(`Ausgeblendet: ${off.join(", ")} (in der Legende antippen zum Einblenden). `, `Hidden: ${off.join(", ")} (tap in the legend to show). `) : T("Antippen in der Legende blendet Linien aus. ", "Tap in the legend to hide lines. "))
+  return (off.length ? T(`Ausgeblendet: ${off.join(", ")} (unter „Anzeige“ wieder einblenden). `, `Hidden: ${off.join(", ")} (show again under “Display”). `) : "")
     + T("Taupunkt und Luftfeuchte gelten für 2 m über Boden.", "Dew point and humidity apply to 2 m above ground.");
 }
 /* Taupunkt-Zeile: je Arbeitsstunde der Abstand der Temperatur in Arbeitshöhe zum Taupunkt (2 m).
@@ -531,7 +560,7 @@ function renderTemp(){
   $("tempDay").textContent = dayLabel(state.day);
   $("tempNote").textContent = tempNote();
   renderDewRow();
-  document.querySelectorAll("#tempLegend button").forEach(b => b.setAttribute("aria-pressed", String(!hid(b.dataset.s))));
+  renderTempLegend();
 }
 
 /* Höhenprofil, Kompass und Pfeilreihe zeigen eine Stunde: die gewählte (Antippen, Zeiger ziehen) oder beim Scrollen

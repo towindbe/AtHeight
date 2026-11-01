@@ -29,6 +29,7 @@ const ICON_PATHS = {
   play:'<path d="M7 4l13 8-13 8z"/>',
   matrix:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>',
   expand:'<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>',
+  sliders:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
   close:'<path d="M6 6l12 12M18 6L6 18"/>'
 };
 // Nach dem Einblenden einer Erklärung dorthin scrollen (sie steht oft weiter unten in der Karte)
