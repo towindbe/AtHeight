@@ -170,6 +170,8 @@ function chartMax(on){
   const mb = $("chartMaxBtn"), txt = on ? T("Schließen", "Close") : T("Vergrößern", "Enlarge"), sv = mb.querySelector("svg");
   mb.setAttribute("aria-pressed", String(on)); mb.setAttribute("aria-label", txt);
   mb.querySelector(".bt").textContent = txt; if(sv) sv.outerHTML = icon(on ? "close" : "expand");
+  // Breite und Höhe der Zeichenfläche ändern sich (quer: Werte rechts daneben): Diagramm neu aufbauen
+  if(state.hours.length) requestAnimationFrame(() => renderChart());
   // am Handy echtes Vollbild und quer, wenn der Browser das erlaubt (sonst bleibt es bei der großen Darstellung)
   const card = $("chartCard");
   if(on){

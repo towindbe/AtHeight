@@ -126,8 +126,23 @@ body.map-open{overflow:hidden}
 /* Vollbild: Wertezeile nicht zusammendrücken (sonst überlappen die Zeilen bei vielen Modellen), lieber darin scrollen */
 #chartCard.chart-max .readout{flex:none;max-height:26vh;overflow-y:auto;grid-auto-rows:max-content;align-content:start}
 #chartCard.chart-max .readout b{position:sticky;top:-6px;z-index:1;background:var(--raised)}   /* Uhrzeit bleibt beim Scrollen stehen */
-@media (orientation:landscape) and (max-height:520px){ #chartCard.chart-max .readout{max-height:66px} #chartCard.chart-max .chart-box{height:calc(100dvh - 150px)} }
-@media (orientation:landscape) and (max-height:520px){ #chartCard.chart-max .chart-box{height:calc(100dvh - 78px);min-height:160px} }
+/* Vollbild im Querformat (Handy): schmale Titelzeile, Werte als Spalte rechts, Diagramm bis zum unteren Rand */
+@media (orientation:landscape) and (max-height:520px){
+  #chartCard.chart-max{--top:52px;display:grid;grid-template-columns:minmax(0,1fr) 196px;gap:6px 10px;align-content:start;padding-top:6px;padding-bottom:6px}
+  #chartCard.chart-max > *{grid-column:1 / -1}
+  #chartCard.chart-max .ch{grid-row:1;align-items:center}
+  #chartCard.chart-max .ch-title{flex-direction:row;align-items:baseline;gap:10px}
+  #chartCard.chart-max .ch-title h2{font-size:18px}
+  #chartCard.chart-max #chartDay{display:none}
+  #chartCard.chart-max .ch-tools button{width:40px;height:40px;min-height:40px;padding:0;border-radius:12px}
+  #chartCard.chart-max .ch-tools .nl,#chartCard.chart-max .ch-tools .bt{display:none}
+  #chartCard.chart-max .chart-box{grid-column:1;grid-row:2;height:calc(100dvh - var(--top) - 12px);min-height:160px}
+  #chartCard.chart-max .readout{grid-column:2;grid-row:2;align-self:stretch;max-height:calc(100dvh - var(--top) - 12px);grid-template-columns:minmax(0,1fr);font-size:12px;gap:3px}
+  #chartCard.chart-max .readout:not([hidden]) ~ .chart-box{grid-column:1}
+  #chartCard.chart-max .readout[hidden] ~ .chart-box{grid-column:1 / -1}
+  #chartCard.chart-max .cs-scroll{scrollbar-width:none}
+  #chartCard.chart-max .cs-scroll::-webkit-scrollbar{display:none}
+}
 .map-wrap{position:relative}
 .radar-time{position:absolute;top:10px;right:10px;z-index:500;background:rgba(0,0,0,.6);color:#fff;font:600 14px var(--f-mono);padding:5px 9px;border-radius:6px;pointer-events:none}
 .radar-time span{font:600 10.5px var(--f-body);text-transform:uppercase;letter-spacing:.06em;margin-left:6px;padding:1px 6px;border-radius:4px}
