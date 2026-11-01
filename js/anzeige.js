@@ -72,7 +72,7 @@ function renderHero(){
   $("heroDay").textContent = `${kurzDatum(state.day)} · ${T("Arbeitszeit", "Working hours")} ${site.from}–${site.to}${UHR()}` + (dl.start && dl.end ? ` · ${T("hell", "daylight")} ${dl.start}–${dl.end}` : "");
   $("headline").textContent = sum.head; $("summary").textContent = sum.text;
   renderInstrument(sum);
-  $("rainNote").textContent = rainSummary(dayHours(state.day));
+  $("rainNote").textContent = rainSummary(dayHours(state.day), true);
   $("dewNote").textContent = dewDaySummary(dayHours(state.day));
   renderCoatBar();
   renderChange();

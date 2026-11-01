@@ -161,7 +161,7 @@ function dayLabel(d, short){
 }
 
 /* Regen-Tendenz in Worten für die Arbeitszeit: Regen (Median der Modelle ab 0,1 mm/h) und Schauer möglich (mind. ein Viertel der Modelle sieht Regen) */
-function rainSummary(hs){
+function rainSummary(hs, kurz){
   hs = hs.filter(h => h.n);
   if(!hs.length) return "";
   const cls = h => h.rain!=null && h.rain >= 0.1 ? "wet" : h.rainN && h.rainYes/h.rainN >= 0.25 ? "maybe" : "";
@@ -170,8 +170,16 @@ function rainSummary(hs){
   hs.forEach(h => { const c = cls(h);
     if(c && cur && cur.c===c) cur.end = h; else { cur = c ? {c, start:h, end:h, mm:0} : null; if(cur) spans.push(cur); }
     if(cur) cur.mm += h.rain || 0; });
-  if(!spans.length) return T("Regen-Tendenz: trocken in der Arbeitszeit.", "Rain trend: dry during working hours.");
+  if(!spans.length) return kurz ? T("Trocken in der Arbeitszeit.", "Dry during working hours.") : T("Regen-Tendenz: trocken in der Arbeitszeit.", "Rain trend: dry during working hours.");
   const mm = hs.reduce((s,h) => s + (cls(h) ? (h.rain || 0) : 0), 0);
+  if(kurz){
+    // Überblick: ein Satz, Einzelheiten im Diagramm „Regen & Gewitter“ und im Tagesbericht
+    const bis = ss => hourOf(ss[ss.length-1].end.t) >= hourOf(hs[hs.length-1].t) ? T(` ab ${hh(ss[0].start.t)} Uhr`, ` from ${hh(ss[0].start.t)}h`) : " " + win(ss[0].start, ss[ss.length-1].end);
+    const wet = spans.filter(s => s.c==="wet"), may = spans.filter(s => s.c==="maybe");
+    let k = wet.length ? T("Regen", "Rain") + bis(wet) : T("Schauer möglich", "Showers possible") + bis(may);
+    if(wet.length && spans[0].c==="maybe") k = T("Schauer möglich", "Showers possible") + T(` ab ${hh(spans[0].start.t)} Uhr, `, ` from ${hh(spans[0].start.t)}h, `) + T("Regen", "rain") + bis(wet);
+    return k + (mm >= 0.1 ? `, ${T("ca.", "approx.")} ${fmt(mm, mm < 1 ? 1 : 0)} mm.` : ".");
+  }
   const peak = hs.reduce((a,h) => h.rain!=null && (!a || h.rain > a.rain) ? h : a, null);
   const parts = [];
   if(hourOf(spans[0].start.t) > hourOf(hs[0].t)) parts.push(T(`trocken bis ${hh(spans[0].start.t)} Uhr`, `dry until ${hh(spans[0].start.t)}h`));

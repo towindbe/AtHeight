@@ -1,8 +1,8 @@
 # AtHeight – Wetter-Check für Höhenarbeit
 
-Wind- und Wetterbericht in Nabenhöhe für Seilarbeiten an Windenergieanlagen. Eigenständige Web-App (eine HTML-Datei, kein Build).
+Wind- und Wetter-Check für Arbeiten in der Höhe (Seilzugang an Fassaden, Brücken, Masten, Windenergieanlagen u. a.). Web-App ohne Build-Schritt.
 
-- Ruft rund 16 Wettermodelle über die [Open-Meteo](https://open-meteo.com) Forecast API ab und rechnet den Wind auf Nabenhöhe.
+- Ruft rund 16 Wettermodelle über die [Open-Meteo](https://open-meteo.com) Forecast API ab und rechnet den Wind auf den Arbeitsbereich (an Windenergieanlagen bis zur Nabe).
 - Regelbasierte Ampel pro Stunde, Tagesbericht mit Freigabe, Druck/PDF und JSON-Export.
 
 **Hinweis:** Entscheidungshilfe, keine Freigabe. Die Arbeitsfreigabe trifft der Aufsichtführende.
@@ -60,7 +60,7 @@ Kein Build-Schritt, läuft direkt auf GitHub Pages.
 | `sw.js`, `manifest.webmanifest`, `icons/` | Installierbare App: App-Dateien offline, Symbole |
 
 Die Skripte sind klassische Skripte (kein `type="module"`) und teilen sich den globalen Gültigkeitsbereich; die Reihenfolge in `index.html` ist wichtig.
-**Bei jeder Veröffentlichung** den Parameter `?v=` aller Dateien in `index.html` erhöhen, sonst mischen Browser alte und neue Dateien.
+**Bei jeder Veröffentlichung** den Parameter `?v=` aller Dateien in `index.html` und `info.html` erhöhen, sonst mischen Browser alte und neue Dateien.
 
 ## Automatischer Test
 

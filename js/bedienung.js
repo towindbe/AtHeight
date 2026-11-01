@@ -150,11 +150,9 @@ $("jsonBtn").onclick = async () => {
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
   a.download = `windbericht_${site.name.replace(/\W+/g,"_")}_${state.day}.json`; document.body.appendChild(a); a.click(); a.remove();
 };
-/* Nur dunkles Design: eine früher gespeicherte helle Wahl entfernen */
-try{ localStorage.removeItem("wb_theme"); }catch(e){}
-/* Infoseite einblenden (? in der Kopfzeile oder Link in der Fußzeile) */
+/* Infoseite einblenden (? in der Kopfzeile oder Link in der Fußzeile); Version wie die App, damit keine alte Kopie erscheint */
 function infoShow(on){
-  if(on && $("infoFrame").src.endsWith("about:blank")) $("infoFrame").src = "info.html?v=2026-10-21w";
+  if(on && $("infoFrame").src.endsWith("about:blank")) $("infoFrame").src = "info.html" + (ownVersion() ? "?v=" + ownVersion() : "");
   $("infoOverlay").hidden = !on; document.body.classList.toggle("info-open", on);
   if(on) $("infoClose").focus(); else $("infoBtn").focus();
 }
